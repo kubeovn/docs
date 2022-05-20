@@ -1,4 +1,5 @@
-site_name: Kube-OVN 文档 
+site_name: Kube-OVN 文档
+repo_url: https://github.com/kubeovn/docs/
 nav:
   - 主页: 'index.md'
   - 快速入门:
@@ -6,11 +7,13 @@ nav:
       - 一键安装: 'start/one-step-install.md'
       - Underlay 网络安装: 'start/underlay.md'
   - 使用指南:
-      - 固定 IP 和 Mac: 'index.md'
+      - 单个 Pod 固定 IP/Mac: 'guide/static-ip-mac.md'
   - 高级功能:
-      - 多网卡管理: 'index.md'
+      - 多网卡管理: 'advance/multi-nic.md'
   - 开发指南:
-      - 开发环境构建: 'index.md'
+      - 开发环境构建: 'develop/dev-env.md'
+  - 技术参考:
+      - Underlay 流量拓扑: 'reference/underlay-topology.md'
 theme:
     name: readthedocs
 markdown_extensions:
