@@ -1,0 +1,17 @@
+site_name: Kube-OVN 文档 
+nav:
+  - 主页: 'index.md'
+  - 快速入门:
+      - 准备工作: 'start/prepare.md'
+      - 一键安装: 'start/one-step-install.md'
+      - Underlay 网络安装: 'start/underlay.md'
+  - 使用指南:
+      - 固定 IP 和 Mac: 'index.md'
+  - 高级功能:
+      - 多网卡管理: 'index.md'
+  - 开发指南:
+      - 开发环境构建: 'index.md'
+theme:
+    name: readthedocs
+markdown_extensions:
+  - footnotes
