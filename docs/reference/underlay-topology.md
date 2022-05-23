@@ -6,19 +6,19 @@
 
 内部逻辑交换机直接交换数据包，不进入外部网络。
 
-![同节点同子网](./underlay-traffic-1.jpg)
+![同节点同子网](../static/underlay-traffic-1.jpg)
 
 #### 跨节点同子网
 
 数据包经由节点网卡进入外部交换机，由外部交换机进行交换。
 
-![跨节点同子网](./underlay-traffic-2.jpg)
+![跨节点同子网](../static/underlay-traffic-2.jpg)
 
 #### 同节点不同子网
 
 数据包经由节点网卡进入外部网络，由外部交换机及路由器进行交换和路由转发。
 
-![同节点不同子网](./underlay-traffic-3.jpg)
+![同节点不同子网](../static/underlay-traffic-3.jpg)
 
 > 此处 br-provider-1 和 br-provider-2 可以是同一个 OVS 网桥，即多个不同子网可以使用同一个 Provider Network。
 
@@ -26,23 +26,23 @@
 
 数据包经由节点网卡进入外部网络，由外部交换机及路由器进行交换和路由转发。
 
-![跨节点不同子网](./underlay-traffic-4.jpg)
+![跨节点不同子网](../static/underlay-traffic-4.jpg)
 
 #### 外部访问
 
 数据包经由节点网卡进入外部网络，由外部交换机及路由器进行交换和路由转发。
 
-![外部访问](./underlay-traffic-5.jpg)
+![外部访问](../static/underlay-traffic-5.jpg)
 
 > 节点与 Pod 之间的通信大体上也遵循此逻辑。
 
 #### 总览
 
-![总览](./underlay-traffic-6.jpg)
+![总览](../static/underlay-traffic-6.jpg)
 
 #### VLAN 总览
 
-![VLAN 总览](./underlay-traffic-7.jpg)
+![VLAN 总览](../static/underlay-traffic-7.jpg)
 
 ### 通过 Service IP 访问
 
@@ -50,8 +50,8 @@ Kube-OVN 为每个 Kubernetes Service 在每个子网的逻辑交换机上配置
 
 #### 同节点同子网
 
-![同节点同子网](./underlay-traffic-8.png)
+![同节点同子网](../static/underlay-traffic-8.png)
 
 #### 同节点不同子网
 
-![同节点不同子网](./underlay-traffic-9.png)
+![同节点不同子网](../static/underlay-traffic-9.png)

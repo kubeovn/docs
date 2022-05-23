@@ -8,6 +8,7 @@ nav:
       - Underlay 网络安装: 'start/underlay.md'
   - 使用指南:
       - 单个 Pod 固定 IP/Mac: 'guide/static-ip-mac.md'
+      - 配置监控和面板: 'guide/prometheus-grafana.md'
   - 高级功能:
       - 多网卡管理: 'advance/multi-nic.md'
   - 开发指南:
