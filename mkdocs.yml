@@ -8,14 +8,38 @@ nav:
       - Underlay 网络安装: 'start/underlay.md'
       - 卸载: 'start/uninstall.md'
   - 使用指南:
+      - 安装选项: 'guide/setup-options.md'
       - 固定地址: 'guide/static-ip-mac.md'
+      - 子网使用: 'guide/subnet.md'
+      - VPC 使用: 'guide/vpc.md'
       - 容器网络 QoS 配置: 'guide/qos.md'
       - 配置监控和面板: 'guide/prometheus-grafana.md'
+      - 双栈使用: 'guide/dual-stack.md'
+      - EIP 和 SNAT 配置: 'guide/eip-snat.md'
+      - 流量镜像: 'guide/mirror.md'
+      - Webhook 使用: 'guide/webhook.md'
+  - 运维指南:
+      - kubectl 插件使用: 'ops/kubectl-ko.md'
+      - 删除节点: 'ops/delete-node.md'
+      - 更换 ovn-central 节点: 'ops/change-ovn-central-node.md'
+      - OVN 数据库备份和恢复: 'ops/recover-db.md'
+      - 卸载 Calico 安装 Kube-OVN: 'ops/from-calico.md'
+      - 卸载 Flannel 安装 Kube-OVN: 'ops/from-flannel.md'
+      - 其他常见问题: 'ops/faq.md'
   - 高级功能:
       - 多网卡管理: 'advance/multi-nic.md'
-  - 开发指南:
-      - 开发环境构建: 'develop/dev-env.md'
+      - 性能调优: 'advance/performance-tuning.md'
+      - 使用 OVN-IC 进行多集群互联: 'advance/with-ovn-ic.md'
+      - 使用 Submariner 进行多集群互联: 'advance/with-submariner.md'
+      - Cilium 集成: 'advance/with-cilium.md'
+      - Mellanox 网卡 offload 支持: 'advance/offload-mellanox.md'
+      - 芯启源网卡 offload 支持: 'advance/offload-corigine.md'
+      - Windows 支持: 'advance/windows.md'
+      - DPDK 支持: 'advance/dpdk.md'
+      - OpenStack 集成: 'advance/with-openstack.md'
   - 技术参考:
+      - 总体架构: 'reference/architecture.md'
+      - 开发环境构建: 'reference/dev-env.md'
       - Underlay 流量拓扑: 'reference/underlay-topology.md'
 theme:
     name: readthedocs
