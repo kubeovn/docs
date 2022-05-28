@@ -1,4 +1,5 @@
 site_name: Kube-OVN 文档
+repo_name: kubeovn/docs
 repo_url: https://github.com/kubeovn/docs/
 nav:
   - 主页: 'index.md'
@@ -48,6 +49,8 @@ theme:
     language: 'zh'
     palette:
       scheme: default
+    features:
+      - navigation.tabs
 markdown_extensions:
   - footnotes
 plugins:

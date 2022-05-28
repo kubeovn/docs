@@ -142,7 +142,85 @@ nginx-74d5899f46-n8wtg   1/1     Running   0          10s   10.66.0.11   node1  
 
 ## Overlay 子网网关配置
 
+Overlay 子网下的 Pod 需要通过网关来访问集群外部网络，Kube-OVN 目前支持两种类型的网关：
+分布式网关和集中式网关，用户可以在子网中对网关的类型进行调整。
+
+两种网关均支持 `natOutgoing` 设置，用户可以选择 Pod 访问外网时是否需要进行 snat。
+
+### 分布式网关
+
+子网的默认类型网关，每个 node 会作为当前 node 上 pod 访问外部网络的网关。
+数据包会通过本机的 ovn0 网卡流入主机网络栈，再根据主机的路由规则进行出网。
+当 `natOutgoing` 为 true 时，Pod 访问外部网络将会使用当前所在宿主机的 IP。
+
+子网示例，其中gatewayType 字段为 distributed：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: distributed
+spec:
+  cidrBlock: 10.166.0.0/16
+  default: false
+  excludeIps:
+  - 10.166.0.1
+  gateway: 10.166.0.1
+  gatewayType: distributed
+  natOutgoing: true
+```
+
+### 集中式网关
+
+如果希望子网内流量访问外网使用固定的 IP，以便审计和白名单等安全操作，可以在子网中设置集中式网关。
+在集中式网关模式下，Pod 访问外网的数据包会首先被路由到特定节点的 ovn0 网卡，再通过主机的路由规则进行出网。
+当 `natOutgoing` 为 true 时，Pod 访问外部网络将会使用特定宿主机的 IP。
+
+子网示例，其中gatewayType 字段为 centralized，gatewayNode 为特定机器在 Kubernetes 中的 node name。
+其中gatewayNode字段可以为逗号分隔的多台主机。
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: centralized
+spec:
+  cidrBlock: 10.166.0.0/16
+  default: false
+  excludeIps:
+  - 10.166.0.1
+  gateway: 10.166.0.1
+  gatewayType: centralized
+  gatewayNode: "node1,node2"
+  natOutgoing: true
+```
+
+- 集中式网关如果希望指定机器的特定网卡进行出网，`gatewayNode` 
+可更改为 `kube-ovn-worker:172.18.0.2, kube-ovn-control-plane:172.18.0.3` 格式。
+- 集中式网关默认为主备模式，只有主节点进行流量转发，
+如果需要切换为 ECMP 模式，请参考[集中式网关 ECMP 开启设置](setup-options.md#ecmp)
+
 ## 子网 ACL 设置
+
+对于有细粒度 ACL 控制的场景，Kube-OVN 的 Subnet 提供了 ACL 规则的设置可以实现网络规则的精细控制。
+
+Subnet 中的 ACL 规则和 OVN 的 ACL 规则一致，相关字段内容可以参考 [ovn-nb ACL Table](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE),
+`match` 字段支持的字段可参考 [ovn-sb Logical Flow Table](https://man7.org/linux/man-pages/man5/ovn-sb.5.html#Logical_Flow_TABLE)
+
+相关示例如下所示：
+```yaml
+spec:
+  acls:
+  - action: reject
+    direction: to-lport
+    match: ip4.src==10.16.0.12 && ip4.dst==2.2.0.3
+    priority: 2022
+  - action: allow
+    direction: to-lport
+    match: ip4.src==10.16.0.12 && ip4.dst==2.2.0.2
+    priority: 2222
+  ...
+```
 
 ## 子网隔离设置
 
