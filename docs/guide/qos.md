@@ -11,6 +11,7 @@ Kube-OVN 支持三种不同类型的 QoS
 
 ## 基于最大带宽限制的 QoS
 该类型的 QoS 可以通过 Pod annotation 动态进行配置，可以在不中断 Pod 运行的情况下进行调整。
+单位为 `Mbit/s`
 
 ```yaml
 apiVersion: v1

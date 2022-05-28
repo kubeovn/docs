@@ -224,19 +224,56 @@ spec:
 
 ## 子网隔离设置
 
-## DHCP 选项
+> 子网 ACL 的功能可以覆盖子网隔离的功能，并有更好的灵活性，我们推荐使用子网 ACL 来做相应的配置
 
-## Underlay 逻辑网关设置
+默认情况下 Kube-OVN 创建的子网之间可以相互通信，Pod 也可以通过网关访问外部网络。
 
-## 外部网关设置
+如需对子网间的访问进行控制，可以在子网 CRD 中将 `private` 设置为 true，则该子网将和其他子网以及外部网络隔离，
+只能进行子网内部的通信。如需开白名单，可以通过 `allowSubnets` 进行设置。`allowSubnets` 内的网段和该子网可以双向互访。
+
+### 开启访问控制的子网示例
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: private
+spec:
+  protocol: IPv4
+  default: false
+  namespaces:
+  - ns1
+  - ns2
+  cidrBlock: 10.69.0.0/16
+  private: true
+  allowSubnets:
+  - 10.16.0.0/16
+  - 10.18.0.0/16
+```
+
+## Underlay 相关选项
+
+> 该部分功能只对 Underlay 类型子网生效
+
+- `vlan`: 如果使用 Underlay 网络，该字段用来控制该 Subnet 和哪个 Vlan CR 进行绑定。该选项默认为空字符串，即不使用 Underlay 网络。
+- `logicalGateway`: 一些 Underlay 环境为纯二层网络，不存在物理的三层网关。在这种情况下可以借助 OVN 本身的能力设置一个虚拟网关，将 Underlay
+  和 Overlay 网络打通。默认值为：`false`
 
 ## 网关检查设置
 
-## 集群互联设置
+默认情况下 `kube-ovn-cni` 在启动 Pod 后会使用 ICMP 或 ARP 协议请求网关并等待返回，
+以验证网络工作正常，在部分 Underlay 环境网关无法响应 ARP 请求，或无需网络外部联通的场景
+可以关闭网关检查。
 
-## VIP 设置
+```yaml
+spec:
+  disableGatewayCheck: true
+```
 
 ## 其他高级设置
 
 - [QoS 设置](./qos.md)
 - [多网络管理，通用 CNI IPAM 管理](../advance/multi-nic.md)
+- [DHCP 选项](../advance/dhcp.md)
+- [外部网关设置](../advance/external-gateway.md)
+- [集群互联设置](../advance/with-ovn-ic.md)
+- [虚拟 IP 设置](../advance/vip.md)
