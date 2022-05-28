@@ -44,6 +44,12 @@ nav:
       - 开发环境构建: 'reference/dev-env.md'
       - Underlay 流量拓扑: 'reference/underlay-topology.md'
 theme:
-    name: readthedocs
+    name: material
+    language: 'zh'
+    palette:
+      scheme: default
 markdown_extensions:
   - footnotes
+plugins:
+  - search:
+      separator: '[\s\u200b\-]'
