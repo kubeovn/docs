@@ -59,3 +59,15 @@ markdown_extensions:
 plugins:
   - search:
       separator: '[\s\u200b\-]'
+extra:
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/kubeovn
+    - icon: fontawesome/brands/github
+      link: https://github.com/kubeovn
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/kubeovn/kube-ovn
+    - icon: fontawesome/brands/slack
+      link: https://kube-ovn-slackin.herokuapp.com/
+copyright: Copyright &copy; 2022 The Linux Foundation
+
