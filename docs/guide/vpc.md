@@ -259,3 +259,46 @@ spec:
 
 ## 自定义路由
 
+在自定义 VPC 内，用户可以自定义网络内部的路由规则，结合网关实现更灵活的转发。
+Kube-OVN 支持静态路由和更为灵活的策略路由。
+
+### 静态路由
+```yaml
+kind: Vpc
+apiVersion: kubeovn.io/v1
+metadata:
+  name: test-vpc-1
+spec:
+  staticRoutes:
+    - cidr: 0.0.0.0/0
+      nextHopIP: 10.0.1.254
+      policy: policyDst
+    - cidr: 172.31.0.0/24
+      nextHopIP: 10.0.1.253
+      policy: policySrc
+```
+
+- `policy`: 支持目的地址路由 `policyDst` 和源地址路由 `policySrc`。
+- 当路由规则存在重叠时，CIDR 掩码较长的规则优先级更高，若掩码长度相同则目的地址路由优先于源地址路由。
+
+### 策略路由
+
+针对静态路由匹配的流量，可通过策略路由进行更细粒度的控制。策略路由提供了更精确的匹配规则，优先级控制
+和更多的转发动作。该功能为 OVN 内部逻辑路由器策略功能的一个对外暴露，更多使用信息请参考 [Logical Router Policy](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE)
+
+简单示例如下：
+```yaml
+kind: Vpc
+apiVersion: kubeovn.io/v1
+metadata:
+  name: test-vpc-1
+spec:
+  policyRoutes:
+    - action: drop
+      match: ip4.src==10.0.1.0/24 && ip4.dst==10.0.1.250
+      priority: 11
+    - action: reroute
+      match: ip4.src==10.0.1.0/24
+      nextHopIP: 10.0.1.252
+      priority: 10
+```
