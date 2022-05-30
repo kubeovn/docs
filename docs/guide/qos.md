@@ -128,7 +128,7 @@ iperf Done.
 ```
 
 
-## linux-htb Qos
+## linux-htb QoS
 linux-htb QoS 是基于优先级的 QoS 设置。新增了一个 CRD 资源，用于设置 QoS 的优先级。
 CRD 定义如下：
 
