@@ -147,7 +147,7 @@ args:
   - --enable-eip-snat=false
 ```
 
-EIP 和 SNAT 的能力在默认安装中为开启。该功能的相关使用请参考[EIP 和 SNAT 配置](./eip-snat.md)
+EIP 和 SNAT 的能力在默认安装中为开启。该功能的相关使用和其他可配参数请参考[EIP 和 SNAT 配置](./eip-snat.md)
 
 ## 集中式网关 ECMP 开启设置
 
