@@ -47,6 +47,7 @@ nav:
   - 技术参考:
       - 总体架构: 'reference/architecture.md'
       - 开发环境构建: 'reference/dev-env.md'
+      - API 指南: 'reference/api.md'
       - Underlay 流量拓扑: 'reference/underlay-topology.md'
 theme:
     name: material
