@@ -55,7 +55,7 @@ Available Subcommands:
   trace {namespace/podname} {target ip address} {icmp|tcp|udp} [target tcp or udp port]    trace ovn microflow of specific packet
   diagnose {all|node} [nodename]    diagnose connectivity of all nodes or a specific node
   tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]  deploy  kernel optimisation components to the system
-  reload restart all kube-ovn components
+  reload    restart all kube-ovn components
 ```
 
 下面将介绍每个命令的具体功能和使用。
@@ -366,3 +366,435 @@ bundle             OFF        ERR       INFO
 bundles            OFF        ERR       INFO
 ...
 ```
+
+### tcpdump {namespace/podname} [tcpdump options ...]
+
+该命令会进入 `namespace/podname` 所在机器的 `kube-ovn-cni` 容器，并执行 `tcpdump` 抓取对应容器 veth 网卡
+端的流量，可以方便排查网络相关问题，如下所示
+
+```bash
+# kubectl ko tcpdump default/ds1-l6n7p icmp
++ kubectl exec -it kube-ovn-cni-wlg4s -n kube-ovn -- tcpdump -nn -i d7176fe7b4e0_h icmp
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on d7176fe7b4e0_h, link-type EN10MB (Ethernet), capture size 262144 bytes
+06:52:36.619688 IP 100.64.0.3 > 10.16.0.4: ICMP echo request, id 2, seq 1, length 64
+06:52:36.619746 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 1, length 64
+06:52:37.619588 IP 100.64.0.3 > 10.16.0.4: ICMP echo request, id 2, seq 2, length 64
+06:52:37.619630 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 2, length 64
+06:52:38.619933 IP 100.64.0.3 > 10.16.0.4: ICMP echo request, id 2, seq 3, length 64
+06:52:38.619973 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 3, length 64
+```
+
+
+### trace {namespace/podname} {target ip address} {icmp|tcp|udp} [target tcp or udp port]
+
+该命令将会打印 Pod 通过特定协议访问某地址时对应的 OVN 逻辑流表和最终的 Openflow 流表，
+方便开发或运维时定位流表相关问题。
+
+```bash
+# kubectl ko trace default/ds1-l6n7p 8.8.8.8 icmp
++ kubectl exec ovn-central-5bc494cb5-np9hm -n kube-ovn -- ovn-trace --ct=new ovn-default 'inport == "ds1-l6n7p.default" && ip.ttl == 64 && icmp && eth.src == 0a:00:00:10:00:05 && ip4.src == 10.16.0.4 && eth.dst == 00:00:00:B8:CA:43 && ip4.dst == 8.8.8.8'
+# icmp,reg14=0xf,vlan_tci=0x0000,dl_src=0a:00:00:10:00:05,dl_dst=00:00:00:b8:ca:43,nw_src=10.16.0.4,nw_dst=8.8.8.8,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=0,icmp_code=0
+
+ingress(dp="ovn-default", inport="ds1-l6n7p.default")
+-----------------------------------------------------
+ 0. ls_in_port_sec_l2 (ovn-northd.c:4143): inport == "ds1-l6n7p.default" && eth.src == {0a:00:00:10:00:05}, priority 50, uuid 39453393
+    next;
+ 1. ls_in_port_sec_ip (ovn-northd.c:2898): inport == "ds1-l6n7p.default" && eth.src == 0a:00:00:10:00:05 && ip4.src == {10.16.0.4}, priority 90, uuid 81bcd485
+    next;
+ 3. ls_in_pre_acl (ovn-northd.c:3269): ip, priority 100, uuid 7b4f4971
+    reg0[0] = 1;
+    next;
+ 5. ls_in_pre_stateful (ovn-northd.c:3396): reg0[0] == 1, priority 100, uuid 36cdd577
+    ct_next;
+
+ct_next(ct_state=new|trk)
+-------------------------
+ 6. ls_in_acl (ovn-northd.c:3759): ip && (!ct.est || (ct.est && ct_label.blocked == 1)), priority 1, uuid 7608af5b
+    reg0[1] = 1;
+    next;
+10. ls_in_stateful (ovn-northd.c:3995): reg0[1] == 1, priority 100, uuid 2aba1b90
+    ct_commit(ct_label=0/0x1);
+    next;
+16. ls_in_l2_lkup (ovn-northd.c:4470): eth.dst == 00:00:00:b8:ca:43, priority 50, uuid 5c9c3c9f
+    outport = "ovn-default-ovn-cluster";
+    output;
+
+...
+```
+
+
+
+### diagnose {all|node} [nodename]
+
+诊断集群网络组件状态，并去对应节点的 `kube-ovn-pinger` 检测当前节点到其他节点和关键服务的连通性和网络延迟
+
+```bash
+# kubectl ko diagnose all
+switch c7cd17e8-ceee-4a91-9bb3-e5a313fe1ece (snat)
+    port snat-ovn-cluster
+        type: router
+        router-port: ovn-cluster-snat
+switch 20e0c6d0-023a-4756-aec5-200e0c60f95d (join)
+    port node-fake-0
+        addresses: ["00:00:00:DA:C7:36 100.64.0.17"]
+    port node-fake-5
+        addresses: ["00:00:00:F3:65:3D 100.64.0.24"]
+    port node-liumengxin-ovn3-192.168.137.178
+        addresses: ["00:00:00:64:FF:A8 100.64.0.4"]
+    port node-liumengxin-ovn1-192.168.137.176
+        addresses: ["00:00:00:AF:98:62 100.64.0.2"]
+    port node-fake-7
+        addresses: ["00:00:00:B9:79:E5 100.64.0.21"]
+    port node-liumengxin-ovn2-192.168.137.177
+        addresses: ["00:00:00:D9:58:B8 100.64.0.3"]
+    port node-fake-8
+        addresses: ["00:00:00:D8:E6:49 100.64.0.23"]
+    port node-fake-3
+        addresses: ["00:00:00:75:91:96 100.64.0.15"]
+    port node-fake-1
+        addresses: ["00:00:00:6E:C7:C5 100.64.0.16"]
+    port node-fake-9
+        addresses: ["00:00:00:B2:EF:36 100.64.0.20"]
+    port node-fake-4
+        addresses: ["00:00:00:6E:69:00 100.64.0.19"]
+    port node-fake-2
+        addresses: ["00:00:00:7A:AB:CC 100.64.0.18"]
+    port node-fake-6
+        addresses: ["00:00:00:EA:39:08 100.64.0.22"]
+    port join-ovn-cluster
+        type: router
+        router-port: ovn-cluster-join
+switch 0191705c-f827-427b-9de3-3c3b7d971ba5 (central)
+    port central-ovn-cluster
+        type: router
+        router-port: ovn-cluster-central
+switch 2a45ff05-388d-4f85-9daf-e6fccd5833dc (ovn-default)
+    port perf-6vxkn.default
+        addresses: ["00:00:00:82:84:71 10.16.0.2"]
+    port grafana-6c4c6b8fb7-pzd2c.monitoring
+        addresses: ["00:00:00:82:5E:9B 10.16.0.7"]
+    port kube-ovn-pinger-7twb4.kube-system
+        addresses: ["00:00:00:DC:E3:63 10.16.63.30"]
+    port prometheus-operator-7bbc99fc8b-wgjm4.monitoring
+        addresses: ["00:00:00:8F:31:15 10.16.0.18"]
+    port kube-ovn-pinger-6ftdf.kube-system
+        addresses: ["00:00:00:FA:1E:50 10.16.0.10"]
+    port lsp1
+    port alertmanager-main-0.monitoring
+        addresses: ["00:00:00:6C:DF:A3 10.16.0.19"]
+    port kube-state-metrics-5d6885d89-4nf8h.monitoring
+        addresses: ["00:00:00:6F:02:1C 10.16.0.15"]
+    port fake-kubelet-67c55dfd89-pv86k.kube-system
+        addresses: ["00:00:00:5C:12:E8 10.16.19.177"]
+    port ovn-default-ovn-cluster
+        type: router
+        router-port: ovn-cluster-ovn-default
+    port alertmanager-main-1.monitoring
+        addresses: ["00:00:00:F9:74:F7 10.16.0.20"]
+    port coredns-6789c94dd8-25d4r.kube-system
+        addresses: ["00:00:00:23:65:24 10.16.0.9"]
+    port kube-ovn-pinger-vh2xg.kube-system
+        addresses: ["00:00:00:F8:07:C8 10.16.0.5"]
+    port prometheus-k8s-0.monitoring
+        addresses: ["00:00:00:76:15:F8 10.16.0.22"]
+    port perf-fjnws.default
+        addresses: ["00:00:00:2A:14:75 10.16.0.14"]
+    port prometheus-adapter-86df476d87-rl88g.monitoring
+        addresses: ["00:00:00:DA:B0:35 10.16.0.16"]
+    port perf-ff475.default
+        addresses: ["00:00:00:56:1B:67 10.16.0.8"]
+    port alertmanager-main-2.monitoring
+        addresses: ["00:00:00:CB:56:43 10.16.0.21"]
+    port prometheus-adapter-86df476d87-gdxmc.monitoring
+        addresses: ["00:00:00:94:31:DD 10.16.0.12"]
+    port coredns-6789c94dd8-9jqsz.kube-system
+        addresses: ["00:00:00:40:A1:95 10.16.0.4"]
+    port blackbox-exporter-676d976865-tvsjd.monitoring
+        addresses: ["00:00:00:BF:9C:FC 10.16.0.13"]
+    port prometheus-k8s-1.monitoring
+        addresses: ["00:00:00:AA:37:DF 10.16.0.23"]
+router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
+    port ovn-cluster-snat
+        mac: "00:00:00:7A:82:8F"
+        networks: ["172.22.0.1/16"]
+    port ovn-cluster-join
+        mac: "00:00:00:F8:18:5A"
+        networks: ["100.64.0.1/16"]
+    port ovn-cluster-central
+        mac: "00:00:00:4D:8C:F5"
+        networks: ["192.101.0.1/16"]
+    port ovn-cluster-ovn-default
+        mac: "00:00:00:A3:F8:18"
+        networks: ["10.16.0.1/16"]
+Routing Policies
+     31000                            ip4.dst == 10.16.0.0/16           allow
+     31000                           ip4.dst == 100.64.0.0/16           allow
+     31000                           ip4.dst == 172.22.0.0/16           allow
+     31000                          ip4.dst == 192.101.0.0/16           allow
+     30000                              ip4.dst == 10.16.0.27         reroute               100.64.0.15
+     30000                             ip4.dst == 10.16.63.34         reroute               100.64.0.20
+     30000                         ip4.dst == 192.168.137.176         reroute                100.64.0.2
+     30000                         ip4.dst == 192.168.137.177         reroute                100.64.0.3
+     30000                         ip4.dst == 192.168.137.178         reroute                100.64.0.4
+     29000                 ip4.src == $ovn.default.fake.0_ip4         reroute               100.64.0.17
+     29000                 ip4.src == $ovn.default.fake.1_ip4         reroute               100.64.0.16
+     29000                 ip4.src == $ovn.default.fake.2_ip4         reroute               100.64.0.18
+     29000                 ip4.src == $ovn.default.fake.3_ip4         reroute               100.64.0.15
+     29000                 ip4.src == $ovn.default.fake.4_ip4         reroute               100.64.0.19
+     29000                 ip4.src == $ovn.default.fake.5_ip4         reroute               100.64.0.24
+     29000                 ip4.src == $ovn.default.fake.6_ip4         reroute               100.64.0.22
+     29000                 ip4.src == $ovn.default.fake.7_ip4         reroute               100.64.0.21
+     29000                 ip4.src == $ovn.default.fake.8_ip4         reroute               100.64.0.23
+     29000                 ip4.src == $ovn.default.fake.9_ip4         reroute               100.64.0.20
+     29000 ip4.src == $ovn.default.liumengxin.ovn1.192.168.137.176_ip4         reroute                100.64.0.2
+     29000 ip4.src == $ovn.default.liumengxin.ovn2.192.168.137.177_ip4         reroute                100.64.0.3
+     29000 ip4.src == $ovn.default.liumengxin.ovn3.192.168.137.178_ip4         reroute                100.64.0.4
+     20000 ip4.src == $ovn.default.liumengxin.ovn1.192.168.137.176_ip4 && ip4.dst != $ovn.cluster.overlay.subnets.IPv4         reroute                100.64.0.2
+     20000 ip4.src == $ovn.default.liumengxin.ovn2.192.168.137.177_ip4 && ip4.dst != $ovn.cluster.overlay.subnets.IPv4         reroute                100.64.0.3
+     20000 ip4.src == $ovn.default.liumengxin.ovn3.192.168.137.178_ip4 && ip4.dst != $ovn.cluster.overlay.subnets.IPv4         reroute                100.64.0.4
+IPv4 Routes
+Route Table <main>:
+                0.0.0.0/0                100.64.0.1 dst-ip
+UUID                                    LB                  PROTO      VIP                     IPs
+e9bcfd9d-793e-4431-9073-6dec96b75d71    cluster-tcp-load    tcp        10.100.209.132:10660    192.168.137.176:10660
+                                                            tcp        10.101.239.192:6641     192.168.137.177:6641
+                                                            tcp        10.101.240.101:3000     10.16.0.7:3000
+                                                            tcp        10.103.184.186:6642     192.168.137.177:6642
+                                                            tcp        10.104.142.63:6643      192.168.137.177:6643
+                                                            tcp        10.104.222.180:443      10.16.0.12:6443,10.16.0.16:6443
+                                                            tcp        10.110.17.192:10665     10.0.1.35:10665,10.0.1.36:10665,10.0.1.37:10665,10.0.1.38:10665,10.0.1.39:10665,10.0.1.40:10665,10.0.1.41:10665,10.0.1.42:10665,10.0.1.43:10665,10.0.1.44:10665,192.168.137.176:10665,192.168.137.177:10665,192.168.137.178:10665
+                                                            tcp        10.96.0.10:53           10.16.0.4:53,10.16.0.9:53
+                                                            tcp        10.96.0.10:9153         10.16.0.4:9153,10.16.0.9:9153
+                                                            tcp        10.96.0.1:443           192.168.137.176:6443,192.168.137.177:6443,192.168.137.178:6443
+                                                            tcp        10.96.220.16:19115      10.16.0.13:19115
+                                                            tcp        10.96.220.16:9115       10.16.0.13:9115
+35d2b7a5-e3a7-485a-a4b7-b4970eb0e63b    cluster-tcp-sess    tcp        10.100.158.128:8080     10.16.0.10:8080,10.16.0.5:8080,10.16.63.30:8080
+                                                            tcp        10.107.26.215:8080      10.16.0.19:8080,10.16.0.20:8080,10.16.0.21:8080
+                                                            tcp        10.107.26.215:9093      10.16.0.19:9093,10.16.0.20:9093,10.16.0.21:9093
+                                                            tcp        10.98.187.99:8080       10.16.0.22:8080,10.16.0.23:8080
+                                                            tcp        10.98.187.99:9090       10.16.0.22:9090,10.16.0.23:9090
+f43303e4-89aa-4d3e-a3dc-278a552fe27b    cluster-udp-load    udp        10.96.0.10:53           10.16.0.4:53,10.16.0.9:53
+_uuid               : 06776304-5a96-43ed-90c4-c4854c251699
+addresses           : []
+external_ids        : {vendor=kube-ovn}
+name                : node_liumengxin_ovn2_192.168.137.177_underlay_v6
+
+_uuid               : 62690625-87d5-491c-8675-9fd83b1f433c
+addresses           : []
+external_ids        : {vendor=kube-ovn}
+name                : node_liumengxin_ovn1_192.168.137.176_underlay_v6
+
+_uuid               : b03a9bae-94d5-4562-b34c-b5f6198e180b
+addresses           : ["10.16.0.0/16", "100.64.0.0/16", "172.22.0.0/16", "192.101.0.0/16"]
+external_ids        : {vendor=kube-ovn}
+name                : ovn.cluster.overlay.subnets.IPv4
+
+_uuid               : e1056f3a-24cc-4666-8a91-75ee6c3c2426
+addresses           : []
+external_ids        : {vendor=kube-ovn}
+name                : ovn.cluster.overlay.subnets.IPv6
+
+_uuid               : 3e5d5fff-e670-47b2-a2f5-a39f4698a8c5
+addresses           : []
+external_ids        : {vendor=kube-ovn}
+name                : node_liumengxin_ovn3_192.168.137.178_underlay_v6
+_uuid               : 2d85dbdc-d0db-4abe-b19e-cc806d32b492
+action              : drop
+direction           : from-lport
+external_ids        : {}
+label               : 0
+log                 : false
+match               : "inport==@ovn.sg.kubeovn_deny_all && ip"
+meter               : []
+name                : []
+options             : {}
+priority            : 2003
+severity            : []
+
+_uuid               : de790cc8-f155-405f-bb32-5a51f30c545f
+action              : drop
+direction           : to-lport
+external_ids        : {}
+label               : 0
+log                 : false
+match               : "outport==@ovn.sg.kubeovn_deny_all && ip"
+meter               : []
+name                : []
+options             : {}
+priority            : 2003
+severity            : []
+Chassis "e15ed4d4-1780-4d50-b09e-ea8372ed48b8"
+    hostname: liumengxin-ovn1-192.168.137.176
+    Encap stt
+        ip: "192.168.137.176"
+        options: {csum="true"}
+    Port_Binding node-liumengxin-ovn1-192.168.137.176
+    Port_Binding perf-6vxkn.default
+    Port_Binding kube-state-metrics-5d6885d89-4nf8h.monitoring
+    Port_Binding alertmanager-main-0.monitoring
+    Port_Binding kube-ovn-pinger-6ftdf.kube-system
+    Port_Binding fake-kubelet-67c55dfd89-pv86k.kube-system
+    Port_Binding prometheus-k8s-0.monitoring
+Chassis "eef07da1-f8ad-4775-b14d-bd6a3b4eb0d5"
+    hostname: liumengxin-ovn3-192.168.137.178
+    Encap stt
+        ip: "192.168.137.178"
+        options: {csum="true"}
+    Port_Binding kube-ovn-pinger-7twb4.kube-system
+    Port_Binding prometheus-adapter-86df476d87-rl88g.monitoring
+    Port_Binding prometheus-k8s-1.monitoring
+    Port_Binding node-liumengxin-ovn3-192.168.137.178
+    Port_Binding perf-ff475.default
+    Port_Binding alertmanager-main-1.monitoring
+    Port_Binding blackbox-exporter-676d976865-tvsjd.monitoring
+Chassis "efa253c9-494d-4719-83ae-b48ab0f11c03"
+    hostname: liumengxin-ovn2-192.168.137.177
+    Encap stt
+        ip: "192.168.137.177"
+        options: {csum="true"}
+    Port_Binding grafana-6c4c6b8fb7-pzd2c.monitoring
+    Port_Binding node-liumengxin-ovn2-192.168.137.177
+    Port_Binding alertmanager-main-2.monitoring
+    Port_Binding coredns-6789c94dd8-9jqsz.kube-system
+    Port_Binding coredns-6789c94dd8-25d4r.kube-system
+    Port_Binding prometheus-operator-7bbc99fc8b-wgjm4.monitoring
+    Port_Binding prometheus-adapter-86df476d87-gdxmc.monitoring
+    Port_Binding perf-fjnws.default
+    Port_Binding kube-ovn-pinger-vh2xg.kube-system
+ds kube-proxy ready
+kube-proxy ready
+deployment ovn-central ready
+deployment kube-ovn-controller ready
+ds kube-ovn-cni ready
+ds ovs-ovn ready
+deployment coredns ready
+ovn-nb leader check ok
+ovn-sb leader check ok
+ovn-northd leader check ok
+### kube-ovn-controller recent log
+
+### start to diagnose node liumengxin-ovn1-192.168.137.176
+#### ovn-controller log:
+2022-06-03T00:56:44.897Z|16722|inc_proc_eng|INFO|User triggered force recompute.
+2022-06-03T01:06:44.912Z|16723|inc_proc_eng|INFO|User triggered force recompute.
+2022-06-03T01:16:44.925Z|16724|inc_proc_eng|INFO|User triggered force recompute.
+2022-06-03T01:26:44.936Z|16725|inc_proc_eng|INFO|User triggered force recompute.
+2022-06-03T01:36:44.959Z|16726|inc_proc_eng|INFO|User triggered force recompute.
+2022-06-03T01:46:44.974Z|16727|inc_proc_eng|INFO|User triggered force recompute.
+2022-06-03T01:56:44.988Z|16728|inc_proc_eng|INFO|User triggered force recompute.
+2022-06-03T02:06:45.001Z|16729|inc_proc_eng|INFO|User triggered force recompute.
+2022-06-03T02:16:45.025Z|16730|inc_proc_eng|INFO|User triggered force recompute.
+2022-06-03T02:26:45.040Z|16731|inc_proc_eng|INFO|User triggered force recompute.
+
+#### ovs-vswitchd log:
+2022-06-02T23:03:00.137Z|00079|dpif(handler1)|WARN|system@ovs-system: execute ct(commit,zone=14,label=0/0x1,nat(src)),8 failed (Invalid argument) on packet icmp,vlan_tci=0x0000,dl_src=00:00:00:f8:07:c8,dl_dst=00:00:00:fa:1e:50,nw_src=10.16.0.5,nw_dst=10.16.0.10,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0 icmp_csum:f9d1
+ with metadata skb_priority(0),tunnel(tun_id=0x160017000004,src=192.168.137.177,dst=192.168.137.176,ttl=64,tp_src=38881,tp_dst=7471,flags(csum|key)),skb_mark(0),ct_state(0x21),ct_zone(0xe),ct_tuple4(src=10.16.0.5,dst=10.16.0.10,proto=1,tp_src=8,tp_dst=0),in_port(4) mtu 0
+2022-06-02T23:23:31.840Z|00080|dpif(handler1)|WARN|system@ovs-system: execute ct(commit,zone=14,label=0/0x1,nat(src)),8 failed (Invalid argument) on packet icmp,vlan_tci=0x0000,dl_src=00:00:00:f8:07:c8,dl_dst=00:00:00:fa:1e:50,nw_src=10.16.0.5,nw_dst=10.16.0.10,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0 icmp_csum:15b2
+ with metadata skb_priority(0),tunnel(tun_id=0x160017000004,src=192.168.137.177,dst=192.168.137.176,ttl=64,tp_src=38881,tp_dst=7471,flags(csum|key)),skb_mark(0),ct_state(0x21),ct_zone(0xe),ct_tuple4(src=10.16.0.5,dst=10.16.0.10,proto=1,tp_src=8,tp_dst=0),in_port(4) mtu 0
+2022-06-03T00:09:15.659Z|00081|dpif(handler1)|WARN|system@ovs-system: execute ct(commit,zone=14,label=0/0x1,nat(src)),8 failed (Invalid argument) on packet icmp,vlan_tci=0x0000,dl_src=00:00:00:dc:e3:63,dl_dst=00:00:00:fa:1e:50,nw_src=10.16.63.30,nw_dst=10.16.0.10,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0 icmp_csum:e5a5
+ with metadata skb_priority(0),tunnel(tun_id=0x150017000004,src=192.168.137.178,dst=192.168.137.176,ttl=64,tp_src=9239,tp_dst=7471,flags(csum|key)),skb_mark(0),ct_state(0x21),ct_zone(0xe),ct_tuple4(src=10.16.63.30,dst=10.16.0.10,proto=1,tp_src=8,tp_dst=0),in_port(4) mtu 0
+2022-06-03T00:30:13.409Z|00064|dpif(handler2)|WARN|system@ovs-system: execute ct(commit,zone=14,label=0/0x1,nat(src)),8 failed (Invalid argument) on packet icmp,vlan_tci=0x0000,dl_src=00:00:00:f8:07:c8,dl_dst=00:00:00:fa:1e:50,nw_src=10.16.0.5,nw_dst=10.16.0.10,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0 icmp_csum:6b4a
+ with metadata skb_priority(0),tunnel(tun_id=0x160017000004,src=192.168.137.177,dst=192.168.137.176,ttl=64,tp_src=38881,tp_dst=7471,flags(csum|key)),skb_mark(0),ct_state(0x21),ct_zone(0xe),ct_tuple4(src=10.16.0.5,dst=10.16.0.10,proto=1,tp_src=8,tp_dst=0),in_port(4) mtu 0
+2022-06-03T02:02:33.832Z|00082|dpif(handler1)|WARN|system@ovs-system: execute ct(commit,zone=14,label=0/0x1,nat(src)),8 failed (Invalid argument) on packet icmp,vlan_tci=0x0000,dl_src=00:00:00:f8:07:c8,dl_dst=00:00:00:fa:1e:50,nw_src=10.16.0.5,nw_dst=10.16.0.10,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0 icmp_csum:a819
+ with metadata skb_priority(0),tunnel(tun_id=0x160017000004,src=192.168.137.177,dst=192.168.137.176,ttl=64,tp_src=38881,tp_dst=7471,flags(csum|key)),skb_mark(0),ct_state(0x21),ct_zone(0xe),ct_tuple4(src=10.16.0.5,dst=10.16.0.10,proto=1,tp_src=8,tp_dst=0),in_port(4) mtu 0
+
+#### ovs-vsctl show results:
+0d4c4675-c9cc-440a-8c1a-878e17f81b88
+    Bridge br-int
+        fail_mode: secure
+        datapath_type: system
+        Port a2c1a8a8b83a_h
+            Interface a2c1a8a8b83a_h
+        Port "4fa5c4cbb1a5_h"
+            Interface "4fa5c4cbb1a5_h"
+        Port ovn-eef07d-0
+            Interface ovn-eef07d-0
+                type: stt
+                options: {csum="true", key=flow, remote_ip="192.168.137.178"}
+        Port ovn0
+            Interface ovn0
+                type: internal
+        Port "04d03360e9a0_h"
+            Interface "04d03360e9a0_h"
+        Port eeb4d9e51b5d_h
+            Interface eeb4d9e51b5d_h
+        Port mirror0
+            Interface mirror0
+                type: internal
+        Port "8e5d887ccd80_h"
+            Interface "8e5d887ccd80_h"
+        Port ovn-efa253-0
+            Interface ovn-efa253-0
+                type: stt
+                options: {csum="true", key=flow, remote_ip="192.168.137.177"}
+        Port "17512d5be1f1_h"
+            Interface "17512d5be1f1_h"
+        Port br-int
+            Interface br-int
+                type: internal
+    ovs_version: "2.17.2"
+
+#### pinger diagnose results:
+I0603 10:35:04.349404   17619 pinger.go:19]
+-------------------------------------------------------------------------------
+Kube-OVN:
+  Version:       v1.10.0
+  Build:         2022-04-24_08:02:50
+  Commit:        git-73f9d15
+  Go Version:    go1.17.8
+  Arch:          amd64
+-------------------------------------------------------------------------------
+I0603 10:35:04.376797   17619 config.go:166] pinger config is &{KubeConfigFile: KubeClient:0xc000493380 Port:8080 DaemonSetNamespace:kube-system DaemonSetName:kube-ovn-pinger Interval:5 Mode:job ExitCode:0 InternalDNS:kubernetes.default ExternalDNS: NodeName:liumengxin-ovn1-192.168.137.176 HostIP:192.168.137.176 PodName:kube-ovn-pinger-6ftdf PodIP:10.16.0.10 PodProtocols:[IPv4] ExternalAddress: NetworkMode:kube-ovn PollTimeout:2 PollInterval:15 SystemRunDir:/var/run/openvswitch DatabaseVswitchName:Open_vSwitch DatabaseVswitchSocketRemote:unix:/var/run/openvswitch/db.sock DatabaseVswitchFileDataPath:/etc/openvswitch/conf.db DatabaseVswitchFileLogPath:/var/log/openvswitch/ovsdb-server.log DatabaseVswitchFilePidPath:/var/run/openvswitch/ovsdb-server.pid DatabaseVswitchFileSystemIDPath:/etc/openvswitch/system-id.conf ServiceVswitchdFileLogPath:/var/log/openvswitch/ovs-vswitchd.log ServiceVswitchdFilePidPath:/var/run/openvswitch/ovs-vswitchd.pid ServiceOvnControllerFileLogPath:/var/log/ovn/ovn-controller.log ServiceOvnControllerFilePidPath:/var/run/ovn/ovn-controller.pid}
+I0603 10:35:04.449166   17619 exporter.go:75] liumengxin-ovn1-192.168.137.176: exporter connect successfully
+I0603 10:35:04.554011   17619 ovn.go:21] ovs-vswitchd and ovsdb are up
+I0603 10:35:04.651293   17619 ovn.go:33] ovn_controller is up
+I0603 10:35:04.651342   17619 ovn.go:39] start to check port binding
+I0603 10:35:04.749613   17619 ovn.go:135] chassis id is 1d7f3d6c-eec5-4b3c-adca-2969d9cdfd80
+I0603 10:35:04.763487   17619 ovn.go:49] port in sb is [node-liumengxin-ovn1-192.168.137.176 perf-6vxkn.default kube-state-metrics-5d6885d89-4nf8h.monitoring alertmanager-main-0.monitoring kube-ovn-pinger-6ftdf.kube-system fake-kubelet-67c55dfd89-pv86k.kube-system prometheus-k8s-0.monitoring]
+I0603 10:35:04.763583   17619 ovn.go:61] ovs and ovn-sb binding check passed
+I0603 10:35:05.049309   17619 ping.go:259] start to check apiserver connectivity
+I0603 10:35:05.053666   17619 ping.go:268] connect to apiserver success in 4.27ms
+I0603 10:35:05.053786   17619 ping.go:129] start to check pod connectivity
+I0603 10:35:05.249590   17619 ping.go:159] ping pod: kube-ovn-pinger-6ftdf 10.16.0.10, count: 3, loss count 0, average rtt 16.30ms
+I0603 10:35:05.354135   17619 ping.go:159] ping pod: kube-ovn-pinger-7twb4 10.16.63.30, count: 3, loss count 0, average rtt 1.81ms
+I0603 10:35:05.458460   17619 ping.go:159] ping pod: kube-ovn-pinger-vh2xg 10.16.0.5, count: 3, loss count 0, average rtt 1.92ms
+I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
+```
+
+
+
+### tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]
+
+该命令执行性能调优相关操作，具体使用请参考[性能调优](../advance/performance-tuning.md)
+
+### reload 
+
+该命令重启所有 Kube-OVN 相关组件
+
+```bash
+# kubectl ko reload
+pod "ovn-central-8684dd94bd-vzgcr" deleted
+Waiting for deployment "ovn-central" rollout to finish: 0 of 1 updated replicas are available...
+deployment "ovn-central" successfully rolled out
+pod "ovs-ovn-bsnvz" deleted
+pod "ovs-ovn-m9b98" deleted
+pod "kube-ovn-controller-8459db5ff4-64c62" deleted
+Waiting for deployment "kube-ovn-controller" rollout to finish: 0 of 1 updated replicas are available...
+deployment "kube-ovn-controller" successfully rolled out
+pod "kube-ovn-cni-2klnh" deleted
+pod "kube-ovn-cni-t2jz4" deleted
+Waiting for daemon set "kube-ovn-cni" rollout to finish: 0 of 2 updated pods are available...
+Waiting for daemon set "kube-ovn-cni" rollout to finish: 1 of 2 updated pods are available...
+daemon set "kube-ovn-cni" successfully rolled out
+pod "kube-ovn-pinger-ln72z" deleted
+pod "kube-ovn-pinger-w8lrk" deleted
+Waiting for daemon set "kube-ovn-pinger" rollout to finish: 0 of 2 updated pods are available...
+Waiting for daemon set "kube-ovn-pinger" rollout to finish: 1 of 2 updated pods are available...
+daemon set "kube-ovn-pinger" successfully rolled out
+pod "kube-ovn-monitor-7fb67d5488-7q6zb" deleted
+Waiting for deployment "kube-ovn-monitor" rollout to finish: 0 of 1 updated replicas are available...
+deployment "kube-ovn-monitor" successfully rolled out
+```
+
+
