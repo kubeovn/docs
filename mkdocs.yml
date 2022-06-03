@@ -21,7 +21,7 @@ nav:
       - Webhook 使用: 'guide/webhook.md'
   - 运维指南:
       - kubectl 插件使用: 'ops/kubectl-ko.md'
-      - 删除节点: 'ops/delete-node.md'
+      - 删除工作节点: 'ops/delete-worker-node.md'
       - 更换 ovn-central 节点: 'ops/change-ovn-central-node.md'
       - OVN 数据库备份和恢复: 'ops/recover-db.md'
       - 修改默认子网: 'ops/change-default-subnet.md'
@@ -58,6 +58,7 @@ theme:
       - navigation.tabs
 markdown_extensions:
   - footnotes
+  - fenced_code
 plugins:
   - search:
       separator: '[\s\u200b\-]'
