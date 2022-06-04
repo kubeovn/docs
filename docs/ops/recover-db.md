@@ -80,3 +80,61 @@ mv /etc/origin/ovn/ovnnb_db.db /tmp
 ```bash
 kubectl delete pod -n kube-system ovn-central-xxxx
 ```
+
+## 集群不能正常工作下的恢复
+
+若集群多数节点受损无法选举出 leader，请参照下面的步骤进行恢复
+
+### 停止 ovn-central
+
+记录当前 ovn-central 副本数量，并停止 `ovn-central` 避免新的数据库变更影响恢复
+
+```bash
+kubectl scale deployment -n kube-system ovn-central --replicas=0
+```
+
+### 选择备份
+
+由于多数节点受损，需要从某个数据库文件进行恢复重建集群。如果之前备份过数据库
+可使用之前的备份文件进行恢复。如果没有进行过备份可以使用下面的步骤从已有的文件
+中生成一个可重建数据库的备份。
+
+> 由于默认文件夹下的数据库文件为集群格式数据库文件，包含当前集群的信息，无法直接
+> 用该文件重建数据库，需要使用 `ovsdb-tool cluster-to-standalone` 进行格式转换
+
+选择 `ovn-central` 环境变量 `NODE_IPS` 中排第一的节点恢复数据库文件，
+如果第一个节点数据库文件已损坏，从其他机器 `/etc/origin/ovn` 下复制文件到第一台机器 ，
+执行下列命令生成数据库文件备份。
+
+```bash
+docker run -it -v /etc/origin/ovn:/etc/ovn kubeovn/kube-ovn:v1.10.0 bash
+cd /etc/ovn/
+ovsdb-tool cluster-to-standalone ovnnb_db_standalone.db ovnnb_db.db
+ovsdb-tool cluster-to-standalone ovnsb_db_standalone.db ovnsb_db.db
+```
+
+### 删除每个 ovn-central 节点上的数据库文件
+
+为了避免重建集群时使用到错误的数据，需要对已有数据库文件进行清理
+
+```bash
+mv /etc/origin/ovn/ovnnb_db.db /tmp
+mv /etc/origin/ovn/ovnsb_db.db /tmp
+```
+
+### 恢复数据库集群
+
+将备份数据库分别重命名为 `ovnnb_db.db` 和 `ovnsb_db.db` 至于 `ovn-central`
+ 环境变量 `NODE_IPS` 中排第一机器的 `/etc/origin/ovn/` 目录下
+
+```bash
+mv /etc/origin/ovn/ovnnb_db_standalone.db /etc/origin/ovn/ovnnb_db.db
+mv /etc/origin/ovn/ovnsb_db_standalone.db /etc/origin/ovn/ovnsb_db.db
+```
+
+恢复 `ovn-central` 的副本数
+
+```bash
+kubectl scale deployment -n kube-system ovn-central --replicas=3
+kubectl rollout status deployment/ovn-central -n kube-system
+```
