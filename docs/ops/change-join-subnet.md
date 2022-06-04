@@ -49,7 +49,7 @@ join          ovn        ovn-cluster   IPv4       100.51.0.0/16   false     fals
 ovn-default   ovn        ovn-cluster   IPv4       10.17.0.0/16    false     true    true      distributed   5        65528         0        0             ["10.17.0.1"]
 ```
 
-### 重新配置 ovn0 网卡地址
+## 重新配置 ovn0 网卡地址
 
 每个节点的 `ovn0` 网卡信息需要重新更新，可通过重启 `kube-ovn-cni` 来完成
 
