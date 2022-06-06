@@ -31,6 +31,7 @@ nav:
   - 高级功能:
       - 多网卡管理: 'advance/multi-nic.md'
       - 性能调优: 'advance/performance-tuning.md'
+      - 手动编译 FastPath 模块: 'advance/fastpath.md'
       - 使用 OVN-IC 进行多集群互联: 'advance/with-ovn-ic.md'
       - 使用 Submariner 进行多集群互联: 'advance/with-submariner.md'
       - Cilium 集成: 'advance/with-cilium.md'
