@@ -7,7 +7,7 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，需要依赖 Kubernetes 环
 - Kubernetes >= 1.16
 - Docker >= 1.12.6, Containerd >= 1.3.4
 - 操作系统: CentOS 7/8, Ubuntu 16.04/18.04/20.04
-- 其他 Linux 发行版，需要检查一下内核模块是否存在 geneve, openvswitch, ip_tables, iptable_nat
+- 其他 Linux 发行版，需要检查一下内核模块是否存在 `geneve`, `openvswitch`, `ip_tables` 和 `iptable_nat`，Kube-OVN 正常工作依赖相关模块
 
 *注意事项*：
 
@@ -19,7 +19,7 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，需要依赖 Kubernetes 环
 - Kernel 启动需要开启 ipv6, 如果 kernel 启动参数包含 `ipv6.disable=1` 需要将其设置为 0
 - Kube-Proxy 正常工作，Kube-OVN 可以通过 SVC IP 访问到 APIServer
 - 确认 kubelet 配置参数开启了 CNI，并且配置在标准路径下, kubelet 启动时包含了如下参数 `--network-plugin=cni --cni-bin-dir=/opt/cni/bin --cni-conf-dir=/etc/cni/net.d`
-- 确认未安装其他网络插件，或者其他网络插件已经被清除，检查 /etc/cni/net.d/ 路径下无其他网络插件配置文件。如果之前安装过其他网络插件建议删除后重启机器清理残留网络资源。
+- 确认未安装其他网络插件，或者其他网络插件已经被清除，检查 `/etc/cni/net.d/` 路径下无其他网络插件配置文件。如果之前安装过其他网络插件建议删除后重启机器清理残留网络资源。
 
 ## 端口信息
 | 组件          | 端口    | 用途                   |
