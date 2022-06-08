@@ -38,7 +38,7 @@ nav:
       - DHCP 设置: 'advance/dhcp.md'
       - VPC 互联: 'advance/vpc-peering.md'
       - 外部网关设置: 'advance/external-gateway.md'
-      - VIP 设置: 'advance/vip.md'
+      - VIP 预留设置: 'advance/vip.md'
       - Mellanox 网卡 offload 支持: 'advance/offload-mellanox.md'
       - 芯启源网卡 offload 支持: 'advance/offload-corigine.md'
       - Windows 支持: 'advance/windows.md'
