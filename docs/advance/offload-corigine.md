@@ -218,4 +218,3 @@ ufid:e00768d7-e652-4d79-8182-3291d852b791, skb_priority(0/0),skb_mark(0/0),ct_st
 ```
 
 如果有 `offloaded:yes, dp:tc` 内容证明卸载成功。
-
