@@ -1,6 +1,8 @@
 site_name: Kube-OVN 文档
-repo_name: kubeovn/docs
-repo_url: https://github.com/kubeovn/docs/
+site_author: Kube-OVN Team
+repo_name: kubeovn/kube-ovn
+repo_url: https://github.com/kubeovn/kube-ovn/
+edit_uri: ../docs/edit/master/docs/
 nav:
   - 主页: 'index.md'
   - 快速入门:
@@ -63,6 +65,9 @@ markdown_extensions:
 plugins:
   - search:
       separator: '[\s\u200b\-]'
+#  - with-pdf:
+#      author: Kube-OVN Team
+#      cover_subtitle: v1.10.0
 extra:
   social:
     - icon: fontawesome/brands/twitter
