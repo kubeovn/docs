@@ -114,6 +114,26 @@ ethtool -G eno1 rx 4096
 ethtool -G eno1 tx 4096
 ```
 
+### 使用 tuned 优化系统参数
+
+[tuned](https://tuned-project.org/) 可以使用一系列预置的 profile 文件保存了针对特定场景的一系列系统优化配置。
+
+针对延迟优先场景：
+
+```bash
+tuned-adm profile network-latency
+```
+
+针对吞吐量优先场景：
+
+```bash
+tuned-adm profile network-throughput
+```
+
+### 中断绑定
+
+我们推荐禁用 `irqbalance` 并将网卡中断和特定 CPU 进行绑定，来避免在多个 CPU 之间切换导致的性能波动。
+
 ### 关闭 OVN LB
 
 OVN 的 L2 LB 实现过程中需要调用内核的 `conntrack` 模块并进行 recirculate 导致大量的 CPU 开销，经测试该功能会带来 20% 左右的 CPU 开销，

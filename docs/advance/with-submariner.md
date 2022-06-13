@@ -51,4 +51,4 @@ subctl show all
 subctl diagnose all
 ```
 
-更多 Submariner 相关操作请查看[Submariner 用户手册](https://submariner.io/operations/usage/)
+更多 Submariner 相关操作请查看 [Submariner 用户手册](https://submariner.io/operations/usage/)
