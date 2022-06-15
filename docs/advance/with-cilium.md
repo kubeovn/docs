@@ -6,7 +6,6 @@
 
 通过集成 Cilium，Kube-OVN 用户可以获得如下增益：
 
-- 更高性能的 Service 实现
 - 更丰富高效的安全策略
 - 基于 Hubble 的监控视图
 
@@ -17,21 +16,27 @@
 
 ## 配置 Kube-OVN
 
-为了充分使用 Cilium 的 Service 和 安全能力，需要关闭 Kube-OVN 内的 `loadbalancer` 和 `networkpolicy` 功能。
+为了充分使用 Cilium 的安全能力，需要关闭 Kube-OVN 内的 `networkpolicy` 功能，并调整 CNI 配置优先级。
 
 在 `install.sh` 脚本里修改下列变量
 
 ```bash
-ENABLE_LB=false
 ENABLE_NP=false
+CNI_CONFIG_PRIORITY=10
 ```
 
-若已部署完成可通过修改 `kube-ovn-controller` 的启动参数进行调整：
+若已部署完成，可通过修改 `kube-ovn-controller` 的启动参数进行调整 `networkpolicy`：
 
 ```yaml
 args:
-- --enable-lb=false
 - --enable-np=false
+```
+
+修改 `kube-ovn-cni` 启动参数调整 CNI 配置优先级：
+
+```yaml
+args:
+- --cni-conf-name=10-kube-ovn.conflist
 ```
 
 在每个节点调整 Kube-OVN 配置文件名称，以便优先使用 Cilium 进行操作：
