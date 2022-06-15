@@ -98,13 +98,8 @@ helm install cilium cilium/cilium --version 1.10.9 \
     --set cni.configMap=cni-configuration \
     --set tunnel=disabled \
     --set enableIPv4Masquerade=false \
-    --set enableIdentityMark=false \
-    --set kubeProxyReplacement=strict \
-    --set k8sServiceHost=API_SERVER_IP \
-    --set k8sServicePort=API_SERVER_PORT
+    --set enableIdentityMark=false 
 ```
-
-将 `API_SERVER_IP` 和 `API_SERVER_PORT` 替换为 APIServer 的地址和端口。
 
 确认 Cilium 安装成功：
 
