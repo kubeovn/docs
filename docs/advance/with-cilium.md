@@ -1,7 +1,7 @@
 # Cilium 集成
 
 [Cilium](https://cilium.io/) 是一款基于 eBPF 的网络和安全组件，Kube-OVN 利用其中的 
-[CNI Chaining](https://docs.cilium.io/en/v1.9/gettingstarted/cni-chaining/) 模式来对已有功能进行增强。
+[CNI Chaining](https://docs.cilium.io/en/stable/gettingstarted/cni-chaining/) 模式来对已有功能进行增强。
 用户可以同时使用 Kube-OVN 丰富的网络抽象能力和 eBPF 带来的监控和安全能力。
 
 通过集成 Cilium，Kube-OVN 用户可以获得如下增益：
@@ -91,7 +91,7 @@ kubectl apply -f chaining.yaml
 
 ```bash
 helm repo add cilium https://helm.cilium.io/
-helm install cilium cilium/cilium --version 1.10.9 \
+helm install cilium cilium/cilium --version 1.11.6 \
     --namespace kube-system \
     --set cni.chainingMode=generic-veth \
     --set cni.customConf=true \
