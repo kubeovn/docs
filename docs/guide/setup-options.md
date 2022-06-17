@@ -211,6 +211,8 @@ env:
 
 如果需要使用 STT 隧道需要额外编译 ovs 的内核模块，请参考[性能调优](../advance/performance-tuning.md)。
 
+不同协议在实际使用中的区别请参考[隧道协议说明](../reference/tunnel-protocol.md)。
+
 ## SSL 设置
 OVN DB 的 API 接口支持 SSL 加密来保证连接安全，如要开启可调整安装脚本中的如下参数:
 ```bash
