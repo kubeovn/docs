@@ -16,3 +16,15 @@ Kube-OVN 是一款 CNCF 旗下的企业级云原生网络编排系统，提供�
 ** 良好的可运维性：**
 Kube-OVN 提供了丰富的网络质量监控指标并内置 Grafana 面板，同时可以和 Cilium 结合利用 eBPF 能力增强可观测性。
 此外还支持流量镜像的能力，方便用户自定义流量监控。
+
+## 联系我们
+
+如需加入微信用户交流群，请扫描下方二维码并填写表单：
+
+![img.png](static/user-wechat.png)
+
+如需获得商业支持和咨询服务，请使用下方连接或扫描二维码填写表单：
+
+[商业版支持](https://ma.alauda.cn/p/2f53a)
+
+![img.png](static/enterprise-qr.png)
