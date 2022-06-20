@@ -3,12 +3,13 @@
 Kube-OVN 中不同的子网可以支持不同的协议，一个集群内可以同时存在 IPv4，IPv6 和双栈类型的子网。
 我们推荐一个集群内使用统一的协议类型以简化使用和维护。
 
-为了支持双栈，需要对 Kubernetes 相关参数做调整，请参考 Kubernetes 的[双栈官方指导](https://kubernetes.io/docs/concepts/services-networking/dual-stack)。
+为了支持双栈，需要主机网络满足双栈幽囚，同时需要对 Kubernetes 相关参数做调整，
+请参考 Kubernetes 的[双栈官方指导](https://kubernetes.io/docs/concepts/services-networking/dual-stack)。
 
 ## 创建双栈子网
 
-在配置双栈时，只需要设置子网CIDR格式为`cidr=<IPv4 CIDR>,<IPv6 CIDR>`即可。
-CIDR顺序要求IPv4在前，IPv6在后，如下所示：
+在配置双栈时，只需要设置对应子网 CIDR 格式为 `cidr=<IPv4 CIDR>,<IPv6 CIDR>` 即可。
+CIDR 顺序要求 IPv4 在前，IPv6 在后，如下所示：
 
 ```yaml
 apiVersion: kubeovn.io/v1
