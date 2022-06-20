@@ -5,7 +5,7 @@
 
 ## 删除在 Kubernetes 中创建的资源
 
-下载下面的脚本，执行脚本删除在 Kubernetes 中创建的资源
+下载下面的脚本，执行脚本删除在 Kubernetes 中创建的资源：
 
 ```bash
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.9/dist/images/cleanup.sh
@@ -14,7 +14,8 @@ bash cleanup.sh
 
 ## 清理主机上的日志和配置文件
 
-在每台机器上执行下列操作，清理 ovsdb 以及 openvswitch 保存的配置
+在每台机器上执行下列操作，清理 ovsdb 以及 openvswitch 保存的配置：
+
 ```bash
 rm -rf /var/run/openvswitch
 rm -rf /var/run/ovn
@@ -25,9 +26,10 @@ rm -rf /etc/cni/net.d/01-kube-ovn.conflist
 rm -rf /var/log/openvswitch
 rm -rf /var/log/ovn
 ```
+
 ## 重启节点
 
-重启机器确保对应的网卡信息，iptable/ipset 规则得以清除，避免对其他网络插件的影响
+重启机器确保对应的网卡信息，iptable/ipset 规则得以清除，避免对其他网络插件的影响：
 
 ```bash
 reboot

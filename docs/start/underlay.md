@@ -1,8 +1,8 @@
 # Underlay 网络安装
 
-默认情况下 Kube-OVN 使用 Geneve 对跨主机流量进行封装，在基础设施之上抽象出一层虚拟的 overlay 网络。
+默认情况下 Kube-OVN 的默认子网使用 Geneve 对跨主机流量进行封装，在基础设施之上抽象出一层虚拟的 Overlay 网络。
 
-对于希望容器网络直接使用物理网络地址段情况，可以将 Kube-OVN 工作在 Underlay 模式，可以直接给容器分配物理网络中的地址资源，达到更好的性能以及和物理网络的连通性。
+对于希望容器网络直接使用物理网络地址段情况，可以将 Kube-OVN 的默认子网工作在 Underlay 模式，可以直接给容器分配物理网络中的地址资源，达到更好的性能以及和物理网络的连通性。
 
 ![topology](https://raw.githubusercontent.com/kubeovn/kube-ovn/master/docs/vlan-topology.png "vlan network topology")
 
@@ -16,17 +16,18 @@
 Kube-OVN 的 Underlay 模式和 Macvlan 工作模式十分类似，在功能和性能上主要有以下几个区别：
 
 1. 由于 Macvlan 的内核路径更短，并且不需要 OVS 对数据包进行处理，Macvlan 在吞吐量和延迟性能指标上表现会更好。
-2. Kube-OVN 通过流表提供了 arp-proxy 功能，可以缓解大规模网络下的 arp 广播风暴风险
-3. 由于 Macvlan 工作在内核底层，会绕过宿主机的 netfilter，Service 和 NetworkPolicy 功能需要额外开发。Kube-OVN 通过 OVS 流表提供了 Service 和 NetworkPolicy 的能力
+2. Kube-OVN 通过流表提供了 arp-proxy 功能，可以缓解大规模网络下的 arp 广播风暴风险。
+3. 由于 Macvlan 工作在内核底层，会绕过宿主机的 netfilter，Service 和 NetworkPolicy 功能需要额外开发。Kube-OVN 通过 OVS 流表提供了 Service 和 NetworkPolicy 的能力。
 
 ## 硬件环境要求
 
-在 Underlay 模式下， OVS 将会桥接一个节点网卡到 OVS 网桥，并将数据包直接通过该节点网卡对外发送，L2/L3 层面的转发能力需要依赖底层网络设备。需要预先在底层网络设备配置对应的网关、Vlan 和安全策略等配置。
+在 Underlay 模式下， OVS 将会桥接一个节点网卡到 OVS 网桥，并将数据包直接通过该节点网卡对外发送，L2/L3 层面的转发能力需要依赖底层网络设备。
+需要预先在底层网络设备配置对应的网关、Vlan 和安全策略等配置。
 
-1. 对于 OpenStack 的 VM 环境，需要将对应网络端口的 `PortSecurity` 关闭
-2. 对于 VMware 的 vswtich 网络，需要将 `MAC Address Changes`, `Forged Transmits` 和 `Promiscuous Mode Operation` 设置为 `allow`
-3. 共有云，例如 AWS、GCE、阿里云等由于不支持用户自定义 Mac 无法支持 Underlay 模式网络
-4. 对于 Service 访问流量，Pod 会将数据包首先发送至网关，网关需要有能将数据包转发会本网段的能力
+1. 对于 OpenStack 的 VM 环境，需要将对应网络端口的 `PortSecurity` 关闭。
+2. 对于 VMware 的 vswtich 网络，需要将 `MAC Address Changes`, `Forged Transmits` 和 `Promiscuous Mode Operation` 设置为 `allow`。
+3. 公有云，例如 AWS、GCE、阿里云等由于不支持用户自定义 Mac 无法支持 Underlay 模式网络。
+4. 对于 Service 访问流量，Pod 会将数据包首先发送至网关，网关需要有能将数据包转发会本网段的能力。
 
 对于管理网和容器网使用同一个网卡的情况下，Kube-OVN 会将网卡的 Mac 地址、IP 地址、路由以及 MTU 将转移或复制至对应的 OVS Bridge，
 以支持单网卡部署 Underlay 网络。OVS Bridge 名称格式为 `br-PROVIDER_NAME`，`PROVIDER_NAME` 为 Provider 网络名称（默认为 provider）。
@@ -39,14 +40,14 @@ Kube-OVN 的 Underlay 模式和 Macvlan 工作模式十分类似，在功能和�
 
 #### 下载安装脚本
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.9/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/install.sh
 ```
 
 #### 修改脚本中相应配置
 ```bash
 NETWORK_TYPE          # 设置为 vlan
 VLAN_INTERFACE_NAME   # 设置为宿主机上承担容器流量的网卡，例如 eth1
-VLAN_ID               # 设置为 0 
+VLAN_ID               # 交换机所接受的 VLAN Tag，若设置为 0 则不做 VLAN 封装
 POD_CIDR              # 设置为物理网络 CIDR， 例如 192.168.1.0/24
 POD_GATEWAY           # 设置为物理网络网关，例如192.168.1.1
 EXCLUDE_IPS           # 排除范围，避免容器网段和物理网络已用 IP 冲突，例如 192.168.1.1..192.168.1.100
@@ -59,7 +60,7 @@ bash install.sh
 
 ### 通过 CRD 动态创建 Underlay 网络
 
-该方式可
+该方式可在安装后动态的创建某个 Underlay 子网供 Pod 使用。
 
 #### 创建 ProviderNetwork
 
