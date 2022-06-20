@@ -54,6 +54,7 @@ nav:
       - API 指南: 'reference/api.md'
       - 对上游 OVS/OVN 修改: 'reference/ovs-ovn-customized.md'
       - 隧道协议说明: 'reference/tunnel-protocol.md'
+  - 联系方式: 'contact.md'
 theme:
     name: material
     language: 'zh'
