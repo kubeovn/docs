@@ -8,7 +8,6 @@
 
 ## 前提条件
 1. 两个集群的 Service CIDR 和默认子网的 CIDR 不能重叠。
-2. 如果需要使用跨集群 Service，`kube-proxy` 必须工作在 `iptables` 模式下。
 
 ## 部署 Submariner
 
@@ -51,4 +50,4 @@ subctl show all
 subctl diagnose all
 ```
 
-更多 Submariner 相关操作请查看 [Submariner 用户手册](https://submariner.io/operations/usage/)
+更多 Submariner 相关操作请查看 [Submariner 用户手册](https://submariner.io/operations/usage/)。

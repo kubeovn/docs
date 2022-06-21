@@ -1,6 +1,6 @@
 # 手动编译 FastPath 模块
 
-经过数据平面的性能 Profile，Netfilter 在容器内和宿主机上的相关处理消耗了 20% 左右的 CPU 资源，FastPath 模块可以绕过 Netfilter 从而
+经过数据平面的性能 Profile，`Netfilter` 在容器内和宿主机上的相关处理消耗了 20% 左右的 CPU 资源，FastPath 模块可以绕过 `Netfilter` 从而
 降低 CPU 的消耗和延迟，并提升吞吐量。本文档将介绍如何手动编译 FastPath 模块。
 
 ## 下载相关内核模块代码

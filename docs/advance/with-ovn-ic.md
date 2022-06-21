@@ -1,6 +1,7 @@
 # 使用 OVN-IC 进行多集群互联
 
-Kube-OVN 支持通过 [OVN-IC](https://docs.ovn.org/en/latest/tutorials/ovn-interconnection.html) 来将两个 Kubernetes 集群 Pod 网络打通，打通后的两个集群内的 Pod 可以通过 Pod IP 进行直接通信。
+Kube-OVN 支持通过 [OVN-IC](https://docs.ovn.org/en/latest/tutorials/ovn-interconnection.html) 
+将两个 Kubernetes 集群 Pod 网络打通，打通后的两个集群内的 Pod 可以通过 Pod IP 进行直接通信。
 Kube-OVN 使用隧道对跨集群流量进行封装，两个集群之间只要存在一组 IP 可达的机器即可完成容器网络的互通。
 
 > 该模式的多集群互联为 Overlay 网络功能，Underlay 网络如果想要实现集群互联需要底层基础设施做网络打通。
@@ -30,7 +31,7 @@ ctr -n k8s.io run -d --net-host --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,op
 
 ## 自动路由设置
 
-在自动路由设置下，每个集群会将自己内部 Subnet 的 CIDR 信息同步给 `OVN-IC`，因此要确保两个集群的 Subnet CIDR 不存在重叠。
+在自动路由设置下，每个集群会将自己默认 VPC 下 Subnet 的 CIDR 信息同步给 `OVN-IC`，因此要确保两个集群的 Subnet CIDR 不存在重叠。
 
 在 `kube-system` Namespace 下创建 `ovn-ic-config` ConfigMap：
 
@@ -50,13 +51,13 @@ data:
   auto-route: "true"
 ```
 
-- `enable-ic`: 是否开启集群互联
-- `az-name`: 区分不同集群的集群名称，每个互联集群需不同
-- `ic-db-host`: 部署 `OVN-IC` 数据库的节点地址
-- `ic-nb-port`: `OVN-IC` 北向数据库，默认为 6645
-- `ic-sb-port`: `OVN-IC` 南向数据库，默认为 6646
-- `gw-nodes`: 集群互联中承担网关工作的节点名，逗号分隔
-- `auto-route`: 是否自动对外发布和学习路由
+- `enable-ic`: 是否开启集群互联。
+- `az-name`: 区分不同集群的集群名称，每个互联集群需不同。
+- `ic-db-host`: 部署 `OVN-IC` 数据库的节点地址。
+- `ic-nb-port`: `OVN-IC` 北向数据库，默认为 6645。
+- `ic-sb-port`: `OVN-IC` 南向数据库，默认为 6646。
+- `gw-nodes`: 集群互联中承担网关工作的节点名，逗号分隔。
+- `auto-route`: 是否自动对外发布和学习路由。
 
 在 `ovn-ic` 容器内通过下面的命令查看是否已建立互联逻辑交换机 `ts`：
 

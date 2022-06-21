@@ -43,13 +43,13 @@ data:
   auto-route: "true"
 ```
 
-- `enable-ic`: 是否开启集群互联
-- `az-name`: 区分不同集群的集群名称，每个互联集群需不同
-- `ic-db-host`: 部署 `OVN-IC` 数据库的节点地址
-- `ic-nb-port`: `OVN-IC` 北向数据库，默认为 6645
-- `ic-sb-port`: `OVN-IC` 南向数据库，默认为 6646
-- `gw-nodes`: 集群互联中承担网关工作的节点名，逗号分隔
-- `auto-route`: 是否自动对外发布和学习路由
+- `enable-ic`: 是否开启集群互联。
+- `az-name`: 区分不同集群的集群名称，每个互联集群需不同。
+- `ic-db-host`: 部署 `OVN-IC` 数据库的节点地址。
+- `ic-nb-port`: `OVN-IC` 北向数据库，默认为 6645。
+- `ic-sb-port`: `OVN-IC` 南向数据库，默认为 6646。
+- `gw-nodes`: 集群互联中承担网关工作的节点名，逗号分隔。
+- `auto-route`: 是否自动对外发布和学习路由。
 
 ### OpenStack 侧操作
 
