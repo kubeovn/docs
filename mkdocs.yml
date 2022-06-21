@@ -54,6 +54,7 @@ nav:
 #      - API 指南: 'reference/api.md'
       - 对上游 OVS/OVN 修改: 'reference/ovs-ovn-customized.md'
       - 隧道协议说明: 'reference/tunnel-protocol.md'
+      - Kube-OVN 监控指标: 'reference/metrics.md'
   - 联系方式: 'contact.md'
 theme:
     name: material
@@ -68,9 +69,9 @@ markdown_extensions:
 plugins:
   - search:
       separator: '[\s\u200b\-]'
-#  - with-pdf:
-#      author: Kube-OVN Team
-#      cover_subtitle: v1.10.1
+  - with-pdf:
+      author: Kube-OVN Team
+      cover_subtitle: v1.10.1
 extra:
   social:
     - icon: fontawesome/brands/twitter
