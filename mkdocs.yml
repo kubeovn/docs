@@ -69,9 +69,9 @@ markdown_extensions:
 plugins:
   - search:
       separator: '[\s\u200b\-]'
-  - with-pdf:
-      author: Kube-OVN Team
-      cover_subtitle: v1.10.1
+#  - with-pdf:
+#      author: Kube-OVN Team
+#      cover_subtitle: v1.10.1
 extra:
   social:
     - icon: fontawesome/brands/twitter

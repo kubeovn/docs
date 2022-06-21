@@ -5,6 +5,8 @@
 
 社区会不断迭代控制面板和优化面的性能，部分通用性能优化已经集成到最新版本，建议使用最新版本获得更好的默认性能。
 
+更多关于性能优化的过程和方法论，可以观看视频分享：[Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web)。
+
 ## 基准测试
 
 > 由于软硬件环境的差异极大，这里提供的性能测试数据只能作为参考，实际测试结果会和小面真实的结果存在较大差异。
@@ -273,4 +275,3 @@ kubectl set env daemonset/ovs-ovn -n kube-system TUNNEL_TYPE=stt
 
 kubectl delete pod -n kube-system -lapp=ovs
 ```
-
