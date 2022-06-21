@@ -1,7 +1,7 @@
 # Webhook 使用
 
 使用 Webhook 可以对 Kube-OVN 内的 CRD 资源进行校验，目前 Webhook 主要完成
-固定 IP 地址冲突检测和 Subnet CIDR 的冲突检测，并在这类资源创建时提示错误。
+固定 IP 地址冲突检测和 Subnet CIDR 的冲突检测，并在这类资源创建冲突时提示错误。
 
 由于 Webhook 会拦截所有的 Subnet 和 Pod 创建的请求，因此需要先部署 Kube-OVN 
 后部署 Webhook 避免无法创建 Pod。
@@ -17,7 +17,7 @@ Webhook 前先部署 cert-manager。
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 ```
 
-更多 cert-manager 使用请参考 [cert-manager 文档](https://cert-manager.io/docs/)
+更多 cert-manager 使用请参考 [cert-manager 文档](https://cert-manager.io/docs/)。
 
 ## 安装 Webhook
 
@@ -33,7 +33,7 @@ issuer.cert-manager.io/kube-ovn-webhook-selfsigned-issuer created
 
 ## 验证 Webhook 生效
 
-查看已运行 Pod，得到 Pod IP `10.16.0.15`
+查看已运行 Pod，得到 Pod IP `10.16.0.15`：
 
 ```bash
 # kubectl get pod -o wide
@@ -41,7 +41,7 @@ NAME                      READY   STATUS    RESTARTS   AGE     IP           NODE
 static-7584848b74-fw9dm   1/1     Running   0          2d13h   10.16.0.15   kube-ovn-worker   <none> 
 ```
 
-编写 yaml 创建相同 IP 的 Pod
+编写 yaml 创建相同 IP 的 Pod：
 
 ```yaml
 apiVersion: v1
@@ -62,7 +62,7 @@ spec:
     name: qatest
 ```
 
-使用以上 yaml 创建静态地址 Pod 的时候，提示 IP 地址冲突
+使用以上 yaml 创建静态地址 Pod 的时候，提示 IP 地址冲突：
 
 ```bash
 # kubectl apply -f pod-static.yaml

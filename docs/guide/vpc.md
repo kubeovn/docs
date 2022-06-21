@@ -3,12 +3,12 @@
 Kube-OVN 支持多租户隔离级别的 VPC 网络。不同 VPC 网络相互独立，可以分别配置 Subnet 网段，
 路由策略，安全策略，出网网关，EIP 等配置。
 
-> VPC 主要用于有多租户网络强隔离的场景，部分常见 Kubernetes 网络假设在多租户网络下存在冲突。
+> VPC 主要用于有多租户网络强隔离的场景，部分 Kubernetes 网络功能在多租户网络下存在冲突。
 > 例如节点和 Pod 互访，NodePort 功能，基于网络访问的健康检查和 DNS 能力在多租户网络场景暂不支持。
 > 为了方便常见 Kubernetes 的使用场景，Kube-OVN 默认 VPC 做了特殊设计，该 VPC 下的 Subnet 
 > 可以满足 Kubernetes 规范。用户自定义 VPC 支持本文档介绍的静态路由，EIP 和 NAT 网关等功能。
 > 常见隔离需求可通过默认 VPC 下的网络策略和子网 ACL 实现，在使用自定义 VPC 前请明确是否需要
-> VPC 级别的隔离，以及自定义 VPC 下的限制。
+> VPC 级别的隔离，并了解自定义 VPC 下的限制。
 
 ## 创建自定义 VPC
 
@@ -86,7 +86,7 @@ metadata:
 VPC 内容器访问外部网络需要通过 VPC 网关，VPC 网关可以打通物理网络和租户网络，并提供
 浮动 IP，SNAT 和 DNAT 功能。
 
-VPC 网关功能依赖 Multus-CNI 的多网卡功能，安装请参考 [multus-cni](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md)
+VPC 网关功能依赖 Multus-CNI 的多网卡功能，安装请参考 [multus-cni](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md)。
 
 ### 配置外部网络
 
@@ -124,8 +124,8 @@ spec:
 
 - 该 Subnet 用来管理可用的外部地址，请和网络管理沟通给出可用的物理段 IP。
 - VPC 网关使用 Macvlan 做物理网络配置，`NetworkAttachmentDefinition` 的 `master` 需为对应物理网路网卡的网卡名。
-- `provider` 格式为 `<NetworkAttachmentDefinition Name>.<NetworkAttachmentDefinition Namespace>`
-- `name` 必须为 ovn-vpc-external-network，这里代码中做了硬编码
+- `provider` 格式为 `<NetworkAttachmentDefinition Name>.<NetworkAttachmentDefinition Namespace>`。
+- `name` 必须为 ovn-vpc-external-network，这里代码中做了硬编码。
 
 ### 开启 VPC 网关功能
 
@@ -137,12 +137,12 @@ metadata:
   name: ovn-vpc-nat-gw-config
   namespace: kube-system
 data:
-  image: 'kubeovn/vpc-nat-gateway:v1.10.0' 
+  image: 'kubeovn/vpc-nat-gateway:v1.10.1' 
   enable-vpc-nat-gw: 'true'
 ```
 
-- `image`: 网关 Pod 所使用的镜像
-- `enable-vpc-nat-gw`： 控制是否启用 VPC 网关功能
+- `image`: 网关 Pod 所使用的镜像。
+- `enable-vpc-nat-gw`： 控制是否启用 VPC 网关功能。
 
 ### 创建 VPC 网关并配置默认路由
 
@@ -164,14 +164,14 @@ spec:
       policy: policyDst
 ```
 
-- `subnet`： 为 VPC 内某个 Subnet 名，VPC 网关 Pod 会在该子网下用 `lanIp` 来连接租户网络
-- `lanIp`：`subnet` 内某个未被使用的 IP，VPC 网关 Pod 最终会使用该 Pod
-- `selector`: VPC 网关 Pod 的节点选择器
-- `nextHopIP`：需和 `lanIp` 相同
+- `subnet`： 为 VPC 内某个 Subnet 名，VPC 网关 Pod 会在该子网下用 `lanIp` 来连接租户网络。
+- `lanIp`：`subnet` 内某个未被使用的 IP，VPC 网关 Pod 最终会使用该 Pod。
+- `selector`: VPC 网关 Pod 的节点选择器。
+- `nextHopIP`：需和 `lanIp` 相同。
 
 ### 创建 EIP
 
-EIP 为外部网络段的某个 IP 分配给 VPC 网关后可进行浮动IP，SNAT 和 DNAT 操作
+EIP 为外部网络段的某个 IP 分配给 VPC 网关后可进行浮动IP，SNAT 和 DNAT 操作。
 
 随机分配一个地址给 EIP：
 ```yaml
@@ -283,7 +283,7 @@ spec:
 ### 策略路由
 
 针对静态路由匹配的流量，可通过策略路由进行更细粒度的控制。策略路由提供了更精确的匹配规则，优先级控制
-和更多的转发动作。该功能为 OVN 内部逻辑路由器策略功能的一个对外暴露，更多使用信息请参考 [Logical Router Policy](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE)
+和更多的转发动作。该功能为 OVN 内部逻辑路由器策略功能的一个对外暴露，更多使用信息请参考 [Logical Router Policy](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE)。
 
 简单示例如下：
 ```yaml

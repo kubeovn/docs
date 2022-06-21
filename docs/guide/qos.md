@@ -159,16 +159,21 @@ spec:
 ```
 当 Subnet 绑定了 HtbQos 实例之后，该 Subnet 下的所有 Pod 都拥有相同的优先级设置。
 
-Pod 新增了 annotation `ovn.kubernetes.io/priority`，取值内容为具体的 priority 数值，如`ovn.kubernetes.io/priority: "50"`，可以用于单独设置 Pod 的 QoS 优先级参数。
+如果需要给某个 Pod 蛋到户设置 HtbQoS 可以使用 Pod annotation `ovn.kubernetes.io/priority`。
+取值内容为具体的 priority 数值，如`ovn.kubernetes.io/priority: "50"`，可以用于单独设置 Pod 的 QoS 优先级参数。
 
-当 Pod 所在 subnet 指定了 HtbQos 参数，同时 Pod 又设置了 QoS 优先级 annotation 时，以 Pod annotation 取值为准。
+```bash
+kubectl annotate --overwrite  pod perf-4n4gt -n ls1 ovn.kubernetes.io/priority=50
+```
 
-对于带宽设置，仍然是基于Pod单独设置的，使用之前的 annotation `ovn.kubernetes.io/ingress_rate` 和 `ovn.kubernetes.io/egress_rate`，用于控制 Pod 的双向带宽。
+当 Pod 所在 Subnet 指定了 HtbQos 参数，同时 Pod 又设置了 QoS 优先级 annotation 时，以 Pod annotation 取值为准。
+
+对于带宽设置，仍然是基于 Pod 单独设置的，使用之前的 annotation `ovn.kubernetes.io/ingress_rate` 和 `ovn.kubernetes.io/egress_rate`，用于控制 Pod 的双向带宽。
 
 ## linux-netem QoS
 Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` 和 
 `ovn.kubernetes.io/loss`。
 
 - `ovn.kubernetes.io/latency`： 为设置的 Pod 流量延迟参数，取值为整形数值，单位为 ms。
-- `ovn.kubernetes.io/limit`： 为 qdisc 队列可容纳的最大数据包数，取值为整形数值，例如 1000。
+- `ovn.kubernetes.io/limit`： 为 `qdisc` 队列可容纳的最大数据包数，取值为整形数值，例如 1000。
 - `ovn.kubernetes.io/loss`： 为设置的报文丢包概率，取值为 float 类型，例如取值为 0.2，则为设置 20% 的丢包概率。

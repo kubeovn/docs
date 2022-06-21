@@ -1,15 +1,15 @@
 # 安装和配置选项
 
 在[一键安装中](../start/one-step-install.md)我们使用默认配置进行安装，Kube-OVN 还支持更多
-自定义配置，可在安装脚本中进行配置或者之后更改各个组件的参数来进行配置。本文档将会介绍这些自定义选项
-作用，以及如何进行配置。
+自定义配置，可在安装脚本中进行配置，或者之后更改各个组件的参数来进行配置。本文档将会介绍这些自定义选项
+的作用，以及如何进行配置。
 
 ## 内置网络设置
 
 Kube-OVN 在安装时会配置两个内置子网：
 
-1. default 子网，作为 Pod 分配 IP 使用的默认子网，默认 cidr 为 10.16.0.0/16，网关为 10.16.0.1。
-2. node 子网，作为 Node 和 Pod 之间进行网络通信的特殊子网, 默认 cidr 为 100.64.0.0/16，网关为 100.64.0.1。
+1. `default` 子网，作为 Pod 分配 IP 使用的默认子网，默认 CIDR 为 `10.16.0.0/16`，网关为 `10.16.0.1`。
+2. `join` 子网，作为 Node 和 Pod 之间进行网络通信的特殊子网, 默认 CIDR 为 `100.64.0.0/16`，网关为 `100.64.0.1`。
 
 在安装时可以通过安装脚本内的配置进行更改：
 
@@ -28,7 +28,7 @@ EXCLUDE_IPS=""
 
 ## Service 网段配置
 
-由于部分 kube-proxy 设置的 iptables 和路由规则会和 Kube-OVN 设置的规则产生交集，Kube-OVN 需要知道
+由于部分 `kube-proxy` 设置的 iptables 和路由规则会和 Kube-OVN 设置的规则产生交集，因此 Kube-OVN 需要知道
 Service 的 CIDR 来正确设置对应的规则。
 
 在安装脚本中可以通过修改：
@@ -64,11 +64,11 @@ IFACE=eth1
 
 ```yaml
 args:
-  - --iface=eth1
+- --iface=eth1
 ```
 
 如果每台机器的网卡名均不同，且没有固定规律，可以使用节点 annotation `ovn.kubernetes.io/tunnel_interface`
-进行每个节点的逐一配置，有该 annotation 节点会覆盖 `iface` 的配置，优先使用 annotation。
+进行每个节点的逐一配置，拥有该 annotation 节点会覆盖 `iface` 的配置，优先使用 annotation。
 
 ```bash
 kubectl annotate node no1 ovn.kubernetes.io/tunnel_interface=ethx
@@ -106,8 +106,8 @@ args:
 
 ## LB 开启设置
 
-Kube-OVN 使用 OVN 中的 L2 LB 来实现 Service 转发，在 Overlay 场景中，用户可以选择使用 Kube-Proxy 来完成 Service 流量转发,
-也可以选择使用 Cilium Chain 的方式利用 eBPF 实现 Service 达到更好的性能，在这种情况下可以关闭 Kube-OVN 的 LB 
+Kube-OVN 使用 OVN 中的 L2 LB 来实现 Service 转发，在 Overlay 场景中，用户可以选择使用 `kube-proxy` 来完成 Service 流量转发,
+也可以选择使用 Cilium Chain 的方式利用 eBPF 实现 Service 达到更好的性能，在这种情况下可以关闭 Kube-OVN 的 LB 功能
 以达到控制面和数据面更好的性能。
 
 该功能可以在安装脚本中进行配置：
@@ -128,7 +128,7 @@ LB 的功能在默认安装中为开启。
 ## NetworkPolicy 开启设置
 
 Kube-OVN 使用 OVN 中的 ACL 来实现 NetworkPolicy，用户可以选择不需要使用 NetworkPolicy 
-或者使用 Cilium Chain 的方式利用 eBPF 实现 NetworkPolicy ，
+或者使用 Cilium Chain 的方式利用 eBPF 实现 NetworkPolicy，
 在这种情况下可以关闭 Kube-OVN 的 NetworkPolicy 功能以达到控制面和数据面更好的性能。
 
 该功能可以在安装脚本中进行配置：
@@ -161,7 +161,7 @@ ENABLE_EIP_SNAT=false
 
 ```yaml
 args:
-  - --enable-eip-snat=false
+- --enable-eip-snat=false
 ```
 
 EIP 和 SNAT 的能力在默认安装中为开启。该功能的相关使用和其他可配参数请参考[EIP 和 SNAT 配置](./eip-snat.md)。
@@ -211,7 +211,7 @@ volumes:
 - name: cni-bin
   hostPath:
     path:"/opt/cni/bin"
-
+...
 args:
 - --cni-conf-name=01-kube-ovn.conflist
 ```
