@@ -1,65 +1,55 @@
 # 开发环境构建
 
-### Prerequisites:
+## 环境准备:
 
-1. Kube-OVN is developed by [Go](https://golang.org/) 1.17 and uses [Go Modules](https://github.com/golang/go/wiki/Modules) to manage dependency. Make sure `GO111MODULE="on"`.
+Kube-OVN 使用 [Go](https://golang.org/) 1.17 开发并使用 [Go Modules](https://github.com/golang/go/wiki/Modules) 管理依赖，
+请确认环境变量 `GO111MODULE="on"`。
 
-2. We also use [gosec](https://github.com/securego/gosec) to inspect source code for security problems.
+[gosec](https://github.com/securego/gosec) 被用来扫描代码安全相关问题，需要在开发环境安装：
 
-```shell
+```bash
 go get github.com/securego/gosec/v2/cmd/gosec
 ```
 
-3. To minimize image size we use docker experimental buildx features.
+为了降低最终生成镜像大小，Kube-OVN 使用了部分 Docker buildx 试验特性，请更新 Docker 至最新版本
+并开启 buildx:
 
-​	For version < Docker 19.03, please enable it manually through the [reference](https://docs.docker.com/develop/develop-images/build_enhancements/).
-
-​    Buildx could also be installed from official [doc](https://github.com/docker/buildx/).
-
-​	For first compilation, create a new builder instance.
-
-```shell
+```bash
 docker buildx create --use
 ```
 
-##### Make:
+## 构建镜像
 
-```shell
+使用下面的命令下载代码，并生成运行 Kube-OVN 所需镜像：
+
+```bash
 git clone https://github.com/kubeovn/kube-ovn.git
-go get -u github.com/securego/gosec/cmd/gosec
 cd kube-ovn
 make release
 ```
 
-## How to run e2e tests
-
-Kube-OVN uses [KIND](https://kind.sigs.k8s.io/) to setup a local Kubernetes cluster and [j2cli](https://github.com/kolypto/j2cli) to render template
-and [Ginkgo](https://onsi.github.io/ginkgo/) as the test framework to run the e2e tests.
-
-```shell
-go get -u github.com/onsi/ginkgo/ginkgo
-go get -u github.com/onsi/gomega/...
-
-make kind-init
-make kind-install
-# wait all pods ready
-make e2e
-```
-
-For Underlay mode e2e tests with single nic, run following commands:
-
-```sh
-make kind-init
-make kind-install-underlay
-# wait all pods ready
-make e2e-underlay-single-nic
-```
-
-## ARM support
-
-If you want to run Kube-OVN on arm64 platform, you need to build the arm64 images with docker multi-platform build.
+如需构建在 ARM 环境下运行的镜像，请执行下面的命令：
 
 ```bash
 make release-arm
 ```
 
+## 运行 E2E
+
+Kube-OVN 使用 [KIND](https://kind.sigs.k8s.io/) 构建本地 Kubernetes 集群，[j2cli](https://github.com/kolypto/j2cli) 渲染模板，
+[Ginkgo](https://onsi.github.io/ginkgo/) 来运行测试代码。请参考相关文档进行依赖安装。
+
+本地执行 E2E 测试：
+
+```bash
+make kind-init
+make kind-install
+make e2e
+```
+
+如需运行 Underlay E2E 测试，执行下列命令：
+```bash
+make kind-init
+make kind-install-underlay
+make e2e-underlay-single-nic
+```
