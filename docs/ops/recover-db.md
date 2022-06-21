@@ -1,10 +1,10 @@
 # OVN 数据库备份和恢复
 
-本文档介绍如何进行数据库备份，以及在不同情况下如何通过已有的数据库文件进行集群恢复
+本文档介绍如何进行数据库备份，以及在不同情况下如何通过已有的数据库文件进行集群恢复。
 
 ## 数据库备份
 
-利用 kubectl 插件的 backup 命令可以对数据库文件进行备份，以用于故障时恢复
+利用 kubectl 插件的 backup 命令可以对数据库文件进行备份，以用于故障时恢复：
 
 ```bash
 # kubectl ko nb backup
@@ -34,7 +34,7 @@ ovsdb-server: ovsdb error: error reading record 2739 from OVN_Northbound log: re
 ### 从集群中踢出对应节点
 
 根据日志提示是 `OVN_Northboun`d 还是 `OVN_Southbound` 选择对应的数据库进行操作。
-上述日志提示为 `OVN_Northbound` 则对 ovn-nb 进行操作
+上述日志提示为 `OVN_Northbound` 则对 ovn-nb 进行操作：
 
 ```bash
 # kubectl ko nb status
@@ -63,19 +63,19 @@ Servers:
     e631 (e631 at tcp:[10.0.131.173]:6643) next_index=12512 match_index=0
 ```
 
-从集群中踢出状态异常节点
+从集群中踢出状态异常节点：
 
 ```bash
 kubectl ko nb kick e631
 ```
 
-登录异常节点，删除对应的数据库文件
+登录异常节点，删除对应的数据库文件：
 
 ```bash
 mv /etc/origin/ovn/ovnnb_db.db /tmp
 ```
 
-删除对应节点的 `ovn-central` Pod 集群即可自动恢复
+删除对应节点的 `ovn-central` Pod 集群即可自动恢复：
 
 ```bash
 kubectl delete pod -n kube-system ovn-central-xxxx
@@ -83,11 +83,11 @@ kubectl delete pod -n kube-system ovn-central-xxxx
 
 ## 集群不能正常工作下的恢复
 
-若集群多数节点受损无法选举出 leader，请参照下面的步骤进行恢复
+若集群多数节点受损无法选举出 leader，请参照下面的步骤进行恢复。
 
 ### 停止 ovn-central
 
-记录当前 ovn-central 副本数量，并停止 `ovn-central` 避免新的数据库变更影响恢复
+记录当前 ovn-central 副本数量，并停止 `ovn-central` 避免新的数据库变更影响恢复：
 
 ```bash
 kubectl scale deployment -n kube-system ovn-central --replicas=0
@@ -115,7 +115,7 @@ ovsdb-tool cluster-to-standalone ovnsb_db_standalone.db ovnsb_db.db
 
 ### 删除每个 ovn-central 节点上的数据库文件
 
-为了避免重建集群时使用到错误的数据，需要对已有数据库文件进行清理
+为了避免重建集群时使用到错误的数据，需要对已有数据库文件进行清理：
 
 ```bash
 mv /etc/origin/ovn/ovnnb_db.db /tmp
@@ -125,14 +125,14 @@ mv /etc/origin/ovn/ovnsb_db.db /tmp
 ### 恢复数据库集群
 
 将备份数据库分别重命名为 `ovnnb_db.db` 和 `ovnsb_db.db` 至于 `ovn-central`
- 环境变量 `NODE_IPS` 中排第一机器的 `/etc/origin/ovn/` 目录下
+ 环境变量 `NODE_IPS` 中排第一机器的 `/etc/origin/ovn/` 目录下：
 
 ```bash
 mv /etc/origin/ovn/ovnnb_db_standalone.db /etc/origin/ovn/ovnnb_db.db
 mv /etc/origin/ovn/ovnsb_db_standalone.db /etc/origin/ovn/ovnsb_db.db
 ```
 
-恢复 `ovn-central` 的副本数
+恢复 `ovn-central` 的副本数：
 
 ```bash
 kubectl scale deployment -n kube-system ovn-central --replicas=3

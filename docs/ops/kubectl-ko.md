@@ -42,6 +42,7 @@ The following compatible plugins are available:
 运行 `kubectl ko` 会展示该插件所有可用的命令和用法描述，如下所示：
 
 ```bash
+# kubectl ko
 kubectl ko {subcommand} [option...]
 Available Subcommands:
   [nb|sb] [status|kick|backup|dbstatus|restore]     ovn-db operations show cluster status, kick stale server, backup database, get db consistency status or restore ovn nb db when met 'inconsistent data' error
@@ -67,7 +68,7 @@ Available Subcommands:
 
 #### 数据库集群状态查看
 
-该命令会在对应 OVN 数据库的 leader 节点执行 `ovs-appctl cluster/status` 展示集群状态
+该命令会在对应 OVN 数据库的 leader 节点执行 `ovs-appctl cluster/status` 展示集群状态:
 
 ```bash
 # kubectl ko nb status
@@ -102,15 +103,15 @@ status: ok
 
 #### 数据库节点下线
 
-该命令会将某个节点从 OVN 数据库中移除，在节点下线或更换节点时需要用到,
-以上个命令所查看到的集群状态为例，下线 `172.18.0.3` 节点
+该命令会将某个节点从 OVN 数据库中移除，在节点下线或更换节点时需要用到。
+下面将以上一条命令所查看到的集群状态为例，下线 `172.18.0.3` 节点:
 
 ```bash
 # kubectl ko nb kick 8723
 started removal
 ```
 
-再次查看数据库集群状态确认节点已移除
+再次查看数据库集群状态确认节点已移除：
 
 ```bash
 # kubectl ko nb status
@@ -141,7 +142,7 @@ status: ok
 
 #### 数据库备份
 
-该命令会备份当前 OVN 数据库至本地，可用于灾备和恢复
+该子命令会备份当前 OVN 数据库至本地，可用于灾备和恢复：
 
 ```bash
 # kubectl ko nb backup
@@ -151,18 +152,18 @@ backup ovn-nb db to /root/ovnnb_db.060223191654183154.backup
 
 #### 数据库存储状态查看
 
-该命令用来查看数据库文件是否存在损坏
+该命令用来查看数据库文件是否存在损坏：
 
 ```bash
 # kubectl ko nb dbstatus
 status: ok
 ```
 
-若异常则显示 `inconsistent data` 需要使用下面的命令进行修复
+若异常则显示 `inconsistent data` 需要使用下面的命令进行修复。
 
 #### 数据库修复
 
-若数据库状态进入 `inconsistent data` 可使用该命令进行修复
+若数据库状态进入 `inconsistent data` 可使用该命令进行修复：
 
 ```bash
 # kubectl ko nb restore
@@ -185,7 +186,7 @@ pod "ovs-ovn-t87zk" deleted
 ### [nbctl | sbctl] [options ...]
 
 该子命令会直接进入 OVN 北向数据库或南向数据库 的 leader 节点分别执行 `ovn-nbctl` 和 `ovn-sbctl` 命令。
-更多该命令的详细用法请查询上游 OVN 的官方文档 [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html) 和 [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html)
+更多该命令的详细用法请查询上游 OVN 的官方文档 [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html) 和 [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html)。
 
 ```bash
 # kubectl ko nbctl show
@@ -208,17 +209,6 @@ switch 0191705c-f827-427b-9de3-3c3b7d971ba5 (central)
         type: router
         router-port: ovn-cluster-central
 switch 2a45ff05-388d-4f85-9daf-e6fccd5833dc (ovn-default)
-    port perf-6vxkn.default
-        addresses: ["00:00:00:82:84:71 10.16.0.2"]
-    port grafana-6c4c6b8fb7-pzd2c.monitoring
-        addresses: ["00:00:00:82:5E:9B 10.16.0.7"]
-    port kube-ovn-pinger-7twb4.kube-system
-        addresses: ["00:00:00:DC:E3:63 10.16.63.30"]
-    port prometheus-operator-7bbc99fc8b-wgjm4.monitoring
-        addresses: ["00:00:00:8F:31:15 10.16.0.18"]
-    port kube-ovn-pinger-6ftdf.kube-system
-        addresses: ["00:00:00:FA:1E:50 10.16.0.10"]
-    port lsp1
     port alertmanager-main-0.monitoring
         addresses: ["00:00:00:6C:DF:A3 10.16.0.19"]
     port kube-state-metrics-5d6885d89-4nf8h.monitoring
@@ -228,30 +218,6 @@ switch 2a45ff05-388d-4f85-9daf-e6fccd5833dc (ovn-default)
     port ovn-default-ovn-cluster
         type: router
         router-port: ovn-cluster-ovn-default
-    port alertmanager-main-1.monitoring
-        addresses: ["00:00:00:F9:74:F7 10.16.0.20"]
-    port coredns-6789c94dd8-25d4r.kube-system
-        addresses: ["00:00:00:23:65:24 10.16.0.9"]
-    port kube-ovn-pinger-vh2xg.kube-system
-        addresses: ["00:00:00:F8:07:C8 10.16.0.5"]
-    port prometheus-k8s-0.monitoring
-        addresses: ["00:00:00:76:15:F8 10.16.0.22"]
-    port perf-fjnws.default
-        addresses: ["00:00:00:2A:14:75 10.16.0.14"]
-    port prometheus-adapter-86df476d87-rl88g.monitoring
-        addresses: ["00:00:00:DA:B0:35 10.16.0.16"]
-    port perf-ff475.default
-        addresses: ["00:00:00:56:1B:67 10.16.0.8"]
-    port alertmanager-main-2.monitoring
-        addresses: ["00:00:00:CB:56:43 10.16.0.21"]
-    port prometheus-adapter-86df476d87-gdxmc.monitoring
-        addresses: ["00:00:00:94:31:DD 10.16.0.12"]
-    port coredns-6789c94dd8-9jqsz.kube-system
-        addresses: ["00:00:00:40:A1:95 10.16.0.4"]
-    port blackbox-exporter-676d976865-tvsjd.monitoring
-        addresses: ["00:00:00:BF:9C:FC 10.16.0.13"]
-    port prometheus-k8s-1.monitoring
-        addresses: ["00:00:00:AA:37:DF 10.16.0.23"]
 router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
     port ovn-cluster-snat
         mac: "00:00:00:7A:82:8F"
@@ -270,7 +236,7 @@ router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
 ### vsctl {nodeName} [options ...]
 
 该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-vsctl` 命令，查询并配置 `vswitchd`。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-vsctl(8)](https://man7.org/linux/man-pages/man8/ovs-vsctl.8.html)
+更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-vsctl(8)](https://man7.org/linux/man-pages/man8/ovs-vsctl.8.html)。
 
 ```bash
 # kubectl ko vsctl kube-ovn-01 show
@@ -289,21 +255,13 @@ router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
         Port ovn0
             Interface ovn0
                 type: internal
-        Port "04d03360e9a0_h"
-            Interface "04d03360e9a0_h"
-        Port eeb4d9e51b5d_h
-            Interface eeb4d9e51b5d_h
         Port mirror0
             Interface mirror0
                 type: internal
-        Port "8e5d887ccd80_h"
-            Interface "8e5d887ccd80_h"
         Port ovn-efa253-0
             Interface ovn-efa253-0
                 type: stt
                 options: {csum="true", key=flow, remote_ip="192.168.137.177"}
-        Port "17512d5be1f1_h"
-            Interface "17512d5be1f1_h"
         Port br-int
             Interface br-int
                 type: internal
@@ -312,8 +270,8 @@ router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
 
 ### ofctl {nodeName} [options ...]
 
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-ofctl` 命令，查询或管理 OpenFlow
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-ofctl(8)](https://man7.org/linux/man-pages/man8/ovs-ofctl.8.html)
+该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-ofctl` 命令，查询或管理 OpenFlow。
+更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-ofctl(8)](https://man7.org/linux/man-pages/man8/ovs-ofctl.8.html)。
 
 ```bash
 # kubectl ko ofctl kube-ovn-01 dump-flows br-int
@@ -327,8 +285,8 @@ NXST_FLOW reply (xid=0x4): flags=[more]
 
 ### dpctl {nodeName} [options ...]
 
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-dpctl` 命令，查询或管理 OVS datapath
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-dpctl(8)](https://man7.org/linux/man-pages/man8/ovs-dpctl.8.html)
+该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-dpctl` 命令，查询或管理 OVS datapath。
+更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-dpctl(8)](https://man7.org/linux/man-pages/man8/ovs-dpctl.8.html)。
 
 ```bash
 # kubectl ko dpctl kube-ovn-01 show
@@ -344,15 +302,12 @@ system@ovs-system:
   port 5: eeb4d9e51b5d_h
   port 6: a2c1a8a8b83a_h
   port 7: 4fa5c4cbb1a5_h
-  port 8: 17512d5be1f1_h
-  port 9: 04d03360e9a0_h
-  port 10: 8e5d887ccd80_h
 ```
 
 ### appctl {nodeName} [options ...]
 
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-appctl` 命令，来操作相关 daemon 进程
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-appctl(8)](https://man7.org/linux/man-pages/man8/ovs-appctl.8.html)
+该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-appctl` 命令，来操作相关 daemon 进程。
+更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-appctl(8)](https://man7.org/linux/man-pages/man8/ovs-appctl.8.html)。
 
 ```bash
 # kubectl ko appctl kube-ovn-01 vlog/list
@@ -370,7 +325,7 @@ bundles            OFF        ERR       INFO
 ### tcpdump {namespace/podname} [tcpdump options ...]
 
 该命令会进入 `namespace/podname` 所在机器的 `kube-ovn-cni` 容器，并执行 `tcpdump` 抓取对应容器 veth 网卡
-端的流量，可以方便排查网络相关问题，如下所示
+端的流量，可以方便排查网络相关问题，如下所示：
 
 ```bash
 # kubectl ko tcpdump default/ds1-l6n7p icmp
@@ -427,7 +382,7 @@ ct_next(ct_state=new|trk)
 
 ### diagnose {all|node} [nodename]
 
-诊断集群网络组件状态，并去对应节点的 `kube-ovn-pinger` 检测当前节点到其他节点和关键服务的连通性和网络延迟
+诊断集群网络组件状态，并去对应节点的 `kube-ovn-pinger` 检测当前节点到其他节点和关键服务的连通性和网络延迟：
 
 ```bash
 # kubectl ko diagnose all
@@ -436,32 +391,10 @@ switch c7cd17e8-ceee-4a91-9bb3-e5a313fe1ece (snat)
         type: router
         router-port: ovn-cluster-snat
 switch 20e0c6d0-023a-4756-aec5-200e0c60f95d (join)
-    port node-fake-0
-        addresses: ["00:00:00:DA:C7:36 100.64.0.17"]
-    port node-fake-5
-        addresses: ["00:00:00:F3:65:3D 100.64.0.24"]
     port node-liumengxin-ovn3-192.168.137.178
         addresses: ["00:00:00:64:FF:A8 100.64.0.4"]
     port node-liumengxin-ovn1-192.168.137.176
         addresses: ["00:00:00:AF:98:62 100.64.0.2"]
-    port node-fake-7
-        addresses: ["00:00:00:B9:79:E5 100.64.0.21"]
-    port node-liumengxin-ovn2-192.168.137.177
-        addresses: ["00:00:00:D9:58:B8 100.64.0.3"]
-    port node-fake-8
-        addresses: ["00:00:00:D8:E6:49 100.64.0.23"]
-    port node-fake-3
-        addresses: ["00:00:00:75:91:96 100.64.0.15"]
-    port node-fake-1
-        addresses: ["00:00:00:6E:C7:C5 100.64.0.16"]
-    port node-fake-9
-        addresses: ["00:00:00:B2:EF:36 100.64.0.20"]
-    port node-fake-4
-        addresses: ["00:00:00:6E:69:00 100.64.0.19"]
-    port node-fake-2
-        addresses: ["00:00:00:7A:AB:CC 100.64.0.18"]
-    port node-fake-6
-        addresses: ["00:00:00:EA:39:08 100.64.0.22"]
     port join-ovn-cluster
         type: router
         router-port: ovn-cluster-join
@@ -470,48 +403,9 @@ switch 0191705c-f827-427b-9de3-3c3b7d971ba5 (central)
         type: router
         router-port: ovn-cluster-central
 switch 2a45ff05-388d-4f85-9daf-e6fccd5833dc (ovn-default)
-    port perf-6vxkn.default
-        addresses: ["00:00:00:82:84:71 10.16.0.2"]
-    port grafana-6c4c6b8fb7-pzd2c.monitoring
-        addresses: ["00:00:00:82:5E:9B 10.16.0.7"]
-    port kube-ovn-pinger-7twb4.kube-system
-        addresses: ["00:00:00:DC:E3:63 10.16.63.30"]
-    port prometheus-operator-7bbc99fc8b-wgjm4.monitoring
-        addresses: ["00:00:00:8F:31:15 10.16.0.18"]
-    port kube-ovn-pinger-6ftdf.kube-system
-        addresses: ["00:00:00:FA:1E:50 10.16.0.10"]
-    port lsp1
-    port alertmanager-main-0.monitoring
-        addresses: ["00:00:00:6C:DF:A3 10.16.0.19"]
-    port kube-state-metrics-5d6885d89-4nf8h.monitoring
-        addresses: ["00:00:00:6F:02:1C 10.16.0.15"]
-    port fake-kubelet-67c55dfd89-pv86k.kube-system
-        addresses: ["00:00:00:5C:12:E8 10.16.19.177"]
     port ovn-default-ovn-cluster
         type: router
         router-port: ovn-cluster-ovn-default
-    port alertmanager-main-1.monitoring
-        addresses: ["00:00:00:F9:74:F7 10.16.0.20"]
-    port coredns-6789c94dd8-25d4r.kube-system
-        addresses: ["00:00:00:23:65:24 10.16.0.9"]
-    port kube-ovn-pinger-vh2xg.kube-system
-        addresses: ["00:00:00:F8:07:C8 10.16.0.5"]
-    port prometheus-k8s-0.monitoring
-        addresses: ["00:00:00:76:15:F8 10.16.0.22"]
-    port perf-fjnws.default
-        addresses: ["00:00:00:2A:14:75 10.16.0.14"]
-    port prometheus-adapter-86df476d87-rl88g.monitoring
-        addresses: ["00:00:00:DA:B0:35 10.16.0.16"]
-    port perf-ff475.default
-        addresses: ["00:00:00:56:1B:67 10.16.0.8"]
-    port alertmanager-main-2.monitoring
-        addresses: ["00:00:00:CB:56:43 10.16.0.21"]
-    port prometheus-adapter-86df476d87-gdxmc.monitoring
-        addresses: ["00:00:00:94:31:DD 10.16.0.12"]
-    port coredns-6789c94dd8-9jqsz.kube-system
-        addresses: ["00:00:00:40:A1:95 10.16.0.4"]
-    port blackbox-exporter-676d976865-tvsjd.monitoring
-        addresses: ["00:00:00:BF:9C:FC 10.16.0.13"]
     port prometheus-k8s-1.monitoring
         addresses: ["00:00:00:AA:37:DF 10.16.0.23"]
 router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
@@ -530,25 +424,11 @@ router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
 Routing Policies
      31000                            ip4.dst == 10.16.0.0/16           allow
      31000                           ip4.dst == 100.64.0.0/16           allow
-     31000                           ip4.dst == 172.22.0.0/16           allow
-     31000                          ip4.dst == 192.101.0.0/16           allow
-     30000                              ip4.dst == 10.16.0.27         reroute               100.64.0.15
-     30000                             ip4.dst == 10.16.63.34         reroute               100.64.0.20
-     30000                         ip4.dst == 192.168.137.176         reroute                100.64.0.2
      30000                         ip4.dst == 192.168.137.177         reroute                100.64.0.3
      30000                         ip4.dst == 192.168.137.178         reroute                100.64.0.4
-     29000                 ip4.src == $ovn.default.fake.0_ip4         reroute               100.64.0.17
-     29000                 ip4.src == $ovn.default.fake.1_ip4         reroute               100.64.0.16
-     29000                 ip4.src == $ovn.default.fake.2_ip4         reroute               100.64.0.18
-     29000                 ip4.src == $ovn.default.fake.3_ip4         reroute               100.64.0.15
-     29000                 ip4.src == $ovn.default.fake.4_ip4         reroute               100.64.0.19
-     29000                 ip4.src == $ovn.default.fake.5_ip4         reroute               100.64.0.24
      29000                 ip4.src == $ovn.default.fake.6_ip4         reroute               100.64.0.22
      29000                 ip4.src == $ovn.default.fake.7_ip4         reroute               100.64.0.21
      29000                 ip4.src == $ovn.default.fake.8_ip4         reroute               100.64.0.23
-     29000                 ip4.src == $ovn.default.fake.9_ip4         reroute               100.64.0.20
-     29000 ip4.src == $ovn.default.liumengxin.ovn1.192.168.137.176_ip4         reroute                100.64.0.2
-     29000 ip4.src == $ovn.default.liumengxin.ovn2.192.168.137.177_ip4         reroute                100.64.0.3
      29000 ip4.src == $ovn.default.liumengxin.ovn3.192.168.137.178_ip4         reroute                100.64.0.4
      20000 ip4.src == $ovn.default.liumengxin.ovn1.192.168.137.176_ip4 && ip4.dst != $ovn.cluster.overlay.subnets.IPv4         reroute                100.64.0.2
      20000 ip4.src == $ovn.default.liumengxin.ovn2.192.168.137.177_ip4 && ip4.dst != $ovn.cluster.overlay.subnets.IPv4         reroute                100.64.0.3
@@ -561,14 +441,6 @@ e9bcfd9d-793e-4431-9073-6dec96b75d71    cluster-tcp-load    tcp        10.100.20
                                                             tcp        10.101.239.192:6641     192.168.137.177:6641
                                                             tcp        10.101.240.101:3000     10.16.0.7:3000
                                                             tcp        10.103.184.186:6642     192.168.137.177:6642
-                                                            tcp        10.104.142.63:6643      192.168.137.177:6643
-                                                            tcp        10.104.222.180:443      10.16.0.12:6443,10.16.0.16:6443
-                                                            tcp        10.110.17.192:10665     10.0.1.35:10665,10.0.1.36:10665,10.0.1.37:10665,10.0.1.38:10665,10.0.1.39:10665,10.0.1.40:10665,10.0.1.41:10665,10.0.1.42:10665,10.0.1.43:10665,10.0.1.44:10665,192.168.137.176:10665,192.168.137.177:10665,192.168.137.178:10665
-                                                            tcp        10.96.0.10:53           10.16.0.4:53,10.16.0.9:53
-                                                            tcp        10.96.0.10:9153         10.16.0.4:9153,10.16.0.9:9153
-                                                            tcp        10.96.0.1:443           192.168.137.176:6443,192.168.137.177:6443,192.168.137.178:6443
-                                                            tcp        10.96.220.16:19115      10.16.0.13:19115
-                                                            tcp        10.96.220.16:9115       10.16.0.13:9115
 35d2b7a5-e3a7-485a-a4b7-b4970eb0e63b    cluster-tcp-sess    tcp        10.100.158.128:8080     10.16.0.10:8080,10.16.0.5:8080,10.16.63.30:8080
                                                             tcp        10.107.26.215:8080      10.16.0.19:8080,10.16.0.20:8080,10.16.0.21:8080
                                                             tcp        10.107.26.215:9093      10.16.0.19:9093,10.16.0.20:9093,10.16.0.21:9093

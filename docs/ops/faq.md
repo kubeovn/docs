@@ -4,8 +4,7 @@
 
 ### 现象
 
-麒麟 ARM 系统和部分国产化网卡 offload 配合存在问题，会导致容器网络间歇
-故障。
+麒麟 ARM 系统和部分国产化网卡 offload 配合存在问题，会导致容器网络间歇故障。
 
 使用 `netstat` 确认问题：
 
@@ -40,13 +39,13 @@ IpExt:
 ### 解决方法
 
 根本解决需要和麒麟以及对应网卡厂商沟通，更新系统和驱动。临时解决可先关闭物理
-网卡的 `tx offload` 但是会导致 tcp 性能有较明显下降
+网卡的 `tx offload` 但是会导致 tcp 性能有较明显下降。
 
 ```bash
 ethtool -K eth0 tx off
 ```
 
-## Pod 访问 Service 不同
+## Pod 访问 Service 不通
 
 ### 现象
 
@@ -57,10 +56,10 @@ netlink：Unknown conntrack attr (type=6, max=5)
 openvswitch: netlink: Flow actions may not be safe on all matching packets.
 ```
 
-该日志说明内核内 OVS 版本过低不支持对应 NAT 操作
+该日志说明内核内 OVS 版本过低不支持对应 NAT 操作。
 
 ### 解决方法
 
-1. 升级内核模块或手动编译 OVS 内核模块
-2. 若只使用 Overlay 网络可以更改 `kube-ovn-controller` 启动参数设置 `--enable-lb=false`
-关闭 OVN LB 使用 kube-proxy 进行 Service 转发
+1. 升级内核模块或手动编译 OVS 内核模块。
+2. 若只使用 Overlay 网络可以更改 `kube-ovn-controller` 启动参数设置 `--enable-lb=false` 
+关闭 OVN LB 使用 kube-proxy 进行 Service 转发。

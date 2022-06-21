@@ -22,7 +22,7 @@
 
 ## 登录对应节点并停止 kubelet 和 docker 已停止对应 DaemonSet pod，
 
-该步骤会停止 `ovs-ovn` 容器，避免向 `ovn-central` 进行注册
+该步骤会停止 `ovs-ovn` 容器，避免向 `ovn-central` 进行注册：
   
 ```bash
 systemctl stop kubelet
@@ -50,7 +50,7 @@ kubectl delete no kube-ovn-01
 
 ## 检查对应节点是否从 ovn-sb 中删除
 
-下面的示例为 `kube-ovn-worker` 依然未被删除
+下面的示例为 `kube-ovn-worker` 依然未被删除：
 ```bash
 # kubectl ko sbctl show
 Chassis "b0564934-5a0d-4804-a4c0-476c93596a17"
@@ -73,7 +73,7 @@ Chassis "6a29de7e-d731-4eaf-bacd-2f239ee52b28"
 
 ## 若节点对应的 chassis 依然存在，手动进行删除
 
-uuid 为之前命令所查出的 Chassis 对应 id
+uuid 为之前命令所查出的 Chassis 对应 id：
 
 ```bash
 # kubectl ko sbctl chassis-del b0564934-5a0d-4804-a4c0-476c93596a17

@@ -24,7 +24,7 @@ for pod in $(kubectl get pod --no-headers -n "$ns" --field-selector spec.restart
 done
 ```
 
-若只使用了默认子网，可以使用下列命令删除所有非 host 网络模式的 Pod
+若只使用了默认子网，可以使用下列命令删除所有非 host 网络模式的 Pod：
 
 ```bash
 for ns in $(kubectl get ns --no-headers -o custom-columns=NAME:.metadata.name); do
@@ -36,7 +36,7 @@ done
 
 ## 更改默认子网配置
 
-若修改的为默认子网的 CIDR 还需要更改 `kube-ovn-controller` 的启动参数
+若修改的为默认子网的 CIDR 还需要更改 `kube-ovn-controller` Deployment 的启动参数：
 
 ```yaml
 args:

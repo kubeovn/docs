@@ -1,15 +1,15 @@
 # 更换 ovn-central 节点
 
-由于 `ovn-central` 内的 `ovn-nb` 和 `ovn-sb` 分别建立了类似 etcd 的 raft 集群，因此更换 `ovn-central`
+由于 `ovn-central` 内的 `ovn-nb` 和 `ovn-sb` 分别建立了类似 etcd 的 raft 集群，因此更换 `ovn-central` 
 节点需要额外的操作，保证集群状态的正确和数据的一致。建议每次只对一个节点进行上下线处理，以避免集群进入不可用
 状态，影响集群整体网络。
 
 ## ovn-central 节点下线
 
-本文档针对如下的集群情况以下线 `kube-ovn-control-plane2` 节点为例，介绍如何将其从 `ovn-central` 集群中移除
+本文档针对如下的集群情况，以下线 `kube-ovn-control-plane2` 节点为例，介绍如何将其从 `ovn-central` 集群中移除。
 
 ```bash
-kubectl -n kube-system get pod -o wide | grep central
+# kubectl -n kube-system get pod -o wide | grep central
 ovn-central-6bf58cbc97-2cdhg                      1/1     Running   0             21m   172.18.0.3   kube-ovn-control-plane    <none>           <none>
 ovn-central-6bf58cbc97-crmfp                      1/1     Running   0             21m   172.18.0.5   kube-ovn-control-plane2   <none>           <none>
 ovn-central-6bf58cbc97-lxmpl                      1/1     Running   0             21m   172.18.0.4   kube-ovn-control-plane3   <none>           <none>
@@ -48,14 +48,14 @@ status: ok
 ```
 
 `kube-ovn-control-plane2` 对应节点 IP 为 `172.18.0.5`，集群内对应的 ID 为 `d64b`。接下来从 ovn-nb 
-集群中踢出该节点
+集群中踢出该节点：
 
 ```bash
 # kubectl ko nb kick d64b
 started removal
 ```
 
-确认节点踢出成功
+确认节点踢出成功：
 
 ```bash
 # kubectl ko nb status
@@ -86,7 +86,7 @@ status: ok
 
 ### 下线 ovn-sb 集群内对应节点
 
-接下来需要对 ovn-sb 集群，首先查看节点在集群内的 ID，以便后续操作。
+接下来需要对 ovn-sb 集群，首先查看节点在集群内的 ID，以便后续操作：
 
 ```bash
 kubectl ko sb status
@@ -117,14 +117,14 @@ status: ok
 ```
 
 `kube-ovn-control-plane2` 对应节点 IP 为 `172.18.0.5`，集群内对应的 ID 为 `e9f7`。接下来从 ovn-sb 
-集群中踢出该节点
+集群中踢出该节点：
 
 ```bash
 # kubectl ko sb kick e9f7
 started removal
 ```
 
-确认节点踢出成功
+确认节点踢出成功：
 
 ```bash
 # kubectl ko sb status
@@ -201,11 +201,11 @@ rm -rf /etc/origin/ovn
 
 ## ovn-central 节点上线
 
-下列步骤会将一个新的 Kubernetes 节点加入 `ovn-central` 集群
+下列步骤会将一个新的 Kubernetes 节点加入 `ovn-central` 集群。
 
 ### 目录检查
 
-检查新增节点的 `/etc/origin/ovn` 目录中是否存在 `ovnnb_db.db` 或 `ovnsb_db.db` 文件，若存在需提前删除
+检查新增节点的 `/etc/origin/ovn` 目录中是否存在 `ovnnb_db.db` 或 `ovnsb_db.db` 文件，若存在需提前删除：
 
 ```bash
 rm -rf /etc/origin/ovn
@@ -280,7 +280,7 @@ kubectl rollout status deployment/ovn-central -n kube-system
 
 ### 修改其他组件连接 ovn-central 地址
 
-修改 `ovs-ovn` 内连接信息，增加上线节点地址。
+修改 `ovs-ovn` 内连接信息，增加上线节点地址：
 
 ```bash
 # kubectl set env daemonset/ovs-ovn -n kube-system OVN_DB_IPS="172.18.0.3,172.18.0.4,172.18.0.5"
@@ -291,7 +291,7 @@ pod "ovs-ovn-csn2w" deleted
 pod "ovs-ovn-mpbmb" deleted
 ```
 
-修改 `kube-ovn-controller` 内连接信息，增加上线节点地址。
+修改 `kube-ovn-controller` 内连接信息，增加上线节点地址：
 
 ```bash
 # kubectl set env deployment/kube-ovn-controller -n kube-system OVN_DB_IPS="172.18.0.3,172.18.0.4,172.18.0.5"
