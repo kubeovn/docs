@@ -611,7 +611,7 @@ ovn-northd leader check ok
 I0603 10:35:04.349404   17619 pinger.go:19]
 -------------------------------------------------------------------------------
 Kube-OVN:
-  Version:       v1.10.0
+  Version:       v1.10.1
   Build:         2022-04-24_08:02:50
   Commit:        git-73f9d15
   Go Version:    go1.17.8

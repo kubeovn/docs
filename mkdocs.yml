@@ -51,7 +51,7 @@ nav:
       - 总体架构: 'reference/architecture.md'
       - Underlay 流量拓扑: 'reference/underlay-topology.md'
       - 开发环境构建: 'reference/dev-env.md'
-      - API 指南: 'reference/api.md'
+#      - API 指南: 'reference/api.md'
       - 对上游 OVS/OVN 修改: 'reference/ovs-ovn-customized.md'
       - 隧道协议说明: 'reference/tunnel-protocol.md'
   - 联系方式: 'contact.md'
@@ -70,7 +70,7 @@ plugins:
       separator: '[\s\u200b\-]'
 #  - with-pdf:
 #      author: Kube-OVN Team
-#      cover_subtitle: v1.10.0
+#      cover_subtitle: v1.10.1
 extra:
   social:
     - icon: fontawesome/brands/twitter
