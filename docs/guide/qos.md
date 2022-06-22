@@ -129,6 +129,8 @@ iperf Done.
 
 ## linux-htb QoS
 
+![](../static/priority-qos.png)
+
 `linux-htb` QoS 是基于优先级的 QoS 设置，当出现整体带宽不足时，优先级较高的流量会被优先保证，在 Kube-OVN 中通过 HtbQos 进行设置。
 
 HtbQos 定义只有一个字段，即 `.spec.priority`，字段取值代表了优先级的大小。在 Kube-OVN 初始化时预置了三个不同优先级的实例，分别是：

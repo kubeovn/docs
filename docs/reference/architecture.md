@@ -15,6 +15,8 @@ Kube-OVN 的组件可以大致分为三类：
 * 核心控制器和 Agent。
 * 监控，运维工具和扩展组件。
 
+![](../static/architecture.png)
+
 ### 上游 OVN/OVS 组件
 
 该类型组件来自 OVN/OVS 社区，并针对 Kube-OVN 的使用场景做了特定修改。 OVN/OVS 本身是一套成熟的管理虚机和容器的 SDN 系统，我们强烈建议

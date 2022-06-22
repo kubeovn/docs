@@ -5,7 +5,7 @@ Namespace 下的 Pod 会自动从所属的子网中获取 IP 并共享子网的�
 
 和其他 CNI 的每个节点绑定一个子网的实现不同，在 Kube-OVN 中子网为一个全局的虚拟网络配置，同一个子网的地址可以分布在任意一个节点上。
 
-![网络拓扑](../static/netowrk-topology.png)
+![网络拓扑](../static/default-vpc-topology.png)
 
 Overlay 和 Underlay 的子网在使用和配置上存在一些差异，本文档将会介绍不同类型子网的一些共同配置和差异化功能。
 
@@ -155,6 +155,8 @@ Overlay 子网下的 Pod 需要通过网关来访问集群外部网络，Kube-OV
 数据包会通过本机的 `ovn0` 网卡流入主机网络栈，再根据主机的路由规则进行出网。
 当 `natOutgoing` 为 `true` 时，Pod 访问外部网络将会使用当前所在宿主机的 IP。
 
+![](../static/distributed-gateway.png)
+
 子网示例，其中 `gatewayType` 字段为 `distributed`：
 
 ```yaml
@@ -173,6 +175,8 @@ spec:
 ```
 
 ### 集中式网关
+
+![](../static/centralized-gateway.png)
 
 如果希望子网内流量访问外网使用固定的 IP，以便审计和白名单等安全操作，可以在子网中设置网关类型为集中式网关。
 在集中式网关模式下，Pod 访问外网的数据包会首先被路由到特定节点的 `ovn0` 网卡，再通过主机的路由规则进行出网。

@@ -9,6 +9,8 @@
 - 更丰富高效的安全策略
 - 基于 Hubble 的监控视图
 
+![](../static/cilium-integragion.png)
+
 ## 前提条件
 
 1. Linux 内核版本高于 4.19 或其他兼容内核以获得完整 eBPF 能力支持
