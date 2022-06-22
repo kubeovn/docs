@@ -40,23 +40,17 @@ Kube-OVN 的组件可以大致分为三类：
 
 ### 核心控制器和 Agent
 
-These are the core components in Kube-OVN that act as the bridge between Kubernetes and OVN and implement all the advanced network functions.
-
-The code entrypoint of the components below can be found in `/cmd`.
+该部分为 Kube-OVN 的核心组件，作为 OVN 和 Kubernetes 之间的一个桥梁，将两个系统打通并将网络概念进行相互转换。
+大部分的核心功能都在该部分组件中实现。
 
 #### kube-ovn-controller
-It's a deployment that runs all the logic that translates the Kubernetes network concept into OVN.
-You can treat it as the control plane of Kube-OVN.
+该组件为一个 Deployment 执行所有 Kubernetes 内资源到 OVN 资源的翻译工作，其作用相当于整个 Kube-OVN 系统的控制平面。
+`kube-ovn-controller` 监听了所有和网络功能相关资源的事件，并根据资源变化情况更新 OVN 内的逻辑网络。主要监听的资源包括：
+Pod，Service，Endpoint，Node，NetworkPolicy，VPC，Subnet，Vlan，ProviderNetwork。
 
-It watches all network-related events in Kubernetes APIServer like Pod creation/deletion, Service/Endpoint modification, Networkpolicy changes, and so on.
-Then the controller translates them into OVN logical network changes.
-It also watches and updates CRDs that belong to Kube-OVN like VPC/Subnet/Vlan/IP to implement advanced network functions.
-
-The basic function of kube-ovn-controller is watching pod creation events.
-When the event comes the controller uses the embedded in-memory IPAM to allocate an address and call ovn-central to update the logical network,
-in the pod creation case, it will create a logical switch port, add static routes and update ACL rules.
-Then the controller writes the allocated address and other options like cidr, gateway, routes into Pod's annotations for the `kube-ovn-daemon` to use.
-As the controller has a global ipam, it can allocate addresses in a global view.
+以 Pod 事件为例， `kube-ovn-controller` 监听到 Pod 创建事件后，通过内置的内存 IPAM 功能分配地址，并调用 `ovn-central` 创建
+逻辑端口，静态路由和可能的 ACL 规则。接下来 `kube-ovn-controller` 将分配到的地址，和子网信息例如 CIDR，网关，路由等信息写会到 Pod 
+的 annotation 中。该 annotation 后续会被 `kube-ovn-cni` 读取用来配置本地网络。
 
 #### kube-ovn-cni
 It's a binary that acts as a thin shim between kubelet and `kube-ovn-daemon`.
@@ -80,16 +74,15 @@ The main works include:
 
 ### 监控，运维工具和扩展组件
 
-These components are extensions of Kube-OVN main functions.
-They provide monitoring, diagnosis, productive tools for Kube-OVN maintenance.
+该部分组件主要提供监控，诊断，运维操作以及和外部进行对接，对 Kube-OVN 的核心网络能力进行扩展，并简化日常运维操作。
 
 #### kube-ovn-speaker
-It's a BGP speaker that can announce container networks to external BGP routers or switches so that workloads outside the Kubernetes cluster can visit the container network directly.
+该组件为一个 DaemonSet 运行在特定标签的节点上，对外发布容器网络的路由，使得外部可以直接通过 Pod IP 访问容器。
 
-For more usage you can read [BGP support](../advance/with-bgp.md).
+更多相关使用方式请参考 [BGP 支持](../advance/with-bgp.md)。
 
 #### kube-ovn-pinger
-该组件为一个 Daemonset 运行在每个节点上收集 OVS 运行信息，节点网络质量，网络延迟等信息，收集的监控指标可参考 [Kube-OVN 监控指标](./metrics.md)。
+该组件为一个 DaemonSet 运行在每个节点上收集 OVS 运行信息，节点网络质量，网络延迟等信息，收集的监控指标可参考 [Kube-OVN 监控指标](./metrics.md)。
 
 #### kube-ovn-monitor
 该组件为一个 Deployment 收集 OVN 的运行信息，收集的监控指标可参考 [Kube-OVN 监控指标](./metrics.md)。
