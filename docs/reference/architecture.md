@@ -44,6 +44,7 @@ Kube-OVN 的组件可以大致分为三类：
 大部分的核心功能都在该部分组件中实现。
 
 #### kube-ovn-controller
+
 该组件为一个 Deployment 执行所有 Kubernetes 内资源到 OVN 资源的翻译工作，其作用相当于整个 Kube-OVN 系统的控制平面。
 `kube-ovn-controller` 监听了所有和网络功能相关资源的事件，并根据资源变化情况更新 OVN 内的逻辑网络。主要监听的资源包括：
 Pod，Service，Endpoint，Node，NetworkPolicy，VPC，Subnet，Vlan，ProviderNetwork。
@@ -53,39 +54,41 @@ Pod，Service，Endpoint，Node，NetworkPolicy，VPC，Subnet，Vlan，Provider
 的 annotation 中。该 annotation 后续会被 `kube-ovn-cni` 读取用来配置本地网络。
 
 #### kube-ovn-cni
-It's a binary that acts as a thin shim between kubelet and `kube-ovn-daemon`.
-It implements the CNI specification and passes the argument from kubelet to `kube-ovn-daemon` to do the real node-level network configuration works.
 
-The binary is contained in the kube-ovn-cni daemonset and will be placed into `/opt/cni/bin` by `kube-ovn-daemon`.
+该组件为一个 DaemonSet 运行在每个节点上，实现 CNI 接口，并操作本地的 OVS 配置单机网络。
 
-#### kube-ovn-daemon
-It's a daemonset run in every node and does all the stuff that really touches the network.
+该 DaemonSet 会复制 `kube-ovn` 二进制文件到每台机器，作为 `kubelet` 和 `kube-ovn-cni` 之间的交互工具，将相应 CNI 请求
+发送给 `kube-ovn-cni` 执行。该二进制文件默认会被复制到 `/opt/cni/bin` 目录下。
 
-The main works include:
-1. Bootstrap ovn-controller and ovs-vswitchd on every node
-2. Handle CNI actions like add/del
-    1. Create/Delete veth pair and plug them into Pod and OVS
-    2. Configure the OVS port
-    3. Update iptables/ipset/routes rules on the host network
-3. Dynamically update the Pod bandwidth
-4. Create `ovn0` for Pod-Host connectivity
-5. Configure host network interface for Vlan/Underlay/EIP functions
-6. Dynamically update the inter-cluster network gateway
+`kube-ovn-cni` 会配置具体的网络来执行相应流量操作，主要工作包括：
+1. 配置 `ovn-controller` 和 `vswitchd`。
+2. 处理 CNI add/del 请求：
+    1. 创建删除 veth 并和 OVS 端口绑定。
+    2. 配置 OVS 端口信息。
+    3. 更新宿主机的 iptables/ipset/route 等规则。
+3. 动态更新容器 QoS.
+4. 创建并配置 `ovn0` 网卡联通容器网络和主机网络。
+5. 配置主机网卡来实现 Vlan/Underlay/EIP 等功能。
+6. 动态配置集群互联网关。
 
 ### 监控，运维工具和扩展组件
 
 该部分组件主要提供监控，诊断，运维操作以及和外部进行对接，对 Kube-OVN 的核心网络能力进行扩展，并简化日常运维操作。
 
 #### kube-ovn-speaker
+
 该组件为一个 DaemonSet 运行在特定标签的节点上，对外发布容器网络的路由，使得外部可以直接通过 Pod IP 访问容器。
 
 更多相关使用方式请参考 [BGP 支持](../advance/with-bgp.md)。
 
 #### kube-ovn-pinger
+
 该组件为一个 DaemonSet 运行在每个节点上收集 OVS 运行信息，节点网络质量，网络延迟等信息，收集的监控指标可参考 [Kube-OVN 监控指标](./metrics.md)。
 
 #### kube-ovn-monitor
+
 该组件为一个 Deployment 收集 OVN 的运行信息，收集的监控指标可参考 [Kube-OVN 监控指标](./metrics.md)。
 
 #### kubectl-ko
+
 该组件为 kubectl 插件，可以快速运行常见运维操作，更多使用请参考 [kubectl 插件使用](../ops/kubectl-ko.md)。
