@@ -58,6 +58,7 @@ nav:
   - 联系方式: 'contact.md'
 theme:
     name: material
+    custom_dir: overrides
     language: 'zh'
     palette:
       - scheme: default
