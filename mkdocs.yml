@@ -74,6 +74,8 @@ theme:
           name: Switch to light mode
     features:
       - navigation.tabs
+      - navigation.tabs.sticky
+      - navigation.top
 markdown_extensions:
   - footnotes
   - fenced_code
