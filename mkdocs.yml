@@ -83,6 +83,9 @@ markdown_extensions:
 plugins:
   - search:
       separator: '[\s\u200b\-]'
+  - git-revision-date-localized:
+      type: date
+      enable_creation_date: true
 #  - with-pdf:
 #      author: Kube-OVN Team
 #      cover_subtitle: v1.10.1

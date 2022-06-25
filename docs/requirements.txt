@@ -1,3 +1,4 @@
 jinja2<3.1.0
 jieba==0.42.1
 mkdocs-material==8.2.15
+mkdocs-git-revision-date-localized-plugin==1.0.1

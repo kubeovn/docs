@@ -1,8 +1,5 @@
 {% extends "base.html" %}
 
-{% block extrahead %}
-<script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=62b5883c3a1e900019a62f2b&product=inline-share-buttons" async="async"></script>{% endblock %}
-
 {% block content %}
 
 <script>
@@ -16,8 +13,6 @@ var _hmt = _hmt || [];
 </script>
 
 {{ super() }}
-
-<div class="sharethis-inline-share-buttons"></div>
 
 <!-- Giscus -->
 <h2 id="__comments">{{ lang.t("meta.comments") }}</h2>
