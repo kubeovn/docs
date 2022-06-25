@@ -4,7 +4,7 @@
 
 对于希望容器网络直接使用物理网络地址段情况，可以将 Kube-OVN 的默认子网工作在 Underlay 模式，可以直接给容器分配物理网络中的地址资源，达到更好的性能以及和物理网络的连通性。
 
-![topology](https://raw.githubusercontent.com/kubeovn/kube-ovn/master/docs/vlan-topology.png "vlan network topology")
+![topology](../static/vlan-topology.png)
 
 ## 功能限制
 该模式下 Kube-OVN 网络表现和 Macvlan 类似，但相比 Macvlan 提供了地址管理，固定IP，服务发现，网络策略和 QoS 等功能。

@@ -9,7 +9,7 @@
 - 更丰富高效的安全策略
 - 基于 Hubble 的监控视图
 
-![](../static/cilium-integragion.png)
+![](../static/cilium-integration.png)
 
 ## 前提条件
 

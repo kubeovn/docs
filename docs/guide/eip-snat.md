@@ -6,6 +6,8 @@ Kube-OVN 支持利用 OVN 中的 L3 Gateway 功能来实现 Pod 级别的 SNAT �
 通过使用 SNAT，一组 Pod 可以共享一个 IP 地址对外进行访问。 通过 EIP 的功能，一个 Pod 可以直接和一个外部 IP 关联，
 外部服务可以通过 EIP 直接访问 Pod，Pod 也将通过这个 EIP 访问外部服务。
 
+![](../static/eip-snat.png)
+
 ## 准备工作
 
 - 为了使用 OVN 的 L3 Gateway 能力，必须将一个单独的网卡接入 OVS 网桥中进行 Overlay 和 Underlay 网络的打通，

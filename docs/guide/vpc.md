@@ -10,7 +10,7 @@ Kube-OVN 支持多租户隔离级别的 VPC 网络。不同 VPC 网络相互独�
 > 常见隔离需求可通过默认 VPC 下的网络策略和子网 ACL 实现，在使用自定义 VPC 前请明确是否需要
 > VPC 级别的隔离，并了解自定义 VPC 下的限制。
 
-![](../static/netowrk-topology.png)
+![](../static/network-topology.png)
 
 ## 创建自定义 VPC
 
