@@ -69,6 +69,10 @@ metadata:
     ovn.kubernetes.io/logical_switch: net1
   namespace: ns1
   name: vpc1-pod
+spec:
+  containers:
+    - name: vpc1-pod
+      image: nginx:alpine
 ---
 apiVersion: v1
 kind: Pod
@@ -77,6 +81,10 @@ metadata:
     ovn.kubernetes.io/logical_switch: net2
   namespace: ns2
   name: vpc2-pod
+spec:
+  containers:
+    - name: vpc2-pod
+      image: nginx:alpine
 ```
 
 运行成功后可观察两个 Pod 地址属于同一个 CIDR，但由于运行在不同的租户 VPC，两个 Pod 无法相互访问。
