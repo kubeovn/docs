@@ -20,7 +20,7 @@ Neutron 侧同样使用 OVN 作为底层网络控制，那么 Kube-OVN 可以使
 使用下面的命令启动 `OVN-IC` 数据库：
 
 ```bash
-docker run --name=ovn-ic-db -d --network=host -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:v1.10.1 bash start-ic-db.sh
+docker run --name=ovn-ic-db -d --network=host -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:v1.10.2 bash start-ic-db.sh
 ```
 
 ### Kubernetes 侧操作

@@ -107,7 +107,7 @@ kubectl scale deployment -n kube-system ovn-central --replicas=0
 执行下列命令生成数据库文件备份。
 
 ```bash
-docker run -it -v /etc/origin/ovn:/etc/ovn kubeovn/kube-ovn:v1.10.1 bash
+docker run -it -v /etc/origin/ovn:/etc/ovn kubeovn/kube-ovn:v1.10.2 bash
 cd /etc/ovn/
 ovsdb-tool cluster-to-standalone ovnnb_db_standalone.db ovnnb_db.db
 ovsdb-tool cluster-to-standalone ovnsb_db_standalone.db ovnsb_db.db

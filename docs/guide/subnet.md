@@ -110,6 +110,7 @@ kind: Subnet
 metadata:
   name: subnet1
 spec:
+  protocol: IPv4
   cidrBlock: 10.66.0.0/16
   excludeIps:
   - 10.66.0.1..10.66.0.10
@@ -129,13 +130,13 @@ EOF
 ### 验证子网绑定生效
 
 ```bash
-# kubectl create ns ls1
-namespace/ls1 created
+# kubectl create ns ns1
+namespace/ns1 created
 
-# kubectl run nginx --image=nginx:alpine -n ls1
+# kubectl run nginx --image=nginx:alpine -n ns1
 deployment.apps/nginx created
 
-# kubectl get pod -n ls1 -o wide
+# kubectl get pod -n ns1 -o wide
 NAME                     READY   STATUS    RESTARTS   AGE   IP           NODE    NOMINATED NODE   READINESS GATES
 nginx-74d5899f46-n8wtg   1/1     Running   0          10s   10.66.0.11   node1   <none>           <none>
 ```
@@ -165,6 +166,7 @@ kind: Subnet
 metadata:
   name: distributed
 spec:
+  protocol: IPv4
   cidrBlock: 10.166.0.0/16
   default: false
   excludeIps:
@@ -191,6 +193,7 @@ kind: Subnet
 metadata:
   name: centralized
 spec:
+  protocol: IPv4
   cidrBlock: 10.166.0.0/16
   default: false
   excludeIps:
