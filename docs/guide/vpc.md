@@ -168,10 +168,6 @@ spec:
   selector:
     - "kubernetes.io/hostname: kube-ovn-worker"
     - "kubernetes.io/os: linux"
-  staticRoutes:
-    - cidr: 0.0.0.0/0
-      nextHopIP: 10.0.1.254
-      policy: policyDst
 ```
 
 - `subnet`： 为 VPC 内某个 Subnet 名，VPC 网关 Pod 会在该子网下用 `lanIp` 来连接租户网络。
