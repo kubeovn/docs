@@ -86,6 +86,10 @@ plugins:
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
+  - minify:
+      minify_html: true
+      htmlmin_opts:
+        remove_comments: true
 #  - with-pdf:
 #      author: Kube-OVN Team
 #      cover_subtitle: v1.10.2
