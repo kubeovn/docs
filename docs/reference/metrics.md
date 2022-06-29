@@ -84,7 +84,7 @@ OVN 自身状态监控指标：
 ## kube-ovn-pinger
 
 网络质量相关监控指标：
-                                                                                                          |
+
 | Type                | Metric                                   | Description                                                                                                                       |
 | ------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Gauge               | pinger_ovs_up                            | If the ovs on the node is up                                                                                                      |
@@ -108,14 +108,14 @@ OVN 自身状态监控指标：
 | Gauge               | pinger_node_ping_lost_total              | The lost count for pod ping node                                                                                                  |
 | Gauge               | pinger_node_ping_count_total             | The total count for pod ping node                                                                                                 |
 | Histogram           | pinger_external_ping_latency_ms          | The latency ms histogram for pod ping external address                                                                            |
-| Gauge               | pinger_node_external_lost_total          | The lost count for pod ping external address     
+| Gauge               | pinger_node_external_lost_total          | The lost count for pod ping external address                                                                                      |
 
 ## kube-ovn-controller
 
 `kube-ovn-controller` 相关监控指标：
 
 | Type                | Metric                                   | Description                                                                                                                       |
-| ------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- ||
+| ------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Histogram           | rest_client_request_latency_seconds      | Request latency in seconds. Broken down by verb and URL                                                                           |
 | Counter             | rest_client_requests_total               | Number of HTTP requests, partitioned by status code, method, and host                                                             |
 | Counter             | lists_total                              | Total number of API lists done by the reflectors                                                                                  |
