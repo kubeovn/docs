@@ -89,7 +89,6 @@ markdown_extensions:
   - toc:
       permalink: true
 plugins:
-  - include-markdown
   - search:
       separator: '[\s\u200b\-]'
   - i18n:
