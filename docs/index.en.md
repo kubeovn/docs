@@ -1,11 +1,12 @@
 # Kube-OVN
 
-![Kube-OVN](static/kube-ovn-horizontal-color.svg){: style="width:40%"}
+![Kube-OVN](static/kube-ovn-horizontal-color.svg)
 
-Kube-OVN 是一款 CNCF 旗下的企业级云原生网络编排系统，将 SDN 的能力和云原生结合，
-提供丰富的功能，极致的性能以及良好的可运维性。
+Kube-OVN, a CNCF Sandbox Project, bridges the SDN into Cloud Native. 
+It offers an advanced Container Network Fabric for Enterprises with the most functions, 
+extreme performance and the easiest operation.
 
-**丰富的功能：**
+**Most Functions:**
 
 如果你怀念 SDN 领域丰富的网络能力却在云原生领域苦苦追寻而不得，那么 Kube-OVN 应该是你的最佳选择。
 
@@ -13,7 +14,7 @@ Kube-OVN 是一款 CNCF 旗下的企业级云原生网络编排系统，将 SDN 
 静态 IP 分配，分布式/集中式网关，Underlay/Overlay 混合网络，VPC 多租户网络，跨集群互联网络，QoS 管理，
 多网卡管理，ACL 网络控制，流量镜像，ARM 支持， Windows 支持等诸多功能。
 
-** 极致的性能：**
+**Extreme Performance:**
 
 如果你担心容器网络会带来额外的性能损耗，那么来看一下 Kube-OVN 是如何极致的优化性能。
 
@@ -23,7 +24,7 @@ Kube-OVN 可以支持大规模上千节点和上万 Pod 的集群。
 
 此外 Kube-OVN 还在不断优化 CPU 和内存等资源的使用量，以适应边缘等资源有限场景。
 
-** 良好的可运维性：**
+**Easiest Operation**
 
 如果你对容器网络的运维心存忧虑，Kube-OVN 内置了大量的工具来帮助你简化运维操作。
 

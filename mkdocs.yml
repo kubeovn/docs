@@ -80,9 +80,37 @@ theme:
 markdown_extensions:
   - footnotes
   - fenced_code
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.snippets:
+      auto_append: ["overrides/contact.md"]
+      check_paths: true
+  - toc:
+      permalink: true
 plugins:
+  - include-markdown
   - search:
       separator: '[\s\u200b\-]'
+  - i18n:
+      default_language: zh
+      languages:
+#        en:
+#          name: English
+#          site_name: Kube-OVN Document
+        zh:
+          name: 简体中文
+          site_name: Kube-OVN 文档
+#      nav_translations:
+#        en:
+#          主页: OVERVIEW
+#          快速入门: GETTING STARTED
+#          使用指南: USER GUIDE
+#          运维指南: OPERATIONS
+#          高级功能: ADVANCE
+#          技术参考: REFERENCE
+#          联系方式: CONTACT
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
