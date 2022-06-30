@@ -126,7 +126,7 @@ plugins:
           kubectl 插件使用: Kubectl Plugin
           删除工作节点: Deleting Work Node
           更换 ovn-central 节点: Replace ovn-central Node
-          OVN 数据库备份和恢复: OVN DB Backup and Restore
+          OVN 数据库备份和恢复: OVN DB Backup and Recovery
           修改子网 CIDR: Change Subnet CIDR
           修改 Join 子网 CIDR: Change Join Subnet CIDR
           卸载 Calico 安装 Kube-OVN: Install Kube-OVN From Calico
@@ -143,7 +143,7 @@ plugins:
           外部网关设置: External Gateway
           VIP 预留设置: VIP Reservation
           Mellanox 网卡 Offload 支持: Offload with Mellanox
-          芯启源网卡 Offload 支持: Offload with corigine
+          芯启源网卡 Offload 支持: Offload with Corigine
           Windows 支持: Windows Support
           DPDK 支持: DPDK Support
           OpenStack 集成: Integration with OpenStack
