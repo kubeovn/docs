@@ -38,7 +38,7 @@ TUNNEL_TYPE="geneve"                   # Tunnel protocol，available options: ge
 
 You can also use regular expression to math NIC names，such as `IFACE=enp6s0f0,eth.*`.
 
-## Run Installation Script
+## Run the Script
 
 `bash install.sh`
 

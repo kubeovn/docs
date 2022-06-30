@@ -1,70 +1,85 @@
 # Underlay Installation
 
-默认情况下 Kube-OVN 的默认子网使用 Geneve 对跨主机流量进行封装，在基础设施之上抽象出一层虚拟的 Overlay 网络。
+By default, the default subnet uses Geneve to encapsulate cross-host traffic, 
+and build an overlay network on top of the infrastructure.
 
-对于希望容器网络直接使用物理网络地址段情况，可以将 Kube-OVN 的默认子网工作在 Underlay 模式，可以直接给容器分配物理网络中的地址资源，达到更好的性能以及和物理网络的连通性。
+For the case that you want the container network to use the physical network address directly, 
+you can set the default subnet of Kube-OVN to work in Underlay mode, 
+which can directly assign the address resources in the physical network to the containers, 
+achieving better performance and connectivity with the physical network.
 
 ![topology](../static/vlan-topology.png)
 
-## 功能限制
-该模式下 Kube-OVN 网络表现和 Macvlan 类似，但相比 Macvlan 提供了地址管理，固定IP，服务发现，网络策略和 QoS 等功能。
+## Limitation
 
-但由于该模式下容器网络直接使用物理网络资源进行包转发，Overlay 模式下的 SNAT/EIP， 分布式网关/集中式网关等 L3 功能无法使用。
+Since the container network in this mode uses physical network directly for L2 packet forwarding, 
+L3 functions such as SNAT/EIP, distributed gateway/centralized gateway in Overlay mode cannot be used.
 
-## 和 Macvlan 比较
+## Comparison with Macvlan
 
-Kube-OVN 的 Underlay 模式和 Macvlan 工作模式十分类似，在功能和性能上主要有以下几个区别：
+The Underlay mode of Kube-OVN is very similar to the Macvlan, with the following major differences in functionality and performance:
 
-1. 由于 Macvlan 的内核路径更短，并且不需要 OVS 对数据包进行处理，Macvlan 在吞吐量和延迟性能指标上表现会更好。
-2. Kube-OVN 通过流表提供了 arp-proxy 功能，可以缓解大规模网络下的 arp 广播风暴风险。
-3. 由于 Macvlan 工作在内核底层，会绕过宿主机的 netfilter，Service 和 NetworkPolicy 功能需要额外开发。Kube-OVN 通过 OVS 流表提供了 Service 和 NetworkPolicy 的能力。
+1. Macvlan performs better in terms of throughput and latency performance metrics due to its shorter kernel path and the fact that it does not require OVS for packet processing.
+2. Kube-OVN provides arp-proxy functionality through flow tables to mitigate the risk of arp broadcast storms on large-scale networks.
+3. Since Macvlan works at the bottom of the kernel and bypasses the host netfilter, Service and NetworkPolicy functionality requires additional development.
+   Kube-OVN provides Service and NetworkPolicy capabilities through the OVS flow table.
+4. Kube-OVN Underlay mode provides additional features such as address management, fixed IP and QoS compared to Macvlan.
 
-## 硬件环境要求
+## Environment Requirements
 
-在 Underlay 模式下， OVS 将会桥接一个节点网卡到 OVS 网桥，并将数据包直接通过该节点网卡对外发送，L2/L3 层面的转发能力需要依赖底层网络设备。
-需要预先在底层网络设备配置对应的网关、Vlan 和安全策略等配置。
+In Underlay mode, the OVS will bridge a node NIC to the OVS bridge and send packets directly through that node NIC, 
+relying on the underlying network devices for L2/L3 level forwarding capabilities. You need to configure the corresponding gateway, 
+Vlan and security policy in the underlying network device in advance.
 
-1. 对于 OpenStack 的 VM 环境，需要将对应网络端口的 `PortSecurity` 关闭。
+1. For OpenStack VM environments, you need to turn off `PortSecurity` on the corresponding network port.
 2. 对于 VMware 的 vswtich 网络，需要将 `MAC Address Changes`, `Forged Transmits` 和 `Promiscuous Mode Operation` 设置为 `allow`。
-3. 公有云，例如 AWS、GCE、阿里云等由于不支持用户自定义 Mac 无法支持 Underlay 模式网络。
-4. 对于 Service 访问流量，Pod 会将数据包首先发送至网关，网关需要有能将数据包转发回本网段的能力。
+3. For VMware vswtich networks, `MAC Address Changes`, `Forged Transmits` and `Promiscuous Mode Operation` should be set to `allow`.
+4. For Service access traffic, the Pod sends the packets first to the underlay gateway, 
+   which needs to have the ability to forward the packets back to the network.
 
-对于管理网和容器网使用同一个网卡的情况下，Kube-OVN 会将网卡的 Mac 地址、IP 地址、路由以及 MTU 将转移或复制至对应的 OVS Bridge，
-以支持单网卡部署 Underlay 网络。OVS Bridge 名称格式为 `br-PROVIDER_NAME`，`PROVIDER_NAME` 为 Provider 网络名称（默认为 provider）。
+For management and container networks using the same NIC, Kube-OVN will transfer the NIC's Mac address, IP address, route, 
+and MTU to the corresponding OVS Bridge to support single NIC deployment of Underlay networks.
+OVS Bridge name format is `br-PROVIDER_NAME`，`PROVIDER_NAME` is the name of `ProviderNetwork` (Default: provider).
 
-## 安装方式
 
-### 部署时指定网络模式
+## Specify Network Mode When Deploying
 
-该部署模式将默认子网设置为 Underlay 模式，所有未指定子网的 Pod 均会默认运行在 Underlay 网络中
+This deployment mode sets the default subnet to Underlay mode, 
+and all Pods with no subnet specified will run in the Underlay network by default.
 
-#### 下载安装脚本
+### Download Script
+
 ```bash
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/install.sh
 ```
 
-#### 修改脚本中相应配置
+#### Modify Configuration Options
 ```bash
-NETWORK_TYPE          # 设置为 vlan
-VLAN_INTERFACE_NAME   # 设置为宿主机上承担容器流量的网卡，例如 eth1
-VLAN_ID               # 交换机所接受的 VLAN Tag，若设置为 0 则不做 VLAN 封装
-POD_CIDR              # 设置为物理网络 CIDR， 例如 192.168.1.0/24
-POD_GATEWAY           # 设置为物理网络网关，例如192.168.1.1
-EXCLUDE_IPS           # 排除范围，避免容器网段和物理网络已用 IP 冲突，例如 192.168.1.1..192.168.1.100
+NETWORK_TYPE          # set to vlan
+VLAN_INTERFACE_NAME   # set to the NIC that carries the Underlay traffic, e.g. eth1
+VLAN_ID               # The VLAN Tag need to be added，if set 0 no vlan tag will be added
+POD_CIDR              # The Underlay network CIDR， e.g. 192.168.1.0/24
+POD_GATEWAY           # Underlay physic gatewa address, e.g. 192.168.1.1
+EXCLUDE_IPS           # Exclude ranges to avoid conflicts between container network and IPs already in use on the physical network, e.g. 192.168.1.1..192.168.1.100
 ```
 
-#### 运行安装脚本
+### Run the Script
+
 ```bash
 bash install.sh
 ```
 
-### 通过 CRD 动态创建 Underlay 网络
+## Dynamically Create Underlay Networks via CRD
 
-该方式可在安装后动态的创建某个 Underlay 子网供 Pod 使用。
+This approach dynamically creates an Underlay subnet that Pod can use after installation.
 
-#### 创建 ProviderNetwork
+### Create ProviderNetwork
 
-创建如下 ProviderNetwork 并应用:
+ProviderNetwork provides the abstraction of host NIC to physical network mapping, unifies the management of NICs belonging to the same network, 
+and solves the configuration problems in complex environments with multiple NICs on the same machine, inconsistent NIC names and 
+inconsistent corresponding Underlay networks.
+
+Create ProviderNetwork as below:
 
 ```yml
 apiVersion: kubeovn.io/v1
@@ -81,25 +96,27 @@ spec:
     - node2
 ```
 
-**注意：ProviderNetwork 资源名称的长度不得超过 12。**
+**Note: The length of the ProviderNetwork resource name must not exceed 12.**
 
-`defaultInterface` 为默认使用的节点网卡名称；`customInterfaces` 为可选项，可针对特定节点指定需要使用的网卡；`excludeNodes` 也是可选项，用于指定不桥接网卡的节点。
+- `defaultInterface`: The default node NIC name. When the ProviderNetwork is successfully created, an OVS bridge named br-net1 (in the format `br-NAME`) is created in each node (except excludeNodes) and the specified node NIC is bridged to this bridge.
+- `customInterfaces`: Optionally, you can specify the NIC to be used for a specific node.
+- `excludeNodes`: Optional, to specify nodes that do not bridge the NIC. Nodes in this list will be added with the `net1.provider-network.ovn.kubernetes.io/exclude=true` tag.
 
-ProviderNetwork 创建成功后，各节点（除 excludeNodes 外）中会创建名为 br-net1（格式为 `br-NAME`）的 OVS 网桥，并将指定的节点网卡桥接至此网桥。
+Other nodes will be added with the following tags:
 
-`excludeNodes` 中的节点会被添加 `net1.provider-network.ovn.kubernetes.io/exclude=true` 标签，其它节点会被添加如下标签：
+| Key                                               | Value | Description                                                 |
+| ------------------------------------------------- | ----- |-------------------------------------------------------------|
+| net1.provider-network.ovn.kubernetes.io/ready     | true  | bridge work finished, ProviderNetwork is ready on this node |
+| net1.provider-network.ovn.kubernetes.io/interface | eth1  | The name of the bridged NIC in the node.                    |
+| net1.provider-network.ovn.kubernetes.io/mtu       | 1500  | MTU of bridged NIC in node                                  |
 
-| Key                                               | Value | 描述                                                 |
-| ------------------------------------------------- | ----- | ---------------------------------------------------- |
-| net1.provider-network.ovn.kubernetes.io/ready     | true  | 节点中的桥接工作已完成，ProviderNetwork 在节点中可用 |
-| net1.provider-network.ovn.kubernetes.io/interface | eth1  | 节点中被桥接的网卡的名称                             |
-| net1.provider-network.ovn.kubernetes.io/mtu       | 1500  | 节点中被桥接的网卡的 MTU                             |
+> If an IP has been configured on the node NIC, the IP address and the route on the NIC are transferred to the corresponding OVS bridge.
 
-> 如果节点网卡上已经配置了 IP，则 IP 地址和网卡上的路由会被转移至对应的 OVS 网桥。
+### Create VLAN
 
-#### 创建 VLAN
+Vlan provides an abstraction to bind Vlan Tag and ProviderNetwork.
 
-创建如下 VLAN 并应用：
+Create a VLAN as below:
 
 ```yml
 apiVersion: kubeovn.io/v1
@@ -111,45 +128,51 @@ spec:
   provider: net1
 ```
 
-`id` 为 VLAN ID/Tag，`provider` 为需要使用的 ProviderNetwork 的名称。多个 VLAN 可以引用同一个 ProviderNetwork。
+- `id`: VLAN ID/Tag，Kube-OVN will add this Vlan tag to traffic, if set 0, no tag is added.
+- `provider`: The name of ProviderNetwork. Multiple VLAN can use a same ProviderNetwork.
 
-#### 创建 Subnet
+### Create Subnet
 
-示例如下：
+Bind Vlan to a Subnet as below：
 
-```yml
+```yaml
 apiVersion: kubeovn.io/v1
 kind: Subnet
 metadata:
-  name: subnet1
+   name: subnet1
 spec:
-  cidrBlock: 172.17.0.0/16
-  gateway: 172.17.0.1
-  vlan: vlan1
+   protocol: IPv4
+   cidrBlock: 172.17.0.0/16
+   gateway: 172.17.0.1
+   vlan: vlan1
 ```
 
-将 `vlan` 的值指定为需要使用的 VLAN 名称即可。多个 Subnet 可以引用同一个 VLAN。
+Simply specify the value of `vlan` as the name of the VLAN to be used. Multiple subnets can refer to the same VLAN.
 
-## 容器创建
-可按正常容器创建方式进行创建，查看容器 IP 是否在规定范围内，以及容器是否可以和物理网络互通。
+## Create Pod
 
-如有固定 IP 需求，可参考 [Pod 固定 IP 和 Mac](../guide/static-ip-mac.md)
+You can create containers in the normal way, check whether the container IP is in the specified range 
+and whether the container can interoperate with the physical network.
 
-## 使用逻辑网关
+For fixed IP requirements, please refer to [Fixed Addresses](../guide/static-ip-mac.en.md)
 
-对于物理网络不存在网关的情况，Kube-OVN 支持在 Underlay 模式的子网中配置使用逻辑网关。
-若要使用此功能，设置子网的 `spec.logicalGateway` 为 `true` 即可：
+## Logical Gateway
 
-```yml
+For cases where no gateway exists in the physical network, Kube-OVN supports the use of logical gateways configured in the subnet in Underlay mode.
+To use this feature, set `spec.logicalGateway` to `true` for the subnet:
+
+```yaml
 apiVersion: kubeovn.io/v1
 kind: Subnet
 metadata:
-  name: subnet1
+   name: subnet1
 spec:
-  cidrBlock: 172.17.0.0/16
-  gateway: 172.17.0.1
-  vlan: vlan1
-  logicalGateway: true
+   protocol: IPv4
+   cidrBlock: 172.17.0.0/16
+   gateway: 172.17.0.1
+   vlan: vlan1
+   logicalGateway: true
 ```
 
-开启此功能后，Pod 不使用外部网关，而是使用 Kube-OVN 创建的逻辑路由器（Logical Router）。对于跨网段通信，由逻辑路由器进行转发。
+When this feature is turned on, the Pod does not use an external gateway, 
+but a Logical Router created by Kube-OVN to forward cross-subnet communication.
