@@ -186,7 +186,7 @@ pod "ovs-ovn-t87zk" deleted
 ### [nbctl | sbctl] [options ...]
 
 该子命令会直接进入 OVN 北向数据库或南向数据库 的 leader 节点分别执行 `ovn-nbctl` 和 `ovn-sbctl` 命令。
-更多该命令的详细用法请查询上游 OVN 的官方文档 [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html) 和 [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html)。
+更多该命令的详细用法请查询上游 OVN 的官方文档 [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html){: target="_blank" } 和 [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html){: target="_blank" }。
 
 ```bash
 # kubectl ko nbctl show
@@ -236,7 +236,7 @@ router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
 ### vsctl {nodeName} [options ...]
 
 该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-vsctl` 命令，查询并配置 `vswitchd`。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-vsctl(8)](https://man7.org/linux/man-pages/man8/ovs-vsctl.8.html)。
+更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-vsctl(8)](https://man7.org/linux/man-pages/man8/ovs-vsctl.8.html){: target="_blank" }。
 
 ```bash
 # kubectl ko vsctl kube-ovn-01 show
@@ -271,7 +271,7 @@ router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
 ### ofctl {nodeName} [options ...]
 
 该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-ofctl` 命令，查询或管理 OpenFlow。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-ofctl(8)](https://man7.org/linux/man-pages/man8/ovs-ofctl.8.html)。
+更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-ofctl(8)](https://man7.org/linux/man-pages/man8/ovs-ofctl.8.html){: target="_blank" }。
 
 ```bash
 # kubectl ko ofctl kube-ovn-01 dump-flows br-int
@@ -286,7 +286,7 @@ NXST_FLOW reply (xid=0x4): flags=[more]
 ### dpctl {nodeName} [options ...]
 
 该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-dpctl` 命令，查询或管理 OVS datapath。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-dpctl(8)](https://man7.org/linux/man-pages/man8/ovs-dpctl.8.html)。
+更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-dpctl(8)](https://man7.org/linux/man-pages/man8/ovs-dpctl.8.html){: target="_blank" }。
 
 ```bash
 # kubectl ko dpctl kube-ovn-01 show
@@ -307,7 +307,7 @@ system@ovs-system:
 ### appctl {nodeName} [options ...]
 
 该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-appctl` 命令，来操作相关 daemon 进程。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-appctl(8)](https://man7.org/linux/man-pages/man8/ovs-appctl.8.html)。
+更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-appctl(8)](https://man7.org/linux/man-pages/man8/ovs-appctl.8.html){: target="_blank" }。
 
 ```bash
 # kubectl ko appctl kube-ovn-01 vlog/list

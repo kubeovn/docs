@@ -21,7 +21,7 @@ Kube-OVN 的组件可以大致分为三类：
 ### 上游 OVN/OVS 组件
 
 该类型组件来自 OVN/OVS 社区，并针对 Kube-OVN 的使用场景做了特定修改。 OVN/OVS 本身是一套成熟的管理虚机和容器的 SDN 系统，我们强烈建议
-对 Kube-OVN 实现感兴趣的用户先去读一下 [ovn-architecture(7)](https://www.mankier.com/7/ovn-architecture) 来了解什么是 OVN 以及
+对 Kube-OVN 实现感兴趣的用户先去读一下 [ovn-architecture(7)](https://www.mankier.com/7/ovn-architecture){: target="_blank" } 来了解什么是 OVN 以及
 如何和它进行集成。Kube-OVN 使用 OVN 的北向接口创建和调整虚拟网络，并将其中的网络概念映射到 Kubernetes 之内。
 
 所有 OVN/OVS 相关组件都已打包成对应镜像，并可在 Kubernetes 中运行。

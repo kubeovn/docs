@@ -13,9 +13,9 @@ the environment configuration and the ports that need to be opened.
 
 *Attention*：
 
-1. For CentOS kernel version 3.10.0-862 bug exists in `netfilter` modules that lead Kube-OVN embed nat and lb failure.Please update kernel and check [Floating IPs broken after kernel upgrade to Centos/RHEL 7.5 - DNAT not working](https://bugs.launchpad.net/neutron/+bug/1776778).
+1. For CentOS kernel version 3.10.0-862 bug exists in `netfilter` modules that lead Kube-OVN embed nat and lb failure.Please update kernel and check [Floating IPs broken after kernel upgrade to Centos/RHEL 7.5 - DNAT not working](https://bugs.launchpad.net/neutron/+bug/1776778){: target="_blank" }.
 2. For kernel version 4.4, the related `openvswitch` module has some issues for ct，please update kernel version or manually compile `openvswitch` kernel module.
-3. When building Geneve tunnel IPv6 in kernel should be enabled，check the kernel bootstrap options with `cat /proc/cmdline`.Check [Geneve tunnels don't work when ipv6 is disabled](https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1794232) for the detail bug info.
+3. When building Geneve tunnel IPv6 in kernel should be enabled，check the kernel bootstrap options with `cat /proc/cmdline`.Check [Geneve tunnels don't work when ipv6 is disabled](https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1794232){: target="_blank" } for the detail bug info.
 
 ## Environment Setup
 - Kernel should enable IPv6, if kernel bootstrap options contain `ipv6.disable=1`, it should be set to `0`.
