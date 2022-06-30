@@ -8,7 +8,7 @@
 下载下面的脚本，执行脚本删除在 Kubernetes 中创建的资源：
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.9/dist/images/cleanup.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/cleanup.sh
 bash cleanup.sh
 ```
 

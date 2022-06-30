@@ -1,20 +1,23 @@
 # Uninstall
 
-如果需要删除 Kube-OVN 并更换其他网络插件，请按照下列的步骤删除对应的 Kube-OVN 组件以及 OVS 配置，以避免对其他网络插件产生干扰。
-也欢迎提 issue 联系我们反馈不使用 Kube-OVN 的原因帮助我们改进。
+If you need to remove the Kube-OVN and replace it with another network plugin, 
+please follow the steps below to remove all the corresponding Kube-OVN component and OVS configuration 
+to avoid interference with other network plugins.
 
-## 删除在 Kubernetes 中创建的资源
+Feel free to contact us with an Issue to give us feedback on why you don't use Kube-OVN to help us improve it.
 
-下载下面的脚本，执行脚本删除在 Kubernetes 中创建的资源：
+## Delete Resource in Kubernetes
+
+Download and run the script below to delete resource created in Kubernetes:
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.9/dist/images/cleanup.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/cleanup.sh
 bash cleanup.sh
 ```
 
-## 清理主机上的日志和配置文件
+## Cleanup Config and Logs on Every Node
 
-在每台机器上执行下列操作，清理 ovsdb 以及 openvswitch 保存的配置：
+Run the following commands on each node to clean up the configuration retained by ovsdb and openvswitch:
 
 ```bash
 rm -rf /var/run/openvswitch
@@ -27,9 +30,10 @@ rm -rf /var/log/openvswitch
 rm -rf /var/log/ovn
 ```
 
-## 重启节点
+## Reboot Node
 
-重启机器确保对应的网卡信息，iptable/ipset 规则得以清除，避免对其他网络插件的影响：
+Reboot the machine to ensure that the corresponding NIC information and iptable/ipset rules 
+are cleared to avoid the interference with other network plugins:
 
 ```bash
 reboot
