@@ -5,7 +5,7 @@
 OVN/OVS 做了部分修改。用户如果使用自己的 OVN/OVS 配合 Kube-OVN 的控制器进行工作时需要 注意
 下述的改动可能造成的影响。
 
-未合并入上游修改：
+未合入上游修改：
 
 - [22ea22c40b](https://github.com/kubeovn/ovs/commit/22ea22c40b46ee5adeae977ff6cfca81b3ff25d7) 调整选举 timer，避免大规模集群选举抖动。
 - [d26ae4de0a](https://github.com/kubeovn/ovn/commit/d26ae4de0ab070f6b602688ba808c8963f69d5c4) 目的地址非 Service 流量绕过 conntrack 以提高特定数据链路性能。
