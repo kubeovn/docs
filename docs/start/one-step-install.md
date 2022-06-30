@@ -1,26 +1,26 @@
 # 一键安装
 
-Kube-OVN 提供了一键安装脚本，可以帮助你快速安装一个高可用，生产就绪的 Kube-OVN 容器网络，默认部署为 overlay 类型网络。
+Kube-OVN 提供了一键安装脚本，可以帮助你快速安装一个高可用，生产就绪的 Kube-OVN 容器网络，默认部署为 Overlay 类型网络。
 
-如果默认网络需要搭建 Underlay/Vlan 网络，请参考 [Underlay 网络支持](./underlay.md)
+如果默认网络需要搭建 Underlay/Vlan 网络，请参考 [Underlay 网络支持](./underlay.md)。
 
 安装前请参考[准备工作](./prepare.md)确认环境配置正确。
 
 ## 下载安装脚本
 
-我们推荐在生产环境使用稳定的 release 版本，请使用下面的命令下载稳定版本安装脚本
+我们推荐在生产环境使用稳定的 release 版本，请使用下面的命令下载稳定版本安装脚本：
 ```bash
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/install.sh
 ```
 
-如果对 master 分支的最新功能感兴趣，想使用下面的命令下载开发版本部署脚本
+如果对 master 分支的最新功能感兴趣，想使用下面的命令下载开发版本部署脚本：
 ```bash
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/install.sh
 ```
 
 ## 修改配置参数
 
-使用编辑器打开脚本，并修改下列变量为预期值
+使用编辑器打开脚本，并修改下列变量为预期值：
 
 ```bash
 REGISTRY="kubeovn"                     # 镜像仓库地址
@@ -33,7 +33,7 @@ IFACE=""                               # 容器网络所使用的的宿主机网
 TUNNEL_TYPE="geneve"                   # 隧道封装协议，可选 geneve, vxlan 或 stt，stt 需要单独编译 ovs 内核模块
 ```
 
-可使用正则表达式来匹配网卡名，例如 `IFACE=enp6s0f0,eth.*`
+可使用正则表达式来匹配网卡名，例如 `IFACE=enp6s0f0,eth.*`。
 
 ## 执行安装脚本
 
