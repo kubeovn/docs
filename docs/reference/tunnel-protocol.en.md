@@ -1,41 +1,47 @@
 # Tunnel Protocol Selection
 
-Kube-OVN 使用 OVN/OVS 作为数据平面实现，目前支持 `Geneve`，`Vxlan` 和 `STT` 三种隧道封装协议。
-这三种协议在功能，性能和易用性上存在着区别，本文档将介绍三种协议在使用中的差异，用户可根据自己的情况进行选择。
+Kube-OVN uses OVN/OVS as the data plane implementation and currently supports `Geneve`, `Vxlan` and `STT` tunnel encapsulation protocols.
+These three protocols differ in terms of functionality, performance and ease of use. 
+This document will describe the differences in the use of the three protocols so that users can choose according to their situation.
 
 ## Geneve
 
-`Geneve` 协议为 Kube-OVN 部署时选择的默认隧道协议，也是 OVN 默认推荐的隧道协议。该协议在内核中得到了广泛的支持，
-并可以利用现代网卡的通用 Offload 能力进行加速。由于 `Geneve` 有着较长的头部，可以使用 24bit 空间来标志不同的 
-datapath 用户可以创建更多数量的虚拟网络。
+The `Geneve` protocol is the default tunneling protocol selected during Kube-OVN deployment and is also the default recommended tunneling protocol for OVN.
+This protocol is widely supported in the kernel and can be accelerated using the generic offload capability of modern NICs.
+Since `Geneve` has a variable header, it is possible to use 24bit space to mark different datapaths users can create a larger number of virtual networks.
 
-如果使用 Mellanox 或芯启源的智能网卡 OVS 卸载，`Geneve` 需要较高版本的内核支持，需要选择 5.4 以上的上游内核，
-或 backport 了该功能的其他兼容内核。
+If you are using Mellanox or Corigine SmartNIC OVS offload, `Geneve` requires a higher kernel version. 
+Upstream kernel of 5.4 or higher, or other compatible kernels that backports this feature.
 
-由于使用 UDP 进行封装，该协议在处理 TCP over UDP 时不能很好的利用现代网卡的 TCP 相关卸载，在处理大包时会消耗较多 
-CPU 资源。
+Due to the use of UDP encapsulation, this protocol does not make good use of the TCP-related offloads of modern NICs when handling TCP over UDP, 
+and consumes more CPU resources when handling large packets.
 
 ## Vxlan
 
-`Vxlan` 为上游 OVN 近期支持的协议，该协议在内核中得到了广泛的支持， 并可以利用现代网卡的通用 Offload 能力进行加速。
-由于该协议头部有限，并且 OVN 需要使用额外的空间进行编排，datapath 的数量存在限制，最多只能创建 4096 个 datapath，
-每个 datapath 下最多 4096 个端口。同时由于空间有限，基于 `inport` 的 ACL 没有进行支持。
+`Vxlan` is a recently supported protocol in the upstream OVN, 
+which is widely supported in the kernel and can be accelerated using the common offload capabilities of modern NICs.
+Due to the limited length of the protocol header and the additional space required for OVN orchestration, 
+there is a limit to the number of datapaths that can be created, 
+with a maximum of 4096 datapaths and a maximum of 4096 ports under each datapath.
+Also, `inport`-based ACLs are not supported due to header length limitations.
 
-如果使用 Mellanox 或芯启源的智能网卡 OVS 卸载，`Vxlan` 的卸载在常见内核中已获得支持。
+`Vxlan` offloading is supported in common kernels if using Mellanox or Corigine SmartNIC.
 
-由于使用 UDP 进行封装，该协议在处理 TCP over UDP 时不能很好的利用现代网卡的 TCP 相关卸载，在处理大包时会消耗较多
-CPU 资源。
+Due to the use of UDP encapsulation, this protocol does not make good use of the TCP-related offloads of modern NICs when handling TCP over UDP,
+and consumes more CPU resources when handling large packets.
 
 ## STT
 
-`STT` 协议为 OVN 较早支持的隧道协议，该协议使用类 TCP 的头部，可以充分利用现代网卡通用的 TCP 卸载能力，大幅提升 TCP 
-的吞吐量。同时该协议头部较长可支持完整的 OVN 能力和大规模的 datapath。
+The `STT` protocol is an early tunneling protocol supported by the OVN that uses TCP-like headers to 
+take advantage of the TCP offload capabilities common to modern NICs and significantly increase TCP throughput.
+The protocol also has a long header to support full OVN capabilities and large-scale datapaths.
 
-该协议未在内核中支持，若要使用需要额外编译 OVS 内核模块，并在升级内核时对应再次编译新版本内核模块。
+This protocol is not supported in the kernel. To use it, you need to compile an additional OVS kernel module and recompile 
+the new version of the kernel module when upgrading the kernel.
 
-该协议目前未被智能网卡支持，无法使用 OVS 的卸载能力。
+This protocol is not currently supported by the SmartNic and cannot use the offloading capability of OVS offloading.
 
-## 参考资料
+## References
 - [https://ipwithease.com/vxlan-vs-geneve-understand-the-difference/](https://blog.russellbryant.net/2017/05/30/ovn-geneve-vs-vxlan-does-it-matter/)
 - [OVN FAQ](https://docs.ovn.org/en/latest/faq/general.html)
 - [What is Geneve](https://www.redhat.com/en/blog/what-geneve)
