@@ -2,10 +2,10 @@
 
 ## 环境准备:
 
-Kube-OVN 使用 [Go](https://golang.org/) 1.17 开发并使用 [Go Modules](https://github.com/golang/go/wiki/Modules) 管理依赖，
+Kube-OVN 使用 [Go](https://golang.org/){: target="_blank" } 1.17 开发并使用 [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" } 管理依赖，
 请确认环境变量 `GO111MODULE="on"`。
 
-[gosec](https://github.com/securego/gosec) 被用来扫描代码安全相关问题，需要在开发环境安装：
+[gosec](https://github.com/securego/gosec){: target="_blank" } 被用来扫描代码安全相关问题，需要在开发环境安装：
 
 ```bash
 go get github.com/securego/gosec/v2/cmd/gosec
@@ -36,8 +36,8 @@ make release-arm
 
 ## 运行 E2E
 
-Kube-OVN 使用 [KIND](https://kind.sigs.k8s.io/) 构建本地 Kubernetes 集群，[j2cli](https://github.com/kolypto/j2cli) 渲染模板，
-[Ginkgo](https://onsi.github.io/ginkgo/) 来运行测试代码。请参考相关文档进行依赖安装。
+Kube-OVN 使用 [KIND](https://kind.sigs.k8s.io/){: target="_blank" } 构建本地 Kubernetes 集群，[j2cli](https://github.com/kolypto/j2cli){: target="_blank" } 渲染模板，
+[Ginkgo](https://onsi.github.io/ginkgo/){: target="_blank" } 来运行测试代码。请参考相关文档进行依赖安装。
 
 本地执行 E2E 测试：
 

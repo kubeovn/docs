@@ -36,6 +36,6 @@ CPU 资源。
 该协议目前未被智能网卡支持，无法使用 OVS 的卸载能力。
 
 ## 参考资料
-- [https://ipwithease.com/vxlan-vs-geneve-understand-the-difference/](https://blog.russellbryant.net/2017/05/30/ovn-geneve-vs-vxlan-does-it-matter/)
-- [OVN FAQ](https://docs.ovn.org/en/latest/faq/general.html)
-- [What is Geneve](https://www.redhat.com/en/blog/what-geneve)
+- [https://ipwithease.com/vxlan-vs-geneve-understand-the-difference/](https://blog.russellbryant.net/2017/05/30/ovn-geneve-vs-vxlan-does-it-matter/){: target="_blank" }
+- [OVN FAQ](https://docs.ovn.org/en/latest/faq/general.html){: target="_blank" }
+- [What is Geneve](https://www.redhat.com/en/blog/what-geneve){: target="_blank" }
