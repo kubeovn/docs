@@ -1,26 +1,27 @@
 # Development Setup
 
-## 环境准备:
+## Environmental Preparation
 
-Kube-OVN 使用 [Go](https://golang.org/){: target="_blank" } 1.17 开发并使用 [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" } 管理依赖，
-请确认环境变量 `GO111MODULE="on"`。
+Kube-OVN uses [Golang](https://golang.org/){: target="_blank" } 1.17 to develop and [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" } 
+to manage dependency, please check env `GO111MODULE="on"`。
 
-[gosec](https://github.com/securego/gosec){: target="_blank" } 被用来扫描代码安全相关问题，需要在开发环境安装：
+[gosec](https://github.com/securego/gosec){: target="_blank" } is used to scan for code security related issues 
+and requires to be installed in the development environment:
 
 ```bash
 go get github.com/securego/gosec/v2/cmd/gosec
 ```
 
-为了降低最终生成镜像大小，Kube-OVN 使用了部分 Docker buildx 试验特性，请更新 Docker 至最新版本
-并开启 buildx:
+To reduce the size of the final generated image, Kube-OVN uses some of the Docker buildx experimental features, 
+please update Docker to the latest version and enable buildx:
 
 ```bash
 docker buildx create --use
 ```
 
-## 构建镜像
+## Build Image
 
-使用下面的命令下载代码，并生成运行 Kube-OVN 所需镜像：
+Use the following command to download the code and generate the image required to run Kube-OVN:
 
 ```bash
 git clone https://github.com/kubeovn/kube-ovn.git
@@ -28,18 +29,18 @@ cd kube-ovn
 make release
 ```
 
-如需构建在 ARM 环境下运行的镜像，请执行下面的命令：
+To build an image to run in an ARM environment, run the following command:
 
 ```bash
 make release-arm
 ```
 
-## 运行 E2E
+## Run E2E
 
-Kube-OVN 使用 [KIND](https://kind.sigs.k8s.io/){: target="_blank" } 构建本地 Kubernetes 集群，[j2cli](https://github.com/kolypto/j2cli){: target="_blank" } 渲染模板，
-[Ginkgo](https://onsi.github.io/ginkgo/){: target="_blank" } 来运行测试代码。请参考相关文档进行依赖安装。
+Kube-OVN uses [KIND](https://kind.sigs.k8s.io/){: target="_blank" } to build local Kubernetes cluster, [j2cli](https://github.com/kolypto/j2cli){: target="_blank" } to render templates，
+and [Ginkgo](https://onsi.github.io/ginkgo/){: target="_blank" } to run test cases. Please refer to the relevant documentation for dependency installation.
 
-本地执行 E2E 测试：
+Run E2E locally:
 
 ```bash
 make kind-init
@@ -47,7 +48,8 @@ make kind-install
 make e2e
 ```
 
-如需运行 Underlay E2E 测试，执行下列命令：
+To run the Underlay E2E test, run the following commands:
+
 ```bash
 make kind-init
 make kind-install-underlay
