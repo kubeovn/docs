@@ -1,97 +1,108 @@
-# 总体架构
+# Architecture
 
-本文档将介绍 Kube-OVN 的总体架构，和各个组件的功能以及其之间的交互。
+This document describes the general architecture of Kube-OVN, the functionality of each component and how they interact with each other.
 
-总体来看，Kube-OVN 作为 Kubernetes 和 OVN 之间的一个桥梁，将成熟的 SDN 和云原生相结合。
-这意味着 Kube-OVN 不仅通过 OVN 实现了 Kubernetes 下的网络规范，例如 CNI，Service 和 Networkpolicy，还将大量的 SDN 
-领域能力带入云原生，例如逻辑交换机，逻辑路由器，VPC，网关，QoS，ACL 和流量镜像。
+Overall, Kube-OVN serves as a bridge between Kubernetes and OVN, combining proven SDN with Cloud Native.
+This means that Kube-OVN not only implements network specifications under Kubernetes, such as CNI, Service and Networkpolicy,
+but also brings a large number of SDN domain capabilities to cloud-native, such as logical switches, logical routers, VPCs, 
+gateways, QoS, ACLs and traffic mirroring.
 
-同时 Kube-OVN 还保持了良好的开放性可以和诸多技术方案集成，例如 Cilium，Submariner，Prometheus，KubeVirt 等等。
+Kube-OVN also maintains a good openness to integrate with many technology solutions, such as Cilium, Submariner, Prometheus, KubeVirt, etc.
 
-## 组件介绍
+## Component Introduction
 
-Kube-OVN 的组件可以大致分为三类：
+The components of Kube-OVN can be broadly divided into three categories.
 
-* 上游 OVN/OVS 组件。
-* 核心控制器和 Agent。
-* 监控，运维工具和扩展组件。
+* Upstream OVN/OVS components.
+* Core Controller and Agent.
+* Monitoring, operation and maintenance tools and extension components.
 
 ![](../static/architecture.png)
 
-### 上游 OVN/OVS 组件
+### Upstream OVN/OVS Components
 
-该类型组件来自 OVN/OVS 社区，并针对 Kube-OVN 的使用场景做了特定修改。 OVN/OVS 本身是一套成熟的管理虚机和容器的 SDN 系统，我们强烈建议
-对 Kube-OVN 实现感兴趣的用户先去读一下 [ovn-architecture(7)](https://www.mankier.com/7/ovn-architecture){: target="_blank" } 来了解什么是 OVN 以及
-如何和它进行集成。Kube-OVN 使用 OVN 的北向接口创建和调整虚拟网络，并将其中的网络概念映射到 Kubernetes 之内。
+This type of component comes from the OVN/OVS community with specific modifications for Kube-OVN usage scenarios.
+OVN/OVS itself is a mature SDN system for managing virtual machines and containers, 
+and we strongly recommend that users interested in the Kube-OVN implementation read [ovn-architecture(7)](https://www.mankier.com/7/ovn-architecture){: target = "_blank" } first
+to understand what OVN is and how to integrate with it.
+Kube-OVN uses the northbound interface of OVN to create and coordinate virtual networks and map the network concepts into Kubernetes.
 
-所有 OVN/OVS 相关组件都已打包成对应镜像，并可在 Kubernetes 中运行。
+All OVN/OVS-related components have been packaged into images and are ready to run in Kubernetes.
 
 #### ovn-central
 
-`ovn-central` Deployment 运行 OVN 的管理平面组件，包括 `ovn-nb`, `ovn-sb`, 和 `ovn-northd`。
+The `ovn-central` Deployment runs the control plane components of OVN, including `ovn-nb`, `ovn-sb`, and `ovn-northd`.
 
-- `ovn-nb`： 保存虚拟网络配置，并提供 API 进行虚拟网络管理。`kube-ovn-controller` 将会主要和 `ovn-nb` 进行交互配置虚拟网络。
-- `ovn-sb`： 保存从 `ovn-nb` 的逻辑网络生成的逻辑流表，以及各个节点的实际物理网络状态。
-- `ovn-northd`：将 `ovn-nb` 的虚拟网络翻译成 `ovn-sb` 中的逻辑流表。 
+- `ovn-nb`: Saves the virtual network configuration and provides an API for virtual network management. `kube-ovn-controller` will mainly interact with `ovn-nb` to configure the virtual network.
+- `ovn-sb`: Holds the logical flow table generated from the logical network of `ovn-nb`, as well as the actual physical network state of each node.
+- `ovn-northd`: translates the virtual network of `ovn-nb` into a logical flow table in `ovn-sb`. 
 
-多个 `ovn-central` 实例会通过 Raft 协议同步数据保证高可用。
+Multiple instances of `ovn-central` will synchronize data via the Raft protocol to ensure high availability.
 
 ### ovs-ovn
 
-`ovs-ovn` 以 DaemonSet 形式运行在每个节点，在 Pod 内运行了 `openvswitch`, `ovsdb`, 和 `ovn-controller`。这些组件作为 `ovn-central`
-的 Agent 将逻辑流表翻译成真实的网络配置。
+`ovs-ovn` runs as a DaemonSet on each node, with `openvswitch`, `ovsdb`, and `ovn-controller` running inside the Pod. 
+These components act as agents for `ovn-central` to translate logical flow tables into real network configurations.
 
-### 核心控制器和 Agent
+### Core Controller and Agent
 
-该部分为 Kube-OVN 的核心组件，作为 OVN 和 Kubernetes 之间的一个桥梁，将两个系统打通并将网络概念进行相互转换。
-大部分的核心功能都在该部分组件中实现。
+This part is the core component of Kube-OVN, serving as a bridge between OVN and Kubernetes, bridging the two systems and translating network concepts between them.
+Most of the core functions are implemented in these components.
 
 #### kube-ovn-controller
 
-该组件为一个 Deployment 执行所有 Kubernetes 内资源到 OVN 资源的翻译工作，其作用相当于整个 Kube-OVN 系统的控制平面。
-`kube-ovn-controller` 监听了所有和网络功能相关资源的事件，并根据资源变化情况更新 OVN 内的逻辑网络。主要监听的资源包括：
+This component performs the translation of all resources within Kubernetes to OVN resources and acts as the control plane for the entire Kube-OVN system.
+The `kube-ovn-controller` listens for events on all resources related to network functionality and updates the logical network 
+within the OVN based on resource changes. The main resources listened including:
+
 Pod，Service，Endpoint，Node，NetworkPolicy，VPC，Subnet，Vlan，ProviderNetwork。
 
-以 Pod 事件为例， `kube-ovn-controller` 监听到 Pod 创建事件后，通过内置的内存 IPAM 功能分配地址，并调用 `ovn-central` 创建
-逻辑端口，静态路由和可能的 ACL 规则。接下来 `kube-ovn-controller` 将分配到的地址，和子网信息例如 CIDR，网关，路由等信息写会到 Pod 
-的 annotation 中。该 annotation 后续会被 `kube-ovn-cni` 读取用来配置本地网络。
+Taking the Pod event as an example, `kube-ovn-controller` listens to the Pod creation event, allocates the address via the built-in in-memory IPAM function, 
+and calls `ovn-central` to create logical ports, static routes and possible ACL rules.
+Next, `kube-ovn-controller` writes the assigned address and subnet information such as CIDR, gateway, route, etc. to the annotation of the Pod. 
+This annotation is then read by `kube-ovn-cni` and used to configure the local network.
 
 #### kube-ovn-cni
 
-该组件为一个 DaemonSet 运行在每个节点上，实现 CNI 接口，并操作本地的 OVS 配置单机网络。
+This component runs on each node as a DaemonSet, implements the CNI interface, and operates the local OVS to configure the local network.
 
-该 DaemonSet 会复制 `kube-ovn` 二进制文件到每台机器，作为 `kubelet` 和 `kube-ovn-cni` 之间的交互工具，将相应 CNI 请求
-发送给 `kube-ovn-cni` 执行。该二进制文件默认会被复制到 `/opt/cni/bin` 目录下。
+This DaemonSet copies the `kube-ovn` binary to each machine as a tool for interaction between `kubelet` and `kube-ovn-cni`.
+This binary sends the corresponding CNI request to `kube-ovn-cni` for further operation. 
+The binary will be copied to the `/opt/cni/bin` directory by default.
 
-`kube-ovn-cni` 会配置具体的网络来执行相应流量操作，主要工作包括：
-1. 配置 `ovn-controller` 和 `vswitchd`。
-2. 处理 CNI add/del 请求：
-    1. 创建删除 veth 并和 OVS 端口绑定。
-    2. 配置 OVS 端口信息。
-    3. 更新宿主机的 iptables/ipset/route 等规则。
-3. 动态更新容器 QoS.
-4. 创建并配置 `ovn0` 网卡联通容器网络和主机网络。
-5. 配置主机网卡来实现 Vlan/Underlay/EIP 等功能。
-6. 动态配置集群互联网关。
+`kube-ovn-cni` will configure the specific network to perform the appropriate traffic operations, 
+and the main tasks including:
+1. Config `ovn-controller` and `vswitchd`.
+2. Handle CNI Add/Del requests:
+    1. Create or delete veth pair and bind or unbind to OVS ports.
+    2. Configure OVS ports
+    3. Update host iptables/ipset/route rules.
+3. Dynamically update the network QoS.
+4. Create and configure the `ovn0` NIC to connect the container network and the host network.
+5. Configure the host NIC to implement Vlan/Underlay/EIP.
+6. Dynamically config inter-cluster gateways.
 
-### 监控，运维工具和扩展组件
+### Monitoring, Operation and Maintenance Tools and Extension Components
 
-该部分组件主要提供监控，诊断，运维操作以及和外部进行对接，对 Kube-OVN 的核心网络能力进行扩展，并简化日常运维操作。
+These components provide monitoring, diagnostics, operations tools, and external interface to extend the core network capabilities of Kube-OVN 
+and simplify daily operations and maintenance.
 
 #### kube-ovn-speaker
 
-该组件为一个 DaemonSet 运行在特定标签的节点上，对外发布容器网络的路由，使得外部可以直接通过 Pod IP 访问容器。
+This component is a DaemonSet running on a specific labeled nodes that publish routes to the external, 
+allowing external access to the container directly through the Pod IP.
 
-更多相关使用方式请参考 [BGP 支持](../advance/with-bgp.md)。
+For more information on how to use it, please refer to [BGP Support](../advance/with-bgp.en.md).
 
 #### kube-ovn-pinger
 
-该组件为一个 DaemonSet 运行在每个节点上收集 OVS 运行信息，节点网络质量，网络延迟等信息，收集的监控指标可参考 [Kube-OVN 监控指标](./metrics.md)。
+This component is a DaemonSet running on each node to collect OVS status information, node network quality, network latency, etc. 
+The monitoring metrics collected can be found in [Metrics](. /metrics.en.md).
 
 #### kube-ovn-monitor
 
-该组件为一个 Deployment 收集 OVN 的运行信息，收集的监控指标可参考 [Kube-OVN 监控指标](./metrics.md)。
+This component collects OVN status information and the monitoring metrics, all metrics can be found in [Metrics](. /metrics.en.md).
 
 #### kubectl-ko
 
-该组件为 kubectl 插件，可以快速运行常见运维操作，更多使用请参考 [kubectl 插件使用](../ops/kubectl-ko.md)。
+This component is a kubectl plugin, which can quickly run common operations, for more usage, please refer to [kubectl plugin].(../ops/kubectl-ko.en.md)。
