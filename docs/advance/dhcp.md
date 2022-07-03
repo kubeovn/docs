@@ -34,7 +34,7 @@ spec:
 ```
 
 - `enableDHCP`: 是否开启子网的 DHCP 功能。
-- `dhcpV4Options`,`dhcpV6Options`: 该字段直接暴露 ovn-nb 内 DHCP 相关选项，请参考 [DHCP Options](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#DHCP_Options_TABLE) 
+- `dhcpV4Options`,`dhcpV6Options`: 该字段直接暴露 ovn-nb 内 DHCP 相关选项，请参考 [DHCP Options](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#DHCP_Options_TABLE)。
 默认值分别为 `"lease_time=3600, router=$ipv4_gateway, server_id=169.254.0.254, server_mac=$random_mac"` 和 `server_id=$random_mac`。
 - `enableIPv6RA`: 是否开启 DHCPv6 的路由广播功能。
 - `ipv6RAConfigs`：该字段直接暴露 ovn-nb 内 Logical_Router_Port 相关选项，请参考 [Logical Router Port](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Port_TABLE) 默认值为

@@ -1,46 +1,49 @@
 # Compile FastPath Module
 
-经过数据平面的性能 Profile，`Netfilter` 在容器内和宿主机上的相关处理消耗了 20% 左右的 CPU 资源，FastPath 模块可以绕过 `Netfilter` 从而
-降低 CPU 的消耗和延迟，并提升吞吐量。本文档将介绍如何手动编译 FastPath 模块。
+After a data plane performance profile, `netfilter` consumes about 20% of CPU resources for related processing within the container and on the host.
+The FastPath module can bypass `netfilter` to reduce CPU consumption and latency, and increase throughput.
+This document will describe how to compile the FastPath module manually.
 
-## 下载相关内核模块代码
+## Download Related Code
 
 ```bash
 git clone --depth=1 https://github.com/kubeovn/kube-ovn.git
 ```
 
-## 安装依赖
+## Install Dependencies
 
-这里以 CentOS 为例下载相关依赖
+Here is an example of CentOS dependencies to download:
 
 ```bash
 yum install -y kernel-devel-$(uname -r) gcc elfutils-libelf-devel
 ```
 
-## 编译相关模块
+## Compile the Module
 
-针对 3.x 的内核：
+For the 3.x kernel:
+
 ```bash
 cd kube-ovn/fastpath
 make all
 ```
 
-针对 4.x 的内核
+For the 4.x kernel:
+
 ```bash
 cd kube-ovn/fastpath/4.18
 cp ../Makefile .
 make all
 ```
 
-## 安装内核模块
+## Instal the Kernel Module
 
-将 `kube_ovn_fastpath.ko` 复制到每个需要性能优化的节点，执行下列命令：
+Copy `kube_ovn_fastpath.ko` to each node that needs performance optimization, and run the following command:
 
 ```bash
 insmod kube_ovn_fastpath.ko
 ```
 
-使用 `dmesg` 确认安装成功：
+Use `dmesg` to confirm successful installation:
 
 ```bash
 # dmesg
@@ -50,10 +53,11 @@ insmod kube_ovn_fastpath.ko
 [619631.323801] init_module,kube_ovn_fastpath_local_in
 ```
 
-如需卸载模块，可使用下列命令：
+To uninstall a module, use the following command.
 
 ```bash
 rmmod kube_ovn_fastpath.ko
 ```
 
-> 该模块在机器重启后不会自动加载，如需自动加载请根据系统弄配置编写相应自启动脚本。
+> This module will not be loaded automatically after machine reboot. If you want to load it automatically, please write 
+> the corresponding autostart script according to the system configuration.

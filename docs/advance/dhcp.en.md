@@ -1,9 +1,11 @@
 # DHCP
 
-在使用 SR-IOV 或 DPDK 类型网络时，KubeVirt 内置的 DHCP 无法在该网络模式下工作。Kube-OVN 可以利用 OVN 的 DHCP 能力在子网级别设置
- DHCP 选项，从而帮助该网络类型的 KubeVirt 虚机正常使用 DHCP 获得分配的 IP 地址。Kube-OVN 同时支持 DHCPv4 和 DHCPv6。
+When using SR-IOV or DPDK type networks, KubeVirt's built-in DHCP does not work in this network mode.
+Kube-OVN can use the DHCP capabilities of OVN to set DHCP options at the subnet level to help KubeVirt 
+VMs of these network types to properly use DHCP to obtain assigned IP addresses.
+Kube-OVN supports both DHCPv4 and DHCPv6.
 
-子网 DHCP 的配置如下：
+The subnet DHCP is configured as follows:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -33,9 +35,9 @@ spec:
   ipv6RAConfigs: "address_mode=dhcpv6_stateful,max_interval=30,min_interval=5,send_periodic=true"
 ```
 
-- `enableDHCP`: 是否开启子网的 DHCP 功能。
-- `dhcpV4Options`,`dhcpV6Options`: 该字段直接暴露 ovn-nb 内 DHCP 相关选项，请参考 [DHCP Options](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#DHCP_Options_TABLE) 
-默认值分别为 `"lease_time=3600, router=$ipv4_gateway, server_id=169.254.0.254, server_mac=$random_mac"` 和 `server_id=$random_mac`。
-- `enableIPv6RA`: 是否开启 DHCPv6 的路由广播功能。
-- `ipv6RAConfigs`：该字段直接暴露 ovn-nb 内 Logical_Router_Port 相关选项，请参考 [Logical Router Port](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Port_TABLE) 默认值为
-`address_mode=dhcpv6_stateful, max_interval=30, min_interval=5, send_periodic=true`。
+- `enableDHCP`: Whether to enable the DHCP function for the subnet.
+- `dhcpV4Options`,`dhcpV6Options`: This field directly exposes DHCP-related options within ovn-nb, please reade [DHCP Options](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#DHCP_Options_TABLE) for more detail.
+The default value is  `"lease_time=3600, router=$ipv4_gateway, server_id=169.254.0.254, server_mac=$random_mac"` and `server_id=$random_mac`。
+- `enableIPv6RA`: Whether to enable the route broadcast function of DHCPv6.
+- `ipv6RAConfigs`：This field directly exposes DHCP-related options within ovn-nb Logical_Router_Port, please read [Logical Router Port](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Port_TABLE) for more detail.
+The default value is `address_mode=dhcpv6_stateful, max_interval=30, min_interval=5, send_periodic=true`。

@@ -54,7 +54,7 @@ bash install.sh --with-hybrid-dpdk
 
 这里我们通过创建一个使用 vhostuser 类型网卡的虚机来验证 OVS-DPDK 功能。
 
-安装 KVM Device Plugin 来创建虚机，更多使用方式请参考 [KVM Device Plugin](https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md)
+安装 KVM Device Plugin 来创建虚机，更多使用方式请参考 [KVM Device Plugin](https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md)。
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/kubevirt/kubernetes-device-plugins/master/manifests/kvm-ds.yml

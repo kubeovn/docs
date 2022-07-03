@@ -1,66 +1,66 @@
 # DPDK Support
 
-该文档介绍 Kube-OVN 如何和 OVS-DPDK 结合，给 KubeVirt 的虚机提供 DPDK 类型的网络接口。
+This document describes how Kube-OVN combines with OVS-DPDK to provide a DPDK-type network interface to KubeVirt's virtual machines.
 
-> 上游的 KubeVirt 目前还未支持 OVS-DPDK，用户需要自己通过相关 patch [Vhostuser implementation](https://github.com/kubevirt/kubevirt/pull/3208)
-> 构建 KubeVirt 或 [KVM Device Plugin](https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md) 来使用 OVS-DPDK。
+> Upstream KubeVirt does not currently support OVS-DPDK, users need to use the downstream patch [Vhostuser implementation](https://github.com/kubevirt/kubevirt/pull/3208)
+> to build KubeVirt by themselves or [KVM Device Plugin](https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md) to use OVS-DPDK.
 
-## 前提条件
+## Prerequisites
 
-- 节点需提供专门给 DPDK 驱动运行的网卡。
-- 节点需开启 Hugepages。
+- The node needs to provide a dedicated NIC for the DPDK driver to run.
+- The node needs to have Hugepages enabled.
 
-## 网卡设置 DPDK 驱动
+## Set DPDK driver
 
-这里我们使用 `driverctl` 为例进行操作，具体参数和其他驱动使用请参考 [DPDK 文档](https://www.dpdk.org/)进行操作。
+Here we use `driverctl` for example, please refer to the [DPDK documentation](https://www.dpdk.org/) for specific parameters and other driver usage:
 
 ```bash
 driverctl set-override 0000:00:0b.0 uio_pci_generic
 ```
 
-## 节点配置
+## Configure Nodes
 
-对支持 OVS-DPDK 的节点打标签，以便 Kube-OVN 进行识别处理：
+Labeling OVS-DPDK-enabled nodes for Kube-OVN to recognize:
 
 ```bash
 kubectl label nodes <node> ovn.kubernetes.io/ovs_dp_type="userspace"
 ```
 
-在支持 OVS-DPDK 节点的 `/opt/ovs-config` 目录下创建配置文件 `ovs-dpdk-config`：
+Create the configuration file `ovs-dpdk-config` in the `/opt/ovs-config` directory on nodes that support DPDK.
 
 ```bash
 ENCAP_IP=192.168.122.193/24
 DPDK_DEV=0000:00:0b.0
 ```
 
-- `ENCAP_IP`: 隧道端点地址。
-- `DPDK_DEV`: 设备的 PCI ID。
+- `ENCAP_IP`: The tunnel endpoint address.
+- `DPDK_DEV`: The PCI ID of the device.
 
-## 安装 Kube-OVN
+## Install Kube-OVN
 
-下载安装脚本：
+Download scripts:
 
 ```bash
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/install.sh
 ```
 
-启用 DPDK 安装选项进行安装：
+Enable the DPDK installation option:
 
 ```bash
 bash install.sh --with-hybrid-dpdk
 ```
 
-## 使用方式
+## Usage
 
-这里我们通过创建一个使用 vhostuser 类型网卡的虚机来验证 OVS-DPDK 功能。
+Here we verify the OVS-DPDK functionality by creating a virtual machine with a vhostuser type NIC.
 
-安装 KVM Device Plugin 来创建虚机，更多使用方式请参考 [KVM Device Plugin](https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md)
+Here we use the KVM Device Plugin to create virtual machines. For more information on how to use it, please refer to [KVM Device Plugin].(https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md).
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/kubevirt/kubernetes-device-plugins/master/manifests/kvm-ds.yml
 ```
 
-创建 NetworkAttachmentDefinition：
+Create NetworkAttachmentDefinition:
 
 ```yaml
 apiVersion: k8s.cni.cncf.io/v1
@@ -80,7 +80,7 @@ spec:
     }
 ```
 
-使用下面的 Dockerfile 创建 VM 镜像：
+Create a VM image using the following Dockerfile:
 
 ```dockerfile
 FROM quay.io/kubevirt/virt-launcher:v0.46.1
@@ -90,7 +90,7 @@ COPY CentOS-7-x86_64-GenericCloud.qcow2 /var/lib/libvirt/images/CentOS-7-x86_64-
 
 ```
 
-创建虚拟机：
+Create a virtual machine:
 
 ```yaml
 apiVersion: v1
@@ -250,7 +250,7 @@ spec:
               mountPath: /var/run/libvirt
 ```
 
-等待虚拟机创建成功后进入 Pod 进行虚机配置：
+Wait for the virtual machine to be created successfully and then go to the Pod to configure the virtual machine:
 
 ```bash
 # virsh set-user-password vm root 12345
@@ -268,7 +268,7 @@ Password:
 Last login: Fri Feb 25 09:52:54 on ttyS0
 ```
 
-接下来可以登录虚机进行网络配置并测试：
+Next, you can log into the virtual machine for network configuration and test:
 
 ```bash
 ip link set eth0 mtu 1400

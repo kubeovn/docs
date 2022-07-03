@@ -11,7 +11,7 @@ git clone --depth=1 https://github.com/kubeovn/kube-ovn.git
 
 ## 安装依赖
 
-这里以 CentOS 为例下载相关依赖
+这里以 CentOS 为例下载相关依赖：
 
 ```bash
 yum install -y kernel-devel-$(uname -r) gcc elfutils-libelf-devel
@@ -25,7 +25,7 @@ cd kube-ovn/fastpath
 make all
 ```
 
-针对 4.x 的内核
+针对 4.x 的内核：
 ```bash
 cd kube-ovn/fastpath/4.18
 cp ../Makefile .
