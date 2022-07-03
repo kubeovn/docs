@@ -13,7 +13,7 @@ Kube-OVN 在最终的数据平面使用 OVS 来完成流量转发，相关的流
 
 ## 设置网卡 SR-IOV 模式
 
-用户可参考[Agilio Open vSwitch TC User Guide](https://help.netronome.com/support/solutions/articles/36000081172-agilio-open-vswitch-tc-user-guide)
+用户可参考 [Agilio Open vSwitch TC User Guide](https://help.netronome.com/support/solutions/articles/36000081172-agilio-open-vswitch-tc-user-guide)
 获得该网卡使用的更多详细信息。
 
 保存下列脚本用于后续执行固件相关操作：
@@ -80,7 +80,7 @@ modprobe nfp
 
 ## 安装 SR-IOV Device Plugin
 
-由于每个机器的 VF 数量优先，每个使用加速的 Pod 会占用 VF 资源，我们需要使用 SR-IOV Device Plugin 管理相应资源，使得调度器知道如何根据
+由于每个机器的 VF 数量有限，每个使用加速的 Pod 会占用 VF 资源，我们需要使用 SR-IOV Device Plugin 管理相应资源，使得调度器知道如何根据
 资源进行调度。
 
 创建 SR-IOV 相关 Configmap：
