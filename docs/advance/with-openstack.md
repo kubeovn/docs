@@ -9,7 +9,7 @@ Neutron 侧同样使用 OVN 作为底层网络控制，那么 Kube-OVN 可以使
 
 ### 前提条件
 
-1. 自动互联模式下 OpenStack 和 Kubernetes 内的子网 CIDR 不能相互重叠。若存在重叠需参考后续手动互联过程，只能将不重叠网段打通。
+1. 自动互联模式下 OpenStack 和 Kubernetes 内的子网 CIDR 不能相互重叠。
 2. 需要存在一组机器可以被每个集群通过网络访问，用来部署跨集群互联的控制器。
 3. 每个集群需要有一组可以通过 IP 进行跨集群互访的机器作为之后的网关节点。
 4. 该方案只打通 Kubernetes 默认子网和 OpenStack 的选定 VPC。

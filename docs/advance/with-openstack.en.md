@@ -12,8 +12,7 @@ except that the two ends of the cluster are replaced with OpenStack and Kubernet
 
 ### Prerequisites
 
-1. The subnet CIDRs within OpenStack and Kubernetes cannot overlap with each other in auto-interconnect mode. 
-   If there is overlap, you need to refer to the subsequent manual interconnection process, which can only connect non-overlapping Subnets.
+1. The subnet CIDRs within OpenStack and Kubernetes cannot overlap with each other in auto-route mode.
 2. A set of machines needs to exist that can be accessed by each cluster over the network and used to deploy controllers that interconnect across clusters.
 3. Each cluster needs to have a set of machines that can access each other across clusters via IP as the gateway nodes.
 4. This solution only connects to the Kubernetes default subnet with selected VPC in OpenStack.

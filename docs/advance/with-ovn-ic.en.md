@@ -1,41 +1,45 @@
 # Cluster Inter-Connection with OVN-IC
 
-Kube-OVN 支持通过 [OVN-IC](https://docs.ovn.org/en/latest/tutorials/ovn-interconnection.html) 
-将两个 Kubernetes 集群 Pod 网络打通，打通后的两个集群内的 Pod 可以通过 Pod IP 进行直接通信。
-Kube-OVN 使用隧道对跨集群流量进行封装，两个集群之间只要存在一组 IP 可达的机器即可完成容器网络的互通。
+Kube-OVN supports interconnecting two Kubernetes cluster Pod networks via [OVN-IC](https://docs.ovn.org/en/latest/tutorials/ovn-interconnection.html), 
+and the Pods in the two clusters can communicate directly via Pod IPs .
+Kube-OVN uses tunnels to encapsulate cross-cluster traffic, allowing container networks to interconnect between two clusters 
+as long as there is a set of IP reachable machines.
 
-> 该模式的多集群互联为 Overlay 网络功能，Underlay 网络如果想要实现集群互联需要底层基础设施做网络打通。
+> This mode of multi-cluster interconnection is for Overlay network. 
+> For Underlay network, it needs the underlying infrastructure to do the inter-connection work.
 
 ![](../static/inter-connection.png)
 
-## 前提条件
+## Prerequisites
 
-1. 自动互联模式下不同集群的子网 CIDR 不能相互重叠，默认子网需在安装时配置为不重叠的网段。若存在重叠需参考后续手动互联过程，只能将不重叠网段打通。
-2. 需要存在一组机器可以被每个集群的 `kube-ovn-controller` 通过 IP 访问，用来部署跨集群互联的控制器。
-3. 每个集群需要有一组可以通过 IP 进行跨集群互访的机器作为之后的网关节点。
-4. 该功能只对默认 VPC 生效，用户自定义 VPC 无法使用互联功能。
+1. The subnet CIDRs within OpenStack and Kubernetes cannot overlap with each other in auto-interconnect mode.
+   If there is overlap, you need to refer to the subsequent manual interconnection process, which can only connect non-overlapping Subnets.
+2. A set of machines needs to exist that can be accessed by each cluster over the network and used to deploy controllers that interconnect across clusters.
+3. Each cluster needs to have a set of machines that can access each other across clusters via IP as the gateway nodes.
+4. This solution only connects to the Kubernetes default VPCs.
 
-## 部署单节点 OVN-IC 数据库
+## Deploy a single-node OVN-IC DB
 
-在每个集群 `kube-ovn-controller` 可通过 IP 访问的机器上部署 `OVN-IC` 数据库，该节点将保存各个集群同步上来的网络配置信息。
+Deploy the `OVN-IC` DB on a machine accessible by `kube-ovn-controller`, This DB will hold the network configuration information synchronized up from each cluster.
 
-部署 `docker` 的环境可以使用下面的命令启动 `OVN-IC` 数据库：
+An environment deploying `docker` can start the `OVN-IC` DB with the following command.
 
 ```bash
 docker run --name=ovn-ic-db -d --network=host -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:v1.10.2 bash start-ic-db.sh
 ```
 
-对于部署 `containerd` 取代 `docker` 的环境可以使用下面的命令：
+For deploying a `containerd` environment instead of `docker` you can use the following command:
 
 ```bash
 ctr -n k8s.io run -d --net-host --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw" docker.io/kubeovn/kube-ovn:v1.10.2 ovn-ic-db bash start-ic-db.sh
 ```
 
-## 自动路由设置
+## Automatic Routing Mode
 
-在自动路由设置下，每个集群会将自己默认 VPC 下 Subnet 的 CIDR 信息同步给 `OVN-IC`，因此要确保两个集群的 Subnet CIDR 不存在重叠。
+In auto-routing mode, each cluster synchronizes the CIDR information of the Subnet under its own default VPC to `OVN-IC`, 
+so make sure there is no overlap between the Subnet CIDRs of the two clusters.
 
-在 `kube-system` Namespace 下创建 `ovn-ic-config` ConfigMap：
+Create `ovn-ic-config` ConfigMap in `kube-system` Namespace:
 
 ```yaml
 apiVersion: v1
@@ -53,15 +57,15 @@ data:
   auto-route: "true"
 ```
 
-- `enable-ic`: 是否开启集群互联。
-- `az-name`: 区分不同集群的集群名称，每个互联集群需不同。
-- `ic-db-host`: 部署 `OVN-IC` 数据库的节点地址。
-- `ic-nb-port`: `OVN-IC` 北向数据库，默认为 6645。
-- `ic-sb-port`: `OVN-IC` 南向数据库，默认为 6646。
-- `gw-nodes`: 集群互联中承担网关工作的节点名，逗号分隔。
-- `auto-route`: 是否自动对外发布和学习路由。
+- `enable-ic`: Whether to enable cluster interconnection.
+- `az-name`: Distinguish the cluster names of different clusters, each interconnected cluster needs to be different.
+- `ic-db-host`: Address of the node where the `OVN-IC` DB is deployed.
+- `ic-nb-port`: `OVN-IC` Northbound Database port, default 6645.
+- `ic-sb-port`: `OVN-IC` Southbound Database port, default 6645.
+- `gw-nodes`: The name of the nodes in the cluster interconnection that takes on the work of the gateways, separated by commas.
+- `auto-route`: Whether to automatically publish and learn routes.
 
-在 `ovn-ic` 容器内通过下面的命令查看是否已建立互联逻辑交换机 `ts`：
+Check if the interconnected logical switch `ts` has been established in the `ovn-ic` container with the following command：
 
 ```bash
 # ovn-ic-sbctl show
@@ -83,7 +87,7 @@ availability-zone az2
             address: ["00:00:00:07:4A:59 169.254.100.63/24"]
 ```
 
-在每个集群观察逻辑路由是否有学习到的对端路由：
+At each cluster observe if logical routes have learned peer routes:
 ```bash
 # kubectl ko nbctl lr-route-list ovn-cluster
 IPv4 Routes
@@ -97,9 +101,10 @@ IPv4 Routes
             100.65.0.0/16            169.254.100.45 dst-ip (learned)
 ```
 
-接下来可以尝试在集群 1 内的一个 Pod 内直接 `ping` 集群 2 内的一个 Pod IP 观察是否可以联通。
+Next, you can try `ping` a Pod IP in Cluster 1 directly from a Pod in Cluster 2 to see if you can work.
 
-对于某个不想对外自动发布路由的子网可以通过修改 Subnet 里的 `disableInterConnection` 来禁止路由广播：
+For a subnet that does not want to automatically publish routes to the other end, 
+you can disable route broadcasting by modifying `disableInterConnection` in the Subnet spec.
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -111,11 +116,12 @@ spec:
   disableInterConnection: true
 ```
 
-## 手动路由设置
+## Manual Routing Mode
 
-对于集群间存在重叠 CIDR 只希望做部分子网打通的情况，可以通过下面的步骤手动发布子网路由。
+For cases where there are overlapping CIDRs between clusters, 
+and you only want to do partial subnet interconnection, you can manually publish subnet routing by following the steps below.
 
-在 `kube-system` Namespace 下创建 `ovn-ic-config` ConfigMap，并将 `auto-route` 设置为 `false`：
+Create `ovn-ic-config` ConfigMap in `kube-system` Namespace, and set `auto-route` to `false`:
 
 ```yaml
 apiVersion: v1
@@ -133,7 +139,7 @@ data:
   auto-route: "false"
 ```
 
-在每个集群分别查看远端逻辑端口的地址，用于之后手动配置路由：
+Find the address of the remote logical ports in each cluster separately, for later manual configuration of the route:
 
 ```bash
 [root@az1 ~]# kubectl ko nbctl show
@@ -156,62 +162,63 @@ switch da6138b8-de81-4908-abf9-b2224ec4edf3 (ts)
         
 ```
 
-由上输出可知，集群 `az1` 到 集群 `az2` 的远端地址为 `169.254.100.31`，`az2` 到 `az1` 的远端地址为 `169.254.100.79`。
+The output above shows that the remote address from cluster `az1` to cluster `az2` is `169.254.100.31` 
+and the remote address from `az2` to `az1` is `169.254.100.79`.
 
-下面手动设置路由，在该例子中，集群 `az1` 内的子网 CIDR 为 `10.16.0.0/24`，集群 `az2` 内的子网 CIDR 为 `10.17.0.0/24`。
+In this example, the subnet CIDR within cluster `az1` is `10.16.0.0/24` and the subnet CIDR within cluster `az2` is `10.17.0.0/24`.
 
-在集群 `az1` 设置到集群 `az2` 的路由:
+Set up a route from cluster `az1` to cluster `az2` in cluster `az1`:
 
 ```bash
 kubectl ko nbctl lr-route-add ovn-cluster 10.17.0.0/24 169.254.100.31
 ```
 
-在集群 `az2` 设置到集群 `az1` 的路由:
+Set up a route to cluster `az1` in cluster `az2`:
 
 ```bash
 kubectl ko nbctl lr-route-add ovn-cluster 10.16.0.0/24 169.254.100.79
 ```
 
-## 高可用 OVN-IC 数据库部署
+## Highly Available OVN-IC DB Installation
 
-`OVN-IC` 数据库之间可以通过 Raft 协议组成一个高可用集群，该部署模式需要至少 3 个节点。
+A highly available cluster can be formed between `OVN-IC` DB via the Raft protocol, which requires a minimum of 3 nodes for this deployment model.
 
-首先在第一个节点上启动 `OVN-IC` 数据库的 leader。
+First start the leader of the `OVN-IC` DB on the first node.
 
-部署 `docker` 环境的用户可以使用下面的命令：
+Users deploying a `docker` environment can use the following command:
 
 ```bash
 docker run --name=ovn-ic-db -d --network=host -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn -e LOCAL_IP="192.168.65.3"  -e NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"   kubeovn/kube-ovn:v1.10.2 bash start-ic-db.sh
 ```
 
-如果是部署 `containerd` 的用户可以使用下面的命令：
+If you are  using `containerd` you can use the following command:
 
 ```bash
 ctr -n k8s.io run -d --net-host --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw"  --env="NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"" --env="LOCAL_IP="192.168.65.3"" docker.io/kubeovn/kube-ovn:v1.10.2 ovn-ic-db bash start-ic-db.sh
 ```
 
-- `LOCAL_IP`： 当前容器所在节点 IP 地址。
-- `NODE_IPS`： 运行 `OVN-IC` 数据库的三个节点 IP 地址，使用逗号进行分隔。
+- `LOCAL_IP`： The IP address of the node where the current container is located.
+- `NODE_IPS`： The IP addresses of the three nodes running the `OVN-IC` database, separated by commas.
 
-接下来，在另外两个节点部署 `OVN-IC` 数据库的 follower。
+Next, deploy the follower of the `OVN-IC` DB on the other two nodes.
 
-部署 `docker` 环境的用户可以使用下面的命令：
+`docker` environment can use the following command.
 
 ```bash
 docker run --name=ovn-ic-db -d --network=host -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn -e LOCAL_IP="192.168.65.2"  -e NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1" -e LEADER_IP="192.168.65.3"  kubeovn/kube-ovn:v1.10.2 bash start-ic-db.sh
 ```
 
-如果是部署 `containerd` 的用户可以使用下面的命令：
+If using `containerd` you can use the following command:
 
 ```bash
 ctr -n k8s.io run -d --net-host --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw"  --env="NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"" --env="LOCAL_IP="192.168.65.2"" --env="LEADER_IP="192.168.65.3"" docker.io/kubeovn/kube-ovn:v1.10.2 ovn-ic-db bash start-ic-db.sh
 ```
 
-- `LOCAL_IP`： 当前容器所在节点 IP 地址。
-- `NODE_IPS`： 运行 `OVN-IC` 数据库的三个节点 IP 地址，使用逗号进行分隔。
-- `LEADER_IP`: 运行 `OVN-IC` 数据库 leader 节点的 IP 地址。
+- `LOCAL_IP`： The IP address of the node where the current container is located.
+- `NODE_IPS`： The IP addresses of the three nodes running the `OVN-IC` database, separated by commas.
+- `LEADER_IP`: The IP address of the `OVN-IC` DB leader node.
 
-在每个集群创建 `ovn-ic-config` 时指定多个 `OVN-IC` 数据库节点地址：
+Specify multiple `OVN-IC` database node addresses when creating `ovn-ic-config` for each cluster:
 
 ```yaml
 apiVersion: v1
