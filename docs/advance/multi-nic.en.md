@@ -1,37 +1,43 @@
 # Manage Multiple Interface
 
-Kube-OVN 可以为其他 CNI 网络插件，例如 macvlan、vlan、host-device 等插件提供集群级别的 IPAM 能力，
-其他网络插件也可以使用到 Kube-OVN 中子网以及固定 IP 功能。
+Kube-OVN can provide cluster-level IPAM capabilities for other CNI network plugins such as macvlan, vlan, host-device, etc. 
+Other network plugins can then use the subnet and fixed IP capabilities in Kube-OVN.
 
-## 工作原理
+Kube-OVN also supports address management when multiple NICs are all of Kube-OVN type.
 
-通过使用 [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni), 我们可以给一个 Pod 添加多块不同网络的网卡。
-然而我们仍然缺乏对集群范围内不同网络的 IP 地址进行管理的能力。在 Kube-OVN 中，我们已经能够通过 Subnet 和 IP 的 CRD 来进行 IP 的高级管理，
-例如子网管理，IP 预留，随机分配，固定分配等。现在我们对子网进行扩展，来接入其他不同的网络插件，使得其他网络插件也可以使用 Kube-OVN 的IPAM功能。
+## Working Principle
 
-### 工作流程
+By using [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni), we can add multiple NICs of different networks to a Pod.
+However, we still lack the ability to manage the IP addresses of different networks within a cluster.
+In Kube-OVN, we have been able to perform advanced IP management such as subnet management, IP reservation, random assignment, fixed assignment, etc. through CRD of Subnet and IP.
+Now Kueb-OVN extend the subnet to integrate with other different network plugins, 
+so that other network plugins can also use the IPAM functionality of Kube-OVN.
+
+### Workflow
 
 ![work-flow](../static/mult-nic-workflow.png)
 
-上图展示了如何通过 Kube-OVN 来管理其他网络插件的 IP 地址。其中容器的 eth0 网卡接入 OVN 网络，net1 网卡接入其他 CNI 网络。
-net1 网络的网络定义来自于 multus-cni 中的 NetworkAttachmentDefinition 资源定义。
+The above diagram shows how to manage the IP addresses of other network plugins via Kube-OVN.
+The eth0 NIC of the container is connected to the OVN network and the net1 NIC is connected to other CNI networks.
+The network definition for the net1 network is taken from the NetworkAttachmentDefinition resource definition in multus-cni.
 
-当 Pod 创建时，`kube-ovn-controller` 会监听到 Pod 添加事件，并根据 Pod 中的 annotation 去寻找到对应的 Subnet 并从中进行 IP 的分配和管理，
-并将 Pod 所分配到的地址信息写回到 Pod annotation 中。
+When a Pod is created, `kube-ovn-controller` will get the Pod add event, find the corresponding Subnet according to the annotation in the Pod, 
+then manage the address from it, and write the address information assigned to the Pod back to the Pod annotation.
 
-在容器所在机器的 CNI 可以通过在配置中配置 `kube-ovn-cni` 作为 ipam 插件, `kube-ovn-cni` 将会读取 Pod annotation 并将地址信息通过CNI 协议的标准格式返回给相应的 CNI 插件。
+The CNI on the container machine can configure `kube-ovn-cni` as the ipam plugin. 
+`kube-ovn-cni` will read the Pod annotation and return the address information to the corresponding CNI plugin using the standard format of the CNI protocol.
 
-## 使用方法
+## Usage
 
-### 安装 Kube-OVN 和 Multus
+### Install Kube-OVN and Multus
 
-请参考 [Kube-OVN 一键安装](../start/one-step-install.md) 和 [Multus how to use](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/how-to-use.md) 来安装 Kube-OVN 和 Multus-CNI。
+Please refer [One-Click Installation](../start/one-step-install.md) and [Multus how to use](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/how-to-use.md) to install Kube-OVN and Multus-CNI.
 
-### 附属网卡为非 Kube-OVN 类型 CNI 提供的网络
+### Provide IPAM for other types of CNI
 
-#### 创建 NetworkAttachmentDefinition
+#### Create NetworkAttachmentDefinition
 
-这里我们使用 macvlan 作为容器网络的第二个网络，并将其 ipam 设置为 `kube-ovn`：
+Here we use macvlan as the second network of the container network and set its ipam to `kube-ovn`:
 
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
@@ -52,13 +58,18 @@ spec:
       }
     }'
 ```
-- `spec.config.ipam.type`: 需要为 `kube-ovn` 来调用 kube-ovn 的插件来获取地址信息。
-- `server_socket`: Kube-OVN 通信使用的 socket 文件。 默认位置为 `/run/openvswitch/kube-ovn-daemon.sock`。
-- `provider`: 当前 NetworkAttachmentDefinition 的 `<name>.<namespace>` , Kube-OVN 将会使用这些信息找到对应的 Subnet 资源。
+- `spec.config.ipam.type`: Need to be set to `kube-ovn` to call the kube-ovn plugin to get the address information.
+- `server_socket`: The socket file used for communication to Kube-OVN. The default location is `/run/openvswitch/kube-ovn-daemon.sock`.
+- `provider`: The current NetworkAttachmentDefinition's `<name>. <namespace>` , Kube-OVN will use this information to find the corresponding Subnet resource.
 
-### 附属网卡为 Kube-OVN 类型网卡
+### The attached NIC is a Kube-OVN type NIC
 
-#### 创建 network attachment definition, 并将 provider 的后缀设置为 ovn
+At this point, the multiple NICs are all Kube-OVN type NICs.
+
+#### Create NetworkAttachmentDefinition
+
+Set the `provider` suffix to `ovn`:
+
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
@@ -74,14 +85,14 @@ spec:
     }'
 ```
 
-- `spec.config.type`: 设置为 `kube-ovn` 来触发 CNI 插件使用 Kube-OVN 子网。
-- `server_socket`: Kube-OVN 通信使用的 socket 文件。 默认位置为 `/run/openvswitch/kube-ovn-daemon.sock`。
-- `provider`: 当前 NetworkAttachmentDefinition 的 `<name>.<namespace>.ovn` , Kube-OVN 将会使用这些信息找到对应的 Subnet 资源，注意后缀需要设置为 ovn。
+- `spec.config.ipam.type`: Need to be set to `kube-ovn` to call the kube-ovn plugin to get the address information.
+- `server_socket`: The socket file used for communication to Kube-OVN. The default location is `/run/openvswitch/kube-ovn-daemon.sock`.
+- `provider`: The current NetworkAttachmentDefinition's `<name>. <namespace>` , Kube-OVN will use this information to find the corresponding Subnet resource. It should have the suffix `ovn` here.
 
-### 创建一个 Kube-OVN Subnet
+### Create a Kube-OVN Subnet
 
-创建一个 Kube-OVN Subnet,设置对应的 `cidrBlock` 和 `exclude_ips`, `provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>`, 
-例如用macvlan提供附加网卡，创建subnet如下：
+Create a Kube-OVN Subnet, set the corresponding `cidrBlock` and `exclude_ips`, the `provider` should be set to the `<name>. <namespace>` of corresponding NetworkAttachmentDefinition.
+For example, to provide additional NICs with macvlan, create a Subnet as follows:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -97,11 +108,11 @@ spec:
   - 172.17.0.0..172.17.0.10
 ```
 
-`gateway`, `private`, `nat` 只对 `provider` 类型为 ovn 的网络生效，不适用于 attachment network。
+`gateway`, `private`, `nat` are only valid for networks with `provider` type ovn, not for attachment networks.
 
-如果以 kube-ovn 作为附加网卡，则
-`provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>.ovn`，要以 `ovn` 作为后缀结束，
-用 kube-ovn 提供附加网卡，创建 Subnet 示例如下：
+If you are using Kube-OVN as an attached NIC, `provider` should be set to the `<name>. <namespace>.ovn` of the corresponding NetworkAttachmentDefinition, and should end with `ovn` as a suffix.
+
+An example of creating a Subnet with an additional NIC provided by Kube-OVN is as follows:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -117,9 +128,10 @@ spec:
   - 172.17.0.0..172.17.0.10
 ```
 
-### 创建一个多网络的 Pod
+### Create a Pod with Multiple NIC
 
-对于地址随机分配的 Pod，只需要添加如下 annotation `k8s.v1.cni.cncf.io/networks`,取值为对应的 NetworkAttachmentDefinition 的 `<name>`：
+For Pods with randomly assigned addresses, 
+simply add the following annotation `k8s.v1.cni.cncf.io/networks`, taking the value `<namespace>/<name>` of the corresponding NetworkAttachmentDefinition.：
 
 ```yaml
 apiVersion: v1
@@ -128,7 +140,7 @@ metadata:
   name: samplepod
   namespace: default
   annotations:
-    k8s.v1.cni.cncf.io/networks: macvlan
+    k8s.v1.cni.cncf.io/networks: default/macvlan
 spec:
   containers:
   - name: samplepod
@@ -137,9 +149,9 @@ spec:
 
 ```
 
-### 创建固定 IP 的 Pod
+### Create Pod with a Fixed IP
 
-对于固定 IP 的 Pod，添加 `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/ip_address` annotation：
+For Pods with fixed IPs, add `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/ip_address` annotation：
 
 ```yaml
 apiVersion: v1
@@ -148,7 +160,7 @@ metadata:
   name: static-ip
   namespace: default
   annotations:
-    k8s.v1.cni.cncf.io/networks: macvlan
+    k8s.v1.cni.cncf.io/networks: default/macvlan
     ovn.kubernetes.io/ip_address: 10.16.0.15
     ovn.kubernetes.io/mac_address: 00:00:00:53:6B:B6
     macvlan.default.kubernetes.io/ip_address: 172.17.0.100
@@ -159,9 +171,9 @@ spec:
     image: nginx:alpine
 ```
 
-### 创建使用固定 IP 的工作负载
+### Create Workloads with Fixed IPs
 
-对于使用 ippool 的工作负载, 添加 `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/ip_pool` annotations:
+For workloads that use ippool, add `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/ip_pool` annotations:
 
 ```yaml
 apiVersion: apps/v1
@@ -181,7 +193,7 @@ spec:
       labels:
         app: static-workload
       annotations:
-        k8s.v1.cni.cncf.io/networks: macvlan
+        k8s.v1.cni.cncf.io/networks: default/macvlan
         ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17
         macvlan.default.kubernetes.io/ip_pool: 172.17.0.200,172.17.0.201,172.17.0.202
     spec:

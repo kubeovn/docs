@@ -3,6 +3,8 @@
 Kube-OVN 可以为其他 CNI 网络插件，例如 macvlan、vlan、host-device 等插件提供集群级别的 IPAM 能力，
 其他网络插件也可以使用到 Kube-OVN 中子网以及固定 IP 功能。
 
+同时 Kube-OVN 也支持多块网卡均为 Kube-OVN 类型网卡情况下的地址管理。
+
 ## 工作原理
 
 通过使用 [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni), 我们可以给一个 Pod 添加多块不同网络的网卡。
@@ -27,7 +29,9 @@ net1 网络的网络定义来自于 multus-cni 中的 NetworkAttachmentDefinitio
 
 请参考 [Kube-OVN 一键安装](../start/one-step-install.md) 和 [Multus how to use](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/how-to-use.md) 来安装 Kube-OVN 和 Multus-CNI。
 
-### 附属网卡为非 Kube-OVN 类型 CNI 提供的网络
+### 为其他 CNI 提供 IPAM
+
+此时主网卡为 Kube-OVN 类型网卡，附属网卡为其他类型 CNI。
 
 #### 创建 NetworkAttachmentDefinition
 
@@ -58,7 +62,12 @@ spec:
 
 ### 附属网卡为 Kube-OVN 类型网卡
 
-#### 创建 network attachment definition, 并将 provider 的后缀设置为 ovn
+此时多块网卡均为 Kube-OVN 类型网卡。
+
+#### 创建 NetworkAttachmentDefinition
+
+将 `provider` 的后缀设置为 `ovn`：
+
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
@@ -81,7 +90,7 @@ spec:
 ### 创建一个 Kube-OVN Subnet
 
 创建一个 Kube-OVN Subnet,设置对应的 `cidrBlock` 和 `exclude_ips`, `provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>`, 
-例如用macvlan提供附加网卡，创建subnet如下：
+例如用 macvlan 提供附加网卡，创建 Subnet 如下：
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -99,9 +108,8 @@ spec:
 
 `gateway`, `private`, `nat` 只对 `provider` 类型为 ovn 的网络生效，不适用于 attachment network。
 
-如果以 kube-ovn 作为附加网卡，则
-`provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>.ovn`，要以 `ovn` 作为后缀结束，
-用 kube-ovn 提供附加网卡，创建 Subnet 示例如下：
+如果以 Kube-OVN 作为附加网卡，则 `provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>.ovn`，并要以 `ovn` 作为后缀结束。
+用 Kube-OVN 提供附加网卡，创建 Subnet 示例如下：
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -119,7 +127,7 @@ spec:
 
 ### 创建一个多网络的 Pod
 
-对于地址随机分配的 Pod，只需要添加如下 annotation `k8s.v1.cni.cncf.io/networks`,取值为对应的 NetworkAttachmentDefinition 的 `<name>`：
+对于地址随机分配的 Pod，只需要添加如下 annotation `k8s.v1.cni.cncf.io/networks`,取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`：
 
 ```yaml
 apiVersion: v1
@@ -128,7 +136,7 @@ metadata:
   name: samplepod
   namespace: default
   annotations:
-    k8s.v1.cni.cncf.io/networks: macvlan
+    k8s.v1.cni.cncf.io/networks: default/macvlan
 spec:
   containers:
   - name: samplepod
@@ -148,7 +156,7 @@ metadata:
   name: static-ip
   namespace: default
   annotations:
-    k8s.v1.cni.cncf.io/networks: macvlan
+    k8s.v1.cni.cncf.io/networks: default/macvlan
     ovn.kubernetes.io/ip_address: 10.16.0.15
     ovn.kubernetes.io/mac_address: 00:00:00:53:6B:B6
     macvlan.default.kubernetes.io/ip_address: 172.17.0.100
@@ -181,7 +189,7 @@ spec:
       labels:
         app: static-workload
       annotations:
-        k8s.v1.cni.cncf.io/networks: macvlan
+        k8s.v1.cni.cncf.io/networks: default/macvlan
         ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17
         macvlan.default.kubernetes.io/ip_pool: 172.17.0.200,172.17.0.201,172.17.0.202
     spec:
