@@ -7,7 +7,8 @@
 能提供 Service 的跨集群能力。但是 Submariner 目前只能实现默认子网的打通，无法实现多子网选择性打通。
 
 ## 前提条件
-1. 两个集群的 Service CIDR 和默认子网的 CIDR 不能重叠。
+
+- 两个集群的 Service CIDR 和默认子网的 CIDR 不能重叠。
 
 ## 部署 Submariner
 
