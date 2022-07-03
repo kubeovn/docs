@@ -1,4 +1,4 @@
-# 使用 OVN-IC 进行多集群互联
+# Cluster Inter-Connection with OVN-IC
 
 Kube-OVN 支持通过 [OVN-IC](https://docs.ovn.org/en/latest/tutorials/ovn-interconnection.html) 
 将两个 Kubernetes 集群 Pod 网络打通，打通后的两个集群内的 Pod 可以通过 Pod IP 进行直接通信。

@@ -5,8 +5,7 @@ Neutron 侧同样使用 OVN 作为底层网络控制，那么 Kube-OVN 可以使
 
 ## 集群互联
 
-该模式和[使用 OVN-IC 进行多集群互联](./with-ovn-ic.md)打通两个 Kubernetes 集群网络方式类似，只不过将集群两端换成 OpenStack 和 Kubernetes,
-底层通用利用 OVN-IC 的能力进行互联。
+该模式和[使用 OVN-IC 进行多集群互联](./with-ovn-ic.md)打通两个 Kubernetes 集群网络方式类似，只不过将集群两端换成 OpenStack 和 Kubernetes。
 
 ### 前提条件
 
@@ -46,8 +45,8 @@ data:
 - `enable-ic`: 是否开启集群互联。
 - `az-name`: 区分不同集群的集群名称，每个互联集群需不同。
 - `ic-db-host`: 部署 `OVN-IC` 数据库的节点地址。
-- `ic-nb-port`: `OVN-IC` 北向数据库，默认为 6645。
-- `ic-sb-port`: `OVN-IC` 南向数据库，默认为 6646。
+- `ic-nb-port`: `OVN-IC` 北向数据库端口，默认为 6645。
+- `ic-sb-port`: `OVN-IC` 南向数据库端口，默认为 6646。
 - `gw-nodes`: 集群互联中承担网关工作的节点名，逗号分隔。
 - `auto-route`: 是否自动对外发布和学习路由。
 
@@ -80,7 +79,7 @@ ovn-nbctl set NB_Global . name=op-az
   --ovn-northd-sb-db=unix:/run/ovn/ovnsb_db.sock \
   start_ic
 ```
-- `ovn-ic-nb-db`，`ovn-ic-sb-db`: OVN-IC 数据库北向数据库和南向数据库地址。
+- `ovn-ic-nb-db`，`ovn-ic-sb-db`: OVN-IC 北向数据库和南向数据库地址。
 - `ovn-northd-nb-db`， `ovn-northd-sb-db`: 当前集群 OVN 北向数据库和南向数据地址。
 
 配置互联网关节点：
@@ -112,8 +111,6 @@ IPv4 Routes
 ```
 
 接下来可以在 `router0` 网络下创建虚机验证是否可以和 Kubernetes 下 Pod 互通。
-
-
 
 ## 共享底层 OVN
 
