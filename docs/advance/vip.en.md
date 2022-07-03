@@ -1,13 +1,13 @@
 # VIP Reservation
 
-在一些场景下我们希望动态的预留一部分 IP 但是并不分配给 Pod 而是分配给其他的基础设施启用，例如：
+In some scenarios we want to dynamically reserve part of the IP but not assign it to Pods but to other infrastructure e.g:
 
-- Kubernetes 嵌套 Kubernetes 的场景中上层 Kubernetes 使用 Underlay 网络会占用底层 Subnet 可用地址。
-- LB 或其他网络基础设施需要使用一个 Subnet 内的 IP，但不会单独起 Pod。
+- Kubernetes nested Kubernetes scenarios where the upper Kubernetes uses the Underlay network take up the available addresses of the underlying Subnet.
+- LB or other network infrastructure requires the use of an IP within a Subnet.
 
-## 创建随机地址 VIP
+## Create Random Address VIP
 
-如果只是为了预留若干 IP 而对 IP 地址本身没有要求可以使用下面的 yaml 进行创建：
+If you just want to set aside a number of IPs and have no requirement for the IP addresses themselves, you can use the following yaml to create them:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -18,9 +18,9 @@ spec:
   subnet: ovn-default
 ```
 
-- `subnet`: 将从该 Subnet 中预留 IP。
+- `subnet`: reserve the IP from this Subnet.
 
-创建成功后查询该 VIP：
+Query the VIP after creation.
 
 ```bash
 # kubectl get vip
@@ -28,11 +28,11 @@ NAME             V4IP         PV4IP   MAC                 PMAC   V6IP   PV6IP   
 vip-dynamic-01   10.16.0.12           00:00:00:F0:DB:25                         ovn-default   true
 ```
 
-可见该 VIP 被分配了 `10.16.0.12` 的 IP 地址，该地址可以之后供其他网络基础设施使用。
+It can be seen that the VIP is assigned the IP address `10.16.0.12`, which can later be used by other network infrastructures.
 
-## 创建固定地址 VIP
+## Create a fixed address VIP
 
-如对预留的 VIP 的 IP 地址有需求可使用下面的 yaml 进行固定分配：
+The IP address of the reserved VIP can be fixed using the following yaml:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -44,10 +44,10 @@ spec:
   v4Ip: "10.16.0.121"
 ```
 
-- `subnet`: 将从该 Subnet 中预留 IP。
-- `v4Ip`: 固定分配的 IP 地址，该地址需在 `subnet` 的 CIDR 范围内。
+- `subnet`: reserve the IP from this Subnet.
+- `v4Ip`: A fixed-assigned IP address that should within the CIDR range of `subnet`.
 
-创建成功后查询该 VIP：
+Query the VIP after creation:
 
 ```bash
 # kubectl get vip
@@ -55,4 +55,4 @@ NAME             V4IP         PV4IP   MAC                 PMAC   V6IP   PV6IP   
 static-vip01   10.16.0.121           00:00:00:F0:DB:26                         ovn-default   true
 ```
 
-可见该 VIP 被分配了所预期的 IP 地址。
+It can be seen that the VIP has been assigned the expected IP address.
