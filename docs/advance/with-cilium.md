@@ -6,21 +6,21 @@
 
 通过集成 Cilium，Kube-OVN 用户可以获得如下增益：
 
-- 更丰富高效的安全策略
-- 基于 Hubble 的监控视图
+- 更丰富高效的安全策略。
+- 基于 Hubble 的监控视图。
 
 ![](../static/cilium-integration.png)
 
 ## 前提条件
 
-1. Linux 内核版本高于 4.19 或其他兼容内核以获得完整 eBPF 能力支持
-2. 提前部署 Helm 为安装 Cilium 做准备，部署 Helm 请参考 [Installing Helm](https://helm.sh/docs/intro/install/)
+1. Linux 内核版本高于 4.19 或其他兼容内核以获得完整 eBPF 能力支持。
+2. 提前部署 Helm 为安装 Cilium 做准备，部署 Helm 请参考 [Installing Helm](https://helm.sh/docs/intro/install/)。
 
 ## 配置 Kube-OVN
 
 为了充分使用 Cilium 的安全能力，需要关闭 Kube-OVN 内的 `networkpolicy` 功能，并调整 CNI 配置优先级。
 
-在 `install.sh` 脚本里修改下列变量
+在 `install.sh` 脚本里修改下列变量：
 
 ```bash
 ENABLE_NP=false

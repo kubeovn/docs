@@ -1,55 +1,56 @@
 # Integration with Cilium
 
-[Cilium](https://cilium.io/) 是一款基于 eBPF 的网络和安全组件，Kube-OVN 利用其中的 
-[CNI Chaining](https://docs.cilium.io/en/stable/gettingstarted/cni-chaining/) 模式来对已有功能进行增强。
-用户可以同时使用 Kube-OVN 丰富的网络抽象能力和 eBPF 带来的监控和安全能力。
+[Cilium](https://cilium.io/) is an eBPF-based networking and security component. Kube-OVN uses the 
+[CNI Chaining](https://docs.cilium.io/en/stable/gettingstarted/cni-chaining/) mode to enhance existing features.
+Users can use both the rich network abstraction capabilities of Kube-OVN and the monitoring and security capabilities that come with eBPF.
 
-通过集成 Cilium，Kube-OVN 用户可以获得如下增益：
+By integrating Cilium, Kube-OVN users can have the following gains:
 
-- 更丰富高效的安全策略
-- 基于 Hubble 的监控视图
+- Richer and more efficient security policies.
+- Hubble-based monitoring and UI.
 
 ![](../static/cilium-integration.png)
 
-## 前提条件
+## Prerequisites
 
-1. Linux 内核版本高于 4.19 或其他兼容内核以获得完整 eBPF 能力支持
-2. 提前部署 Helm 为安装 Cilium 做准备，部署 Helm 请参考 [Installing Helm](https://helm.sh/docs/intro/install/)
+1. Linux kernel version above 4.19 or other compatible kernel for full eBPF capability support.
+2. Install Helm in advance to prepare for the installation of Cilium, please refer to [Installing Helm](https://helm.sh/docs/intro/install/) to deploy Helm.
 
-## 配置 Kube-OVN
+## Configure Kube-OVN
 
-为了充分使用 Cilium 的安全能力，需要关闭 Kube-OVN 内的 `networkpolicy` 功能，并调整 CNI 配置优先级。
+In order to fully utilize the security capabilities of Cilium, you need to disable the `networkpolicy` feature within Kube-OVN 
+and adjust the CNI configuration priority.
 
-在 `install.sh` 脚本里修改下列变量
+Change the following variables in the `install.sh` script:
 
 ```bash
 ENABLE_NP=false
 CNI_CONFIG_PRIORITY=10
 ```
 
-若已部署完成，可通过修改 `kube-ovn-controller` 的启动参数进行调整 `networkpolicy`：
+If the deployment is complete, you can adjust the args of `kube-ovn-controller`:
 
 ```yaml
 args:
 - --enable-np=false
 ```
 
-修改 `kube-ovn-cni` 启动参数调整 CNI 配置优先级：
+Modify the `kube-ovn-cni` args to adjust the CNI configuration priority:
 
 ```yaml
 args:
 - --cni-conf-name=10-kube-ovn.conflist
 ```
 
-在每个节点调整 Kube-OVN 配置文件名称，以便优先使用 Cilium 进行操作：
+Adjust the Kube-OVN cni configuration name on each node:
 
 ```bash
 mv /etc/cni/net.d/01-kube-ovn.conflist /etc/cni/net.d/10-kube-ovn.conflist
 ```
 
-## 部署 Cilium
+## Deploy Cilium
 
-创建 `chaining.yaml` 配置文件，使用 Cilium 的 generic-veth 模式：
+Create the `chaining.yaml` configuration file to use Cilium's `generic-veth` mode:
 
 ```yaml
 apiVersion: v1
@@ -83,13 +84,13 @@ data:
     }
 ```
 
-安装配置文件：
+Installation the chaining config:
 
 ```bash
 kubectl apply -f chaining.yaml
 ```
 
-使用 Helm 部署 Cilium：
+Deploying Cilium with Helm:
 
 ```bash
 helm repo add cilium https://helm.cilium.io/
@@ -103,7 +104,7 @@ helm install cilium cilium/cilium --version 1.11.6 \
     --set enableIdentityMark=false 
 ```
 
-确认 Cilium 安装成功：
+Confirm that the Cilium installation was successful:
 
 ```bash
 # cilium  status
