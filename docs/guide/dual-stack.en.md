@@ -1,15 +1,16 @@
 # DualStack
 
-Kube-OVN 中不同的子网可以支持不同的协议，一个集群内可以同时存在 IPv4，IPv6 和双栈类型的子网。
-我们推荐一个集群内使用统一的协议类型以简化使用和维护。
+Different subnets in Kube-OVN can support different IP protocols. IPv4, IPv6 and dual-stack types of subnets can exist within one cluster.
+However, it is recommended to use a uniform protocol type within a cluster to simplify usage and maintenance.
 
-为了支持双栈，需要主机网络满足双栈幽囚，同时需要对 Kubernetes 相关参数做调整，
-请参考 Kubernetes 的[双栈官方指导](https://kubernetes.io/docs/concepts/services-networking/dual-stack)。
+In order to support dual-stack, the host network needs to meet the dual-stack requirements, 
+and the Kubernetes-related parameters need to be adjusted, please refer to [official guide to dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack).
 
-## 创建双栈子网
+## Create dual-stack Subnet
 
-在配置双栈时，只需要设置对应子网 CIDR 格式为 `cidr=<IPv4 CIDR>,<IPv6 CIDR>` 即可。
-CIDR 顺序要求 IPv4 在前，IPv6 在后，如下所示：
+When configuring a dual stack Subnet, you only need to set the corresponding subnet CIDR format as `cidr=<IPv4 CIDR>,<IPv6 CIDR>`.
+
+The CIDR order requires IPv4 to come first and IPv6 to come second, as follows.
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -24,16 +25,18 @@ spec:
   gateway: 10.16.0.1,fd00:10:16::1
 ```
 
-如果需要在安装时默认子网使用双栈，需要在安装脚本中修改如下参数：
+If you need to use a dual stack for the default subnet during installation, you need to change the following parameters in the installation script:
 
 ```bash
 POD_CIDR="10.16.0.0/16,fd00:10:16::/64"
 JOIN_CIDR="100.64.0.0/16,fd00:100:64::/64"
 ```
 
-## 查看 Pod 地址
+## Check Pod Address
 
-配置双栈网络的 Pod 将会从该子网同时分配 IPv4 和 IPv6 的地址，分配结果会显示在 Pod 的 annotation 中:
+Pods configured for dual-stack networks will be assigned both IPv4 and IPv6 addresses from that subnet, 
+and the results will be displayed in the annotation of the Pod:
+
 ```yaml
 apiVersion: v1
 kind: Pod

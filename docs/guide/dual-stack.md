@@ -3,7 +3,7 @@
 Kube-OVN 中不同的子网可以支持不同的协议，一个集群内可以同时存在 IPv4，IPv6 和双栈类型的子网。
 我们推荐一个集群内使用统一的协议类型以简化使用和维护。
 
-为了支持双栈，需要主机网络满足双栈幽囚，同时需要对 Kubernetes 相关参数做调整，
+为了支持双栈，需要主机网络满足双栈要求，同时需要对 Kubernetes 相关参数做调整，
 请参考 Kubernetes 的[双栈官方指导](https://kubernetes.io/docs/concepts/services-networking/dual-stack)。
 
 ## 创建双栈子网
