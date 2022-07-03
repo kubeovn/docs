@@ -1,28 +1,32 @@
 # Performance Tuning
 
-为了保持安装的简单和功能的完备，Kube-OVN 的默认安装脚本并没有对性能针对性的优化。如果应用对延迟和吞吐量敏感，
-管理员可以通过本文档对性能进行针对性优化。
+To keep the installation simple and feature-complete, the default installation script for Kube-OVN does not have performance-specific optimizations. 
+If the applications are sensitive to latency and throughput, administrators can use this document to make specific performance optimizations.
 
-社区会不断迭代控制面板和优化面的性能，部分通用性能优化已经集成到最新版本，建议使用最新版本获得更好的默认性能。
+The community will continue to iterate on the performance. 
+Some general performance optimizations have been integrated into the latest version, 
+so it is recommended to use the latest version to get better default performance.
 
-更多关于性能优化的过程和方法论，可以观看视频分享：[Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web)。
+For more on the process and methodology of performance optimization, please watch the video [Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web)。
 
-## 基准测试
+## Benchmarking
 
-> 由于软硬件环境的差异极大，这里提供的性能测试数据只能作为参考，实际测试结果会和小面真实的结果存在较大差异。
-> 建议比较优化前后的性能测试结果，和宿主机网络和容器网络的性能比较。
+> Because the hardware and software environments vary greatly, the performance test data provided here can only be used as a reference, 
+> and the actual test results may differ significantly from the results in this document.
+> It is recommended to compare the performance test results before and after optimization, 
+> and the performance comparison between the host network and the container network.
 
-### Overlay 优化前后性能对比
+### Overlay Performance Comparison before and after Optimization
 
-*环境信息：*
+*Environment:*
 - Kubernetes: 1.22.0
 - OS: CentOS 7
-- Kube-OVN: 1.8.0 *Overlay* 模式
+- Kube-OVN: 1.8.0 *Overlay* Mode
 - CPU: Intel(R) Xeon(R) E-2278G
 - Network: 2*10Gbps, xmit_hash_policy=layer3+4
 
-我们使用 `qperf -t 60 <server ip> -ub -oo msg_size:1 -vu tcp_lat tcp_bw udp_lat udp_bw` 测试
- 1 字节小包下 tcp/udp 的带宽和延迟，分别测试优化前，优化后以及宿主机网络的性能：
+We use `qperf -t 60 <server ip> -ub -oo msg_size:1 -vu tcp_lat tcp_bw udp_lat udp_bw` 
+to test bandwidth and latency of tcp/udp in 1-byte packets and the host network, respectively.
 
 | Type               | tcp_lat (us) | udp_lat (us) | tcp_bw (Mb/s) | udp_bw(Mb/s) |
 | ------------------ | -------------| -------------| --------------| -------------|
@@ -31,10 +35,9 @@
 | HOST Network       | 13.1         | 12.4         | 28.2          | 6.02         |
 
 
-### Overlay， Underlay 以及 Calico 不同模式性能对比
+### Overlay， Underlay and Calico Comparison
 
-下面我们会比较优化后 Kube-OVN 在不同包大小下的 Overlay 和 Underlay 性能，并和 Calico 的 `IPIP Always`
-`IPIP never` 以及宿主机网络做比较。
+Next, we compare the overlay and underlay performance of the optimized Kube-OVN at different packet sizes with Calico's `IPIP Always`, `IPIP never` and the host network.
 
 *Environment*:
 - Kubernetes: 1.22.0
@@ -73,27 +76,29 @@
 | Calico NoEncap     | 40           | 49.6         | 6.56          | 4.19         |
 | HOST Network       | 35.9         | 45.9         | 14.6          | 5.59         |
 
-> 在部分情况下容器网络的性能会优于宿主机网络，这是优于经过优化后容器网络路径完全绕过了 netfilter，
-> 而宿主机网络由于 `kube-proxy` 的存在所有数据包均需经过 netfilter，会导致在一些环境下容器网络
-> 的消耗相对更小，因此会有更好的性能表现。
+> In some cases the container network outperforms the host network, this is because the container network path is optimized to completely bypass netfilter.
+> Due to the existence of `kube-proxy`, all packets in host network have to go through netfilter, which will lead to more CPU consumption, 
+> so that container network in some environments has better performance.
 
-## 数据平面性能优化方法
+## Dataplane performance optimization methods
 
-这里介绍的优化方法和软硬件环境以及所需要的功能相关，请仔细了解优化的前提条件再进行尝试。
+The optimization methods described here are related to the hardware and software environment and the desired functionality, 
+so please carefully understand the prerequisites for optimization before attempting it.
 
-### CPU 性能模式调整
+### CPU Performance Mode Tuning
 
-部分环境下 CPU 运行在节能模式，该模式下性能表现将会不稳定，延迟会出现明显增加，建议使用 CPU 的性能模式获得更稳定的性能表现：
+In some environments the CPU is running in power saving mode, performance in this mode will be unstable and latency will increase significantly, 
+it is recommended to use the CPU's performance mode for more stable performance.
 
 ```bash
 cpupower frequency-set -g performance
 ```
 
-### 网卡硬件队列调整
+### NIC Hardware Queue Adjustment
 
-在流量增大的情况下，缓冲队列过短可能导致较高的丢包率导致性能显著下降，需要进行调整
+In the case of increased traffic, a small buffer queue may lead to significant performance degradation due to a high packet loss rate and needs to be tuned.
 
-检查当前网卡队列长度：
+Check the current NIC queue length:
 ```bash
 # ethtool -g eno1
  Ring parameters for eno1:
@@ -109,38 +114,38 @@ cpupower frequency-set -g performance
  TX:             255
 ```
 
-增加队列长度至最大值：
+Increase the queue length to the maximum:
 
 ```bash
 ethtool -G eno1 rx 4096
 ethtool -G eno1 tx 4096
 ```
 
-### 使用 tuned 优化系统参数
+### Optimize with tuned
 
-[tuned](https://tuned-project.org/) 可以使用一系列预置的 profile 文件保存了针对特定场景的一系列系统优化配置。
+[tuned](https://tuned-project.org/) can use a series of preconfigured profile files to perform system optimizations for a specific scenario.
 
-针对延迟优先场景：
+For latency-first scenarios:
 
 ```bash
 tuned-adm profile network-latency
 ```
 
-针对吞吐量优先场景：
+For throughput-first scenarios:
 
 ```bash
 tuned-adm profile network-throughput
 ```
 
-### 中断绑定
+### Interrupt Binding
 
-我们推荐禁用 `irqbalance` 并将网卡中断和特定 CPU 进行绑定，来避免在多个 CPU 之间切换导致的性能波动。
+We recommend disabling `irqbalance` and binding NIC interrupts to specific CPUs to avoid performance fluctuations caused by switching between multiple CPUs.
 
-### 关闭 OVN LB
+### Disable OVN LB
 
-OVN 的 L2 LB 实现过程中需要调用内核的 `conntrack` 模块并进行 recirculate 导致大量的 CPU 开销，经测试该功能会带来 20% 左右的 CPU 开销，
-Overlay 如果使用 `kube-proxy` 或 `Cilium` 完成 Service 转发功能，可以在 `kube-ovn-controller` 中关闭该功能，获得更好的 Pod-to-Pod 
-性能：
+The L2 LB implementation of OVN requires calling the kernel's `conntrack` module and recirculate, resulting in a significant CPU overhead, which is tested to be around 20%.
+For Overlay networks you can use `kube-proxy` to complete the service forwarding function for better Pod-to-Pod performance.
+This can be turned off in `kube-ovn-controller` args:
 
 ```yaml
 command:
@@ -151,22 +156,23 @@ args:
 ...
 ```
 
-> Underlay 模式下 `kube-proxy` 无法使用 iptables 或 ipvs 控制容器网络流量，如需关闭 LB 功能需要确认是否不需要 Service 功能，或可使用
-> 其他 Service 实现（例如 Cilium）替代。
+> In Underlay mode `kube-proxy` cannot use iptables or ipvs to control container network traffic, 
+> if you want to disable the LB function, you need to confirm whether you do not need the Service function.
 
-### 内核 FastPath 模块
+### FastPath Kernel Module
 
-由于容器网络和宿主机网络在不同的 network ns，数据包在跨宿主机传输时会多次经过 netfilter 模块，会带来近 20% 的 CPU 开销。由于大部分情况下
-容器网络内应用无须使用 netfilter 模块的功能，`FastPath` 模块可以绕过 netfilter 降低 CPU 开销。
+Since the container network and the host network are on different network ns, the packets will pass through the netfilter module several times when they are transmitted across the host, which results in a CPU overhead of nearly 20%.
+The `FastPath` module can reduce CPU overhead by bypassing netfilter, since in most cases applications within a container network do not need to use the functionality of the netfilter module.
 
-> 如容器网络内需要使用 netfilter 提供的功能如 iptables，ipvs，nftables 等，该模块会使相关功能失效。
+> If you need to use the functions provided by netfilter such as iptables, ipvs, nftables, etc. in the container network, this module will disable the related functions.
 
-由于内核模块和内核版本相关，无法提供一个单一适应所有内核的内核模块制品。我们预先编译了部分内核的 `FastPath` 模块，
-可以前往 [tunning-package](https://github.com/kubeovn/tunning-package) 进行下载。
+Since kernel modules are kernel version dependent, it is not possible to provide a single kernel module artifact that adapts to all kernels.
+We pre-compiled the `FastPath` module for part of the kernels, which can be accessed by [tunning-package](https://github.com/kubeovn/tunning-package).
 
-也可以手动进行编译，方法参考[手动编译 FastPath 模块](./fastpath.md)
+You can also compile it manually, see [Compiling FastPath Module](./fastpath.md)
 
-获得内核模块后可在每个节点使用 `insmod kube_ovn_fastpath.ko` 加载 `FastPath` 模块，并使用 `dmesg` 验证模块加载成功：
+After obtaining the kernel module, you can load the `FastPath` module on each node 
+using `insmod kube_ovn_fastpath.ko` and verify that the module was loaded successfully using `dmesg`:
 
 ```bash
 # dmesg
@@ -178,30 +184,33 @@ args:
 ...
 ```
 
-### OVS 内核模块优化
+### OVS Kernel Module Optimization
 
-OVS 的 flow 处理包括哈希计算，匹配等操作会消耗大约 10% 左右的 CPU 资源。现代 x86 CPU 上的一些指令集例如 `popcnt` 和 `sse4.2` 可以
-加速相关计算过程，单默认编译未开启相关选项。经测试在开启相应指令集优化后，flow 相关操作 CPU 消耗将会降至 5% 左右。
+OVS flow processing including hashing, matching, etc. consumes about 10% of the CPU resources. 
+Some instruction sets on modern x86 CPUs such as `popcnt` and `sse4.2` can speed up the computation process, 
+but the kernel is not compiled with these options enabled. 
+It has been tested that the CPU consumption of flow-related operations is reduced to about 5% 
+when the corresponding instruction set optimizations are enabled.
 
-和 `FastPath` 模块的编译类似，由于内核模块和内核版本相关，无法提供一个单一适应所有内核的内核模块制品。用户需要手动编译或者
-前往 [tunning-package](https://github.com/kubeovn/tunning-package) 查看是否有以编译好的制品进行下载。
+Similar to the compilation of the `FastPath` module, it is not possible to provide a single kernel module artifact for all kernels.
+Users need to compile manually or go to [tunning-package](https://github.com/kubeovn/tunning-package) to see if a compiled package is available for download.
 
-使用该内核模块前请先确认 CPU 是否支持相关指令集：
+Before using this kernel module, please check if the CPU supports the following instruction set:
 
 ```bash
 cat /proc/cpuinfo  | grep popcnt
 cat /proc/cpuinfo  | grep sse4_2
 ```
 
-#### CentOS 下编译安装
+#### Compile and Install in CentOS
 
-安装相关编译依赖和内核头文件：
+Install the relevant compilation dependencies and kernel headers:
 
 ```bash
 yum install -y gcc kernel-devel-$(uname -r) python3 autoconf automake libtool rpm-build openssl-devel
 ```
 
-编译 OVS 内核模块并生成对应 RPM 文件:
+Compile the OVS kernel module and generate the corresponding RPM:
 
 ```bash
 git clone -b branch-2.17 --depth=1 https://github.com/openvswitch/ovs.git
@@ -213,23 +222,24 @@ make rpm-fedora-kmod
 cd rpm/rpmbuild/RPMS/x86_64/
 ```
 
-复制 RPM 到每个节点并进行安装：
+Copy the RPM to each node and install:
 
 ```bash
 rpm -i openvswitch-kmod-2.15.2-1.el7.x86_64.rpm
 ```
 
-若之前已经启动过 Kube-OVN，旧版本 OVS 模块已加载至内核，建议重启机器重新加载新版内核模块。
+If you have previously started Kube-OVN and the older version of the OVS module has been loaded into the kernel. 
+It is recommended to reboot the machine to reload the new version of the kernel module.
 
-#### Ubuntu 下编译安装
+#### Compile and Install in Ubuntu
 
-安装相关编译依赖和内核头文件：
+Install the relevant compilation dependencies and kernel headers:
 
 ```bash
 apt install -y autoconf automake libtool gcc build-essential libssl-dev
 ```
 
-编译 OVS 内核模块并安装：
+Compile the OVS kernel module and install:
 
 ```bash
 apt install -y autoconf automake libtool gcc build-essential libssl-dev
@@ -253,22 +263,24 @@ cp debian/openvswitch-switch.init /etc/init.d/openvswitch-switch
 /etc/init.d/openvswitch-switch force-reload-kmod
 ```
 
-若之前已经启动过 Kube-OVN，旧版本 OVS 模块已加载至内核，建议重启机器重新加载新版内核模块。
+If you have previously started Kube-OVN and the older version of the OVS module has been loaded into the kernel.
+It is recommended to reboot the machine to reload the new version of the kernel module.
 
+### Using STT Type Tunnel
 
+Common tunnel encapsulation protocols such as Geneve and Vxlan use the UDP protocol to encapsulate packets and are well supported in the kernel.
+However, when TCP packets are encapsulated using UDP, the optimization and offload features of modern operating systems and 
+network cards for the TCP protocol do not work well, resulting in a significant drop in TCP throughput.
+In some virtualization scenarios, due to CPU limitations, TCP packet throughput may even be a tenth of that of the host network.
 
-### 使用 STT 类型隧道
+STT provides an innovative tunneling protocol that uses TCP formatted header for encapsulation.
+This encapsulation only emulates the TCP protocol header format without actually establishing a TCP connection, 
+but can take full advantage of the TCP optimization capabilities of modern operating systems and network cards.
+In our tests TCP packet throughput can be improved several times, reaching performance levels close to those of the host network.
 
-常见的隧道封装协议例如 Geneve 和 Vxlan 使用 UDP 协议对数据包进行封装，在内核中有良好的支持。但是当使用 UDP 封装 TCP 数据包时，
-现代操作系统和网卡针对 TCP 协议的优化和 offload 功能将无法顺利工作，导致 TCP 的吞吐量出现显著下降。在虚拟化场景下由于 CPU 的限制，
-TCP 大包的吞吐量甚至可能只有宿主机网络的十分之一。
+The STT tunnel is not pre-installed in the kernel and needs to be installed by compiling the OVS kernel module, which can be found in the previous section.
 
-STT 提供了一种创新式的使用 TCP 格式数据包进行封装的隧道协议，该封装只是模拟了 TCP 协议的头部格式，并没有真正建立 TCP 连接，但是可以
-充分利用现代操作系统和网卡的 TCP 优化能力。在我们的测试中 TCP 大包的吞吐量能有数倍的提升，达到接近宿主机网络的性能水平。
-
-STT 隧道并没有预安装在内核内，需要通过编译 OVS 内核模块来安装，OVS 内核模块的编译方法可以参考上一节。
-
-STT 隧道开启：
+Enable STT tunnel:
 
 ```bash
 kubectl set env daemonset/ovs-ovn -n kube-system TUNNEL_TYPE=stt

@@ -9,7 +9,7 @@
 
 ## 基准测试
 
-> 由于软硬件环境的差异极大，这里提供的性能测试数据只能作为参考，实际测试结果会和小面真实的结果存在较大差异。
+> 由于软硬件环境的差异极大，这里提供的性能测试数据只能作为参考，实际测试结果会和本文档中的结果存在较大差异。
 > 建议比较优化前后的性能测试结果，和宿主机网络和容器网络的性能比较。
 
 ### Overlay 优化前后性能对比
@@ -33,7 +33,7 @@
 
 ### Overlay， Underlay 以及 Calico 不同模式性能对比
 
-下面我们会比较优化后 Kube-OVN 在不同包大小下的 Overlay 和 Underlay 性能，并和 Calico 的 `IPIP Always`
+下面我们会比较优化后 Kube-OVN 在不同包大小下的 Overlay 和 Underlay 性能，并和 Calico 的 `IPIP Always`,
 `IPIP never` 以及宿主机网络做比较。
 
 *Environment*:
@@ -139,8 +139,7 @@ tuned-adm profile network-throughput
 ### 关闭 OVN LB
 
 OVN 的 L2 LB 实现过程中需要调用内核的 `conntrack` 模块并进行 recirculate 导致大量的 CPU 开销，经测试该功能会带来 20% 左右的 CPU 开销，
-Overlay 如果使用 `kube-proxy` 或 `Cilium` 完成 Service 转发功能，可以在 `kube-ovn-controller` 中关闭该功能，获得更好的 Pod-to-Pod 
-性能：
+在 Overlay 网络模式下可以使用 `kube-proxy` 完成 Service 转发功能，获得更好的 Pod-to-Pod 性能。可以在 `kube-ovn-controller` 中关闭该功能：
 
 ```yaml
 command:
@@ -151,8 +150,7 @@ args:
 ...
 ```
 
-> Underlay 模式下 `kube-proxy` 无法使用 iptables 或 ipvs 控制容器网络流量，如需关闭 LB 功能需要确认是否不需要 Service 功能，或可使用
-> 其他 Service 实现（例如 Cilium）替代。
+> Underlay 模式下 `kube-proxy` 无法使用 iptables 或 ipvs 控制容器网络流量，如需关闭 LB 功能需要确认是否不需要 Service 功能。
 
 ### 内核 FastPath 模块
 
@@ -181,10 +179,10 @@ args:
 ### OVS 内核模块优化
 
 OVS 的 flow 处理包括哈希计算，匹配等操作会消耗大约 10% 左右的 CPU 资源。现代 x86 CPU 上的一些指令集例如 `popcnt` 和 `sse4.2` 可以
-加速相关计算过程，单默认编译未开启相关选项。经测试在开启相应指令集优化后，flow 相关操作 CPU 消耗将会降至 5% 左右。
+加速相关计算过程，但内核默认编译未开启相关选项。经测试在开启相应指令集优化后，flow 相关操作 CPU 消耗将会降至 5% 左右。
 
 和 `FastPath` 模块的编译类似，由于内核模块和内核版本相关，无法提供一个单一适应所有内核的内核模块制品。用户需要手动编译或者
-前往 [tunning-package](https://github.com/kubeovn/tunning-package) 查看是否有以编译好的制品进行下载。
+前往 [tunning-package](https://github.com/kubeovn/tunning-package) 查看是否有已编译好的制品进行下载。
 
 使用该内核模块前请先确认 CPU 是否支持相关指令集：
 
@@ -254,8 +252,6 @@ cp debian/openvswitch-switch.init /etc/init.d/openvswitch-switch
 ```
 
 若之前已经启动过 Kube-OVN，旧版本 OVS 模块已加载至内核，建议重启机器重新加载新版内核模块。
-
-
 
 ### 使用 STT 类型隧道
 
