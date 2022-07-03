@@ -1,18 +1,18 @@
 # Manage QoS
 
-Kube-OVN 支持三种不同类型的 QoS
+Kube-OVN supports three types of QoS:
 
-- 最大带宽限制 QoS。
-- `linux-htb`，基于优先级的 QoS，当带宽不足时优先级较高流量被首先满足。
-- `linux-netem`，模拟设备干扰丢包等的 QoS，可用于模拟测试。
+- Maximum bandwidth limit QoS.
+- `linux-htb`, Priority-based QoS, where higher-priority traffic is satisfied first when there is insufficient bandwidth.
+- `linux-netem`, QoS for simulating latency and packet loss that can be used for simulation testing.
 
-其中 `linux-htb` 和 `linux-netem` 两种 QoS 无法同时生效，若两种 QoS 都配置到了同一个 Pod 上，
-只有 `linux-htb` 类型 QoS 生效。
+`linux-htb` and `linux-netem` can not take effect at the same time.
+If both QoS are configured to the same Pod, only the `linux-htb` type QoS is in effect.
 
-## 基于最大带宽限制的 QoS
+## Maximum Bandwidth Limit QoS
 
-该类型的 QoS 可以通过 Pod annotation 动态进行配置，可以在不中断 Pod 运行的情况下进行调整。
-带宽限速的单位为 `Mbit/s`
+This type of QoS can be dynamically configured via Pod annotation and can be adjusted without restarting running Pod.
+Bandwidth speed limit unit is `Mbit/s`.
 
 ```yaml
 apiVersion: v1
@@ -29,15 +29,16 @@ spec:
     image: nginx:alpine
 ```
 
-使用 annotation 动态调整 QoS：
+Use annotation to dynamically adjust QoS:
 
 ```bash
 kubectl annotate --overwrite  pod nginx-74d5899f46-d7qkn ovn.kubernetes.io/ingress_rate=3
 ```
 
-### 测试 QoS 调整
+### Test QoS
 
-部署性能测试需要的容器
+Deploy the containers needed for performance testing:
+
 ```yaml
 kind: DaemonSet
 apiVersion: apps/v1
@@ -60,7 +61,7 @@ spec:
         image: kubeovn/perf
 ```
 
-进入其中一个 Pod 并开启 iperf3 server：
+Exec into one Pod and run iperf3 server:
 
 ```bash
 # kubectl exec -it perf-4n4gt -n ls1 sh
@@ -68,10 +69,10 @@ spec:
 -----------------------------------------------------------
 Server listening on 5201
 -----------------------------------------------------------
-
 ```
 
-进入另一个 Pod 请求之前的 Pod：
+Exec into the other Pod and run iperf3 client to connect above server address:
+
 ```bash
 # kubectl exec -it perf-d4mqc -n ls1 sh
 # iperf3 -c 10.66.0.12
@@ -96,13 +97,14 @@ Connecting to host 10.66.0.12, port 5201
 iperf Done.
 ```
 
-修改第一个 Pod 的入口带宽 QoS：
+Modify the ingress bandwidth QoS for the first Pod:
 
 ```bash
 kubectl annotate --overwrite  pod perf-4n4gt -n ls1 ovn.kubernetes.io/ingress_rate=30
 ```
 
-再次从第二个 Pod 测试第一个 Pod 带宽：
+Test the Pod bandwidth again from the second Pod:
+
 ```bash
 # iperf3 -c 10.66.0.12
 Connecting to host 10.66.0.12, port 5201
@@ -131,9 +133,12 @@ iperf Done.
 
 ![](../static/priority-qos.png)
 
-`linux-htb` QoS 是基于优先级的 QoS 设置，当出现整体带宽不足时，优先级较高的流量会被优先保证，在 Kube-OVN 中通过 HtbQos 进行设置。
+`linux-htb` QoS is a priority-based QoS, where higher-priority traffic is satisfied first when there is insufficient bandwidth.
+And it can be configured in Kube-OVN via HtbQos CRD.
 
-HtbQos 定义只有一个字段，即 `.spec.priority`，字段取值代表了优先级的大小。在 Kube-OVN 初始化时预置了三个不同优先级的实例，分别是：
+HtbQos CRD has only one field, `.spec.priority`, and the field takes a value that represents the priority.
+
+Three instances with different priority levels are preconfigured at the initialization of Kube-OVN:
 
 ```bash
 # kubectl get htbqos
@@ -142,9 +147,10 @@ htbqos-high     100
 htbqos-low      300
 htbqos-medium   200
 ```
-优先级顺序是相对的，priority 取值越小，QoS 优先级越高。
 
-Subnet Spec 中的 `HtbQos` 字段，用于指定当前 Subnet 绑定的 HtbQos 实例，参考如下:
+The priority order is relative; the smaller the priority value, the higher the QoS priority.
+
+The `HtbQos` field in Subnet Spec, used to specify the HtbQos instance of the current Subnet binding as below:
 
 ```bash
 # kubectl get subnet test -o yaml
@@ -159,23 +165,25 @@ spec:
   htbqos: htbqos-high
   ...
 ```
-当 Subnet 绑定了 HtbQos 实例之后，该 Subnet 下的所有 Pod 都拥有相同的优先级设置。
+When a Subnet is bound to an instance of HtbQos, all Pods under that Subnet have the same priority setting.
 
-如果需要给某个 Pod 蛋到户设置 HtbQoS 可以使用 Pod annotation `ovn.kubernetes.io/priority`。
-取值内容为具体的 priority 数值，如`ovn.kubernetes.io/priority: "50"`，可以用于单独设置 Pod 的 QoS 优先级参数。
+If you need to set a separate HtbQoS for a Pod you can use the Pod annotation `ovn.kubernetes.io/priority`.
+The value is a specific priority value, such as `ovn.kubernetes.io/priority: "50"`, which can be used to set the QoS priority parameter of the Pod individually.
 
 ```bash
 kubectl annotate --overwrite  pod perf-4n4gt -n ls1 ovn.kubernetes.io/priority=50
 ```
 
-当 Pod 所在 Subnet 指定了 HtbQos 参数，同时 Pod 又设置了 QoS 优先级 annotation 时，以 Pod annotation 取值为准。
+When the Pod's Subnet specifies the HtbQos parameter and the Pod sets the QoS priority annotation, the Pod annotation takes effect.
 
-对于带宽设置，仍然是基于 Pod 单独设置的，使用之前的 annotation `ovn.kubernetes.io/ingress_rate` 和 `ovn.kubernetes.io/egress_rate`，用于控制 Pod 的双向带宽。
+The bandwidth settings are still set individually based on the Pod, using the previous annotations `ovn.kubernetes.io/ingress_rate` 
+and `ovn.kubernetes.io/egress_rate`, which are used to control the bi-direction bandwidth of the Pod.
 
 ## linux-netem QoS
-Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` 和 
+
+Pod can use annotation below to config `linux-netem` type QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` and 
 `ovn.kubernetes.io/loss`。
 
-- `ovn.kubernetes.io/latency`： 为设置的 Pod 流量延迟参数，取值为整形数值，单位为 ms。
-- `ovn.kubernetes.io/limit`： 为 `qdisc` 队列可容纳的最大数据包数，取值为整形数值，例如 1000。
-- `ovn.kubernetes.io/loss`： 为设置的报文丢包概率，取值为 float 类型，例如取值为 0.2，则为设置 20% 的丢包概率。
+- `ovn.kubernetes.io/latency`: 设Sets the Pod traffic delay to an integer value in ms.
+- `ovn.kubernetes.io/limit`： is the maximum number of packets that the `qdisc` queue can hold, and takes an integer value, such as 1000.
+- `ovn.kubernetes.io/loss`： Set packet loss probability, the value is float type, for example, the value is 0.2, then it is set 20% packet loss probability.

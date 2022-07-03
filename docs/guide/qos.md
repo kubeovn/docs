@@ -1,6 +1,6 @@
 # 容器网络 QoS 配置
 
-Kube-OVN 支持三种不同类型的 QoS
+Kube-OVN 支持三种不同类型的 QoS：
 
 - 最大带宽限制 QoS。
 - `linux-htb`，基于优先级的 QoS，当带宽不足时优先级较高流量被首先满足。
@@ -12,7 +12,7 @@ Kube-OVN 支持三种不同类型的 QoS
 ## 基于最大带宽限制的 QoS
 
 该类型的 QoS 可以通过 Pod annotation 动态进行配置，可以在不中断 Pod 运行的情况下进行调整。
-带宽限速的单位为 `Mbit/s`
+带宽限速的单位为 `Mbit/s`。
 
 ```yaml
 apiVersion: v1
@@ -37,7 +37,8 @@ kubectl annotate --overwrite  pod nginx-74d5899f46-d7qkn ovn.kubernetes.io/ingre
 
 ### 测试 QoS 调整
 
-部署性能测试需要的容器
+部署性能测试需要的容器：
+
 ```yaml
 kind: DaemonSet
 apiVersion: apps/v1
@@ -161,7 +162,7 @@ spec:
 ```
 当 Subnet 绑定了 HtbQos 实例之后，该 Subnet 下的所有 Pod 都拥有相同的优先级设置。
 
-如果需要给某个 Pod 蛋到户设置 HtbQoS 可以使用 Pod annotation `ovn.kubernetes.io/priority`。
+如果需要给某个 Pod 单独设置 HtbQoS 可以使用 Pod annotation `ovn.kubernetes.io/priority`。
 取值内容为具体的 priority 数值，如`ovn.kubernetes.io/priority: "50"`，可以用于单独设置 Pod 的 QoS 优先级参数。
 
 ```bash
@@ -173,9 +174,10 @@ kubectl annotate --overwrite  pod perf-4n4gt -n ls1 ovn.kubernetes.io/priority=5
 对于带宽设置，仍然是基于 Pod 单独设置的，使用之前的 annotation `ovn.kubernetes.io/ingress_rate` 和 `ovn.kubernetes.io/egress_rate`，用于控制 Pod 的双向带宽。
 
 ## linux-netem QoS
+
 Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` 和 
 `ovn.kubernetes.io/loss`。
 
-- `ovn.kubernetes.io/latency`： 为设置的 Pod 流量延迟参数，取值为整形数值，单位为 ms。
+- `ovn.kubernetes.io/latency`：设置 Pod 流量延迟，取值为整数，单位为 ms。
 - `ovn.kubernetes.io/limit`： 为 `qdisc` 队列可容纳的最大数据包数，取值为整形数值，例如 1000。
 - `ovn.kubernetes.io/loss`： 为设置的报文丢包概率，取值为 float 类型，例如取值为 0.2，则为设置 20% 的丢包概率。
