@@ -1,23 +1,25 @@
 # EIP and SNAT
 
-> 该配置针对默认 VPC 下的网络，用户自定义 VPC 请参考 [VPC 网关](./vpc.md#vpc_2)
+> This configuration is for the network under default VPC, 
+> for custom VPC please refer to [VPC Gateway](./vpc.en.md#vpc_2)
 
-Kube-OVN 支持利用 OVN 中的 L3 Gateway 功能来实现 Pod 级别的 SNAT 和 EIP 功能。
-通过使用 SNAT，一组 Pod 可以共享一个 IP 地址对外进行访问。 通过 EIP 的功能，一个 Pod 可以直接和一个外部 IP 关联，
-外部服务可以通过 EIP 直接访问 Pod，Pod 也将通过这个 EIP 访问外部服务。
+Kube-OVN supports SNAT and EIP functionality at the Pod level using the L3 Gateway feature in OVN.
+By using SNAT, a group of Pods can share an IP address for external access. With the EIP feature, a Pod can be directly associated with an external IP.
+External services can access the Pod directly through the EIP, and the Pod will also access external services through this EIP.
 
 ![](../static/eip-snat.png)
 
-## 准备工作
+## Preparation
 
-- 为了使用 OVN 的 L3 Gateway 能力，必须将一个单独的网卡接入 OVS 网桥中进行 Overlay 和 Underlay 网络的打通，
-主机必须有其他的网卡用于运维管理。
-- 由于经过 NAT 后的数据包会直接进入 Underlay 网络，必须确认当前的网络架构下此类数据包可以安全通过。
-- 目前 EIP 和 SNAT 地址没有冲突检测，需要管理员手动分配避免地址冲突。
+- In order to use the OVN's L3 Gateway capability, a separate NIC must be bridged into the OVS bridge for overlay and underlay network communication.
+  The host must have other NICs for management.
+- Since packets passing through NAT will go directly to the Underlay network, it is important to confirm that such packets can pass safely on the current network architecture.
+- Currently, there is no conflict detection for EIP and SNAT addresses, and an administrator needs to manually assign them to avoid address conflicts.
 
-## 创建配置文件
 
-在 `kube-system` 下创建 ConfigMap `ovn-external-gw-config`：
+## Create Config
+
+Create ConfigMap `ovn-external-gw-config` in `kube-system` Namespace:
 
 ```yaml
 apiVersion: v1
@@ -34,17 +36,17 @@ data:
   nic-mac: "16:52:f3:13:6a:25"
 ```
 
-- `enable-external-gw`: 是否开启 SNAT 和 EIP 功能。
-- `type`: `centrailized` 或 `distributed`， 默认为 `centralized` 如果使用 `distributed`，则集群所有节点都需要有同名网卡来承担网关功能。
-- `external-gw-nodes`: `centralized` 模式下，承担网关作用的节点名，逗号分隔。
-- `external-gw-nic`: 节点上承担网关作用的网卡名。
-- `external-gw-addr`: 物理网络网关的 IP 和掩码。
-- `nic-ip`,`nic-mac`: 分配给逻辑网关端口的 IP 和 Mac，需为物理段未被占用的 IP 和 Mac。
+- `enable-external-gw`: Whether to enable SNAT and EIP functions.
+- `type`: `centrailized` or `distributed`， Default is `centralized` If `distributed` is used, all nodes of the cluster need to have the same name NIC to perform the gateway function.
+- `external-gw-nodes`: In `centralized` mode，The names of the node performing the gateway role, comma separated.
+- `external-gw-nic`: The name of the NIC that performs the role of a gateway on the node.
+- `external-gw-addr`: The IP and mask of the physical network gateway.
+- `nic-ip`,`nic-mac`: The IP and Mac assigned to the logical gateway port needs to be an unoccupied IP and Mac for the physical subnet.
 
-## 观察 OVN 和 OVS 状态确认配置生效
+## Confirm the Configuration Take Effect
 
-检查 OVN-NB 状态, 确认 `ovn-external` 逻辑交换机存在，并且 `ovn-cluster-ovn-external` 
-逻辑路由器端口上 绑定了正确的地址和 chassis。
+Check the OVN-NB status to confirm that the `ovn-external` logical switch exists and that the correct address and 
+chassis are bound to the `ovn-cluster-ovn-external` logical router port.
 
 ```bash
 # kubectl ko nbctl show
@@ -62,7 +64,7 @@ router e1eb83ad-34be-4ed5-9a02-fcc8b1d357c4 (ovn-cluster)
         gateway chassis: [a5682814-2e2c-46dd-9c1c-6803ef0dab66]
 ```
 
-检查 OVS 状态，确认相应的网卡已经桥接进 `br-external` 网桥：
+Check the OVS status to confirm that the corresponding NIC is bridged into the `br-external` bridge:
 
 ```bash
 # kubectl ko vsctl ${gateway node name} show
@@ -79,9 +81,9 @@ e7d81150-7743-4d6e-9e6f-5c688232e130
                 options: {peer=patch-br-int-to-ln-ovn-external}
 ```
 
-## Pod 配置 EIP 和 SNAT
+## Config EIP amd SNAT on Pod
 
-可通过在 Pod 上增加 `ovn.kubernetes.io/snat` 或 `ovn.kubernetes.io/eip` annotation 来分别配置 SNAT 和 EIP：
+SNAT and EIP can be configured by adding the `ovn.kubernetes.io/snat` or `ovn.kubernetes.io/eip` annotation to the Pod, respectively:
 
 ```yaml
 apiVersion: v1
@@ -107,18 +109,18 @@ spec:
     image: nginx:alpine
 ```
 
-可通过 kubectl 或其他工具动态调整 Pod 所配置的 EIP 或 SNAT 规则，更改时请注意要同时删除 `ovn.kubernetes.io/routed` annotation
-触发路由的变更：
+The EIP or SNAT rules configured by the Pod can be dynamically adjusted via kubectl or other tools, 
+remember to remove the `ovn.kubernetes.io/routed` annotation to trigger the routing change.
 
 ```bash
 kubectl annotate pod pod-gw ovn.kubernetes.io/eip=172.56.0.221 --overwrite
 kubectl annotate pod pod-gw ovn.kubernetes.io/routed-
 ```
 
-## 高级配置
+## Advanced Configuration
 
-`kube-ovn-controller` 的部分启动参数可对 SNAT 和 EIP 功能进行高阶配置：
+Some args of `kube-ovn-controller` allow for advanced configuration of SNAT and EIP:
 
-- `--external-gateway-config-ns`: Configmap `ovn-external-gw-config` 所属 Namespace， 默认为 `kube-system`。
-- `--external-gateway-net`: 物理网卡所桥接的网桥名，默认为 `external`。
-- `--external-gateway-vlanid`: 物理网络 Vlan Tag 号，默认为 0， 即不使用 Vlan。
+- `--external-gateway-config-ns`: The Namespace of Configmap `ovn-external-gw-config`, default is `kube-system`。
+- `--external-gateway-net`: The name of the bridge to which the physical NIC is bridged, default is `external`.
+- `--external-gateway-vlanid`: Physical network Vlan Tag number, default is 0, i.e. no Vlan is used.
