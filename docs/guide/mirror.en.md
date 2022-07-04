@@ -1,33 +1,33 @@
 # Traffic Mirror
 
-流量镜像功能可以将进出容器网络的数据包进行复制到主机的特定网卡。管理员或开发者
-可以通过监听这块网卡获得完整的容器网络流量来进一步进行分析，监控，安全审计等操作。
-也可和传统的 NPM 对接获取更细粒度的流量监控。
+The traffic mirroring feature allows packets to and from the container network to be copied to a specific NIC of the host.
+Administrators or developers can listen to this NIC to get the complete container network traffic for further analysis, monitoring, security auditing and other operations.
+It can also be integrated with traditional NPM for more fine-grained traffic visibility.
 
-流量镜像功能会带来一定的性能损失，根据 CPU 性能以及流量的特征，会有 5%~10% 的
-额外 CPU 消耗。
+The traffic mirroring feature introduces some performance loss, with an additional CPU consumption of 5% to 10% depending on CPU performance and traffic characteristics.
 
 ![mirror architecture](../static/mirror.png)
 
-## 全局流量镜像配置
+## Global Traffic Mirroring Settings
 
-流量镜像功能默认为关闭状态，如果需要开启请修改 `kube-ovn-cni` DaemonSet 的启动参数：
+The traffic mirroring is disabled by default, please modify the args of `kube-ovn-cni` DaemonSet to enable it:
 
-- `--enable-mirror=true`： 是否开启流量镜像。
-- `--mirror-iface=mirror0`: 流量镜像所复制到的网卡名。该网卡可为主机上已存在的一块物理网卡，
-此时该网卡会被桥接进 br-int 网桥，镜像流量会直接接入底层交换机。若网卡名不存在，Kube-OVN 会自动
-创建一块同名的虚拟网卡，管理员或开发者可以在宿主机上通过该网卡获取当前节点所有流量。默认为 `mirror0`。
+- `--enable-mirror=true`: Whether to enable traffic mirroring.
+- `--mirror-iface=mirror0`: The name of the NIC that the traffic mirror is copied to. This NIC can be a physical NIC that already exists on the host machine.
+  At this point the NIC will be bridged into the br-int bridge and the mirrored traffic will go directly to the underlying switch.
+  If the NIC name does not exist, Kube-OVN will automatically create a virtual NIC with the same name, through which the administrator or developer can access all traffic on the current node on the host. 
+  The default is `mirror0`.
 
-接下来可以用 tcpdump 或其他流量分析工具监听 `mirror0` 上的流量：
+Next, you can listen to the traffic on `mirror0` with tcpdump or other traffic analysis tools.
 
 ```bash
 tcpdump -ni mirror0
 ```
 
-## Pod 级别流量镜像配置
+## Pod Level Mirroring Settings
 
-如果只需对部分 Pod 流量进行镜像，则需要关闭全局的流量镜像功能，然后在特定 Pod 上增加
-`ovn.kubernetes.io/mirror` annotation 来开启 Pod 级别流量镜像。
+If you only need to mirror some Pod traffic, you need to disable the global traffic mirroring and 
+then add the `ovn.kubernetes.io/mirror` annotation on a specific Pod to enable Pod-level traffic mirroring.
 
 ```yaml
 apiVersion: v1
