@@ -1,4 +1,4 @@
-# Deleting Work Node
+# Delete Work Node
 
 由于节点上 `ovs-ovn` 中运行的 `ovn-controller` 进程会定期连接 `ovn-central` 并注册相关网络信息，会导致额外
 浪费资源开销并有潜在的规则冲突风险。因此在从 Kubernetes 内删除节点时，请按照下面的步骤来保证网络信息可以正常被清理。

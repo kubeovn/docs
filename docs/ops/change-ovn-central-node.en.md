@@ -1,12 +1,13 @@
 # Replace ovn-central Node
 
-由于 `ovn-central` 内的 `ovn-nb` 和 `ovn-sb` 分别建立了类似 etcd 的 raft 集群，因此更换 `ovn-central` 
-节点需要额外的操作，保证集群状态的正确和数据的一致。建议每次只对一个节点进行上下线处理，以避免集群进入不可用
-状态，影响集群整体网络。
+Since `ovn-nb` and `ovn-sb` within `ovn-central` create separate etcd-like raft clusters, 
+replacing the `ovn-central` node requires additional operations to ensure correct cluster state and consistent data.
+It is recommended that only one node be up and down at a time to avoid the cluster going into an unavailable state 
+and affecting the overall cluster network.
 
-## ovn-central 节点下线
+## ovn-central Nodes Offline
 
-本文档针对如下的集群情况，以下线 `kube-ovn-control-plane2` 节点为例，介绍如何将其从 `ovn-central` 集群中移除。
+This document use the cluster below to describes how to remove the `kube-ovn-control-plane2` node from the `ovn-central` as an example.
 
 ```bash
 # kubectl -n kube-system get pod -o wide | grep central
@@ -15,9 +16,9 @@ ovn-central-6bf58cbc97-crmfp                      1/1     Running   0           
 ovn-central-6bf58cbc97-lxmpl                      1/1     Running   0             21m   172.18.0.4   kube-ovn-control-plane3   <none>           <none>
 ```
 
-### 下线 ovn-nb 集群内对应节点
+### Kick Node in ovn-nb
 
-首先查看节点在集群内的 ID，以便后续操作。
+First check the ID of the node within the cluster for subsequent operations.
 
 ```bash
 # kubectl ko nb status
@@ -47,15 +48,15 @@ Servers:
 status: ok
 ```
 
-`kube-ovn-control-plane2` 对应节点 IP 为 `172.18.0.5`，集群内对应的 ID 为 `d64b`。接下来从 ovn-nb 
-集群中踢出该节点：
+`kube-ovn-control-plane2` corresponds to a node IP of `172.18.0.5` and the corresponding ID within the cluster is `d64b`.
+Next, kick the node out of the ovn-nb cluster.
 
 ```bash
 # kubectl ko nb kick d64b
 started removal
 ```
 
-确认节点踢出成功：
+Check if the node has been kicked:
 
 ```bash
 # kubectl ko nb status
@@ -84,9 +85,9 @@ Servers:
 status: ok
 ```
 
-### 下线 ovn-sb 集群内对应节点
+### Kick Node in ovn-sb
 
-接下来需要对 ovn-sb 集群，首先查看节点在集群内的 ID，以便后续操作：
+Next, for the ovn-sb cluster, you need to first check the ID of the node within the cluster for subsequent operations.
 
 ```bash
 kubectl ko sb status
@@ -116,15 +117,15 @@ Servers:
 status: ok
 ```
 
-`kube-ovn-control-plane2` 对应节点 IP 为 `172.18.0.5`，集群内对应的 ID 为 `e9f7`。接下来从 ovn-sb 
-集群中踢出该节点：
+`kube-ovn-control-plane2` corresponds to node IP `172.18.0.5` and the corresponding ID within the cluster is `e9f7`.
+Next, kick the node out of the ovn-sb cluster.
 
 ```bash
 # kubectl ko sb kick e9f7
 started removal
 ```
 
-确认节点踢出成功：
+Check if the node has been kicked:
 
 ```bash
 # kubectl ko sb status
@@ -153,9 +154,9 @@ Servers:
 status: ok
 ```
 
-### 删除节点标签，并缩容 ovn-central
+### Delete Node Label and Downscale ovn-central
 
-注意需在 ovn-central 环境变量 `NODE_IPS` 的节点地址中删除下线节点。
+Note that you need to remove the offline node from the node address of the ovn-central environment variable `NODE_IPS`.
 
 ```bash
 kubectl label node kube-ovn-control-plane2 kube-ovn/role-
@@ -164,9 +165,9 @@ kubectl set env deployment/ovn-central -n kube-system NODE_IPS="172.18.0.3,172.1
 kubectl rollout status deployment/ovn-central -n kube-system 
 ```
 
-### 修改其他组件连接 ovn-central 地址
+### Modify Components Address to ovn-central
 
-修改 `ovs-ovn` 内连接信息，删除下线节点地址。
+Modify `ovs-ovn` to remove the offline Node address:
 
 ```bash
 # kubectl set env daemonset/ovs-ovn -n kube-system OVN_DB_IPS="172.18.0.3,172.18.0.4"
@@ -177,7 +178,7 @@ pod "ovs-ovn-csn2w" deleted
 pod "ovs-ovn-mpbmb" deleted
 ```
 
-修改 `kube-ovn-controller` 内连接信息，删除下线节点地址。
+Modify `kube-ovn-controller` to remove the offline Node address:
 
 ```bash
 # kubectl set env deployment/kube-ovn-controller -n kube-system OVN_DB_IPS="172.18.0.3,172.18.0.4"
@@ -189,31 +190,32 @@ Waiting for deployment "kube-ovn-controller" rollout to finish: 2 of 3 updated r
 deployment "kube-ovn-controller" successfully rolled out
 ```
 
-### 清理节点
+### Clean Node
 
-删除 `kube-ovn-control-plane2` 节点内的数据库文件，避免重复添加节点时发生异常
-
-```bash
-rm -rf /etc/origin/ovn
-```
-
-如需将节点从整个 Kubernetes 集群下线，还需继续参考[删除工作节点](./delete-worker-node.md)进行操作。
-
-## ovn-central 节点上线
-
-下列步骤会将一个新的 Kubernetes 节点加入 `ovn-central` 集群。
-
-### 目录检查
-
-检查新增节点的 `/etc/origin/ovn` 目录中是否存在 `ovnnb_db.db` 或 `ovnsb_db.db` 文件，若存在需提前删除：
+Delete the database files in the `kube-ovn-control-plane2` node to avoid errors when adding the node again:
 
 ```bash
 rm -rf /etc/origin/ovn
 ```
 
-### 确认当前 ovn-central 集群状态正常
+To take a node offline from a Kubernetes cluster entirely, please continue with [Delete Work Node](./delete-worker-node.en.md).
 
-若当前 `ovn-central` 集群状态已经异常，新增节点可能导致投票选举无法过半数，影响后续操作。
+## ovn-central Online
+
+The following steps will add a new Kubernetes node to the `ovn-central` cluster.
+
+### Directory Check
+
+Check if the `ovnnb_db.db` or `ovnsb_db.db` file exists in the `/etc/origin/ovn` directory of the new node, and if so, delete it:
+
+```bash
+rm -rf /etc/origin/ovn
+```
+
+### Check Current ovn-central Status
+
+If the current `ovn-central` cluster state is already abnormal, 
+adding new nodes may cause the voting election to fail to pass the majority, affecting subsequent operations.
 
 ```bash
 # kubectl ko nb status
@@ -267,9 +269,9 @@ Servers:
 status: ok
 ```
 
-### 给节点增加标签并扩容
+### Label Node and Scale ovn-central
 
-注意需在 ovn-central 环境变量 `NODE_IPS` 的节点地址中增加上线节点地址。
+Note that you need to add the online node address to the node address of the ovn-central environment variable `NODE_IPS`.
 
 ```bash
 kubectl label node kube-ovn-control-plane2 kube-ovn/role=master
@@ -278,9 +280,9 @@ kubectl set env deployment/ovn-central -n kube-system NODE_IPS="172.18.0.3,172.1
 kubectl rollout status deployment/ovn-central -n kube-system
 ```
 
-### 修改其他组件连接 ovn-central 地址
+### Modify Components Address to ovn-central
 
-修改 `ovs-ovn` 内连接信息，增加上线节点地址：
+Modify `ovs-ovn` to add the online Node address:
 
 ```bash
 # kubectl set env daemonset/ovs-ovn -n kube-system OVN_DB_IPS="172.18.0.3,172.18.0.4,172.18.0.5"
@@ -291,7 +293,7 @@ pod "ovs-ovn-csn2w" deleted
 pod "ovs-ovn-mpbmb" deleted
 ```
 
-修改 `kube-ovn-controller` 内连接信息，增加上线节点地址：
+Modify `kube-ovn-controller` to add the online Node address:
 
 ```bash
 # kubectl set env deployment/kube-ovn-controller -n kube-system OVN_DB_IPS="172.18.0.3,172.18.0.4,172.18.0.5"

@@ -86,7 +86,7 @@ status: ok
 
 ### 下线 ovn-sb 集群内对应节点
 
-接下来需要对 ovn-sb 集群，首先查看节点在集群内的 ID，以便后续操作：
+接下来需要操作 ovn-sb 集群，首先查看节点在集群内的 ID，以便后续操作：
 
 ```bash
 kubectl ko sb status
@@ -191,7 +191,7 @@ deployment "kube-ovn-controller" successfully rolled out
 
 ### 清理节点
 
-删除 `kube-ovn-control-plane2` 节点内的数据库文件，避免重复添加节点时发生异常
+删除 `kube-ovn-control-plane2` 节点内的数据库文件，避免重复添加节点时发生异常：
 
 ```bash
 rm -rf /etc/origin/ovn
