@@ -1,27 +1,29 @@
 # Webhook
 
-使用 Webhook 可以对 Kube-OVN 内的 CRD 资源进行校验，目前 Webhook 主要完成
-固定 IP 地址冲突检测和 Subnet CIDR 的冲突检测，并在这类资源创建冲突时提示错误。
+Using Webhook, you can verify CRD resources within Kube-OVN. Currently, 
+Webhook mainly performs fixed IP address conflict detection and Subnet CIDR conflict detection, 
+and prompts errors when such conflicts happen.
 
-由于 Webhook 会拦截所有的 Subnet 和 Pod 创建的请求，因此需要先部署 Kube-OVN 
-后部署 Webhook 避免无法创建 Pod。
+Since Webhook intercepts all Subnet and Pod creation requests, 
+you need to deploy Kube-OVN first and Webhook later.
 
-## Cert-Manager 安装
+## Install Cert-Manager 
 
-Webhook 部署需要相关证书加密，我们使用 cert-manager 生成相关证书，我们需要在部署
-Webhook 前先部署 cert-manager。
+Webhook deployment requires certificate, we use cert-manager to generate the associated certificate, 
+we need to deploy cert-manager before deploying Webhook.
 
-可以使用下面的命令来部署 cert-manager 
+You can use the following command to deploy cert-manager:
 
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 ```
 
-更多 cert-manager 使用请参考 [cert-manager 文档](https://cert-manager.io/docs/)。
+More cert-manager usage please refer to [cert-manager document](https://cert-manager.io/docs/){: target = "_blank" }。
 
-## 安装 Webhook
+## Install Webhook
 
-下载 Webhook 对应的 yaml 进行安装
+Download Webhook yaml and install:
+
 ```bash
 # kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/yamls/webhook.yaml
 deployment.apps/kube-ovn-webhook created
@@ -31,9 +33,9 @@ certificate.cert-manager.io/kube-ovn-webhook-serving-cert created
 issuer.cert-manager.io/kube-ovn-webhook-selfsigned-issuer created
 ```
 
-## 验证 Webhook 生效
+## Verify Webhook Take Effect
 
-查看已运行 Pod，得到 Pod IP `10.16.0.15`：
+Check the running Pod and get the Pod IP `10.16.0.15`:
 
 ```bash
 # kubectl get pod -o wide
@@ -41,7 +43,7 @@ NAME                      READY   STATUS    RESTARTS   AGE     IP           NODE
 static-7584848b74-fw9dm   1/1     Running   0          2d13h   10.16.0.15   kube-ovn-worker   <none> 
 ```
 
-编写 yaml 创建相同 IP 的 Pod：
+Write yaml to create a Pod with the same IP:
 
 ```yaml
 apiVersion: v1
@@ -57,12 +59,12 @@ metadata:
   namespace: default
 spec:
   containers:
-  - image: qaimages:helloworld
+  - image: nginx:alpine
     imagePullPolicy: IfNotPresent
     name: qatest
 ```
 
-使用以上 yaml 创建静态地址 Pod 的时候，提示 IP 地址冲突：
+When using the above yaml to create a fixed address Pod, it prompts an IP address conflict:
 
 ```bash
 # kubectl apply -f pod-static.yaml

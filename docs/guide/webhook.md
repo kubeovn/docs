@@ -11,17 +11,18 @@
 Webhook 部署需要相关证书加密，我们使用 cert-manager 生成相关证书，我们需要在部署
 Webhook 前先部署 cert-manager。
 
-可以使用下面的命令来部署 cert-manager 
+可以使用下面的命令来部署 cert-manager:
 
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 ```
 
-更多 cert-manager 使用请参考 [cert-manager 文档](https://cert-manager.io/docs/)。
+更多 cert-manager 使用请参考 [cert-manager 文档](https://cert-manager.io/docs/){: target = "_blank" }。
 
 ## 安装 Webhook
 
-下载 Webhook 对应的 yaml 进行安装
+下载 Webhook 对应的 yaml 进行安装:
+
 ```bash
 # kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/yamls/webhook.yaml
 deployment.apps/kube-ovn-webhook created
@@ -57,7 +58,7 @@ metadata:
   namespace: default
 spec:
   containers:
-  - image: qaimages:helloworld
+  - image: nginx:alpine
     imagePullPolicy: IfNotPresent
     name: qatest
 ```
