@@ -107,8 +107,7 @@ args:
 ## LB 开启设置
 
 Kube-OVN 使用 OVN 中的 L2 LB 来实现 Service 转发，在 Overlay 场景中，用户可以选择使用 `kube-proxy` 来完成 Service 流量转发,
-也可以选择使用 Cilium Chain 的方式利用 eBPF 实现 Service 达到更好的性能，在这种情况下可以关闭 Kube-OVN 的 LB 功能
-以达到控制面和数据面更好的性能。
+在这种情况下可以关闭 Kube-OVN 的 LB 功能以达到控制面和数据面更好的性能。
 
 该功能可以在安装脚本中进行配置：
 
@@ -127,7 +126,7 @@ LB 的功能在默认安装中为开启。
 
 ## NetworkPolicy 开启设置
 
-Kube-OVN 使用 OVN 中的 ACL 来实现 NetworkPolicy，用户可以选择不需要使用 NetworkPolicy 
+Kube-OVN 使用 OVN 中的 ACL 来实现 NetworkPolicy，用户可以选择关闭 NetworkPolicy 功能
 或者使用 Cilium Chain 的方式利用 eBPF 实现 NetworkPolicy，
 在这种情况下可以关闭 Kube-OVN 的 NetworkPolicy 功能以达到控制面和数据面更好的性能。
 

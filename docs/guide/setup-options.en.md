@@ -1,17 +1,18 @@
 # Installation and Configuration Options
 
-在[一键安装中](../start/one-step-install.md)我们使用默认配置进行安装，Kube-OVN 还支持更多
-自定义配置，可在安装脚本中进行配置，或者之后更改各个组件的参数来进行配置。本文档将会介绍这些自定义选项
-的作用，以及如何进行配置。
+In [One-Click Installation](../start/one-step-install.en.md) we use the default configuration for installation.
+Kube-OVN also supports more custom configurations, which can be configured in the installation script, 
+or later by changing the parameters of individual components.
+This document will describe what these customization options do, and how to configure them.
 
-## 内置网络设置
+## Built-in Network Settings
 
-Kube-OVN 在安装时会配置两个内置子网：
+Kube-OVN will configure two built-in Subnets during installation:
 
-1. `default` 子网，作为 Pod 分配 IP 使用的默认子网，默认 CIDR 为 `10.16.0.0/16`，网关为 `10.16.0.1`。
-2. `join` 子网，作为 Node 和 Pod 之间进行网络通信的特殊子网, 默认 CIDR 为 `100.64.0.0/16`，网关为 `100.64.0.1`。
+1. `default` Subnet, as the default subnet used by the Pod to assign IPs, with a default CIDR of `10.16.0.0/16` and a gateway of `10.16.0.1`.
+2. The `join` subnet, as a special subnet for network communication between the Node and Pod, has a default CIDR of `100.64.0.0/16` and a gateway of `100.64.0.1`.
 
-在安装时可以通过安装脚本内的配置进行更改：
+The configuration of these two subnets can be changed during installation via the installation scripts variables:
 
 ```bash
 POD_CIDR="10.16.0.0/16"
@@ -20,180 +21,183 @@ JOIN_CIDR="100.64.0.0/16"
 EXCLUDE_IPS=""
 ```
 
-`EXCLUDE_IP` 可设置 `POD_CIDR` 不进行分配的地址范围，格式为：`192.168.10.20..192.168.10.30`。
+`EXCLUDE_IP` sets the address range for which `kube-ovn-controller` will not automatically assign from it, the format is: `192.168.10.20..192.168.10.30`.
 
-需要注意 Overlay 情况下这两个网络不能和已有的主机网络和 Service CIDR 冲突。
+Note that in the Overlay case these two Subnets CIDRs cannot conflict with existing host networks and Service CIDRs.
 
-在安装后可以对这两个网络的地址范围进行修改请参考[修改默认子网](../ops/change-default-subnet.md)和[修改 Join 子网](../ops/change-join-subnet.md)。
+You can change the address range of both Subnets after installation by referring to [Change Subnet CIDR](../ops/change-default-subnet.en.md) and [Change Join Subnet CIDR](../ops/change-join-subnet.en.md).
 
-## Service 网段配置
+## Config Service CIDR
 
-由于部分 `kube-proxy` 设置的 iptables 和路由规则会和 Kube-OVN 设置的规则产生交集，因此 Kube-OVN 需要知道
-Service 的 CIDR 来正确设置对应的规则。
+Since some of the iptables and routing rules set by `kube-proxy` will conflict with the rules set by Kube-OVN, 
+Kube-OVN needs to know the CIDR of the service to set the corresponding rules correctly.
 
-在安装脚本中可以通过修改：
+This can be done by modifying the installation script:
 
 ```bash
 SVC_CIDR="10.96.0.0/12"  
 ```
 
-来进行配置。
-
-也可以在安装后通过修改 `kube-ovn-controller` Deployment 的参数：
+You can also modify the args of the `kube-ovn-controller` Deployment after installation:
 
 ```yaml
 args:
 --service-cluster-ip-range=10.96.0.0/12
 ```
 
-来进行修改。
+## Overlay NIC Selection
 
-## Overlay 网卡选择
+In the case of multiple NICs on a node, Kube-OVN will select the NIC corresponding to the Kubernetes Node IP as the NIC 
+for cross-node communication between containers and establish the corresponding tunnel.
 
-在节点存在多块网卡的情况下，Kube-OVN 默认会选择 Kubernetes Node IP 对应的网卡作为容器间跨节点通信的网卡并建立对应的隧道。
-
-如果需要选择其他的网卡建立容器隧道，可以在安装脚本中修改：
+If you need to select another NIC to create a container tunnel, you can change it in the installation script:
 
 ```bash
 IFACE=eth1
 ```
 
-该选项支持以逗号所分隔正则表达式,例如`ens[a-z0-9]*,eth[a-z0-9]*`。
+This option supports regular expressions separated by commas, e.g. 'ens[a-z0-9]*,eth[a-z0-9]*'.
 
-安装后也可通过修改 `kube-ovn-cni` DaemonSet 的参数进行调整：
+It can also be adjusted after installation by modifying the args of the `kube-ovn-cni` DaemonSet:
 
 ```yaml
 args:
 - --iface=eth1
 ```
 
-如果每台机器的网卡名均不同，且没有固定规律，可以使用节点 annotation `ovn.kubernetes.io/tunnel_interface`
-进行每个节点的逐一配置，拥有该 annotation 节点会覆盖 `iface` 的配置，优先使用 annotation。
+If each machine has a different NIC name and there is no fixed pattern, you can use the node annotation `ovn.kubernetes.io/tunnel_interface` to configure each node one by one.
+This annotation will override the configuration of `iface`.
 
 ```bash
 kubectl annotate node no1 ovn.kubernetes.io/tunnel_interface=ethx
 ```
 
-## MTU 设置
+## Config MTU
 
-由于 Overlay 封装需要占据额外的空间，Kube-OVN 在创建容器网卡时会根据选择网卡的 MTU 进行容器网卡的 MTU 调整，
-默认情况下 Overlay 子网下 Pod 网卡 MTU 为主机网卡 MTU - 100，Underlay 子网下，Pod 网卡和主机网卡有相同 MTU。
+Since Overlay encapsulation requires additional space, Kube-OVN will adjust the MTU of the container NIC based on the MTU of the selected NIC when creating the container NIC.
+By default, the Pod NIC MTU is the host NIC MTU - 100 on the Overlay Subnet, and the Pod NIC and host NIC have the same MTU on the Underlay Subnet.
 
-如果需要调整 Overlay 子网下 MTU 的大小，可以修改 `kube-ovn-cni` DaemonSet 的参数：
+If you need to adjust the size of the MTU under the Overlay subnet, you can modify the parameters of the `kube-ovn-cni` DaemonSet:
 
 ```yaml
 args:
 - --mtu=1333
 ```
 
-## 全局流量镜像开启设置
+## Global Traffic Mirroring Setting
 
-在开启全局流量镜像的情况下，Kube-OVN 会在每个节点上创建一块 `mirror0` 的虚拟网卡，复制当前机器所有容器网络流量到该网卡上，
-用户可以通过 tcpdump 及其他工具进行流量分析，该功能可以在安装脚本中通过下面的配置开启：
+When global traffic mirroring is enabled, Kube-OVN will create a `mirror0` virtual NIC on each node 
+and copy all container network traffic from the current machine to that NIC，
+Users can perform traffic analysis with tcpdump and other tools. This function can be enabled in the installation script:
 
 ```bash
 ENABLE_MIRROR=tue
 ```
 
-也可在安装后通过修改 `kube-ovn-cni` DaemonSet 的参数方式进行调整:
+It can also be adjusted after installation by modifying the args of the `kube-ovn-cni` DaemonSet:
 
 ```yaml
 args:
 - --enable-mirror=true
 ```
 
-流量镜像的能力在默认安装中为关闭，如果需要细粒度的流量镜像或需要将流量镜像到额外的网卡请参考[容器网络流量镜像](mirror.md)。
+The ability to mirror traffic is disabled in the default installation, 
+if you need fine-grained traffic mirroring or need to mirror traffic to additional NICs please refer to [Traffic Mirror](mirror.en.md).
 
-## LB 开启设置
+## LB Settings
 
-Kube-OVN 使用 OVN 中的 L2 LB 来实现 Service 转发，在 Overlay 场景中，用户可以选择使用 `kube-proxy` 来完成 Service 流量转发,
-也可以选择使用 Cilium Chain 的方式利用 eBPF 实现 Service 达到更好的性能，在这种情况下可以关闭 Kube-OVN 的 LB 功能
-以达到控制面和数据面更好的性能。
+Kube-OVN uses L2 LB in OVN to implement service forwarding.
+In Overlay scenarios, users can choose to use `kube-proxy` for service traffic forwarding, 
+in which case the LB function of Kube-OVN can be disabled to achieve better performance on the control plane and data plane.
 
-该功能可以在安装脚本中进行配置：
+This feature can be configured in the installation script:
 
 ```bash
 ENABLE_LB=false
 ```
 
-或者在安装后通过更改 `kube-ovn-controller` Deployment 的参数进行配置：
+It can also be configured after installation by changing the args of the `kube-ovn-controller` Deployment:
 
 ```yaml
 args:
 - --enable-lb=false
 ```
 
-LB 的功能在默认安装中为开启。
+The LB feature is enabled in the default installation.
 
-## NetworkPolicy 开启设置
+## NetworkPolicy Settings
 
-Kube-OVN 使用 OVN 中的 ACL 来实现 NetworkPolicy，用户可以选择不需要使用 NetworkPolicy 
-或者使用 Cilium Chain 的方式利用 eBPF 实现 NetworkPolicy，
-在这种情况下可以关闭 Kube-OVN 的 NetworkPolicy 功能以达到控制面和数据面更好的性能。
+Kube-OVN uses ACLs in OVN to implement NetworkPolicy. 
+Users can choose to disable the NetworkPolicy feature or use the Cilium Chain approach to implement NetworkPolicy using eBPF.
+In this case, the NetworkPolicy feature of Kube-OVN can be disabled to achieve better performance on the control plane and data plane.
 
-该功能可以在安装脚本中进行配置：
+This feature can be configured in the installation script:
 
 ```bash
 ENABLE_NP=false
 ```
 
-或者在安装后通过更改 `kube-ovn-controller` Deployment 的参数进行配置：
+It can also be configured after installation by changing the args of the `kube-ovn-controller` Deployment:
 
 ```yaml
 args:
 - --enable-np=false
 ```
 
-NetworkPolicy 的能力在默认安装中为开启。
+NetworkPolicy is enabled by default.
 
-## EIP 和 SNAT 开启设置
+## EIP and SNAT Settings
 
-默认网络下如果无需使用 EIP 和 SNAT 的能力，可以选择关闭相关功能，以减少 `kube-ovn-controller` 在创建和更新
-网络时的检查消耗，在大规模集群环境下可以提升处理速度。
+If the EIP and SNAT capabilities are not required on the default VPC, 
+users can choose to disable them to reduce the performance overhead of `kube-ovn-controller` in 
+large scale cluster environments and improve processing speed.
 
-该功能可在安装脚本中进行配置：
+This feature can be configured in the installation script:
 
 ```bash
 ENABLE_EIP_SNAT=false
 ```
 
-或者在安装后通过更改 `kube-ovn-controller` Deployment 的参数进行配置：
+It can also be configured after installation by changing the args of the `kube-ovn-controller` Deployment:
 
 ```yaml
 args:
 - --enable-eip-snat=false
 ```
 
-EIP 和 SNAT 的能力在默认安装中为开启。该功能的相关使用和其他可配参数请参考[EIP 和 SNAT 配置](./eip-snat.md)。
+EIP and SNAT is enabled by default. More information can refer to [EIP and SNAT](./eip-snat.en.md)。
 
-## 集中式网关 ECMP 开启设置
+## Centralized Gateway ECMP Settings
 
-集中式网关支持主备和 ECMP 两种高可用模式，如果需要启用 ECMP 模式，
-需要更改 `kube-ovn-controller` Deployment 的参数进行配置:
+The centralized gateway supports two mode of high availability, primary-backup and ECMP.
+If you want to enable ECMP mode, you need to change the args of `kube-ovn-controller` Deployment:
 
 ```yaml
 args:
 - --enable-ecmp=true 
 ```
 
-集中式网关默认安装下为主备模式，更多网关相关内容请参考[子网使用](./subnet.md)。
+Centralized gateway default installation under the primary-backup mode, more gateway-related content please refer to [Config Subnet](./subnet.en.md).
 
-## Kubevirt VM 固定地址开启设置
+## Kubevirt VM Fixed Address Settings
 
-针对 Kubevirt 创建的 VM 实例，`kube-ovn-controller` 可以按照类似 StatefulSet Pod 的方式进行 IP 地址分配和管理。
-以达到 VM 实例在生命周期内启停，升级，迁移等操作过程中地址固定不变，更符虚拟化合用户的实际使用体验。
+For VM instances created by Kubevirt, `kube-ovn-controller` can assign and manage IP addresses in a similar way to the StatefulSet Pod.
+This allows VM instances address fixed during start-up, shutdown, upgrade, migration, and other operations throughout their lifecycle, 
+making them more compatible with the actual virtualization user experience.
 
-该功能默认关闭，若要使用此功能，需要在 `kube-ovn-controller` Deployment 的启动命令中开启如下参数：
+This feature is disabled by default. To use this feature, you need to enable the following args in the `kube-ovn-controller` Deployment:
 
 ```yaml
 args:
 - --keep-vm-ip=true
 ```
 
-## CNI 配置相关设置
+## CNI Settings
 
-Kube-OVN 默认会在 `/opt/cni/bin` 目录下安装 CNI 执行文件，在 `/etc/cni/net.d` 目录下安装 CNI 配置文件 `01-kube-ovn.conflist`。
-如果需要更改安装位置和 CNI 配置文件的优先级，可以通过安装脚本的下列参数进行调整：
+KBy default, Kube-OVN installs the CNI binary in the `/opt/cni/bin` directory 
+and the CNI configuration file `01-kube-ovn.conflist` in the `/etc/cni/net.d` directory.
+If you need to change the installation location and the priority of the CNI configuration file, 
+you can modify the following parameters of the installation script.
 
 ```bash
 CNI_CONF_DIR="/etc/cni/net.d"
@@ -201,7 +205,7 @@ CNI_BIN_DIR="/opt/cni/bin"
 CNI_CONFIG_PRIORITY="01"
 ```
 
-或者在安装后更改 `kube-ovn-cni` DaemonSet 的 Volume 挂载和启动参数：
+Or change the Volume mount and args of the `kube-ovn-cni` DaemonSet after installation:
 
 ```yaml
 volumes:
@@ -216,15 +220,17 @@ args:
 - --cni-conf-name=01-kube-ovn.conflist
 ```
 
-## 隧道类型设置
+## Tunnel Type Settings
 
-Kube-OVN 默认 Overlay 的封装模式为 Geneve，如果想更换为 Vxlan 或 STT，可以通过安装脚本的下列参数进行调整：
+The default encapsulation mode of Kube-OVN Overlay is Geneve, 
+if you want to change it to Vxlan or STT, 
+please adjust the following parameters in the installation script:
 
 ```bash
 TUNNEL_TYPE="vxlan"
 ```
 
-或者在安装后更改 `ovs-ovn` DaemonSet 的环境变量：
+Or change the environment variables of `ovs-ovn` DaemonSet after installation:
 
 ```yaml
 env:
@@ -232,15 +238,16 @@ env:
   value: "vxlan"
 ```
 
-如果需要使用 STT 隧道需要额外编译 ovs 的内核模块，请参考[性能调优](../advance/performance-tuning.md)。
+If you need to use the STT tunnel and need to compile additional kernel modules for ovs, please refer to [Performance Tunning](../advance/performance-tuning.en.md)。
 
-不同协议在实际使用中的区别请参考[隧道协议说明](../reference/tunnel-protocol.md)。
+Please refer to [Tunneling Protocol Selection](../reference/tunnel-protocol.en.md) for the differences between the different protocols in practice.
 
-## SSL 设置
-OVN DB 的 API 接口支持 SSL 加密来保证连接安全，如要开启可调整安装脚本中的如下参数:
+## SSL Settings
+The OVN DB API interface supports SSL encryption to secure the connection. 
+To enable it, adjust the following parameters in the installation script:
 
 ```bash
 ENABLE_SSL=true
 ```
 
-SSL 功能默认安装下为关闭模式。
+The SSL is disabled by default.
