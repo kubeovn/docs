@@ -184,8 +184,8 @@ spec:
 在集中式网关模式下，Pod 访问外网的数据包会首先被路由到特定节点的 `ovn0` 网卡，再通过主机的路由规则进行出网。
 当 `natOutgoing` 为 `true` 时，Pod 访问外部网络将会使用特定宿主机的 IP。
 
-子网示例，其中gatewayType 字段为 centralized，gatewayNode 为特定机器在 Kubernetes 中的 node name。
-其中gatewayNode字段可以为逗号分隔的多台主机。
+子网示例，其中 `gatewayType` 字段为 `centralized`，`gatewayNode` 为特定机器在 Kubernetes 中的 NodeName。
+其中 `gatewayNode` 字段可以为逗号分隔的多台主机。
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -289,7 +289,7 @@ spec:
 ## 其他高级设置
 
 - [QoS 设置](./qos.md)
-- [多网络管理，通用 CNI IPAM 管理](../advance/multi-nic.md)
+- [多网卡管理](../advance/multi-nic.md)
 - [DHCP 选项](../advance/dhcp.md)
 - [外部网关设置](../advance/external-gateway.md)
 - [集群互联设置](../advance/with-ovn-ic.md)

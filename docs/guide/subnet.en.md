@@ -1,29 +1,36 @@
 # Config Subnet
 
-子网是 Kube-OVN 中的一个核心概念和基本使用单元，Kube-OVN 会以子网来组织 IP 和网络配置，每个 Namespace 可以归属于特定的子网，
-Namespace 下的 Pod 会自动从所属的子网中获取 IP 并共享子网的网络配置（CIDR，网关类型，访问控制，NAT控制等）。
+Subnet is a core concept and basic unit of use in Kube-OVN, and Kube-OVN organizes IP and network configuration in terms of Subnet.
+Each Namespace can belong to a specific Subnet, and Pods under the Namespace automatically obtain IPs from the Subnet they belong to 
+and share the network configuration (CIDR, gateway type, access control, NAT control, etc.).
 
-和其他 CNI 的每个节点绑定一个子网的实现不同，在 Kube-OVN 中子网为一个全局的虚拟网络配置，同一个子网的地址可以分布在任意一个节点上。
+Unlike other CNI implementations where each node is bound to a subnet, 
+in Kube-OVN the Subnet is a global level virtual network configuration, 
+and the addresses of one Subnet can be distributed on any node.
 
-![网络拓扑](../static/default-vpc-topology.png)
+![](../static/default-vpc-topology.png)
 
-Overlay 和 Underlay 的子网在使用和配置上存在一些差异，本文档将会介绍不同类型子网的一些共同配置和差异化功能。
+There are some differences in the usage and configuration of Overlay and Underlay Subnets, 
+and this document will describe the common configurations and differentiated features of the different types of Subnets.
 
-## 默认子网
+## Default Subnet
 
-为了方便用户的快速上手使用，Kube-OVN 内置了一个默认子网，所有未显式声明子网归属的 Namespace 会自动从默认子网中分配 IP，
-并使用默认子网的网络信息。该子网的配置为安装时指定，可以参考[内置网络设置](setup-options.md#_2)，
-如果要在安装后修改默认网络的 CIDR 请参考[修改默认网络](../ops/change-default-subnet.md)。
+To make it easier for users to get started quickly, 
+Kube-OVN has a built-in default Subnet, all Namespaces that do not explicitly declare subnet affiliation are automatically assigned IPs 
+from the default subnet and the network information.
+The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](setup-options.en.md#_2) for more details.
+To change the CIDR of the default Subnet after installation please refer to [Change Subnet CIDR](../ops/change-default-subnet.en.md).
 
-在 Overlay 模式下，默认子网使用了分布式网关并对出网流量进行 NAT 转换，其行为和 Flannel 的默认行为基本一致，
-用户无需额外的配置即可使用到大部分的网络功能。
+In Overlay mode, the default Subnet uses a distributed gateway and NAT translation for outbound traffic, 
+which behaves much the same as the Flannel's default behavior, 
+allowing users to use most of the network features without additional configuration.
 
-在 Underlay 模式下，默认子网使用物理网关作为出网网关，并开启 arping 检查网络连通性。
+In Underlay mode, the default Subnet uses the physical gateway as the outgoing gateway and enables arping to check network connectivity.
 
-### 查看默认子网
-默认子网 spec 中的 default 字段为 true，一个集群下只有一个默认子网，默认名为 `ovn-default`。
+### Check the Default Subnet
 
-查看默认子网：
+The `default` field in the default Subnet spec is set to `true`, and there is only one default Subnet in a cluster, named `ovn-default`.
+
 ```bash
 # kubectl get subnet ovn-default -o yaml
 apiVersion: kubeovn.io/v1
@@ -47,18 +54,18 @@ spec:
   protocol: IPv4
 ```
 
-## Join 子网
+## Join Subnet
 
-在 Kubernetes 的网络规范中，要求 Node 可以和所有的 Pod 直接通信。
-为了在 Overlay 网络模式下达到这个目的， Kube-OVN 创建了一个 `join` 子网，
-并在每个 Node 节点创建了一块虚拟网卡 ovn0 接入 `join` 子网，通过该网络完成节点和 Pod 之间的网络互通。
+In the Kubernetes network specification, it is required that Nodes can communicate directly with all Pods.
+To achieve this in Overlay network mode, Kube-OVN creates a `join` Subnet and creates a virtual NIC `ovn0` 
+at each node that connect to the `join` subnet, through which the nodes and Pods can communicate with each other.
 
-该子网的配置为安装时指定，可以参考[内置网络设置](setup-options.md#_2)，如果要在安装后修改。
-join 子网的 CIDR 请参考[修改 Join 子网](../ops/change-join-subnet.md)
+The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](setup-options.en.md#_2) for more details.
+To change the CIDR of the Join Subnet after installation please refer to [Change Join CIDR](../ops/change-join-subnet.en.md).
 
-### 查看 Join 子网
+### Check the Join Subnet
 
-该子网默认名为 `join` 一般无需对该子网 CIDR 外的其他网络配置进行修改。
+The default name of this subnet is `join`. There is generally no need to make changes to the network configuration except the CIDR.
 
 ```bash
 # kubectl get subnet join -o yaml
@@ -83,7 +90,7 @@ spec:
   private: false
   protocol: IPv4
 ```
-在 node 节点查看 ovn0 网卡：
+Check the ovn0 NIC at the node:
 
 ```bash
 # ifconfig ovn0
@@ -97,11 +104,12 @@ ovn0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1420
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 ```
 
-## 创建自定义子网
+## Create Custom Subnets
 
-这里我们介绍创建一个子网，并将其和某个 Namespace 做关联的基本操作，更多高级配置请参考后续内容。
+Here we describe the basic operation of how to create a Subnet and associate it with a Namespace, 
+for more advanced configuration, please refer to the subsequent content.
 
-### 创建子网
+### Create Subnet
 
 ```bash
 cat <<EOF | kubectl create -f -
@@ -122,12 +130,12 @@ spec:
 EOF
 ```
 
-- `cidrBlock`: 子网 CIDR 范围，同一个 VPC 下的不同 Subnet CIDR 不能重叠。
-- `excludeIps`: 保留地址列表，容器网络将不会自动分配列表内的地址，可用做固定 IP 地址分配段，也可在 Underlay 模式下避免和物理网络中已有设备冲突。
-- `gateway`：该子网网关地址，Overlay 模式下 Kube-OVN 会自动分配对应的逻辑网关，Underlay 模式下该地址需为底层物理网关地址。
-- `namespaces`: 绑定该子网的 Namespace 列表，绑定后 Namespace 下的 Pod 将会从当前子网分配地址。
+- `cidrBlock`: Subnet CIDR range, different Subnet CIDRs under the same VPC cannot overlap.
+- `excludeIps`: The address list is reserved so that the container network will not automatically assign addresses in the list, which can be used as a fixed IP address assignment segment or to avoid conflicts with existing devices in the physical network in Underlay mode.
+- `gateway`：For this subnet gateway address, Kube-OVN will automatically assign the corresponding logical gateway in Overlay mode, and the address should be the underlying physical gateway address in Underlay mode.
+- `namespaces`: Bind the list of Namespace for this Subnet. Pods under the Namespace will be assigned addresses from the current Subnet after binding.
 
-### 验证子网绑定生效
+### Create Pod in the Subnet
 
 ```bash
 # kubectl create ns ns1
@@ -141,24 +149,27 @@ NAME                     READY   STATUS    RESTARTS   AGE   IP           NODE   
 nginx-74d5899f46-n8wtg   1/1     Running   0          10s   10.66.0.11   node1   <none>           <none>
 ```
 
-## Overlay 子网网关配置
+## Overlay Subnet Gateway Settings
 
-> 该功能只对 Overlay 模式子网生效，Underlay 类型子网访问外部网络需要借助底层物理网关。
+> This feature only works for Overlay mode Subnets, Underlay type Subnets need to use the underlying physical gateway to access the external network.
 
-Overlay 子网下的 Pod 需要通过网关来访问集群外部网络，Kube-OVN 目前支持两种类型的网关：
-分布式网关和集中式网关，用户可以在子网中对网关的类型进行调整。
+Pods under the Overlay Subnet need to access the external network through a gateway, 
+and Kube-OVN currently supports two types of gateways:
+distributed gateway and centralized gateway which can be changed in the Subnet spec.
 
-两种类型网关均支持 `natOutgoing` 设置，用户可以选择 Pod 访问外网时是否需要进行 snat。
+Both types of gateways support the `natOutgoing` setting, 
+which allows the user to choose whether snat is required when the Pod accesses the external network.
 
-### 分布式网关
+### Distributed Gateway
 
-子网的默认类型网关，每个 node 会作为当前 node 上 pod 访问外部网络的网关。
-数据包会通过本机的 `ovn0` 网卡流入主机网络栈，再根据主机的路由规则进行出网。
-当 `natOutgoing` 为 `true` 时，Pod 访问外部网络将会使用当前所在宿主机的 IP。
+The default type of gateway for the Subnet, each node will act as a gateway for the pod on the current node to access the external network.
+The packets from container will flow into the host network stack from the local `ovn0` NIC, 
+and then forwarding the network according to the host's routing rules.
+When `natOutgoing` is `true`, the Pod will use the IP of the current host when accessing the external network.
 
 ![](../static/distributed-gateway.png)
 
-子网示例，其中 `gatewayType` 字段为 `distributed`：
+Example of a Subnet, where the `gatewayType` field is `distributed`:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -176,16 +187,18 @@ spec:
   natOutgoing: true
 ```
 
-### 集中式网关
+### Centralized Gateway
 
 ![](../static/centralized-gateway.png)
 
-如果希望子网内流量访问外网使用固定的 IP，以便审计和白名单等安全操作，可以在子网中设置网关类型为集中式网关。
-在集中式网关模式下，Pod 访问外网的数据包会首先被路由到特定节点的 `ovn0` 网卡，再通过主机的路由规则进行出网。
-当 `natOutgoing` 为 `true` 时，Pod 访问外部网络将会使用特定宿主机的 IP。
+If you want traffic within the Subnet to access the external network using a fixed IP for security operations such as auditing and whitelisting, 
+you can set the gateway type in the Subnet to centralized.
+In centralized gateway mode, packets from Pods accessing the external network are first routed to the `ovn0` NIC of a specific nodes, 
+and then outbound through the host's routing rules.
+When `natOutgoing` is `true`, the Pod will use the IP of a specific nodes when accessing the external network.
 
-子网示例，其中gatewayType 字段为 centralized，gatewayNode 为特定机器在 Kubernetes 中的 node name。
-其中gatewayNode字段可以为逗号分隔的多台主机。
+The centralized gateway example is as follows, where the `gatewayType` field is `centralized` 
+and `gatewayNode` is the NodeName of the particular machine in Kubernetes.
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -204,19 +217,21 @@ spec:
   natOutgoing: true
 ```
 
-- 集中式网关如果希望指定机器的特定网卡进行出网，`gatewayNode` 
-可更改为 `kube-ovn-worker:172.18.0.2, kube-ovn-control-plane:172.18.0.3` 格式。
-- 集中式网关默认为主备模式，只有主节点进行流量转发，
-如果需要切换为 ECMP 模式，请参考[集中式网关 ECMP 开启设置](setup-options.md#ecmp)。
+- If a centralized gateway wants to specify a specific NIC of a machine for outbound networking, 
+`gatewayNode` format can be changed to `kube-ovn-worker:172.18.0.2, kube-ovn-control-plane:172.18.0.3`.
+- The centralized gateway defaults to primary-backup mode, with only the primary node performing traffic forwarding.
+  If you need to switch to ECMP mode, please refer to [ECMP Settings](setup-options.en.md#centralized-gateway-ecmp-settings).
 
-## 子网 ACL 设置
+## Subnet ACL
 
-对于有细粒度 ACL 控制的场景，Kube-OVN 的 Subnet 提供了 ACL 规则的设置，可以实现网络规则的精细控制。
+For scenarios with fine-grained ACL control, Subnet of Kube-OVN provides ACL to enable fine-grained rules.
 
-Subnet 中的 ACL 规则和 OVN 的 ACL 规则一致，相关字段内容可以参考 [ovn-nb ACL Table](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE)，
-`match` 字段支持的字段可参考 [ovn-sb Logical Flow Table](https://man7.org/linux/man-pages/man5/ovn-sb.5.html#Logical_Flow_TABLE)。
+The ACL rules in Subnet are the same as the ACL rules in OVN, and you can refer to [ovn-nb ACL Table](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE) for more details.
+The supported filed in `match` can refer to [ovn-sb Logical Flow Table](https://man7.org/linux/man-pages/man5/ovn-sb.5.html#Logical_Flow_TABLE).
 
-允许 IP 地址为 `10.10.0.2` 的 Pod 访问所有地址，但不允许其他地址主动访问自己的 ACL 规则示例如下：
+Example of an ACL rule that allows Pods with IP address `10.10.0.2` to access all addresses, 
+but does not allow other addresses to access itself, is as follows:
+
 ```yaml
 apiVersion: kubeovn.io/v1
 kind: Subnet
@@ -235,16 +250,19 @@ spec:
   cidrBlock: 10.10.0.0/24
 ```
 
-## 子网隔离设置
+## Subnet Isolation
 
-> 子网 ACL 的功能可以覆盖子网隔离的功能，并有更好的灵活性，我们推荐使用子网 ACL 来做相应的配置。
+> The function of Subnet ACL can cover the function of Subnet isolation with better flexibility, 
+> we recommend using Subnet ACL to do the corresponding configuration.
 
-默认情况下 Kube-OVN 创建的子网之间可以相互通信，Pod 也可以通过网关访问外部网络。
+By default the Subnets created by Kube-OVN can communicate with each other, and Pods can also access external networks through the gateway.
 
-如需对子网间的访问进行控制，可以在子网 CRD 中将 `private` 设置为 true，则该子网将和其他子网以及外部网络隔离，
-只能进行子网内部的通信。如需开白名单，可以通过 `allowSubnets` 进行设置。`allowSubnets` 内的网段和该子网可以双向互访。
+To control access between Subnets, set `private` to true in the subnet spec, and the Subnet will be isolated from other Subnets and external networks 
+and can only communicate within the Subnet.
+If you want to open a whitelist, you can set it by `allowSubnets`. The CIDRs in `allowSubnets` can access the Subnet bidirectionally.
 
-### 开启访问控制的子网示例
+### Enable Subnet Isolation Examples
+
 ```yaml
 apiVersion: kubeovn.io/v1
 kind: Subnet
@@ -263,19 +281,18 @@ spec:
   - 10.18.0.0/16
 ```
 
-## Underlay 相关选项
+## Underlay Settings
 
-> 该部分功能只对 Underlay 类型子网生效。
+> This part of the feature is only available for Underlay type Subnets.
 
-- `vlan`: 如果使用 Underlay 网络，该字段用来控制该 Subnet 和哪个 Vlan CR 进行绑定。该选项默认为空字符串，即不使用 Underlay 网络。
-- `logicalGateway`: 一些 Underlay 环境为纯二层网络，不存在物理的三层网关。在这种情况下可以借助 OVN 本身的能力设置一个虚拟网关，将 Underlay
-  和 Overlay 网络打通。默认值为：`false`。
+- `vlan`: If an Underlay network is used, this field is used to control which Vlan CR the Subnet is bound to. This option defaults to the empty string, meaning that the Underlay network is not used.
+- `logicalGateway`: Some Underlay environments are pure Layer 2 networks, with no physical Layer 3 gateway. In this case a virtual gateway can be set up with the OVN to connect the Underlay and Overlay networks. The default value is: `false`.
 
-## 网关检查设置
+## Gateway Check Settings
 
-默认情况下 `kube-ovn-cni` 在启动 Pod 后会使用 ICMP 或 ARP 协议请求网关并等待返回，
-以验证网络工作正常，在部分 Underlay 环境网关无法响应 ARP 请求，或无需网络外部联通的场景
-可以关闭网关检查。
+By default `kube-ovn-cni` will request the gateway using ICMP or ARP protocol after starting the 
+Pod and wait for the return to verify that the network is working properly.
+Some Underlay environment gateways cannot respond to ARP requests, or scenarios that do not require external connectivity, the checking can be disabled .
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -286,11 +303,11 @@ spec:
   disableGatewayCheck: true
 ```
 
-## 其他高级设置
+## Other Advanced Settings
 
-- [QoS 设置](./qos.md)
-- [多网络管理，通用 CNI IPAM 管理](../advance/multi-nic.md)
-- [DHCP 选项](../advance/dhcp.md)
-- [外部网关设置](../advance/external-gateway.md)
-- [集群互联设置](../advance/with-ovn-ic.md)
-- [虚拟 IP 设置](../advance/vip.md)
+- [Manage QoS](./qos.en.md)
+- [Manage Multiple Interface](../advance/multi-nic.en.md)
+- [DHCP](../advance/dhcp.en.md)
+- [外部网关设置](../advance/external-gateway.en.md)
+- [External Gateway](../advance/with-ovn-ic.en.md)
+- [VIP Reservation](../advance/vip.en.md)

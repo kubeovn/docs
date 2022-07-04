@@ -97,11 +97,11 @@ For more information on how to use it, please refer to [BGP Support](../advance/
 #### kube-ovn-pinger
 
 This component is a DaemonSet running on each node to collect OVS status information, node network quality, network latency, etc. 
-The monitoring metrics collected can be found in [Metrics](. /metrics.en.md).
+The monitoring metrics collected can be found in [Metrics](./metrics.en.md).
 
 #### kube-ovn-monitor
 
-This component collects OVN status information and the monitoring metrics, all metrics can be found in [Metrics](. /metrics.en.md).
+This component collects OVN status information and the monitoring metrics, all metrics can be found in [Metrics](./metrics.en.md).
 
 #### kubectl-ko
 
