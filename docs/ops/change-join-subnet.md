@@ -27,7 +27,7 @@ kubectl annotate node ovn.kubernetes.io/allocated=false --all --overwrite
 kubectl edit deployment -n kube-system kube-ovn-controller
 ```
 
-修改下列参数
+修改下列参数：
 
 ```yaml
 args:
