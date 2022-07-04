@@ -1,14 +1,14 @@
 # 修改子网 CIDR
 
-若发现创建的子网 CIDR 冲突或不符合预期，可以通过本文档进行修改。
+如果创建的子网 CIDR 冲突或不符合预期，可以通过本文档的步骤进行修改。
 
 > 修改子网 CIDR 后之前创建的 Pod 将无法正常访问网络需要进行重建。
 > 建议操作前慎重考虑。本文只针对业务子网 CIDR 更改进行操作，如需
-> 更改 Join 子网 CIDR 请参考[更改 Join 子网 CIDR](./change-join-subnet.md)
+> 更改 Join 子网 CIDR 请参考[更改 Join 子网 CIDR](./change-join-subnet.md)。
 
 ## 编辑子网
 
-使用 `kubectl edit` 修改子网 `cidrBlock`，`gateway` 和 `excludeIps`
+使用 `kubectl edit` 修改子网 `cidrBlock`，`gateway` 和 `excludeIps`。
 
 ```bash
 kubectl edit subnet test-subnet

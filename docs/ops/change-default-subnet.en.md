@@ -1,22 +1,23 @@
 # Change Subnet CIDR
 
-若发现创建的子网 CIDR 冲突或不符合预期，可以通过本文档进行修改。
+If a subnet CIDR is created that conflicts or does not meet expectations, 
+it can be modified by following the steps in this document.
 
-> 修改子网 CIDR 后之前创建的 Pod 将无法正常访问网络需要进行重建。
-> 建议操作前慎重考虑。本文只针对业务子网 CIDR 更改进行操作，如需
-> 更改 Join 子网 CIDR 请参考[更改 Join 子网 CIDR](./change-join-subnet.md)
+> After modifying the subnet CIDR, the previously created Pods will not be able to access the network properly and need to be rebuilt.
+> Careful consideration is recommended before operating。This document is only for business subnet CIDR changes, 
+> if you need to Change the Join subnet CIDR, please refer to [Change Join CIDR](./change-join-subnet.en.md).
 
-## 编辑子网
+## Edit Subnet
 
-使用 `kubectl edit` 修改子网 `cidrBlock`，`gateway` 和 `excludeIps`
+Use `kubectl edit` to modify `cidrBlock`，`gateway` and `excludeIps`.
 
 ```bash
 kubectl edit subnet test-subnet
 ```
 
-## 重建该子网绑定的 Namespace 下所有 Pod
+## Rebuild all Pods under this Subnet
 
-以子网绑定 `test` Namespace 为例：
+Take the subnet binding `test` Namespace as example:
 
 ```bash
 for pod in $(kubectl get pod --no-headers -n "$ns" --field-selector spec.restartPolicy=Always -o custom-columns=NAME:.metadata.name,HOST:spec.hostNetwork | awk '{if ($2!="true") print $1}'); do
@@ -24,7 +25,7 @@ for pod in $(kubectl get pod --no-headers -n "$ns" --field-selector spec.restart
 done
 ```
 
-若只使用了默认子网，可以使用下列命令删除所有非 host 网络模式的 Pod：
+If only the default subnet is used, you can delete all Pods that are not in host network mode using the following command:
 
 ```bash
 for ns in $(kubectl get ns --no-headers -o custom-columns=NAME:.metadata.name); do
@@ -34,9 +35,9 @@ for ns in $(kubectl get ns --no-headers -o custom-columns=NAME:.metadata.name); 
 done
 ```
 
-## 更改默认子网配置
+## Change Default Subnet Settings
 
-若修改的为默认子网的 CIDR 还需要更改 `kube-ovn-controller` Deployment 的启动参数：
+If you are modifying the CIDR for the default Subnet, you also need to change the args of the `kube-ovn-controller` Deployment:
 
 ```yaml
 args:
