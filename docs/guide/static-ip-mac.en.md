@@ -1,17 +1,17 @@
 # Fixed Addresses
 
-Kube-OVN 默认会根据 Pod 所在 Namespace 所属的子网中随机分配 IP 和 Mac。
-针对工作负载需要固定地址的情况，Kube-OVN 根据不同的场景，提供了多中固定地址的方法：
+By default, Kube-OVN randomly assigns IPs and Macs based on the Subnet to which the Pod's Namespace belongs.
+For workloads that require fixed addresses, Kube-OVN provides multiple methods of fixing addresses depending on the scenario.
 
-- 单个 Pod 固定 IP/Mac。
-- Workload 通用 IP Pool 方式指定固定地址范围。
-- StatefulSet 固定地址。
-- Kubevirt VM 固定地址。
+- Single Pod fixed IP/Mac.
+- Workload IP Pool to specify fixed addresses.
+- StatefulSet fixed address.
+- Kubevirt VM fixed address.
 
-## 单个 Pod 固定 IP 和 Mac
+## Single Pod Fixed IP/Mac
 
-可以在创建 Pod 时通过 annotation 来指定 Pod 运行时所需的 IP/Mac, `kube-ovn-controller`
-运行时将会跳过地址随机分配阶段，经过冲突检测后直接使用指定地址，如下所示：
+You can specify the IP/Mac required for the Pod by annotation when creating the Pod.
+The `kube-ovn-controller` will skip the address random assignment phase and use the specified address directly after conflict detection, as follows:
 
 ```yaml
 apiVersion: v1
@@ -28,21 +28,22 @@ spec:
     image: nginx:alpine
 ```
 
-在使用 annotation 定义单个 Pod IP/Mac 时需要注意以下几点：
+The following points need to be noted when using annotation.
 
-1. 所使用的 IP/Mac 不能和已有的 IP/Mac 冲突。
-2. IP 必须在所属子网的 CIDR 内。
-3. 可以只指定 IP 或 Mac，只指定一个时，另一个会随机分配。
+1. The IP/Mac used cannot conflict with an existing IP/Mac.
+2. The IP must be in the CIDR range of the Subnet it belongs to.
+3. You can specify only IP or Mac. When you specify only one, the other one will be assigned randomly.
 
-## Workload 通用 IP Pool 固定地址
+## Workload IP Pool
 
-Kube-OVN 支持通过 annotation `ovn.kubernetes.io/ip_pool` 给 Workload（Deployment/StatefulSet/DaemonSet/Job/CronJob）设置固定 IP。
-`kube-ovn-controllerr` 会自动选择 `ovn.kubernetes.io/ip_pool` 中指定的 IP 并进行冲突检测。
+Kube-OVN supports setting fixed IPs for Workloads (Deployment/StatefulSet/DaemonSet/Job/CronJob) via annotation `ovn.kubernetes.io/ip_pool`.
+`kube-ovn-controllerr` will automatically select the IP specified in `ovn.kubernetes.io/ip_pool` and perform conflict detection.
 
-IP Pool 的 Annotation 需要加在 `template` 内的 `annotation` 字段，除了 Kubernetes 内置的 Workload 类型，
-其他用户自定义的 Workload 也可以使用同样的方式进行固定地址分配，
+The Annotation of the IP Pool needs to be added to the `annotation` field in the `template`.
+In addition to Kubernetes built-in workload types, other user-defined workloads can also be assigned fixed addresses using the same approach.
 
-### Deployment 固定 IP 示例
+### Deployment With Fixed IPs
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -68,22 +69,25 @@ spec:
         image: nginx:alpine
 ```
 
-对 Workload 使用固定 IP 需要注意以下几点：
+Using a fixed IP for Workload requires the following:
 
-1. `ovn.kubernetes.io/ip_pool` 中的 IP 应该属于所在子网的 CIDR 内。
-2. `ovn.kubernetes.io/ip_pool` 中的 IP 不能和已使用的 IP 冲突。
-3. 当 `ovn.kubernetes.io/ip_pool` 中的 IP 数量小于 replicas 数量时，多出的 Pod 将无法创建。你需要根据 Workload 的更新策略以及扩容规划调整 `ovn.kubernetes.io/ip_pool` 中 IP 的数量。
+1. The IP in `ovn.kubernetes.io/ip_pool` should belong to the CIDR of the Subnet.
+2. The IP in `ovn.kubernetes.io/ip_pool` cannot conflict with an IP already in use.
+3. When the number of IPs in `ovn.kubernetes.io/ip_pool` is less than the number of replicas, the extra Pods will not be created. You need to adjust the number of IPs in `ovn.kubernetes.io/ip_pool` according to the update policy of the workload and the scaling plan.
 
-## StatefulSet 固定地址
-StatefulSet 和其他 Workload 相同可以使用 `ovn.kubernetes.io/ip_pool` 来指定 Pod 使用的 IP。
+## StatefulSet Fixed Address
 
-由于 StatefulSet 多用于有状态服务，对网络标示的固定有更高的要求，Kube-OVN 做了特殊的强化：
+StatefulSet, like other workloads, can use `ovn.kubernetes.io/ip_pool` to specify the IP used by the Pod.
 
-1. Pod 会按顺序分配 `ovn.kubernetes.io/ip_pool` 中的 IP。例如 StatefulSet 的名字为 web，则 web-0 会使用 `ovn.kubernetes.io/ip_pool` 中的第一个 IP， web-1 会使用第二个 IP，以此类推。
-2. StatefulSet Pod 在更新或删除的过程中 OVN 中的 logical_switch_port 不会删除，新生成的 Pod 直接复用旧的 interface 信息。因此 Pod 可以复用 IP/Mac 及其他网络信息，达到和 StatefulSet Volume 类似的状态保留功能。
-3. 基于 2 的能力，对于没有 `ovn.kubernetes.io/ip_pool` 注解的 StatefulSet，Pod 第一次生成时会随机分配 IP/Mac，之后在整个 StatefulSet 的生命周期内，网络信息都会保持固定。
+Since StatefulSet is mostly used for stateful services, 
+which have higher requirements for fixed addresses, Kube-OVN has made special enhancements:
 
-### StatefulSet 示例
+1. Pods are assigned IPs in `ovn.kubernetes.io/ip_pool` in order. For example, if the name of the StatefulSet is web, web-0 will use the first IP in `ovn.kubernetes.io/ip_pool`, web-1 will use the second IP, and so on.
+2. The logical_switch_port in the OVN is not deleted during update or deletion of the StatefulSet Pod, and the newly generated Pod directly reuses the old logical port information. Pods can therefore reuse IP/Mac and other network information to achieve similar state retention as StatefulSet Volumes.
+3. Based on the capabilities of 2, for StatefulSet without the `ovn.kubernetes.io/ip_pool` annotation, a Pod is randomly assigned an IP/Mac when it is first generated, and then the network information remains fixed for the lifetime of the StatefulSet.
+
+### StatefulSet Example
+
 ```yaml
 apiVersion: apps/v1
 kind: StatefulSet
@@ -108,14 +112,16 @@ spec:
           name: web
 ```
 
-可以尝试删除 StatefulSet 下 Pod 观察 Pod IP 变化信息。
+You can try to delete the Pod under StatefulSet to observe if the Pod IP changes.
 
-## Kubevirt VM 固定地址
+## Kubevirt VM Fixed Address
 
-针对 Kubevirt 创建的 VM 实例，`kube-ovn-controller` 可以按照类似 StatefulSet Pod 的方式进行 IP 地址分配和管理。
-以达到 VM 实例在生命周期内启停，升级，迁移等操作过程中地址固定不变，更符虚拟化合用户的实际使用体验。
+For VM instances created by Kubevirt, `kube-ovn-controller` can assign and manage IP addresses in a similar way to the StatefulSet Pod.
+This allows VM instances address fixed during start-up, shutdown, upgrade, migration, and other operations throughout their lifecycle,
+making them more compatible with the actual virtualization user experience.
 
-该功能默认关闭，若要使用此功能，需要在 `kube-ovn-controller` 的启动命令中开启如下参数：
+This feature is disabled by default. To use this feature, you need to enable the following args in the `kube-ovn-controller` Deployment:
+
 ```yaml
 args:
 - --keep-vm-ip=true

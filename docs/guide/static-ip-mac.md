@@ -40,7 +40,7 @@ Kube-OVN 支持通过 annotation `ovn.kubernetes.io/ip_pool` 给 Workload（Depl
 `kube-ovn-controllerr` 会自动选择 `ovn.kubernetes.io/ip_pool` 中指定的 IP 并进行冲突检测。
 
 IP Pool 的 Annotation 需要加在 `template` 内的 `annotation` 字段，除了 Kubernetes 内置的 Workload 类型，
-其他用户自定义的 Workload 也可以使用同样的方式进行固定地址分配，
+其他用户自定义的 Workload 也可以使用同样的方式进行固定地址分配。
 
 ### Deployment 固定 IP 示例
 ```yaml
