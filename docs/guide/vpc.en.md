@@ -1,20 +1,23 @@
 # Config VPC
 
-Kube-OVN 支持多租户隔离级别的 VPC 网络。不同 VPC 网络相互独立，可以分别配置 Subnet 网段，
-路由策略，安全策略，出网网关，EIP 等配置。
+Kube-OVN supports multi-tenant isolation level VPC networks. Different VPC networks are independent of each other 
+and can be configured separately with Subnet CIDRs, routing policies, security policies, outbound gateways, EIP, etc.
 
-> VPC 主要用于有多租户网络强隔离的场景，部分 Kubernetes 网络功能在多租户网络下存在冲突。
-> 例如节点和 Pod 互访，NodePort 功能，基于网络访问的健康检查和 DNS 能力在多租户网络场景暂不支持。
-> 为了方便常见 Kubernetes 的使用场景，Kube-OVN 默认 VPC 做了特殊设计，该 VPC 下的 Subnet 
-> 可以满足 Kubernetes 规范。用户自定义 VPC 支持本文档介绍的静态路由，EIP 和 NAT 网关等功能。
-> 常见隔离需求可通过默认 VPC 下的网络策略和子网 ACL 实现，在使用自定义 VPC 前请明确是否需要
-> VPC 级别的隔离，并了解自定义 VPC 下的限制。
+> VPC is mainly used in scenarios where there requires strong isolation of multi-tenant networks 
+> and some Kubernetes networking features conflict under multi-tenant networks.
+> For example, node and pod access, NodePort functionality, network access-based health checks, 
+> and DNS capabilities are not supported in multi-tenant network scenarios at this time.
+> In order to facilitate common Kubernetes usage scenarios, Kube-OVN has a special design for the default 
+> VPC where the Subnet under the VPC can meet the Kubernetes specification.
+> The custom VPC supports static routing, EIP and NAT gateways as described in this document.
+> Common isolation requirements can be achieved through network policies and Subnet ACLs under the default VPC, 
+> so before using a custom VPC, please make sure whether you need VPC-level isolation and understand the limitations under the custom VPC.
 
 ![](../static/network-topology.png)
 
-## 创建自定义 VPC
+## Creating Custom VPCs
 
-创建两个 VPC：
+Create two VPCs:
 
 ```yaml
 kind: Vpc
@@ -31,9 +34,9 @@ metadata:
   name: test-vpc-2
 spec: {}
 ```
-- `namespaces` 可以限定只有哪些 Namespace 可以使用当前 VPC，若为空则不限定。
+- `namespaces`: Limit which namespaces can use this VPC. If empty, all namespaces can use this VPC.
 
-创建两个子网，分属两个不同的 VPC 并有相同的 CIDR:
+Create two Subnets, belonging to two different VPCs and having the same CIDR:
 
 ```yaml
 kind: Subnet
@@ -59,7 +62,7 @@ spec:
     - ns2
 ```
 
-分别在两个 Namespace 下创建 Pod:
+Create Pods under two separate Namespaces:
 
 ```yaml
 apiVersion: v1
@@ -87,18 +90,18 @@ spec:
       image: nginx:alpine
 ```
 
-运行成功后可观察两个 Pod 地址属于同一个 CIDR，但由于运行在不同的租户 VPC，两个 Pod 无法相互访问。
+After running successfully, you can observe that the two Pod addresses belong to the same CIDR, 
+but the two Pods cannot access each other because they are running on different tenant VPCs.
 
-## 创建 VPC 网关
+## Create VPC NAT Gateway
 
-> 自定义 VPC 下的子网不支持默认 VPC 下的分布式网关和集中式网关
+> Subnets under custom VPCs do not support distributed gateways and centralized gateways under default VPCs.
 
-VPC 内容器访问外部网络需要通过 VPC 网关，VPC 网关可以打通物理网络和租户网络，并提供
-浮动 IP，SNAT 和 DNAT 功能。
+Pod access to the external network within the VPC requires a VPC gateway, which bridges the physical and tenant networks and provides floating IP, SNAT and DNAT capabilities.
 
-VPC 网关功能依赖 Multus-CNI 的多网卡功能，安装请参考 [multus-cni](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md)。
+The VPC gateway function relies on Multus-CNI function, please refer to [multus-cni](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md){: target = "_blank" }.
 
-### 配置外部网络
+### Configuring the External Network
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -132,14 +135,15 @@ spec:
     }'
 ```
 
-- 该 Subnet 用来管理可用的外部地址，请和网络管理沟通给出可用的物理段 IP。
-- VPC 网关使用 Macvlan 做物理网络配置，`NetworkAttachmentDefinition` 的 `master` 需为对应物理网路网卡的网卡名。
-- `provider` 格式为 `<NetworkAttachmentDefinition Name>.<NetworkAttachmentDefinition Namespace>`。
-- `name` 必须为 ovn-vpc-external-network，这里代码中做了硬编码。
+- This Subnet is used to manage the available external addresses, so please communicate with your network management to give you the available physical segment IPs.
+- The VPC gateway uses Macvlan for physical network configuration, and `master` of `NetworkAttachmentDefinition` should be the NIC name of the corresponding physical network NIC.
+- `provider` format is `<NetworkAttachmentDefinition Name>.<NetworkAttachmentDefinition Namespace>`.
+- `name` must be `ovn-vpc-external-network`.
 
-### 开启 VPC 网关功能
+### Enabling the VPC Gateway
 
-VPC 网关功能需要通过 `kube-system` 下的 `ovn-vpc-nat-gw-config` 开启：
+VPC gateway functionality needs to be enabled via `ovn-vpc-nat-gw-config` under `kube-system`:
+
 ```yaml
 kind: ConfigMap
 apiVersion: v1
@@ -151,10 +155,10 @@ data:
   enable-vpc-nat-gw: 'true'
 ```
 
-- `image`: 网关 Pod 所使用的镜像。
-- `enable-vpc-nat-gw`： 控制是否启用 VPC 网关功能。
+- `image`: The image used by the Gateway Pod.
+- `enable-vpc-nat-gw`: Controls whether the VPC Gateway feature is enabled.
 
-### 创建 VPC 网关并配置默认路由
+### Create VPC Gateway and Set the Default Route
 
 ```yaml
 kind: VpcNatGateway
@@ -170,16 +174,17 @@ spec:
     - "kubernetes.io/os: linux"
 ```
 
-- `subnet`： 为 VPC 内某个 Subnet 名，VPC 网关 Pod 会在该子网下用 `lanIp` 来连接租户网络。
-- `lanIp`：`subnet` 内某个未被使用的 IP，VPC 网关 Pod 最终会使用该 Pod。
-- `selector`: VPC 网关 Pod 的节点选择器。
-- `nextHopIP`：需和 `lanIp` 相同。
+- `subnet`: A Subnet within the VPC, the VPC Gateway Pod will use `lanIp` to connect to the tenant network under that subnet.
+- `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use for the Pod.
+- `selector`: Node selector for the VPC Gateway Pod.
+- `nextHopIP`: Needs to be the same as `lanIp`.
 
-### 创建 EIP
+### Create EIP
 
-EIP 为外部网络段的某个 IP 分配给 VPC 网关后可进行浮动IP，SNAT 和 DNAT 操作。
+EIP allows for floating IP, SNAT, and DNAT operations after assigning an IP from an external network segment to a VPC gateway.
 
-随机分配一个地址给 EIP：
+Randomly assign an address to the EIP:
+
 ```yaml
 kind: IptablesEIP
 apiVersion: kubeovn.io/v1
@@ -189,7 +194,7 @@ spec:
   natGwDp: gw1
 ```
 
-固定 EIP 地址分配：
+Fixed EIP address assignment:
 
 ```yaml
 kind: IptablesEIP
@@ -201,7 +206,8 @@ spec:
   v4ip: 10.0.1.111
 ```
 
-### 创建 DNAT 规则
+### Create DNAT Rules
+
 ```yaml
 kind: IptablesEIP
 apiVersion: kubeovn.io/v1
@@ -223,7 +229,8 @@ spec:
   protocol: tcp
 ```
 
-### 创建 SNAT 规则
+### Create SNAT Rules
+
 ```yaml
 ---
 kind: IptablesEIP
@@ -242,7 +249,8 @@ spec
   internalCIDR: 10.0.1.0/24
 ```
 
-### 创建浮动 IP
+### Create Floating IP
+
 ```yaml
 ---
 kind: IptablesEIP
@@ -262,12 +270,13 @@ spec:
   internalIp: 10.0.1.5
 ```
 
-## 自定义路由
+## Custom Routing
 
-在自定义 VPC 内，用户可以自定义网络内部的路由规则，结合网关实现更灵活的转发。
-Kube-OVN 支持静态路由和更为灵活的策略路由。
+Within the custom VPC, users can customize the routing rules within the VPC and combine it with the gateway for more flexible forwarding.
+Kube-OVN supports static routes and more flexible policy routes.
 
-### 静态路由
+### Static Routes
+
 ```yaml
 kind: Vpc
 apiVersion: kubeovn.io/v1
@@ -283,15 +292,18 @@ spec:
       policy: policySrc
 ```
 
-- `policy`: 支持目的地址路由 `policyDst` 和源地址路由 `policySrc`。
-- 当路由规则存在重叠时，CIDR 掩码较长的规则优先级更高，若掩码长度相同则目的地址路由优先于源地址路由。
+- `policy`: Supports destination routing `policyDst` and source routing `policySrc`.
+- When there are overlapping routing rules, the rule with the longer CIDR mask has higher priority, 
+  and if the mask length is the same, the destination route has a higher priority over the source route.
 
-### 策略路由
+### Policy Routes
 
-针对静态路由匹配的流量，可通过策略路由进行更细粒度的控制。策略路由提供了更精确的匹配规则，优先级控制
-和更多的转发动作。该功能为 OVN 内部逻辑路由器策略功能的一个对外暴露，更多使用信息请参考 [Logical Router Policy](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE)。
+Traffic matched by static routes can be controlled at a finer granularity by policy routing.
+Policy routing provides more precise matching rules, priority control and more forwarding actions.
+This feature brings the OVN internal logical router policy function directly to the outside world, for more information on its use, please refer to [Logical Router Policy](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE){: target = "_blank" }.
 
-简单示例如下：
+A example of policy routes:
+
 ```yaml
 kind: Vpc
 apiVersion: kubeovn.io/v1

@@ -91,12 +91,12 @@ spec:
 
 ## 创建 VPC 网关
 
-> 自定义 VPC 下的子网不支持默认 VPC 下的分布式网关和集中式网关
+> 自定义 VPC 下的子网不支持默认 VPC 下的分布式网关和集中式网关。
 
 VPC 内容器访问外部网络需要通过 VPC 网关，VPC 网关可以打通物理网络和租户网络，并提供
 浮动 IP，SNAT 和 DNAT 功能。
 
-VPC 网关功能依赖 Multus-CNI 的多网卡功能，安装请参考 [multus-cni](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md)。
+VPC 网关功能依赖 Multus-CNI 的多网卡功能，安装请参考 [multus-cni](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md){: target = "_blank" }。
 
 ### 配置外部网络
 
@@ -289,7 +289,7 @@ spec:
 ### 策略路由
 
 针对静态路由匹配的流量，可通过策略路由进行更细粒度的控制。策略路由提供了更精确的匹配规则，优先级控制
-和更多的转发动作。该功能为 OVN 内部逻辑路由器策略功能的一个对外暴露，更多使用信息请参考 [Logical Router Policy](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE)。
+和更多的转发动作。该功能为 OVN 内部逻辑路由器策略功能的一个对外暴露，更多使用信息请参考 [Logical Router Policy](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE){: target = "_blank" }。
 
 简单示例如下：
 ```yaml
