@@ -1,12 +1,12 @@
 # FAQ
 
-## 麒麟 ARM 系统跨主机容器访问间歇失败
+## Kylin ARM system cross-host container access intermittently fails
 
-### 现象
+### Behavior
 
-麒麟 ARM 系统和部分国产化网卡 offload 配合存在问题，会导致容器网络间歇故障。
+There is a problem with Kylin ARM system and some NIC offload, which can cause intermittent container network failure.
 
-使用 `netstat` 确认问题：
+Use `netstat` to identify the problem:
 
 ```bash
 # netstat -us
@@ -34,32 +34,31 @@ IpExt:
     InNoECTPkts: 7683903
 ```
 
-若存在 `InCsumErrors`，且随着访问失败增加，可确认是该问题。
+If `InCsumErrors` is present and increases with netwoork failures, you can confirm that this is the problem.
 
-### 解决方法
+### Solution
 
-根本解决需要和麒麟以及对应网卡厂商沟通，更新系统和驱动。临时解决可先关闭物理
-网卡的 `tx offload` 但是会导致 tcp 性能有较明显下降。
+The fundamental solution requires communication with Kylin and the corresponding network card manufacturer to update the system and drivers.
+A temporary solution would be to turn off `tx offload` on the physical NIC, but this would cause a significant degradation in tcp performance.
 
 ```bash
 ethtool -K eth0 tx off
 ```
 
-## Pod 访问 Service 不通
+## Pod can not Access Service
 
-### 现象
+### Behavior
 
-Pod 内无法访问 Service 对应的服务，`dmesg` 显示异常：
+Pod can not access Service, and `dmesg` show errors:
 
 ```bash
 netlink：Unknown conntrack attr (type=6, max=5)
 openvswitch: netlink: Flow actions may not be safe on all matching packets.
 ```
 
-该日志说明内核内 OVS 版本过低不支持对应 NAT 操作。
+This log indicates that the in-kernel OVS version is too low to support the corresponding NAT operation.
 
-### 解决方法
+### Solution
 
-1. 升级内核模块或手动编译 OVS 内核模块。
-2. 若只使用 Overlay 网络可以更改 `kube-ovn-controller` 启动参数设置 `--enable-lb=false` 
-关闭 OVN LB 使用 kube-proxy 进行 Service 转发。
+1. Upgrade the kernel module or compile the OVS kernel module manually.
+2. If you are using an Overlay network you can change the `kube-ovn-controller` args, setting `--enable-lb=false` to disable the OVN LB to use kube-proxy for service forwarding.
