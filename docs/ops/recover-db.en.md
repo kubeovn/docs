@@ -1,10 +1,12 @@
 # OVN DB Backup and Recovery
 
-本文档介绍如何进行数据库备份，以及在不同情况下如何通过已有的数据库文件进行集群恢复。
+This document describes how to perform database backups and how to 
+perform cluster recovery from existing database files in different situations.
 
-## 数据库备份
+## Database Backup
 
-利用 kubectl 插件的 backup 命令可以对数据库文件进行备份，以用于故障时恢复：
+The database files can be backed up for recovery in case of failure. Use 
+the backup command of the kubectl plugin:
 
 ```bash
 # kubectl ko nb backup
@@ -16,14 +18,15 @@ tar: Removing leading `/' from member names
 backup ovn-nb db to /root/ovnsb_db.060223191654183154.backup
 ```
 
-## 集群部分故障恢复
+## Cluster Partial Nodes Failure Recovery
 
-若集群中存在部分节点因为断电，文件系统故障或磁盘空间不足导致工作异常，
-但是集群仍可正常工作可以通过如下步骤进行恢复。
+If some nodes in the cluster are working abnormally due to power failure, 
+file system failure or lack of disk space, but the cluster is still working normally, you can recover it by following the steps below.
 
-### 查看日志确认状态异常
+### Check the Logs to Confirm Status
 
-查看对应节点 `/var/log/ovn/ovn-northd.log`，若提示类似错误则可判断数据库存在异常
+Check the log in `/var/log/ovn/ovn-northd.log`, if it shows similar error as follows, 
+you can make sue that there is an exception in the database:
 
 ```bash
  * ovn-northd is not running
@@ -31,10 +34,10 @@ ovsdb-server: ovsdb error: error reading record 2739 from OVN_Northbound log: re
  * Starting ovsdb-nb
 ```
 
-### 从集群中踢出对应节点
+### Kick Node from Cluster
 
-根据日志提示是 `OVN_Northboun`d 还是 `OVN_Southbound` 选择对应的数据库进行操作。
-上述日志提示为 `OVN_Northbound` 则对 ovn-nb 进行操作：
+Select the corresponding database for the operation based on whether the log prompt is `OVN_Northbound` or `OVN_Southbound`.
+The above log prompt is `OVN_Northbound` then for ovn-nb do the following:
 
 ```bash
 # kubectl ko nb status
@@ -63,48 +66,50 @@ Servers:
     e631 (e631 at tcp:[10.0.131.173]:6643) next_index=12512 match_index=0
 ```
 
-从集群中踢出状态异常节点：
+Kick abnormal nodes from the cluster:
 
 ```bash
 kubectl ko nb kick e631
 ```
 
-登录异常节点，删除对应的数据库文件：
+Log in to the abnormal node and delete the database file:
 
 ```bash
 mv /etc/origin/ovn/ovnnb_db.db /tmp
 ```
 
-删除对应节点的 `ovn-central` Pod 集群即可自动恢复：
+Delete the `ovn-central` pod of the corresponding node and wait for the cluster to recover：
 
 ```bash
 kubectl delete pod -n kube-system ovn-central-xxxx
 ```
 
-## 集群不能正常工作下的恢复
+## Recover when Total Cluster Failed
 
-若集群多数节点受损无法选举出 leader，请参照下面的步骤进行恢复。
+If the majority of the cluster nodes are broken and the leader cannot be elected, please refer to the following steps to recover.
 
-### 停止 ovn-central
+### Stop ovn-central
 
-记录当前 ovn-central 副本数量，并停止 `ovn-central` 避免新的数据库变更影响恢复：
+Record the current replicas of `ovn-central` and stop `ovn-central` to avoid new database changes that affect recovery:
 
 ```bash
 kubectl scale deployment -n kube-system ovn-central --replicas=0
 ```
 
-### 选择备份
+### Select a Backup
 
-由于多数节点受损，需要从某个数据库文件进行恢复重建集群。如果之前备份过数据库
-可使用之前的备份文件进行恢复。如果没有进行过备份可以使用下面的步骤从已有的文件
-中生成一个可重建数据库的备份。
+As most of the nodes are damaged, the cluster needs to be rebuilt by recovering from one of the database files.
+If you have previously backed up the database you can use the previous backup file to restore it.
+If not you can use the following steps to generate a backup from an existing file.
 
-> 由于默认文件夹下的数据库文件为集群格式数据库文件，包含当前集群的信息，无法直接
-> 用该文件重建数据库，需要使用 `ovsdb-tool cluster-to-standalone` 进行格式转换
+> Since the database file in the default folder is a cluster format database file containing information about 
+> the current cluster, you can't rebuild the database directly with this file, 
+> you need to use `ovsdb-tool cluster-to-standalone` to convert the format.
 
-选择 `ovn-central` 环境变量 `NODE_IPS` 中排第一的节点恢复数据库文件，
-如果第一个节点数据库文件已损坏，从其他机器 `/etc/origin/ovn` 下复制文件到第一台机器 ，
-执行下列命令生成数据库文件备份。
+
+Select the first node in the `ovn-central` environment variable `NODE_IPS` to restore the database files. 
+If the database file of the first node is corrupted, copy the file from the other machine `/etc/origin/ovn` to 
+the first machine. Run the following command to generate a database file backup.
 
 ```bash
 docker run -it -v /etc/origin/ovn:/etc/ovn kubeovn/kube-ovn:v1.10.2 bash
@@ -113,26 +118,26 @@ ovsdb-tool cluster-to-standalone ovnnb_db_standalone.db ovnnb_db.db
 ovsdb-tool cluster-to-standalone ovnsb_db_standalone.db ovnsb_db.db
 ```
 
-### 删除每个 ovn-central 节点上的数据库文件
+### Delete the Database Files on All ovn-central Nodes
 
-为了避免重建集群时使用到错误的数据，需要对已有数据库文件进行清理：
+In order to avoid rebuilding the cluster with the wrong data, the existing database files need to be cleaned up:
 
 ```bash
 mv /etc/origin/ovn/ovnnb_db.db /tmp
 mv /etc/origin/ovn/ovnsb_db.db /tmp
 ```
 
-### 恢复数据库集群
+### Recovering Database Cluster
 
-将备份数据库分别重命名为 `ovnnb_db.db` 和 `ovnsb_db.db` 至于 `ovn-central`
- 环境变量 `NODE_IPS` 中排第一机器的 `/etc/origin/ovn/` 目录下：
+Rename the backup databases to `ovnnb_db.db` and `ovnsb_db.db` respectively, 
+and copy them to the `/etc/origin/ovn/` directory of the first machine in the `ovn-central` environment variable `NODE_IPS`：
 
 ```bash
 mv /etc/origin/ovn/ovnnb_db_standalone.db /etc/origin/ovn/ovnnb_db.db
 mv /etc/origin/ovn/ovnsb_db_standalone.db /etc/origin/ovn/ovnsb_db.db
 ```
 
-恢复 `ovn-central` 的副本数：
+Restore the number of replicas of `ovn-central`：
 
 ```bash
 kubectl scale deployment -n kube-system ovn-central --replicas=3

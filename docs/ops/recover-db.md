@@ -33,7 +33,7 @@ ovsdb-server: ovsdb error: error reading record 2739 from OVN_Northbound log: re
 
 ### 从集群中踢出对应节点
 
-根据日志提示是 `OVN_Northboun`d 还是 `OVN_Southbound` 选择对应的数据库进行操作。
+根据日志提示是 `OVN_Northbound` 还是 `OVN_Southbound` 选择对应的数据库进行操作。
 上述日志提示为 `OVN_Northbound` 则对 ovn-nb 进行操作：
 
 ```bash
@@ -75,7 +75,7 @@ kubectl ko nb kick e631
 mv /etc/origin/ovn/ovnnb_db.db /tmp
 ```
 
-删除对应节点的 `ovn-central` Pod 集群即可自动恢复：
+删除对应节点的 `ovn-central` Pod，等待集群自动恢复：
 
 ```bash
 kubectl delete pod -n kube-system ovn-central-xxxx
@@ -87,7 +87,7 @@ kubectl delete pod -n kube-system ovn-central-xxxx
 
 ### 停止 ovn-central
 
-记录当前 ovn-central 副本数量，并停止 `ovn-central` 避免新的数据库变更影响恢复：
+记录当前 `ovn-central` 副本数量，并停止 `ovn-central` 避免新的数据库变更影响恢复：
 
 ```bash
 kubectl scale deployment -n kube-system ovn-central --replicas=0
@@ -96,11 +96,11 @@ kubectl scale deployment -n kube-system ovn-central --replicas=0
 ### 选择备份
 
 由于多数节点受损，需要从某个数据库文件进行恢复重建集群。如果之前备份过数据库
-可使用之前的备份文件进行恢复。如果没有进行过备份可以使用下面的步骤从已有的文件
-中生成一个可重建数据库的备份。
+可使用之前的备份文件进行恢复。如果没有进行过备份可以使用下面的步骤从已有的数据库文件
+中生成一个备份。
 
 > 由于默认文件夹下的数据库文件为集群格式数据库文件，包含当前集群的信息，无法直接
-> 用该文件重建数据库，需要使用 `ovsdb-tool cluster-to-standalone` 进行格式转换
+> 用该文件重建数据库，需要使用 `ovsdb-tool cluster-to-standalone` 进行格式转换。
 
 选择 `ovn-central` 环境变量 `NODE_IPS` 中排第一的节点恢复数据库文件，
 如果第一个节点数据库文件已损坏，从其他机器 `/etc/origin/ovn` 下复制文件到第一台机器 ，
@@ -124,7 +124,7 @@ mv /etc/origin/ovn/ovnsb_db.db /tmp
 
 ### 恢复数据库集群
 
-将备份数据库分别重命名为 `ovnnb_db.db` 和 `ovnsb_db.db` 至于 `ovn-central`
+将备份数据库分别重命名为 `ovnnb_db.db` 和 `ovnsb_db.db`，并复制到 `ovn-central`
  环境变量 `NODE_IPS` 中排第一机器的 `/etc/origin/ovn/` 目录下：
 
 ```bash
