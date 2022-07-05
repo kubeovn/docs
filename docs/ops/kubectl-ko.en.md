@@ -1,34 +1,34 @@
 # Kubectl Plugin
 
-为了方便日常的运维操作，Kube-OVN 提供了 kubectl 插件工具，网络管理员
-可以通过该命令进行日常操作，例如：查看 OVN 数据库信息和状态，OVN 数据库
-备份和恢复，OVS 相关信息查看，tcpdump 特定容器，特定链路逻辑拓扑展示，
-网络问题诊断和性能优化。
+To facilitate daily operations and maintenance, Kube-OVN provides the kubectl plug-in tool, which allows administrators to perform daily operations through this command.
+For examples: Check OVN database information and status, OVN database backup and restore, OVS related information, 
+tcpdump specific containers, specific link logical topology, network problem diagnosis and performance optimization.
 
-## 插件安装
+## Plugin Installation
 
-Kube-OVN 安装时默认会部署插件到每个节点，若执行 kubectl 的机器不在集群内，
-或需要重装插件，可参考下面的步骤：
+Kube-OVN installation will deploy the plugin to each node by default. 
+If the machine that runs kubectl is not in the cluster, 
+or if you need to reinstall the plugin, please refer to the following steps:
 
-下载 `kubectl-ko` 文件：
+Download `kubectl-ko` file:
 
 ```bash
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/kubectl-ko
 ```
 
-将该文件移动至 `$PATH` 目录下：
+Move file to `$PATH`:
 
 ```bash
 mv kubectl-ko /usr/local/bin/kubectl-ko
 ```
 
-增加可执行权限：
+Add executable permissions:
 
 ```bash
 chmod +x /usr/local/bin/kubectl-ko
 ```
 
-检查插件是否可以正常使用：
+Check if the plugin works properly:
 
 ```bash
 # kubectl plugin list
@@ -37,9 +37,9 @@ The following compatible plugins are available:
 /usr/local/bin/kubectl-ko
 ```
 
-## 插件使用
+## Plugin Usage
 
-运行 `kubectl ko` 会展示该插件所有可用的命令和用法描述，如下所示：
+Running `kubectl ko` will show all the available commands and usage descriptions, as follows:
 
 ```bash
 # kubectl ko
@@ -59,16 +59,17 @@ Available Subcommands:
   reload    restart all kube-ovn components
 ```
 
-下面将介绍每个命令的具体功能和使用。
+The specific functions and usage of each command are described below.
 
 ### [nb | sb] [status | kick | backup | dbstatus | restore]
 
-该子命令主要对 OVN 北向或南向数据库进行操作，包括数据库集群状态查看，数据库节点下线，
-数据库备份，数据库存储状态查看和数据库修复。
+This subcommand mainly operates on OVN northbound or southbound databases, 
+including database cluster status check, database node offline, database backup, 
+database storage status check and database repair.
 
-#### 数据库集群状态查看
+#### DB Cluster Status Check
 
-该命令会在对应 OVN 数据库的 leader 节点执行 `ovs-appctl cluster/status` 展示集群状态:
+This command executes `ovs-appctl cluster/status` on the leader node of the corresponding OVN database to show the cluster status:
 
 ```bash
 # kubectl ko nb status
@@ -98,20 +99,20 @@ Servers:
 status: ok
 ```
 
-若 `Server` 下的 `match_index` 出现较大差别，且 `last msg` 时间较长则对应 Server 可能长时间没有响应，
-需要进一步查看。
+If the `match_index` under `Server` has a large difference and the `last msg` time is long, 
+the corresponding Server may not respond for a long time and needs to be checked further.
 
-#### 数据库节点下线
+#### DB Nodes Offline
 
-该命令会将某个节点从 OVN 数据库中移除，在节点下线或更换节点时需要用到。
-下面将以上一条命令所查看到的集群状态为例，下线 `172.18.0.3` 节点:
+This command removes a node from the OVN database and is required when a node is taken offline or replaced.
+The following is an example of the cluster status from the previous command, to offline the `172.18.0.3` node:
 
 ```bash
 # kubectl ko nb kick 8723
 started removal
 ```
 
-再次查看数据库集群状态确认节点已移除：
+Check the database cluster status again to confirm that the node has been removed:
 
 ```bash
 # kubectl ko nb status
@@ -140,9 +141,9 @@ Servers:
 status: ok
 ```
 
-#### 数据库备份
+#### DB Backup
 
-该子命令会备份当前 OVN 数据库至本地，可用于灾备和恢复：
+This subcommand backs up the current OVN database locally and can be used for disaster recovery:
 
 ```bash
 # kubectl ko nb backup
@@ -150,20 +151,20 @@ tar: Removing leading `/' from member names
 backup ovn-nb db to /root/ovnnb_db.060223191654183154.backup
 ```
 
-#### 数据库存储状态查看
+#### Database Storage Status Check
 
-该命令用来查看数据库文件是否存在损坏：
+This command is used to check if the database file is corrupt:
 
 ```bash
 # kubectl ko nb dbstatus
 status: ok
 ```
 
-若异常则显示 `inconsistent data` 需要使用下面的命令进行修复。
+If error happens, `inconsistent data` is displayed and needs to be fixed with the following command.
 
-#### 数据库修复
+#### Database Repair
 
-若数据库状态进入 `inconsistent data` 可使用该命令进行修复：
+If the database status goes to `inconsistent data`, this command can be used to repair:
 
 ```bash
 # kubectl ko nb restore
@@ -185,8 +186,8 @@ pod "ovs-ovn-t87zk" deleted
 
 ### [nbctl | sbctl] [options ...]
 
-该子命令会直接进入 OVN 北向数据库或南向数据库 的 leader 节点分别执行 `ovn-nbctl` 和 `ovn-sbctl` 命令。
-更多该命令的详细用法请查询上游 OVN 的官方文档 [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html){: target="_blank" } 和 [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html){: target="_blank" }。
+This subcommand executes the `ovn-nbctl` and `ovn-sbctl` commands directly into the leader node of the OVN northbound or southbound database.
+For more detailed usage of this command, please refer to the official documentation of the upstream OVN [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html){: target="_blank" } 和 [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html){: target="_blank" }。
 
 ```bash
 # kubectl ko nbctl show
@@ -235,8 +236,8 @@ router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
 
 ### vsctl {nodeName} [options ...]
 
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-vsctl` 命令，查询并配置 `vswitchd`。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-vsctl(8)](https://man7.org/linux/man-pages/man8/ovs-vsctl.8.html){: target="_blank" }。
+This command will go to the `ovs-ovn` container on the corresponding `nodeName` and execute the corresponding `ovs-vsctl` command to query and configure `vswitchd`.
+For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-vsctl(8)](https://man7.org/linux/man-pages/man8/ovs-vsctl.8.html){: target="_blank" }。
 
 ```bash
 # kubectl ko vsctl kube-ovn-01 show
@@ -270,8 +271,8 @@ router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
 
 ### ofctl {nodeName} [options ...]
 
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-ofctl` 命令，查询或管理 OpenFlow。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-ofctl(8)](https://man7.org/linux/man-pages/man8/ovs-ofctl.8.html){: target="_blank" }。
+This command will go to the `ovs-ovn` container on the corresponding `nodeName` and execute the corresponding `ovs-ofctl` command to query or manage OpenFlow.
+For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-ofctl(8)](https://man7.org/linux/man-pages/man8/ovs-ofctl.8.html){: target="_blank" }。
 
 ```bash
 # kubectl ko ofctl kube-ovn-01 dump-flows br-int
@@ -285,8 +286,8 @@ NXST_FLOW reply (xid=0x4): flags=[more]
 
 ### dpctl {nodeName} [options ...]
 
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-dpctl` 命令，查询或管理 OVS datapath。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-dpctl(8)](https://man7.org/linux/man-pages/man8/ovs-dpctl.8.html){: target="_blank" }。
+This command will go to the `ovs-ovn` container on the corresponding `nodeName` and execute the corresponding `ovs-dpctl` command to query or manage the OVS datapath.
+For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-dpctl(8)](https://man7.org/linux/man-pages/man8/ovs-dpctl.8.html){: target="_blank" }。
 
 ```bash
 # kubectl ko dpctl kube-ovn-01 show
@@ -306,8 +307,8 @@ system@ovs-system:
 
 ### appctl {nodeName} [options ...]
 
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-appctl` 命令，来操作相关 daemon 进程。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-appctl(8)](https://man7.org/linux/man-pages/man8/ovs-appctl.8.html){: target="_blank" }。
+This command will enter the `ovs-ovn` container on the corresponding `nodeName` and execute the corresponding `ovs-appctl` command to operate the associated daemon process.
+For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-appctl(8)](https://man7.org/linux/man-pages/man8/ovs-appctl.8.html){: target="_blank" }。
 
 ```bash
 # kubectl ko appctl kube-ovn-01 vlog/list
@@ -324,8 +325,9 @@ bundles            OFF        ERR       INFO
 
 ### tcpdump {namespace/podname} [tcpdump options ...]
 
-该命令会进入 `namespace/podname` 所在机器的 `kube-ovn-cni` 容器，并执行 `tcpdump` 抓取对应容器 veth 网卡
-端的流量，可以方便排查网络相关问题，如下所示：
+This command will enter the `kube-ovn-cni` container on the machine where `namespace/podname` is located, 
+and run `tcpdump` to capture the traffic on the veth NIC of the corresponding container, 
+which can be used to troubleshoot network-related problems.
 
 ```bash
 # kubectl ko tcpdump default/ds1-l6n7p icmp
@@ -340,11 +342,10 @@ listening on d7176fe7b4e0_h, link-type EN10MB (Ethernet), capture size 262144 by
 06:52:38.619973 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 3, length 64
 ```
 
-
 ### trace {namespace/podname} {target ip address} {icmp|tcp|udp} [target tcp or udp port]
 
-该命令将会打印 Pod 通过特定协议访问某地址时对应的 OVN 逻辑流表和最终的 Openflow 流表，
-方便开发或运维时定位流表相关问题。
+This command will print the OVN logical flow table and the final Openflow flow table when the Pod accesses an address through a specific protocol, 
+so that it make locate flow table related problems during development or troubleshooting much easy.
 
 ```bash
 # kubectl ko trace default/ds1-l6n7p 8.8.8.8 icmp
@@ -378,11 +379,10 @@ ct_next(ct_state=new|trk)
 ...
 ```
 
-
-
 ### diagnose {all|node} [nodename]
 
-诊断集群网络组件状态，并去对应节点的 `kube-ovn-pinger` 检测当前节点到其他节点和关键服务的连通性和网络延迟：
+Diagnose the status of cluster network components and go to the corresponding node's `kube-ovn-pinger` 
+to detect connectivity and network latency from the current node to other nodes and critical services.
 
 ```bash
 # kubectl ko diagnose all
@@ -634,15 +634,13 @@ I0603 10:35:05.458460   17619 ping.go:159] ping pod: kube-ovn-pinger-vh2xg 10.16
 I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
 ```
 
-
-
 ### tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]
 
-该命令执行性能调优相关操作，具体使用请参考[性能调优](../advance/performance-tuning.md)
+This command performs performance tuning related operations, please refer to [Performance Tunning](../advance/performance-tuning.en.md).
 
 ### reload 
 
-该命令重启所有 Kube-OVN 相关组件
+This command restarts all Kube-OVN related components:
 
 ```bash
 # kubectl ko reload

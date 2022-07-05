@@ -340,7 +340,6 @@ listening on d7176fe7b4e0_h, link-type EN10MB (Ethernet), capture size 262144 by
 06:52:38.619973 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 3, length 64
 ```
 
-
 ### trace {namespace/podname} {target ip address} {icmp|tcp|udp} [target tcp or udp port]
 
 该命令将会打印 Pod 通过特定协议访问某地址时对应的 OVN 逻辑流表和最终的 Openflow 流表，
@@ -377,8 +376,6 @@ ct_next(ct_state=new|trk)
 
 ...
 ```
-
-
 
 ### diagnose {all|node} [nodename]
 
@@ -634,15 +631,13 @@ I0603 10:35:05.458460   17619 ping.go:159] ping pod: kube-ovn-pinger-vh2xg 10.16
 I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
 ```
 
-
-
 ### tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]
 
-该命令执行性能调优相关操作，具体使用请参考[性能调优](../advance/performance-tuning.md)
+该命令执行性能调优相关操作，具体使用请参考[性能调优](../advance/performance-tuning.md)。
 
 ### reload 
 
-该命令重启所有 Kube-OVN 相关组件
+该命令重启所有 Kube-OVN 相关组件：
 
 ```bash
 # kubectl ko reload
