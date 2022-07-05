@@ -1,36 +1,36 @@
 # Install Kube-OVN From Calico
 
-若 Kubernetes 集群已安装 Calico 需要变更为 Kube-OVN 可以参考本文档。
+If a Kubernetes cluster already has Calico installed and needs to change to Kube-OVN you can refer to this document.
 
-> 由于 Calico 各个版本的安装可能存在差异，并且更换过程中已有 Pod 网络
-> 会中断，建议提前做好规划，并参照不同版本 Calico 安装差异进行调整。
+> Since the installation of Calico may vary from version to version and the existing Pod network may be disrupted during the replacement process, 
+> it is recommended that you plan ahead and compare the differences in Calico installation from version to version.
 
-## 卸载 Calico 组件
+## Uninstall Calico
 
-Operator 安装模式 Calico 卸载：
+For Calico installed from an Operator:
 
 ```bash
 kubectl delete -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
 kubectl delete -f https://projectcalico.docs.tigera.io/manifests/custom-resources.yaml
 ```
 
-Manifest 安装模式 Calico 卸载：
+For Calico installed from manifests:
 
 ```bash
 kubectl delete -f https://projectcalico.docs.tigera.io/manifests/calico.yaml 
 ```
 
-## 残留配置清理
+## Cleanup Config Files
 
-根据环境具体情况，在每台机器删除 CNI 相关配置文件：
+Delete the CNI-related configuration files on each machine, depending on the environment:
 
 ```bash
 rm -f /etc/cni/net.d/10-calico.conflist
 rm -f /etc/cni/net.d/calico-kubeconfig
 ```
 
-Calico 依然会在节点上残留路由规则，iptables 规则，veth 网络接口等配置信息，
-建议重启节点清理相关配置，避免出现难以排查的问题。
+Calico still leaves routing rules, iptables rules, veth network interfaces and other configuration information on the node, 
+so it is recommended to reboot the node to clean up the relevant configuration to avoid problems that are difficult to troubleshoot.
 
 ## 安装 Kube-OVN
 
