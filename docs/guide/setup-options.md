@@ -43,7 +43,7 @@ SVC_CIDR="10.96.0.0/12"
 
 ```yaml
 args:
---service-cluster-ip-range=10.96.0.0/12
+- --service-cluster-ip-range=10.96.0.0/12
 ```
 
 来进行修改。
