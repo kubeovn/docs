@@ -117,7 +117,7 @@ spec:
 
 某些情况下，例如误编辑了 `ovn-ic-config` 的配置时, OVN-IC 可能出现配置异常。同时由于端口被占用, 可能重配置无法恢复，因此需要手动重置环境。
 
-在这种情况下. 可以按下列操作重置环境:
+在这种情况下，可以按下列操作重置环境：
 
 ```bash
 root@ovnic:~# kubectl -n kube-system -lovn-nb-leader=true get pods
