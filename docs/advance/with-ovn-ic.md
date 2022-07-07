@@ -61,7 +61,7 @@ data:
 - `gw-nodes`: 集群互联中承担网关工作的节点名，逗号分隔。
 - `auto-route`: 是否自动对外发布和学习路由。
 
-**注意:** 为了保证操作的正确性,  `ovn-ic-config` 这个 configmap 不允许修改. 如有参数需要变更, 请删除该 ovn-configmap , 修改后再应用此 configmap. 
+**注意：** 为了保证操作的正确性，`ovn-ic-config` 这个 ConfigMap 不允许修改。如有参数需要变更，请删除该 ConfigMap，修改后再应用此 ConfigMap。
 
 在 `ovn-ic` 容器内通过下面的命令查看是否已建立互联逻辑交换机 `ts`：
 
