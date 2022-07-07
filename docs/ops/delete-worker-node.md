@@ -1,9 +1,10 @@
 # 删除工作节点
 
-由于节点上 `ovs-ovn` 中运行的 `ovn-controller` 进程会定期连接 `ovn-central` 并注册相关网络信息，会导致额外
-浪费资源开销并有潜在的规则冲突风险。因此在从 Kubernetes 内删除节点时，请按照下面的步骤来保证网络信息可以正常被清理。
+如果只是简单从 Kubernetes 中删除节点，由于节点上 `ovs-ovn` 中运行的 `ovn-controller` 进程仍在运行会定期连接 `ovn-central` 注册相关网络信息，
+会导致额外资源浪费并有潜在的规则冲突风险。
+因此在从 Kubernetes 内删除节点时，请按照下面的步骤来保证网络信息可以正常被清理。
 
-该文档介绍删除工作节点的步骤，如需更换 `ovn-central` 所在节点，请参考[更换 ovn-central 节点](./change-ovn-central-node.md)
+该文档介绍删除工作节点的步骤，如需更换 `ovn-central` 所在节点，请参考[更换 ovn-central 节点](./change-ovn-central-node.md)。
 
 ## 驱逐节点上所有容器
 
@@ -20,16 +21,16 @@
  node/kube-ovn-worker drained
 ````
 
-## 登录对应节点并停止 kubelet 和 docker 已停止对应 DaemonSet pod，
+## 停止 kubelet 和 docker
 
-该步骤会停止 `ovs-ovn` 容器，避免向 `ovn-central` 进行注册：
+该步骤会停止 `ovs-ovn` 容器，以避免向 `ovn-central` 进行信息注册，登录到对应节点执行下列命令：
   
 ```bash
 systemctl stop kubelet
 systemctl stop docker
 ```
 
-## 清理 node 上的 ovs/ovn 残留数据
+## 清理 Node 上的残留数据
 
 ```bash
 rm -rf /var/run/openvswitch
@@ -51,6 +52,7 @@ kubectl delete no kube-ovn-01
 ## 检查对应节点是否从 ovn-sb 中删除
 
 下面的示例为 `kube-ovn-worker` 依然未被删除：
+
 ```bash
 # kubectl ko sbctl show
 Chassis "b0564934-5a0d-4804-a4c0-476c93596a17"

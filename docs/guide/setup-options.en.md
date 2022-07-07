@@ -42,7 +42,7 @@ You can also modify the args of the `kube-ovn-controller` Deployment after insta
 
 ```yaml
 args:
---service-cluster-ip-range=10.96.0.0/12
+- --service-cluster-ip-range=10.96.0.0/12
 ```
 
 ## Overlay NIC Selection

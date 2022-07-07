@@ -1,11 +1,13 @@
 # Delete Work Node
 
-由于节点上 `ovs-ovn` 中运行的 `ovn-controller` 进程会定期连接 `ovn-central` 并注册相关网络信息，会导致额外
-浪费资源开销并有潜在的规则冲突风险。因此在从 Kubernetes 内删除节点时，请按照下面的步骤来保证网络信息可以正常被清理。
+If the node is simply removed from Kubernetes, the `ovn-controller` process running in `ovs-ovn` on the node will periodically 
+connect to `ovn-central` to register relevant network information. 
+This leads to additional resource waste and potential rule conflict risk。
+Therefore, when removing nodes from within Kubernetes, follow the steps below to ensure that related resources are cleaned up properly.
 
-该文档介绍删除工作节点的步骤，如需更换 `ovn-central` 所在节点，请参考[更换 ovn-central 节点](./change-ovn-central-node.md)
+This document describes the steps to delete a worker node, if you want to change the node where `ovn-central` is located, please refer to [Replace ovn-central Node](./change-ovn-central-node.en.md).
 
-## 驱逐节点上所有容器
+## Evict Pods on the Node
 
 ````bash
  # kubectl drain kube-ovn-worker --ignore-daemonsets --force
@@ -20,16 +22,17 @@
  node/kube-ovn-worker drained
 ````
 
-## 登录对应节点并停止 kubelet 和 docker 已停止对应 DaemonSet pod，
+## Stop kubelet and docker
 
-该步骤会停止 `ovs-ovn` 容器，避免向 `ovn-central` 进行注册：
+This step stops the `ovs-ovn` container to avoid registering information to `ovn-central`. 
+Log into to the corresponding node and ruu the following commands:
   
 ```bash
 systemctl stop kubelet
 systemctl stop docker
 ```
 
-## 清理 node 上的 ovs/ovn 残留数据
+## Cleanup Files on Node
 
 ```bash
 rm -rf /var/run/openvswitch
@@ -42,15 +45,16 @@ rm -rf /var/log/openvswitch
 rm -rf /var/log/ovn
 ```
 
-## 使用 kubectl 删除节点
+## Delete the Node
 
 ```bash
 kubectl delete no kube-ovn-01
 ```
 
-## 检查对应节点是否从 ovn-sb 中删除
+## Check If Node Removed from OVN-SB
 
-下面的示例为 `kube-ovn-worker` 依然未被删除：
+In the example below, the node `kube-ovn-worker` is not removed:
+
 ```bash
 # kubectl ko sbctl show
 Chassis "b0564934-5a0d-4804-a4c0-476c93596a17"
@@ -71,9 +75,9 @@ Chassis "6a29de7e-d731-4eaf-bacd-2f239ee52b28"
   Port_Binding coredns-64897985d-fhwlw.kube-system
 ```
 
-## 若节点对应的 chassis 依然存在，手动进行删除
+## Delete the Chassis Manually
 
-uuid 为之前命令所查出的 Chassis 对应 id：
+Use the uuid find above to delete the chassis:
 
 ```bash
 # kubectl ko sbctl chassis-del b0564934-5a0d-4804-a4c0-476c93596a17

@@ -18,7 +18,7 @@ and this document will describe the common configurations and differentiated fea
 To make it easier for users to get started quickly, 
 Kube-OVN has a built-in default Subnet, all Namespaces that do not explicitly declare subnet affiliation are automatically assigned IPs 
 from the default subnet and the network information.
-The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](setup-options.en.md#_2) for more details.
+The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](setup-options.en.md#built-in-network-settings) for more details.
 To change the CIDR of the default Subnet after installation please refer to [Change Subnet CIDR](../ops/change-default-subnet.en.md).
 
 In Overlay mode, the default Subnet uses a distributed gateway and NAT translation for outbound traffic, 
@@ -60,7 +60,7 @@ In the Kubernetes network specification, it is required that Nodes can communica
 To achieve this in Overlay network mode, Kube-OVN creates a `join` Subnet and creates a virtual NIC `ovn0` 
 at each node that connect to the `join` subnet, through which the nodes and Pods can communicate with each other.
 
-The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](setup-options.en.md#_2) for more details.
+The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](setup-options.en.md#built-in-network-settings) for more details.
 To change the CIDR of the Join Subnet after installation please refer to [Change Join CIDR](../ops/change-join-subnet.en.md).
 
 ### Check the Join Subnet
