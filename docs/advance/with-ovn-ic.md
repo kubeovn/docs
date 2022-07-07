@@ -120,6 +120,8 @@ spec:
 在这种情况下，可以按下列操作重置环境：
 
 ```bash
+# 首先删除当前的 ovn-ic configmap
+root@ovnic:~# kubectl -n kube-system delete cm ovn-ic-config
 root@ovnic:~# kubectl -n kube-system -lovn-nb-leader=true get pods
 NAME                          READY   STATUS    RESTARTS   AGE
 ovn-central-7c97cdbd9-k5qll   1/1     Running   0          7m4s
