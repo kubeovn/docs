@@ -57,9 +57,11 @@ static-vip01   10.16.0.121           00:00:00:F0:DB:26                         o
 
 可见该 VIP 被分配了所预期的 IP 地址。
 
-## pod 使用vip来固定ip
+## Pod 使用 VIP 来固定 IP
 
-如果subnet支持双栈，vip的v6地址也可以同步固定
+> 该功能目前只在 master 分支支持。
+
+可以使用 annotation 将某个 VIP 分配给一个 Pod：
 
 ```yaml
 apiVersion: v1
@@ -67,10 +69,10 @@ kind: Pod
 metadata:
   name: static-ip
   annotations:
-    ovn.kubernetes.io/vip: vip-dynamic-01 # 指定vip
+    ovn.kubernetes.io/vip: vip-dynamic-01 # 指定 vip
   namespace: default
 spec:
   containers:
-  - name: static-ip
-    image: nginx:alpine
+    - name: static-ip
+      image: nginx:alpine
 ```
