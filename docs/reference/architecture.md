@@ -36,7 +36,7 @@ Kube-OVN 的组件可以大致分为三类：
 
 多个 `ovn-central` 实例会通过 Raft 协议同步数据保证高可用。
 
-### ovs-ovn
+#### ovs-ovn
 
 `ovs-ovn` 以 DaemonSet 形式运行在每个节点，在 Pod 内运行了 `openvswitch`, `ovsdb`, 和 `ovn-controller`。这些组件作为 `ovn-central`
 的 Agent 将逻辑流表翻译成真实的网络配置。
