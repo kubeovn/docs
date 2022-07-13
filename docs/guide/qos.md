@@ -139,11 +139,12 @@ HtbQos 定义只有一个字段，即 `.spec.priority`，字段取值代表了�
 ```bash
 # kubectl get htbqos
 NAME            PRIORITY
-htbqos-high     100
-htbqos-low      300
-htbqos-medium   200
+htbqos-high     1
+htbqos-low      5
+htbqos-medium   3
 ```
 优先级顺序是相对的，priority 取值越小，QoS 优先级越高。
+OVS 本身对字段的取值，没有做限制，可以参考 [Qos参数](https://www.mankier.com/5/ovs-vswitchd.conf.db#QoS_TABLE)，但是实际 Linux 支持的 Priority 参数取值，范围为 0-7，超出范围外的取值，默认设置为 7。
 
 Subnet Spec 中的 `HtbQos` 字段，用于指定当前 Subnet 绑定的 HtbQos 实例，参考如下:
 
