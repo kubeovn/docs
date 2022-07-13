@@ -144,7 +144,7 @@ htbqos-low      5
 htbqos-medium   3
 ```
 优先级顺序是相对的，priority 取值越小，QoS 优先级越高。
-OVS本身对字段的取值，没有做限制，可以参考 [Qos参数](https://www.mankier.com/5/ovs-vswitchd.conf.db#QoS_TABLE)，但是实际Linux支持的Priority参数取值，范围为0-7，超出范围外的取值，默认设置为7。
+OVS 本身对字段的取值，没有做限制，可以参考 [Qos参数](https://www.mankier.com/5/ovs-vswitchd.conf.db#QoS_TABLE)，但是实际 Linux 支持的 Priority 参数取值，范围为 0-7，超出范围外的取值，默认设置为 7。
 
 Subnet Spec 中的 `HtbQos` 字段，用于指定当前 Subnet 绑定的 HtbQos 实例，参考如下:
 
