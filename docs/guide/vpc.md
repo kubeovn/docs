@@ -147,7 +147,7 @@ metadata:
   name: ovn-vpc-nat-gw-config
   namespace: kube-system
 data:
-  image: 'kubeovn/vpc-nat-gateway:v1.10.2' 
+  image: 'kubeovn/vpc-nat-gateway:{{ variables.version }}' 
   enable-vpc-nat-gw: 'true'
 ```
 

@@ -27,7 +27,7 @@ Open the script using the editor and change the following variables to the expec
 
 ```bash
 REGISTRY="kubeovn"                     # Image Repo 
-VERSION="v1.10.2"                      # Image Tag
+VERSION="{{ variables.version }}"                      # Image Tag
 POD_CIDR="10.16.0.0/16"                # Default subnet CIDR don't overlay with SVC/NODE/JOIN CIDR
 SVC_CIDR="10.96.0.0/12"                # Be consistent with apiserver's service-cluster-ip-range
 JOIN_CIDR="100.64.0.0/16"              # Pod/Host communication Subnet CIDR, don't overlay with SVC/NODE/POD CIDR

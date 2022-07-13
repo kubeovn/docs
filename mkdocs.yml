@@ -162,9 +162,10 @@ plugins:
       minify_html: true
       htmlmin_opts:
         remove_comments: true
+  - markdownextradata: {}
 #  - with-pdf:
 #      author: Kube-OVN Team
-#      cover_subtitle: v1.10.2
+#      cover_subtitle: v1.10.3
 extra:
   social:
     - icon: fontawesome/brands/weixin
@@ -177,4 +178,6 @@ extra:
       link: https://github.com/kubeovn
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/r/kubeovn/kube-ovn
+  variables:
+    version: v1.10.3
 copyright: Copyright &copy; 2022 The Linux Foundation

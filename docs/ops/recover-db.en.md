@@ -112,7 +112,7 @@ If the database file of the first node is corrupted, copy the file from the othe
 the first machine. Run the following command to generate a database file backup.
 
 ```bash
-docker run -it -v /etc/origin/ovn:/etc/ovn kubeovn/kube-ovn:v1.10.2 bash
+docker run -it -v /etc/origin/ovn:/etc/ovn kubeovn/kube-ovn:{{ variables.version }} bash
 cd /etc/ovn/
 ovsdb-tool cluster-to-standalone ovnnb_db_standalone.db ovnnb_db.db
 ovsdb-tool cluster-to-standalone ovnsb_db_standalone.db ovnsb_db.db

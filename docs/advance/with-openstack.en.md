@@ -22,7 +22,7 @@ except that the two ends of the cluster are replaced with OpenStack and Kubernet
 Start the `OVN-IC` DB with the following command:
 
 ```bash
-docker run --name=ovn-ic-db -d --network=host -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:v1.10.2 bash start-ic-db.sh
+docker run --name=ovn-ic-db -d --network=host -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
 ```
 
 ### Kubernetes Side Operations
