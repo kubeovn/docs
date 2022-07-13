@@ -65,6 +65,9 @@ data:
 - `gw-nodes`: The name of the nodes in the cluster interconnection that takes on the work of the gateways, separated by commas.
 - `auto-route`: Whether to automatically publish and learn routes.
 
+**Note:** To ensure the correct operation, the ConfigMap `ovn-ic-config` is not allowed to be modified. 
+If any parameter needs to be changed, please delete this ConfigMap, modify it and then apply it again.
+
 Check if the interconnected logical switch `ts` has been established in the `ovn-ic` container with the following command：
 
 ```bash
@@ -235,3 +238,22 @@ data:
   gw-nodes: "az1-gw"
   auto-route: "true"
 ```
+
+## Manual Reset
+
+In some cases, the entire interconnection configuration needs to be cleaned up due to configuration errors, 
+you can refer to the following steps to clean up your environment.
+
+Delete the current `ovn-ic-config` Configmap:
+
+```bash
+kubectl -n kube-system delete cm ovn-ic-config
+```
+
+Delete `ts` logical switch:
+
+```bash
+kubectl-ko nbctl ls-del ts
+```
+
+Repeat the same steps at the peer cluster.

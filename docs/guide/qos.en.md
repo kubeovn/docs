@@ -143,12 +143,15 @@ Three instances with different priority levels are preconfigured at the initiali
 ```bash
 # kubectl get htbqos
 NAME            PRIORITY
-htbqos-high     100
-htbqos-low      300
-htbqos-medium   200
+htbqos-high     1
+htbqos-low      5
+htbqos-medium   3
 ```
 
 The priority order is relative; the smaller the priority value, the higher the QoS priority.
+
+OVS itself does not limit the value of the field, you can refer to [Qos parameter](https://www.mankier.com/5/ovs-vswitchd.conf.db#QoS_TABLE). 
+However, the actual Linux supports Priority in the range of 0-7, and values outside the range will be set to 7.
 
 The `HtbQos` field in Subnet Spec, used to specify the HtbQos instance of the current Subnet binding as below:
 

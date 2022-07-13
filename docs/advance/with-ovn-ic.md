@@ -113,35 +113,6 @@ spec:
   disableInterConnection: true
 ```
 
-## 手动重置
-
-某些情况下，例如误编辑了 `ovn-ic-config` 的配置时, OVN-IC 可能出现配置异常。同时由于端口被占用, 可能重配置无法恢复，因此需要手动重置环境。
-
-在这种情况下，可以按下列操作重置环境：
-
-```bash
-# 首先删除当前的 ovn-ic configmap
-root@ovnic:~# kubectl -n kube-system delete cm ovn-ic-config
-root@ovnic:~# kubectl -n kube-system -lovn-nb-leader=true get pods
-NAME                          READY   STATUS    RESTARTS   AGE
-ovn-central-7c97cdbd9-k5qll   1/1     Running   0          7m4s
-# 记录得到的 pod 名字, 进入该 pod 执行操作
-root@ovnic:~# kubectl -n kube-system exec -ti ovn-central-7c97cdbd9-k5qll bash
-kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
-root@ovnic:/kube-ovn# ovn-nbctl show | grep ts
-switch ae275e63-c2db-44a7-a1b1-c76c37b5965b (ts)
-    port ts-az1
-    port ts-az0
-        router-port: az0-ts
-    port az0-ts
-# 删除 ts 相关的所有端口, 注意在这里 az0/az1 是我的 ovn-ic-config 里的 az 字段. 你的可能并不相同.
-root@ovnic:/kube-ovn# ovn-nbctl lsp-del ts-az1
-root@ovnic:/kube-ovn# ovn-nbctl lsp-del ts-az0
-root@ovnic:/kube-ovn# ovn-nbctl lrp-del az0-ts
-# 处理完毕后退出. 然后重新部署 ovn-ic-config 即可.
-root@ovnic:/kube-ovn# exit
-```
-
 ## 手动路由设置
 
 对于集群间存在重叠 CIDR 只希望做部分子网打通的情况，可以通过下面的步骤手动发布子网路由。
@@ -259,3 +230,21 @@ data:
   gw-nodes: "az1-gw"
   auto-route: "true"
 ```
+
+## 手动重置
+
+在一些情况下，由于配置错误需要对整个互联配置进行清理，可以参考下面的步骤清理环境。
+
+删除当前的 `ovn-ic-config` Configmap：
+
+```bash
+kubectl -n kube-system delete cm ovn-ic-config
+```
+
+删除 `ts` 逻辑交换机：
+
+```bash
+kubectl-ko nbctl ls-del ts
+```
+
+在对端集群重复同样的步骤。
