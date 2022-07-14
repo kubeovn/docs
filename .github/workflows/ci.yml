@@ -2,15 +2,21 @@ name: ci
 on:
   push:
     branches:
-      - master
       - main
+      - master
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v2
         with:
           python-version: 3.x
       - run: pip install -r docs/requirements.txt
-      - run: mkdocs gh-deploy --force
+      - run: |
+          git config --global user.name "ci-bot"
+          git config --global user.email "ci-bot@example.com"
+          git fetch origin gh-pages
+          mike deploy --push -f v1.11.x dev -t "v1.11.x (dev)"
