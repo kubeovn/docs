@@ -2,8 +2,7 @@ name: ci
 on:
   push:
     branches:
-      - master
-      - main
+      - v1.10
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,4 +12,7 @@ jobs:
         with:
           python-version: 3.x
       - run: pip install -r docs/requirements.txt
-      - run: mkdocs gh-deploy --force
+      - run: |
+          git fetch origin gh-pages --depth=1
+          GIT_COMMITTER_NAME=ci-bot GIT_COMMITTER_EMAIL=ci-bot@example.com \
+            mike deploy --push -f v1.10.x
