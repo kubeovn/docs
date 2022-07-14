@@ -32,9 +32,8 @@ relying on the underlying network devices for L2/L3 level forwarding capabilitie
 Vlan and security policy in the underlying network device in advance.
 
 1. For OpenStack VM environments, you need to turn off `PortSecurity` on the corresponding network port.
-2. 对于 VMware 的 vswtich 网络，需要将 `MAC Address Changes`, `Forged Transmits` 和 `Promiscuous Mode Operation` 设置为 `allow`。
-3. For VMware vswtich networks, `MAC Address Changes`, `Forged Transmits` and `Promiscuous Mode Operation` should be set to `allow`.
-4. For Service access traffic, the Pod sends the packets first to the underlay gateway, 
+2. For VMware vswtich networks, `MAC Address Changes`, `Forged Transmits` and `Promiscuous Mode Operation` should be set to `allow`.
+3. For Service access traffic, the Pod sends the packets first to the underlay gateway, 
    which needs to have the ability to forward the packets back to the network.
 
 For management and container networks using the same NIC, Kube-OVN will transfer the NIC's Mac address, IP address, route, 
