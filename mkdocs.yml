@@ -183,5 +183,5 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/r/kubeovn/kube-ovn
   variables:
-    version: v1.10.3
+    version: v1.11.0
 copyright: Copyright &copy; 2022 The Linux Foundation

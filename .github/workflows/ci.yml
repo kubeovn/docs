@@ -20,3 +20,4 @@ jobs:
           git config --global user.email "ci-bot@example.com"
           git fetch origin gh-pages
           mike deploy --push -f v1.11.x dev -t "v1.11.x (dev)"
+          mike list
