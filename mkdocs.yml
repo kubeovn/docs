@@ -92,6 +92,7 @@ markdown_extensions:
 plugins:
   - search:
       separator: '[\s\u200b\-]'
+  - mike: {}
   - i18n:
       default_language: zh
       languages:
@@ -167,6 +168,9 @@ plugins:
 #      author: Kube-OVN Team
 #      cover_subtitle: v1.10.3
 extra:
+  version:
+    provider: mike
+    default: stable
   social:
     - icon: fontawesome/brands/weixin
       link: http://page.alauda.cn/kubeovn
