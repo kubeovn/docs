@@ -8,11 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v2
         with:
           python-version: 3.x
       - run: pip install -r docs/requirements.txt
       - run: |
-          git fetch origin gh-pages --depth=1
-          GIT_COMMITTER_NAME=ci-bot GIT_COMMITTER_EMAIL=ci-bot@example.com \
-            mike deploy --push -f v1.10.x
+          git config --global user.name "ci-bot"
+          git config --global user.email "ci-bot@example.com"
+          git fetch origin gh-pages
+          mike deploy --push -f v1.10.x stable -t "v1.10.x (stable)"
+          mike set-default stable --push
