@@ -45,6 +45,8 @@ IpExt:
 ethtool -K eth0 tx off
 ```
 
+经社区反馈使用 `4.19.90-25.16.v2101` 内核后可以解决该问题。
+
 ## Pod 访问 Service 不通
 
 ### 现象

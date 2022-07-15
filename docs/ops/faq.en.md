@@ -45,6 +45,8 @@ A temporary solution would be to turn off `tx offload` on the physical NIC, but 
 ethtool -K eth0 tx off
 ```
 
+From the community feedback, the problem can be solved by the `4.19.90-25.16.v2101` kernel.
+
 ## Pod can not Access Service
 
 ### Behavior
