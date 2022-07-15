@@ -32,6 +32,6 @@ rm -f /etc/cni/net.d/calico-kubeconfig
 Calico still leaves routing rules, iptables rules, veth network interfaces and other configuration information on the node, 
 so it is recommended to reboot the node to clean up the relevant configuration to avoid problems that are difficult to troubleshoot.
 
-## 安装 Kube-OVN
+## Install Kube-OVN
 
-可参考[一键安装](../start/one-step-install.md)正常进行安装。
+You can refer to [One Click Installation](../start/one-step-install.en.md) to install Kube-OVN as usual.
