@@ -11,7 +11,7 @@ Feel free to contact us with an Issue to give us feedback on why you don't use K
 Download and run the script below to delete resource created in Kubernetes:
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/cleanup.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/cleanup.sh
 bash cleanup.sh
 ```
 

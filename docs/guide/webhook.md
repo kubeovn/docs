@@ -24,7 +24,7 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 下载 Webhook 对应的 yaml 进行安装:
 
 ```bash
-# kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/yamls/webhook.yaml
+# kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/yamls/webhook.yaml
 deployment.apps/kube-ovn-webhook created
 service/kube-ovn-webhook created
 validatingwebhookconfiguration.admissionregistration.k8s.io/kube-ovn-webhook created

@@ -174,7 +174,7 @@ spec:
 Download the scripts:
 
 ```bash
-wget https://raw.githubusercontent.com/alauda/kube-ovn/release-1.10/dist/images/install.sh
+wget https://raw.githubusercontent.com/alauda/kube-ovn/{{ variables.branch }}/dist/images/install.sh
 ```
 
 Change the related options，`IFACE` should be the physic NIC and has an IP:

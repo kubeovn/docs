@@ -12,7 +12,7 @@ Before installation please read [Prerequisites](./prepare.en.md) first to make s
 We recommend using the stable release version for production environments, please use the following command to download:
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
 ```
 
 If you are interested in the latest features of the master branch, please use the following command to download:

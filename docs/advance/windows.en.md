@@ -37,7 +37,7 @@ Running  ovs-vswitchd  Open vSwitch Service
 
 ## Install Kube-OVN
 
-Download the installation script in the Windows node [install.ps1](https://github.com/kubeovn/kube-ovn/blob/release-1.10/dist/windows/install.ps1).
+Download the installation script in the Windows node [install.ps1](https://github.com/kubeovn/kube-ovn/blob/{{ variables.branch }}/dist/windows/install.ps1).
 
 Add relevant parameters and run:
 

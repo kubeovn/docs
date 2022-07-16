@@ -25,7 +25,7 @@ More cert-manager usage please refer to [cert-manager document](https://cert-man
 Download Webhook yaml and install:
 
 ```bash
-# kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/yamls/webhook.yaml
+# kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/yamls/webhook.yaml
 deployment.apps/kube-ovn-webhook created
 service/kube-ovn-webhook created
 validatingwebhookconfiguration.admissionregistration.k8s.io/kube-ovn-webhook created
