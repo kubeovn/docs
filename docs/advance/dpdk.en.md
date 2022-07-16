@@ -41,7 +41,7 @@ DPDK_DEV=0000:00:0b.0
 Download scripts:
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
 ```
 
 Enable the DPDK installation option:

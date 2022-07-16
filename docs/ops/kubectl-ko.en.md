@@ -13,7 +13,7 @@ or if you need to reinstall the plugin, please refer to the following steps:
 Download `kubectl-ko` file:
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/kubectl-ko
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/kubectl-ko
 ```
 
 Move file to `$PATH`:

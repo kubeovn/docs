@@ -49,7 +49,7 @@ and all Pods with no subnet specified will run in the Underlay network by defaul
 ### Download Script
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
 ```
 
 #### Modify Configuration Options

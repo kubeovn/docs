@@ -41,7 +41,7 @@ DPDK_DEV=0000:00:0b.0
 下载安装脚本：
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
 ```
 
 启用 DPDK 安装选项进行安装：

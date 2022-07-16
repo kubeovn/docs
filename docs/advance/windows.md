@@ -35,7 +35,7 @@ Running  ovs-vswitchd  Open vSwitch Service
 
 ## 安装 Kube-OVN
 
-在 Windows 节点下载安装脚本 [install.ps1](https://github.com/kubeovn/kube-ovn/blob/release-1.10/dist/windows/install.ps1)。
+在 Windows 节点下载安装脚本 [install.ps1](https://github.com/kubeovn/kube-ovn/blob/{{ variables.branch }}/dist/windows/install.ps1)。
 
 补充相关参数并执行：
 ```bash

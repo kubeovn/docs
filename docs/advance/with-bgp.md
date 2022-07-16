@@ -19,7 +19,7 @@ kubectl label nodes speaker-node-2 ovn.kubernetes.io/bgp=true
 下载对应 yaml:
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/yamls/speaker.yaml
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/yamls/speaker.yaml
 ```
 
 修改 yaml 内相应配置：

@@ -13,7 +13,7 @@ Kube-OVN 安装时默认会部署插件到每个节点，若执行 kubectl 的�
 下载 `kubectl-ko` 文件：
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/kubectl-ko
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/kubectl-ko
 ```
 
 将该文件移动至 `$PATH` 目录下：
