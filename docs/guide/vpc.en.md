@@ -32,7 +32,9 @@ kind: Vpc
 apiVersion: kubeovn.io/v1
 metadata:
   name: test-vpc-2
-spec: {}
+spec:
+  namespaces:
+    - ns2
 ```
 - `namespaces`: Limit which namespaces can use this VPC. If empty, all namespaces can use this VPC.
 
