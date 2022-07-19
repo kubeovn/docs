@@ -29,7 +29,9 @@ kind: Vpc
 apiVersion: kubeovn.io/v1
 metadata:
   name: test-vpc-2
-spec: {}
+spec:
+  namespaces:
+  - ns2
 ```
 - `namespaces` 可以限定只有哪些 Namespace 可以使用当前 VPC，若为空则不限定。
 
