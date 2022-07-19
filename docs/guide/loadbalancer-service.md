@@ -1,31 +1,32 @@
-# 默认 Vpc 支持 LoadBalancer Service
+# LoadBalancer 类型 Service
 
-Kube-OVN 已经支持了 Vpc 和 Vpc 网关的实现，具体配置可以参考 [Vpc配置](https://kubeovn.github.io/docs/guide/vpc/)。
+Kube-OVN 已经支持了 VPC 和 VPC 网关的实现，具体配置可以参考 [VPC 配置](vpc.md)。
 
-由于 Vpc 网关的使用比较复杂，基于 Vpc 网关的实现做了简化，支持在默认 Vpc 下创建 `LoadBalancer` 类型的 Service，实现通过 LoadBalancerIP 来访问默认 Vpc 下的 Service。
-
-该特性从 Kube-OVN v1.11.0 版本开始支持。
+由于 VPC 网关的使用比较复杂，基于 VPC 网关的实现做了简化，支持在默认 VPC 下创建 `LoadBalancer` 类型的 Service，实现通过 LoadBalancerIP 来访问默认 VPC 下的 Service。
 
 首先确认环境上满足以下条件：
 1. 安装了 `multus-cni` 和 `macvlan cni`。
-2. LoadBalancer Service 的支持，是对 Vpc 网关代码进行简化实现的，仍然使用 `vpc-nat-gw` 的镜像，依赖 macvlan 提供多网卡功能支持。
-3. 目前只支持在`默认 Vpc` 配置，自定义 Vpc 下的 LoadBalancer 支持可以参考 Vpc 的文档 [Vpc配置](https://kubeovn.github.io/docs/guide/vpc/)。
+2. LoadBalancer Service 的支持，是对 VPC 网关代码进行简化实现的，仍然使用 `vpc-nat-gw` 的镜像，依赖 macvlan 提供多网卡功能支持。
+3. 目前只支持在`默认 VPC` 配置，自定义 VPC 下的 LoadBalancer 支持可以参考 VPC 的文档 [VPC 配置](vpc.md)。
 
-## 默认 Vpc LoadBalancer Service 配置步骤
+## 默认 VPC LoadBalancer Service 配置步骤
+
 ### 开启特性开关
 修改 kube-system namespace 下的 deployment `kube-ovn-controller`，在 `args` 中增加参数  `--enable-lb-svc=true`，开启功能开关，该参数默认为 false。
 ```yaml
-      containers:
-      - args:
-        - /kube-ovn/start-controller.sh
-        - --default-cidr=10.16.0.0/16
-        - --default-gateway=10.16.0.1
-        - --default-gateway-check=true
-        - --enable-lb-svc=true                  // 参数设置为 true
+containers:
+- args:
+  - /kube-ovn/start-controller.sh
+  - --default-cidr=10.16.0.0/16
+  - --default-gateway=10.16.0.1
+  - --default-gateway-check=true
+  - --enable-lb-svc=true                  // 参数设置为 true
 ```
 
 ### 创建 NetworkAttachmentDefinition CRD 资源
+
 参考以下 yaml，创建 `net-attach-def` 资源:
+
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
@@ -40,12 +41,14 @@ spec:
       "mode": "bridge"
     }'
 ```
-默认情况下，通过物理网卡 `eth0` 来实现多网卡功能，如果需要使用其他物理网卡，可以通过修改 `"master"` 取值，指定使用的物理网卡名称。
+默认情况下，通过物理网卡 `eth0` 来实现多网卡功能，如果需要使用其他物理网卡，可以通过修改 `master` 取值，指定使用的物理网卡名称。
 
-### 创建 subnet
-创建的 Subnet，用于给 LoadBalancer Service 分配 LoadBalancerIP，该地址正常情况下在集群外应该可以访问到。可以配置 underlay subnet 用于地址分配。
+### 创建 Subnet
 
-参考以下 yaml，创建新子网:
+创建的 Subnet，用于给 LoadBalancer Service 分配 LoadBalancerIP，该地址正常情况下在集群外应该可以访问到。可以配置 Underlay Subnet 用于地址分配。
+
+参考以下 yaml，创建新子网：
+
 ```yaml
 apiVersion: kubeovn.io/v1
 kind: Subnet
@@ -59,12 +62,15 @@ spec:
   excludeIps:
   - 172.18.0.0..172.18.0.10
 ```
-subnet 中 provider 参数以 ovn 或者以 .ovn 为后缀结束，表示该子网是由 Kube-OVN 管理使用，需要对应创建 `logical-switch` 记录。
 
-provider 非 ovn 或者非 .ovn 为后缀结束，则 Kube-OVN 只提供 IPAM 功能，记录 IP 地址分配情况，不对子网做业务逻辑处理。
+Subnet 中 `provider` 参数以 `ovn` 或者以 `.ovn` 为后缀结束，表示该子网是由 Kube-OVN 管理使用，需要对应创建 `logical switch` 记录。
+
+`provider` 非 `ovn` 或者非 `.ovn` 为后缀结束，则 Kube-OVN 只提供 IPAM 功能，记录 IP 地址分配情况，不对子网做业务逻辑处理。
 
 ### 创建 LoadBalancer Service
-参考以下 yaml，创建 LoadBalancer Service:
+
+参考以下 yaml，创建 LoadBalancer Service：
+
 ```yaml
 apiVersion: v1
 kind: Service
@@ -88,27 +94,28 @@ spec:
   sessionAffinity: None
   type: LoadBalancer
 ```
-在 yaml 中，annotation `"ovn.kubernetes.io/attchmentprovider"`  为必填项，取值由第一步创建的 `net-attach-def` 资源的 Name.Namespace 组成。该 annotation 用于在创建 Pod 时，查找 `net-attach-def` 资源。
+在 yaml 中，annotation `ovn.kubernetes.io/attchmentprovider`  为必填项，取值由第一步创建的 `net-attach-def` 资源的 Name.Namespace 组成。该 annotation 用于在创建 Pod 时，查找 `net-attach-def` 资源。
 
 可以通过 annotation 指定多网卡地址分配使用的子网。annotation key 格式为 net-attach-def 资源的 `Name.Namespace.kubernetes.io/logical_switch`。该配置为`可选`选项，在没有指定 LoadBalancerIP 地址的情况下，将从该子网动态分配地址，填充到 LoadBalancerIP 字段。
 
 如果需要静态配置 LoadBalancerIP 地址，可以配置 `spec.loadBalancerIP` 字段，该地址需要在指定子网的地址范围内。
 
-在执行 yaml 创建 Service 后，在 Service 同 Namespace 下，可以看到 Pod 启动信息:
-```yaml
-apple@bogon svc % kubectl get pod
+在执行 yaml 创建 Service 后，在 Service 同 Namespace 下，可以看到 Pod 启动信息：
+
+```bash
+# kubectl get pod
 NAME                                      READY   STATUS    RESTARTS   AGE
 lb-svc-test-service-6869d98dd8-cjvll      1/1     Running   0          107m
-apple@bogon svc % kubectl get svc
+# kubectl get svc
 NAME              TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
 test-service      LoadBalancer   10.109.201.193   172.18.0.18   80:30056/TCP   107m
-apple@bogon svc %
 ```
 指定 `service.spec.loadBalancerIP` 参数时，最终将该参数赋值给 service external-ip 字段。不指定的情况下，该参数为随机分配值。
 
-查看测试 Pod 的 yaml 输出，存在多网卡分配的地址信息:
-```yaml
-apple@bogon svc % kubectl get pod -o yaml lb-svc-test-service-6869d98dd8-cjvll
+查看测试 Pod 的 yaml 输出，存在多网卡分配的地址信息：
+
+```bash
+# kubectl get pod -o yaml lb-svc-test-service-6869d98dd8-cjvll
 apiVersion: v1
 kind: Pod
 metadata:
@@ -160,9 +167,10 @@ metadata:
     test-service.default.kubernetes.io/pod_nic_type: veth-pair
 ```
 
-查看 Service 的信息
-```yaml
-apple@bogon svc % kubectl get svc -o yaml test-service
+查看 Service 的信息：
+
+```bash
+# kubectl get svc -o yaml test-service
 apiVersion: v1
 kind: Service
 metadata:
@@ -240,8 +248,8 @@ spec:
 ```
 
 正常情况下，提供的子网地址，在集群外应该可以访问到。为了简单验证，在集群内访问 Service 的 `LoadBalancerIP:Port`，查看是否正常访问成功。
-```yaml
-root@kube-ovn-control-plane:/kube-ovn# curl 172.18.0.11:80
+```bash
+# curl 172.18.0.11:80
 <html>
 <head>
         <title>Hello World!</title>
@@ -271,8 +279,8 @@ root@kube-ovn-control-plane:/kube-ovn# curl 172.18.0.11:80
 ```
 
 进入 Service 创建的 Pod，查看网络的信息
-```yaml
-bash-5.1# ip a
+```bash
+# ip a
 4: net1@if62: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
     link/ether ba:85:f7:02:9f:42 brd ff:ff:ff:ff:ff:ff link-netnsid 0
     inet 172.18.0.18/16 scope global net1
@@ -285,20 +293,20 @@ bash-5.1# ip a
        valid_lft forever preferred_lft forever
     inet6 fe80::200:ff:fe45:f429/64 scope link
        valid_lft forever preferred_lft forever
-bash-5.1#
-bash-5.1# ip rule
+
+# ip rule
 0:	from all lookup local
 32764:	from all iif eth0 lookup 100
 32765:	from all iif net1 lookup 100
 32766:	from all lookup main
 32767:	from all lookup default
-bash-5.1#
-bash-5.1# ip route show table 100
+
+# ip route show table 100
 default via 172.18.0.1 dev net1
 10.109.201.193 via 10.16.0.1 dev eth0
 172.18.0.0/16 dev net1 scope link
-bash-5.1#
-bash-5.1# iptables -t nat -L -n -v
+
+# iptables -t nat -L -n -v
 Chain PREROUTING (policy ACCEPT 0 packets, 0 bytes)
  pkts bytes target     prot opt in     out     source               destination
     0     0 DNAT       tcp  --  *      *       0.0.0.0/0            172.18.0.18          tcp dpt:80 to:10.109.201.193:80
@@ -312,5 +320,4 @@ Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
 Chain POSTROUTING (policy ACCEPT 0 packets, 0 bytes)
  pkts bytes target     prot opt in     out     source               destination
     0     0 MASQUERADE  all  --  *      *       0.0.0.0/0            10.109.201.193
-bash-5.1#
 ```
