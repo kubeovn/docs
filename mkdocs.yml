@@ -159,6 +159,7 @@ plugins:
           隧道协议说明: Tunnel Protocol Selection
           Kube-OVN 监控指标: Metrics
           Overlay 下路由方式网络打通: Interconnection with Routes in Overlay Mode
+          文档规范: Document Convention
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
