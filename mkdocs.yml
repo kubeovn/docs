@@ -21,6 +21,7 @@ nav:
       - 双栈使用: 'guide/dual-stack.md'
       - EIP 和 SNAT 配置: 'guide/eip-snat.md'
       - 流量镜像: 'guide/mirror.md'
+      - NetworkPolicy 日志: 'guide/networkpolicy-log.md'
       - Webhook 使用: 'guide/webhook.md'
   - 运维指南:
       - kubectl 插件使用: 'ops/kubectl-ko.md'
@@ -127,6 +128,7 @@ plugins:
           双栈使用: DualStack
           EIP 和 SNAT 配置: EIP and SNAT
           流量镜像: Traffic Mirror
+          NetworkPolicy 日志: NetworkPolicy Logging
           Webhook 使用: Webhook
           kubectl 插件使用: Kubectl Plugin
           删除工作节点: Deleting Work Node
