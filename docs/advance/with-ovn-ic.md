@@ -22,7 +22,7 @@ Kube-OVN 使用隧道对跨集群流量进行封装，两个集群之间只要�
 部署 `docker` 的环境可以使用下面的命令启动 `OVN-IC` 数据库：
 
 ```bash
-docker run --name=ovn-ic-db -d --network=host--privilege=true  -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
+docker run --name=ovn-ic-db -d --network=host --privileged  -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
 ```
 
 对于部署 `containerd` 取代 `docker` 的环境可以使用下面的命令：
