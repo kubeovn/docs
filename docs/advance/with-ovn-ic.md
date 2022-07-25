@@ -200,7 +200,7 @@ ctr -n k8s.io run -d --net-host --privileged --mount="type=bind,src=/etc/ovn/,ds
 部署 `docker` 环境的用户可以使用下面的命令：
 
 ```bash
-docker run --name=ovn-ic-db -d --network=host --privilege=true -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn -e LOCAL_IP="192.168.65.2"  -e NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1" -e LEADER_IP="192.168.65.3"  kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
+docker run --name=ovn-ic-db -d --network=host --privileged -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn -e LOCAL_IP="192.168.65.2"  -e NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1" -e LEADER_IP="192.168.65.3"  kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
 ```
 
 如果是部署 `containerd` 的用户可以使用下面的命令：
