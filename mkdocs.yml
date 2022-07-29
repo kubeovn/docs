@@ -38,6 +38,8 @@ nav:
       - 使用 Submariner 进行多集群互联: 'advance/with-submariner.md'
       - BGP 支持: 'advance/with-bgp.md'
       - Cilium 集成: 'advance/with-cilium.md'
+      - Cilium NetworkPolicy 支持: 'advance/cilium-networkpolicy.md'
+      - Cilium 网络流量观测: 'advance/cilium-hubble-observe.md'
       - DHCP 设置: 'advance/dhcp.md'
       - VPC 互联: 'advance/vpc-peering.md'
       - 外部网关设置: 'advance/external-gateway.md'
