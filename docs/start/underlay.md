@@ -25,7 +25,7 @@ Kube-OVN 的 Underlay 模式和 Macvlan 工作模式十分类似，在功能和�
 需要预先在底层网络设备配置对应的网关、Vlan 和安全策略等配置。
 
 1. 对于 OpenStack 的 VM 环境，需要将对应网络端口的 `PortSecurity` 关闭。
-2. 对于 VMware 的 vswtich 网络，需要将 `MAC Address Changes`, `Forged Transmits` 和 `Promiscuous Mode Operation` 设置为 `allow`。
+2. 对于 VMware 的 vSwitch 网络，需要将 `MAC Address Changes`, `Forged Transmits` 和 `Promiscuous Mode Operation` 设置为 `allow`。
 3. 公有云，例如 AWS、GCE、阿里云等由于不支持用户自定义 Mac 无法支持 Underlay 模式网络。
 4. 对于 Service 访问流量，Pod 会将数据包首先发送至网关，网关需要有能将数据包转发回本网段的能力。
 
