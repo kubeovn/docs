@@ -61,10 +61,10 @@ spec:
 kind: Vpc
 apiVersion: kubeovn.io/v1
 metadata:
-  name: vpc-1
+  name: vpc-2
 spec:
   vpcPeerings:
-    - remoteVpc: vpc-2
+    - remoteVpc: vpc-1
       localConnectIP: 169.254.0.2/30
   staticRoutes:
     - cidr: 10.0.0.0/16
@@ -76,3 +76,36 @@ spec:
 - `localConnectIP`: 作为互联端点的 IP 地址和 CIDR，注意两端 IP 应属于同一 CIDR，且不能和已有子网冲突。
 - `cidr`：另一端 Subnet 的 CIDR。
 - `nextHopIP`：互联 VPC 另一端的 `localConnectIP`。
+
+分别在两个Subnet下创建Pod
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    ovn.kubernetes.io/logical_switch: net1
+  name: vpc-1-pod
+spec:
+  containers:
+    - name: vpc-1-pod
+      image: nginx:alpine
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    ovn.kubernetes.io/logical_switch: net2
+  name: vpc-2-pod
+spec:
+  containers:
+    - name: vpc-2-pod
+      image: nginx:alpine
+```
+
+测试网络连通性
+
+```shell
+kubectl exec -it vpc-1-pod -- ping $(kubectl get pod vpc-2-pod -o jsonpath='{.status.podIP}')
+kubectl exec -it vpc-2-pod -- ping $(kubectl get pod vpc-1-pod -o jsonpath='{.status.podIP}')
+```
