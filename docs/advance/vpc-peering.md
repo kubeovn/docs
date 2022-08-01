@@ -106,6 +106,22 @@ spec:
 测试网络连通性
 
 ```shell
-kubectl exec -it vpc-1-pod -- ping $(kubectl get pod vpc-2-pod -o jsonpath='{.status.podIP}')
-kubectl exec -it vpc-2-pod -- ping $(kubectl get pod vpc-1-pod -o jsonpath='{.status.podIP}')
+# kubectl exec -it vpc-1-pod -- ping $(kubectl get pod vpc-2-pod -o jsonpath='{.status.podIP}')
+PING 172.31.0.2 (172.31.0.2): 56 data bytes
+64 bytes from 172.31.0.2: seq=0 ttl=62 time=0.655 ms
+64 bytes from 172.31.0.2: seq=1 ttl=62 time=0.086 ms
+64 bytes from 172.31.0.2: seq=2 ttl=62 time=0.098 ms
+^C
+--- 172.31.0.2 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 0.086/0.279/0.655 ms
+# kubectl exec -it vpc-2-pod -- ping $(kubectl get pod vpc-1-pod -o jsonpath='{.status.podIP}')
+PING 10.0.0.2 (10.0.0.2): 56 data bytes
+64 bytes from 10.0.0.2: seq=0 ttl=62 time=0.594 ms
+64 bytes from 10.0.0.2: seq=1 ttl=62 time=0.093 ms
+64 bytes from 10.0.0.2: seq=2 ttl=62 time=0.088 ms
+^C
+--- 10.0.0.2 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 0.088/0.258/0.594 ms
 ```
