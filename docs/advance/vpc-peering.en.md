@@ -62,10 +62,10 @@ spec:
 kind: Vpc
 apiVersion: kubeovn.io/v1
 metadata:
-  name: vpc-1
+  name: vpc-2
 spec:
   vpcPeerings:
-    - remoteVpc: vpc-2
+    - remoteVpc: vpc-1
       localConnectIP: 169.254.0.2/30
   staticRoutes:
     - cidr: 10.0.0.0/16
@@ -77,3 +77,52 @@ spec:
 - `localConnectIP`: As the IP address and CIDR of the interconnection endpoint. Note that both IPs should belong to the same CIDR and should not conflict with existing subnets.
 - `cidr`：CIDR of the peering Subnet.
 - `nextHopIP`：The `localConnectIP` on the other end of the peering VPC.
+
+Create Pods under the two Subnets
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    ovn.kubernetes.io/logical_switch: net1
+  name: vpc-1-pod
+spec:
+  containers:
+    - name: vpc-1-pod
+      image: nginx:alpine
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    ovn.kubernetes.io/logical_switch: net2
+  name: vpc-2-pod
+spec:
+  containers:
+    - name: vpc-2-pod
+      image: nginx:alpine
+```
+
+Test the network connectivity
+
+```shell
+# kubectl exec -it vpc-1-pod -- ping $(kubectl get pod vpc-2-pod -o jsonpath='{.status.podIP}')
+PING 172.31.0.2 (172.31.0.2): 56 data bytes
+64 bytes from 172.31.0.2: seq=0 ttl=62 time=0.655 ms
+64 bytes from 172.31.0.2: seq=1 ttl=62 time=0.086 ms
+64 bytes from 172.31.0.2: seq=2 ttl=62 time=0.098 ms
+^C
+--- 172.31.0.2 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 0.086/0.279/0.655 ms
+# kubectl exec -it vpc-2-pod -- ping $(kubectl get pod vpc-1-pod -o jsonpath='{.status.podIP}')
+PING 10.0.0.2 (10.0.0.2): 56 data bytes
+64 bytes from 10.0.0.2: seq=0 ttl=62 time=0.594 ms
+64 bytes from 10.0.0.2: seq=1 ttl=62 time=0.093 ms
+64 bytes from 10.0.0.2: seq=2 ttl=62 time=0.088 ms
+^C
+--- 10.0.0.2 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 0.088/0.258/0.594 ms
+```
