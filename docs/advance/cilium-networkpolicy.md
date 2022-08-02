@@ -1,6 +1,6 @@
 # Cilium NetworkPolicy 支持
 
-Kube-OVN 当前已经支持与 Cilium 集成，具体操作可以参考 [Cilium集成](with-cilium.md)
+Kube-OVN 当前已经支持与 Cilium 集成，具体操作可以参考 [Cilium集成](with-cilium.md)。
 
 在集成 Cilium 之后，就可以使用 Cilium 优秀的网络策略能力，实现对流量访问的控制。以下文档提供了对 Cilium L3 和 L4 网络策略能力的集成验证。
 
@@ -102,9 +102,9 @@ spec:
 ```
 
 在 default namespace 下的测试 Pod 中，发起对目的 Pod 的访问，结果访问不通。
-但是在 test namespace 下，测试到目录 Pod 的访问，测试正常。
+但是在 test namespace 下，测试到目的 Pod 的访问，测试正常。
 
-default namespace 下测试结果
+default namespace 下测试结果:
 ```bash
 # kubectl exec -it dynamic-7d8d7874f5-9v5c4 -- bash
 bash-5.0# ping -c 3 10.16.0.41
@@ -114,7 +114,7 @@ PING 10.16.0.41 (10.16.0.41): 56 data bytes
 3 packets transmitted, 0 packets received, 100% packet loss
 ```
 
-test namepsace 下 Pod 的访问，访问正常
+test namepsace 下 Pod 的测试，访问正常:
 ```bash
 # kubectl exec -it -n test dynamic-7d8d7874f5-6dsg6 -- bash
 bash-5.0# ping -c 3 10.16.0.41
@@ -182,7 +182,7 @@ round-trip min/avg/max = 0.115/0.880/2.383 ms
 这点与 Kube-OVN 实现是不同的。Kube-OVN 支持标准的 k8s 网络策略，限制了具体 Namespace 下的**目的 Pod**，但是对源地址 Pod，是没有 Namespace 限制的，任何 Namespace 下符合限制规则的 Pod，都可以实现对目的 Pod 的访问。
 
 ### L4 网络策略测试
-参考以下yaml，创建 L4 层的网络策略资源:
+参考以下 yaml，创建 L4 层的网络策略资源:
 ```yaml
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
