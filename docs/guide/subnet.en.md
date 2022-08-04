@@ -311,5 +311,5 @@ spec:
 - [Manage Multiple Interface](../advance/multi-nic.en.md)
 - [DHCP](../advance/dhcp.en.md)
 - [External Gateway](../advance/external-gateway.en.md)
-- [External Gateway](../advance/with-ovn-ic.en.md)
+- [Cluster Inter-Connection with OVN-IC](../advance/with-ovn-ic.en.md)
 - [VIP Reservation](../advance/vip.en.md)
