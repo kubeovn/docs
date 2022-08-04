@@ -124,6 +124,8 @@ spec:
   - 10.66.0.1..10.66.0.10
   - 10.66.0.101..10.66.0.151
   gateway: 10.66.0.1
+  gatewayType: distributed
+  natOutgoing: true
   namespaces:
   - ns1
   - ns2
