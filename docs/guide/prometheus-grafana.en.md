@@ -20,6 +20,8 @@ kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/
 kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/ovn-monitor.yaml
 ```
 
+The default interval for Prometheus pull is 15s, if you need to adjust it, modify the `interval` value in yaml.
+
 ## Import Grafana Dashboard
 
 Kube-OVN provides a predefined Grafana Dashboard to display control plane and data plane related metrics.
