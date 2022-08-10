@@ -9,6 +9,7 @@ nav:
       - 准备工作: 'start/prepare.md'
       - 一键安装: 'start/one-step-install.md'
       - Underlay 网络安装: 'start/underlay.md'
+      - 使用 sealos 一键部署 Kubernetes 和 Kube-OVN: 'start/sealos-install.md'
       - 卸载: 'start/uninstall.md'
   - 使用指南:
       - 安装和配置选项: 'guide/setup-options.md'
@@ -90,6 +91,13 @@ markdown_extensions:
       check_paths: true
   - toc:
       permalink: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
 plugins:
   - search:
       separator: '[\s\u200b\-]'
