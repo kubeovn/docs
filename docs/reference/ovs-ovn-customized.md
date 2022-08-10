@@ -14,6 +14,7 @@ OVN/OVS 做了部分修改。用户如果使用自己的 OVN/OVS 配合 Kube-OVN
 - [08a95db2ca](https://github.com/kubeovn/ovs/commit/08a95db2ca506fce4d89fdf4fafab74607b2bb9f) 支持 Windows 下的 github action 构建。
 - [680e77a190](https://github.com/kubeovn/ovs/commit/680e77a190ae7df3086bc35bb6150238e97f9020) Windows 下默认使用 tcp 监听。
 - [94b73d939c](https://github.com/kubeovn/ovn/commit/94b73d939cd33b0531fa9a3422c999cd83ead087) DNAT 后替换 Mac 地址为目标地址，减少额外性能开销。
+- [2dc8e7aa20](https://github.com/kubeovn/ovs/commit/2dc8e7aa202818952b2fa80b47298604530c9de0) vswitchd ofport_usage 内存泄露。
 
 已合入上游修改：
 

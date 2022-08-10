@@ -14,6 +14,7 @@ Did not merge into the upstream modification.
 - [08a95db2ca](https://github.com/kubeovn/ovs/commit/08a95db2ca506fce4d89fdf4fafab74607b2bb9f) Support for github action builds on Windows.
 - [680e77a190](https://github.com/kubeovn/ovs/commit/680e77a190ae7df3086bc35bb6150238e97f9020) Windows uses tcp listening by default.
 - [94b73d939c](https://github.com/kubeovn/ovn/commit/94b73d939cd33b0531fa9a3422c999cd83ead087) Replaces the Mac address as the destination address after DNAT to reduce additional performance overhead.
+- [2dc8e7aa20](https://github.com/kubeovn/ovs/commit/2dc8e7aa202818952b2fa80b47298604530c9de0) vswitchd ofport_usage memory leak.
 
 Merged into upstream modification:
 
