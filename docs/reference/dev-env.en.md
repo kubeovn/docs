@@ -2,7 +2,7 @@
 
 ## Environmental Preparation
 
-Kube-OVN uses [Golang](https://golang.org/){: target="_blank" } 1.17 to develop and [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" } 
+Kube-OVN uses [Golang](https://golang.org/){: target="_blank" } 1.18 to develop and [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" } 
 to manage dependency, please check env `GO111MODULE="on"`。
 
 [gosec](https://github.com/securego/gosec){: target="_blank" } is used to scan for code security related issues 
