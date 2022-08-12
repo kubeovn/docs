@@ -2,7 +2,7 @@
 
 ## 环境准备:
 
-Kube-OVN 使用 [Go](https://golang.org/){: target="_blank" } 1.17 开发并使用 [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" } 管理依赖，
+Kube-OVN 使用 [Go](https://golang.org/){: target="_blank" } 1.18 开发并使用 [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" } 管理依赖，
 请确认环境变量 `GO111MODULE="on"`。
 
 [gosec](https://github.com/securego/gosec){: target="_blank" } 被用来扫描代码安全相关问题，需要在开发环境安装：
