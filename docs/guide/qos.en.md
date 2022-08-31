@@ -1,13 +1,9 @@
 # Manage QoS
 
-Kube-OVN supports three types of QoS:
+Kube-OVN supports two types of QoS:
 
 - Maximum bandwidth limit QoS.
-- `linux-htb`, Priority-based QoS, where higher-priority traffic is satisfied first when there is insufficient bandwidth.
 - `linux-netem`, QoS for simulating latency and packet loss that can be used for simulation testing.
-
-`linux-htb` and `linux-netem` can not take effect at the same time.
-If both QoS are configured to the same Pod, only the `linux-htb` type QoS is in effect.
 
 ## Maximum Bandwidth Limit QoS
 
@@ -128,65 +124,11 @@ Connecting to host 10.66.0.12, port 5201
 iperf Done.
 ```
 
-
-## linux-htb QoS
-
-![](../static/priority-qos.png)
-
-`linux-htb` QoS is a priority-based QoS, where higher-priority traffic is satisfied first when there is insufficient bandwidth.
-And it can be configured in Kube-OVN via HtbQos CRD.
-
-HtbQos CRD has only one field, `.spec.priority`, and the field takes a value that represents the priority.
-
-Three instances with different priority levels are preconfigured at the initialization of Kube-OVN:
-
-```bash
-# kubectl get htbqos
-NAME            PRIORITY
-htbqos-high     1
-htbqos-low      5
-htbqos-medium   3
-```
-
-The priority order is relative; the smaller the priority value, the higher the QoS priority.
-
-OVS itself does not limit the value of the field, you can refer to [Qos parameter](https://www.mankier.com/5/ovs-vswitchd.conf.db#QoS_TABLE). 
-However, the actual Linux supports Priority in the range of 0-7, and values outside the range will be set to 7.
-
-The `HtbQos` field in Subnet Spec, used to specify the HtbQos instance of the current Subnet binding as below:
-
-```bash
-# kubectl get subnet test -o yaml
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: test
-spec:
-  cidrBlock: 192.168.0.0/16
-  default: false
-  gatewayType: distributed
-  htbqos: htbqos-high
-  ...
-```
-When a Subnet is bound to an instance of HtbQos, all Pods under that Subnet have the same priority setting.
-
-If you need to set a separate HtbQoS for a Pod you can use the Pod annotation `ovn.kubernetes.io/priority`.
-The value is a specific priority value, such as `ovn.kubernetes.io/priority: "50"`, which can be used to set the QoS priority parameter of the Pod individually.
-
-```bash
-kubectl annotate --overwrite  pod perf-4n4gt -n ls1 ovn.kubernetes.io/priority=50
-```
-
-When the Pod's Subnet specifies the HtbQos parameter and the Pod sets the QoS priority annotation, the Pod annotation takes effect.
-
-The bandwidth settings are still set individually based on the Pod, using the previous annotations `ovn.kubernetes.io/ingress_rate` 
-and `ovn.kubernetes.io/egress_rate`, which are used to control the bi-direction bandwidth of the Pod.
-
 ## linux-netem QoS
 
 Pod can use annotation below to config `linux-netem` type QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` and 
 `ovn.kubernetes.io/loss`。
 
-- `ovn.kubernetes.io/latency`: 设Sets the Pod traffic delay to an integer value in ms.
-- `ovn.kubernetes.io/limit`： is the maximum number of packets that the `qdisc` queue can hold, and takes an integer value, such as 1000.
-- `ovn.kubernetes.io/loss`： Set packet loss probability, the value is float type, for example, the value is 0.2, then it is set 20% packet loss probability.
+- `ovn.kubernetes.io/latency`: Set the Pod traffic delay to an integer value in ms.
+- `ovn.kubernetes.io/limit`： Set the maximum number of packets that the `qdisc` queue can hold, and takes an integer value, such as 1000.
+- `ovn.kubernetes.io/loss`： Set packet loss probability, the value is float type, for example, the value is 20, then it is set 20% packet loss probability.
