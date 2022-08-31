@@ -1,13 +1,9 @@
 # 容器网络 QoS 配置
 
-Kube-OVN 支持三种不同类型的 QoS：
+Kube-OVN 支持两种不同类型的 QoS：
 
 - 最大带宽限制 QoS。
-- `linux-htb`，基于优先级的 QoS，当带宽不足时优先级较高流量被首先满足。
 - `linux-netem`，模拟设备干扰丢包等的 QoS，可用于模拟测试。
-
-其中 `linux-htb` 和 `linux-netem` 两种 QoS 无法同时生效，若两种 QoS 都配置到了同一个 Pod 上，
-只有 `linux-htb` 类型 QoS 生效。
 
 ## 基于最大带宽限制的 QoS
 
@@ -127,53 +123,6 @@ Connecting to host 10.66.0.12, port 5201
 iperf Done.
 ```
 
-
-## linux-htb QoS
-
-![](../static/priority-qos.png)
-
-`linux-htb` QoS 是基于优先级的 QoS 设置，当出现整体带宽不足时，优先级较高的流量会被优先保证，在 Kube-OVN 中通过 HtbQos 进行设置。
-
-HtbQos 定义只有一个字段，即 `.spec.priority`，字段取值代表了优先级的大小。在 Kube-OVN 初始化时预置了三个不同优先级的实例，分别是：
-
-```bash
-# kubectl get htbqos
-NAME            PRIORITY
-htbqos-high     1
-htbqos-low      5
-htbqos-medium   3
-```
-优先级顺序是相对的，priority 取值越小，QoS 优先级越高。
-OVS 本身对字段的取值，没有做限制，可以参考 [Qos参数](https://www.mankier.com/5/ovs-vswitchd.conf.db#QoS_TABLE)，但是实际 Linux 支持的 Priority 参数取值，范围为 0-7，超出范围外的取值，默认设置为 7。
-
-Subnet Spec 中的 `HtbQos` 字段，用于指定当前 Subnet 绑定的 HtbQos 实例，参考如下:
-
-```bash
-# kubectl get subnet test -o yaml
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: test
-spec:
-  cidrBlock: 192.168.0.0/16
-  default: false
-  gatewayType: distributed
-  htbqos: htbqos-high
-  ...
-```
-当 Subnet 绑定了 HtbQos 实例之后，该 Subnet 下的所有 Pod 都拥有相同的优先级设置。
-
-如果需要给某个 Pod 单独设置 HtbQoS 可以使用 Pod annotation `ovn.kubernetes.io/priority`。
-取值内容为具体的 priority 数值，如`ovn.kubernetes.io/priority: "50"`，可以用于单独设置 Pod 的 QoS 优先级参数。
-
-```bash
-kubectl annotate --overwrite  pod perf-4n4gt -n ls1 ovn.kubernetes.io/priority=50
-```
-
-当 Pod 所在 Subnet 指定了 HtbQos 参数，同时 Pod 又设置了 QoS 优先级 annotation 时，以 Pod annotation 取值为准。
-
-对于带宽设置，仍然是基于 Pod 单独设置的，使用之前的 annotation `ovn.kubernetes.io/ingress_rate` 和 `ovn.kubernetes.io/egress_rate`，用于控制 Pod 的双向带宽。
-
 ## linux-netem QoS
 
 Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` 和 
@@ -181,4 +130,4 @@ Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS： `ovn.kubern
 
 - `ovn.kubernetes.io/latency`：设置 Pod 流量延迟，取值为整数，单位为 ms。
 - `ovn.kubernetes.io/limit`： 为 `qdisc` 队列可容纳的最大数据包数，取值为整形数值，例如 1000。
-- `ovn.kubernetes.io/loss`： 为设置的报文丢包概率，取值为 float 类型，例如取值为 0.2，则为设置 20% 的丢包概率。
+- `ovn.kubernetes.io/loss`： 为设置的报文丢包概率，取值为 float 类型，例如取值为 20，则为设置 20% 的丢包概率。
