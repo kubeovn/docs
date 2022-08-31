@@ -55,6 +55,7 @@ nav:
       - OpenStack 集成: 'advance/with-openstack.md'
   - 技术参考:
       - 总体架构: 'reference/architecture.md'
+      - 功能成熟度: 'reference/feature-stages.md'
       - Underlay 流量拓扑: 'reference/underlay-topology.md'
       - 开发环境构建: 'reference/dev-env.md'
       - 对上游 OVS/OVN 修改: 'reference/ovs-ovn-customized.md'
@@ -172,6 +173,7 @@ plugins:
           Kube-OVN 监控指标: Metrics
           Overlay 下路由方式网络打通: Interconnection with Routes in Overlay Mode
           文档规范: Document Convention
+          功能成熟度: Feature Stage
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
