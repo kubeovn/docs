@@ -53,7 +53,7 @@ Available Subcommands:
   dpctl {nodeName} [ovs-dpctl options ...]   invoke ovs-dpctl on the specified node
   appctl {nodeName} [ovs-appctl options ...]   invoke ovs-appctl on the specified node
   tcpdump {namespace/podname} [tcpdump options ...]     capture pod traffic
-  trace {namespace/podname} {target ip address} {icmp|tcp|udp} [target tcp or udp port]    trace ovn microflow of specific packet
+  trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp or udp port]    trace ovn microflow of specific packet
   diagnose {all|node} [nodename]    diagnose connectivity of all nodes or a specific node
   tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]  deploy  kernel optimisation components to the system
   reload    restart all kube-ovn components
@@ -340,7 +340,7 @@ listening on d7176fe7b4e0_h, link-type EN10MB (Ethernet), capture size 262144 by
 06:52:38.619973 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 3, length 64
 ```
 
-### trace {namespace/podname} {target ip address} {icmp|tcp|udp} [target tcp or udp port]
+### trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp or udp port]
 
 该命令将会打印 Pod 通过特定协议访问某地址时对应的 OVN 逻辑流表和最终的 Openflow 流表，
 方便开发或运维时定位流表相关问题。
@@ -375,6 +375,12 @@ ct_next(ct_state=new|trk)
     output;
 
 ...
+```
+
+若 trace 对象为运行于 Underlay 网络下的虚拟机，您可能需要添加额外参数来指定目的 Mac 地址：
+
+```bash
+kubectl ko trace default/virt-handler-7lvml 8.8.8.8 82:7c:9f:83:8c:01 icmp
 ```
 
 ### diagnose {all|node} [nodename]
