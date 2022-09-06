@@ -1,16 +1,19 @@
-# 配置 Prometheus 动态获取监控数据
+# 配置原生 Prometheus 获取监控数据
 
 Kube-OVN 提供了丰富的监控数据，用于 OVN/OVS 健康状态检查，以及容器网络和主机网络的连通性检查。Kube-OVN 配置了 ServiceMonitor，可以用于 Prometheus 动态获取监控指标。
 
-在某些情况下，客户的环境上，只安装了 Prometheus Server，没有安装其他的组件，因此需要通过修改 Prometheus 的配置，支持动态获取集群环境的监控数据。
+在某些情况下，只安装了 Prometheus Server，没有安装其他的组件，可以通过修改 Prometheus 的配置，动态获取集群环境的监控数据。
 
 ## Prometheus 配置
+
 以下的配置文档，参考自 [Prometheus 服务发现](https://yunlzheng.gitbook.io/prometheus-book/part-iii-prometheus-shi-zhan/readmd/service-discovery-with-kubernetes)。
 
 ### 权限配置
+
 Prometheus 部署在集群内，需要通过 k8s apiserver 来访问集群内的资源，从而实现查询业务的监控数据。
 
-参考以下 yaml，配置 Prometheus 需要的权限:
+参考以下 yaml，配置 Prometheus 需要的权限：
+
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -54,9 +57,11 @@ subjects:
 ```
 
 ### Prometheus 配置文件
+
 Prometheus 的启动，依赖于配置文件 prometheus.yml，可以将该文件内容配置在 ConfigMap 内，动态挂载到 Pod 中。
 
-参考以下 yaml，创建 Prometheus 使用的 ConfigMap 文件:
+参考以下 yaml，创建 Prometheus 使用的 ConfigMap 文件：
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -114,7 +119,9 @@ Prometheus 提供了基于角色查询 Kubernetes 资源监控的操作，具体
 在 Kubernetes 集群中，Prometheus 支持查询监控指标的角色包含 node、service、pod、endpoints 和 ingress。在 ConfigMap 配置文件中给出了以上全部资源的监控查询配置示例，可以根据需要选择配置。
 
 ### Prometheus 部署
-参考以下 yaml 文件，部署 Prometheus Server:
+
+参考以下 yaml 文件，部署 Prometheus Server：
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -160,7 +167,8 @@ spec:
           name: prometheus-config
 ```
 
-在部署完 Prometheus 之后，参考以下 yaml 文件，部署 Prometheus Service:
+在部署完 Prometheus 之后，参考以下 yaml 文件，部署 Prometheus Service：
+
 ```yaml
 kind: Service
 apiVersion: v1
@@ -181,10 +189,12 @@ spec:
   sessionAffinity: None
 ```
 
-在将 Prometheus 通过 NodePort Service 暴露出来后，可以通过节点来访问 Prometheus 了。
+将 Prometheus 通过 NodePort 暴露后，即可通过节点来访问 Prometheus。
 
 ## Prometheus 监控数据验证
-查看环境上 Prometheus 相关的信息:
+
+查看环境上 Prometheus 相关的信息：
+
 ```bash
 # kubectl get svc 
 NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
@@ -198,15 +208,19 @@ NAME         ENDPOINTS                                                        AG
 kubernetes   192.168.136.228:6443,192.168.136.232:6443,192.168.137.219:6443   8d
 prometheus   10.3.0.7:9090                                                    8d
 ```
-通过 NodePort 访问 Prometheus，查看 Status/Service Discovery 动态查询到的数据:
+
+通过 NodePort 访问 Prometheus，查看 Status/Service Discovery 动态查询到的数据：
+
 ![](../static/prometheus-service-discovery.png)
 
 可以看到当前可以查询到集群上全部的 Service 数据信息。
 
 ### 配置查询指定的资源
+
 以上的 ConfigMap 配置中，没有添加过滤条件，查询了所有的资源数据。如果只需要某个角色的资源数据，则可以添加过滤条件。
 
 以 Service 为例，修改 ConfigMap 内容，只查询关心的 Service 监控数据。
+
 ```yaml
     - job_name: 'kubernetes-service'
       tls_config:
@@ -233,7 +247,7 @@ Service 默认监控路径为 /metrics。如果 Service 提供的监控指标是
 
 应用以上 yaml，更新 ConfigMap 信息，重建 Prometheus Pod，使配置生效。
 
-查看 kube-system namespace 下的 service 信息:
+查看 kube-system Namespace 下的 Service 信息：
 ```bash
 # kubectl get svc -n kube-system
 NAME                  TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                  AGE
@@ -246,7 +260,9 @@ ovn-nb                ClusterIP   10.4.80.213    <none>        6641/TCP         
 ovn-northd            ClusterIP   10.4.126.234   <none>        6643/TCP                 13d
 ovn-sb                ClusterIP   10.4.216.249   <none>        6642/TCP                 13d
 ```
-给 service 添加 annotation `prometheus.io/scrape="true"`，
+
+给 Service 添加 annotation `prometheus.io/scrape="true"`：
+
 ```bash
 # kubectl annotate svc -n kube-system kube-ovn-cni  prometheus.io/scrape=true
 service/kube-ovn-cni annotated
@@ -258,7 +274,8 @@ service/kube-ovn-monitor annotated
 service/kube-ovn-pinger annotated
 ```
 
-查看配置后的 Service 信息:
+查看配置后的 Service 信息：
+
 ```bash
 # kubectl get svc -o yaml -n kube-system kube-ovn-controller
 apiVersion: v1
@@ -294,7 +311,7 @@ status:
   loadBalancer: {}
 ```
 
-查看 Prometheus Status Targets 信息，可以看到只有添加了 annotation 的 Service 被过滤出来
+查看 Prometheus Status Targets 信息，可以看到只有添加了 annotation 的 Service 被过滤出来：
 ![](../static/prometheus-filter-service.png)
 
 更多关于 relabel 添加过滤参数的信息，可以参考 [Prometheus-Relabel](https://godleon.github.io/blog/Prometheus/Prometheus-Relabel/)。
