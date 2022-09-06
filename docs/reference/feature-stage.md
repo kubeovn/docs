@@ -75,3 +75,5 @@
 | Workload 固定 IP         | true  | GA    | 1.8       |           |
 | StatefulSet 固定 IP      | true  | GA    | 1.8       |           |
 | VM 固定 IP               | false | Beta  | 1.9       |           |
+| 自定义 VPC 内部负载均衡         | false | Alpha | 1.11      |           |
+| 自定义 VPC DNS            | false | Alpha | 1.11      |           |

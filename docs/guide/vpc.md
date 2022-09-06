@@ -309,3 +309,153 @@ spec:
       nextHopIP: 10.0.1.252
       priority: 10
 ```
+
+## 自定义内部负载均衡规则
+
+Kubernetes 本身提供的 Service 能力可以完成内部负载均衡的功能，但是受限于 Kubernetes 实现，
+Service 的 IP 地址是全局分配且不能重复。对于 VPC 的使用场景，用户希望能自定义内部负载均衡的地址
+范围，不同 VPC 下的负载均衡地址可能重叠，Kubernetes 内置的 Service 功能无法完全满足。
+
+针对这类场景，Kube-OVN 提供了 `SwitchLBRule` 资源，用户可以自定义内部负载均衡的地址范围。
+
+一个 SwitchLBRule 例子如下：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: SwitchLBRule
+metadata:
+  name:  cjh-slr-nginx
+spec:
+  vip: 1.1.1.1
+  sessionAffinity: ClientIP
+  namespace: default
+  selector:
+    - app:nginx
+  ports:
+  - name: dns
+    port: 8888
+    targetPort: 80
+    protocol: TCP
+```
+
+- `vip`：自定义内部负载均衡的地址。
+- `namespace`：负载均衡器后端 Pod 所在的 Namespace。
+- `sessionAffinity`：和 Service 的 `sessionAffinity` 功能相同。
+- `selector`：和 Service 的 `selector` 功能相同。
+- `ports`：和 Service 的 `port` 功能相同。
+
+查看部署的内部负载均衡器规则：
+
+```bash
+# kubectl get slr
+NAME                VIP         PORT(S)                  SERVICE                             AGE
+vpc-dns-test-cjh2   10.96.0.3   53/UDP,53/TCP,9153/TCP   kube-system/slr-vpc-dns-test-cjh2   88m
+```
+
+## 自定义 vpc-dns
+
+由于自定义 VPC 和默认 VPC 网络相互隔离，VPC 内 Pod 无法使用默认的 coredns 服务进行域名解析。
+如果希望在自定义 VPC 内使用 coredns 解析集群内 Service 域名，可以通过 Kube-OVN 提供的 vpc-dns 资源来实现。
+
+### 创建附加网卡
+
+```yaml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: ovn-nad
+  namespace: default
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "kube-ovn",
+      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
+      "provider": "ovn-nad.default.ovn"
+    }'
+```
+
+### 修改 ovn-default 逻辑交换机的 provider
+
+修改 ovn-default 的 provider，为上面 nad 配置的 provider `ovn-nad.default.ovn`：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: ovn-default
+spec:
+  cidrBlock: 10.16.0.0/16
+  default: true
+  disableGatewayCheck: false
+  disableInterConnection: false
+  enableDHCP: false
+  enableIPv6RA: false
+  excludeIps:
+  - 10.16.0.1
+  gateway: 10.16.0.1
+  gatewayType: distributed
+  logicalGateway: false
+  natOutgoing: true
+  private: false
+  protocol: IPv4
+  provider: ovn-nad.default.ovn
+  vpc: ovn-cluster
+```
+
+### 配置 vpc-dns 的 ConfigMap
+
+在 kube-system 命名空间下创建 configmap，配置 vpc-dns 使用参数，用于后面启动 vpc-dns 功能：
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vpc-dns-config
+  namespace: kube-system
+data:
+  coredns-vip: 10.96.0.3
+  enable-vpc-dns: true
+  nad-name: ovn-nad
+  nad-provider: ovn-nad.default.ovn
+```
+
+- `enable-vpc-dns`：（可缺省）`true` 启用功能，`false` 关闭功能。默认 `true`。
+- `coredns-image`：（可省略）：dns 部署镜像。默认为集群 coredns 部署版本。
+- `coredns-vip`：为 coredns 提供 lb 服务的 vip。
+- `nad-name`：配置的 `network-attachment-definitions` 资源名称。
+- `nad-provider`：使用的 provider 名称。
+- `k8s-service-host`：（可缺省） 用于 coredns 访问 k8s apiserver 服务的 ip。
+- `k8s-service-port`：（可缺省）用于 coredns 访问 k8s apiserver 服务的 port。
+
+### 部署 vpc-dns
+
+```yaml
+kind: VpcDns
+apiVersion: kubeovn.io/v1
+metadata:
+  name: test-cjh1
+spec:
+  vpc: cjh-vpc-1
+  subnet: cjh-subnet-1
+```
+
+- `vpc`： 用于部署 dns 组件的 vpc 名称。
+- `subnet`：用于部署 dns 组件的子名称。
+
+
+查看资源信息：
+
+```bash
+[root@hci-dev-mst-1 kubeovn]# kubectl get vpc-dns
+NAME        ACTIVE   VPC         SUBNET   
+test-cjh1   false    cjh-vpc-1   cjh-subnet-1   
+test-cjh2   true     cjh-vpc-1   cjh-subnet-2 
+```
+
+- `ACTIVE`: `true` 部署了自定义 dns 组件，`false` 无部署
+
+### 限制
+
+- 一个 vpc 下只会部署一个自定义 dns 组件;
+- 当一个 vpc 下配置多个 vpc-dns 资源（即同一个 vpc 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `fasle`;
+- 当 `ture` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。
