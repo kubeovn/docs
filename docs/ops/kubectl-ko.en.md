@@ -53,7 +53,7 @@ Available Subcommands:
   dpctl {nodeName} [ovs-dpctl options ...]   invoke ovs-dpctl on the specified node
   appctl {nodeName} [ovs-appctl options ...]   invoke ovs-appctl on the specified node
   tcpdump {namespace/podname} [tcpdump options ...]     capture pod traffic
-  trace {namespace/podname} {target ip address} {icmp|tcp|udp} [target tcp or udp port]    trace ovn microflow of specific packet
+  trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp or udp port]    trace ovn microflow of specific packet
   diagnose {all|node} [nodename]    diagnose connectivity of all nodes or a specific node
   tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]  deploy  kernel optimisation components to the system
   reload    restart all kube-ovn components
@@ -342,7 +342,7 @@ listening on d7176fe7b4e0_h, link-type EN10MB (Ethernet), capture size 262144 by
 06:52:38.619973 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 3, length 64
 ```
 
-### trace {namespace/podname} {target ip address} {icmp|tcp|udp} [target tcp or udp port]
+### trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp or udp port]
 
 This command will print the OVN logical flow table and the final Openflow flow table when the Pod accesses an address through a specific protocol, 
 so that it make locate flow table related problems during development or troubleshooting much easy.
@@ -377,6 +377,12 @@ ct_next(ct_state=new|trk)
     output;
 
 ...
+```
+
+If the trace object is a virtual machine running  in Underlay network, additional parameters is needed to specify the destination Mac address.
+
+```bash
+kubectl ko trace default/virt-handler-7lvml 8.8.8.8 82:7c:9f:83:8c:01 icmp
 ```
 
 ### diagnose {all|node} [nodename]

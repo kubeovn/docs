@@ -377,7 +377,7 @@ ct_next(ct_state=new|trk)
 ...
 ```
 
-若 trace 对象为运行于 Underlay 网络下的虚拟机，您可能需要添加额外参数来指定目的 Mac 地址：
+若 trace 对象为运行于 Underlay 网络下的虚拟机，需要添加额外参数来指定目的 Mac 地址：
 
 ```bash
 kubectl ko trace default/virt-handler-7lvml 8.8.8.8 82:7c:9f:83:8c:01 icmp
