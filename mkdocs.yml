@@ -19,6 +19,7 @@ nav:
       - VPC 使用: 'guide/vpc.md'
       - 容器网络 QoS 配置: 'guide/qos.md'
       - 配置监控和面板: 'guide/prometheus-grafana.md'
+      - 配置原生 Prometheus: 'guide/prometheus.md'
       - 双栈使用: 'guide/dual-stack.md'
       - EIP 和 SNAT 配置: 'guide/eip-snat.md'
       - 流量镜像: 'guide/mirror.md'
@@ -174,6 +175,7 @@ plugins:
           Overlay 下路由方式网络打通: Interconnection with Routes in Overlay Mode
           文档规范: Document Convention
           功能成熟度: Feature Stage
+          配置原生 Prometheus: Config Native Prometheus
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
