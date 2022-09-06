@@ -58,6 +58,7 @@ nav:
       - 总体架构: 'reference/architecture.md'
       - 功能成熟度: 'reference/feature-stage.md'
       - Underlay 流量拓扑: 'reference/underlay-topology.md'
+      - Iptables 规则: 'reference/iptables-rules.md'
       - 开发环境构建: 'reference/dev-env.md'
       - 对上游 OVS/OVN 修改: 'reference/ovs-ovn-customized.md'
       - 隧道协议说明: 'reference/tunnel-protocol.md'
@@ -176,6 +177,7 @@ plugins:
           文档规范: Document Convention
           功能成熟度: Feature Stage
           配置原生 Prometheus: Config Native Prometheus
+          Iptables 规则: Iptables Rules
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
