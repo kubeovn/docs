@@ -185,11 +185,11 @@ For VM instances created by Kubevirt, `kube-ovn-controller` can assign and manag
 This allows VM instances address fixed during start-up, shutdown, upgrade, migration, and other operations throughout their lifecycle, 
 making them more compatible with the actual virtualization user experience.
 
-This feature is disabled by default. To use this feature, you need to enable the following args in the `kube-ovn-controller` Deployment:
+This feature is enable by default after v1.10.6. To disable this feature, you need to change the following args in the `kube-ovn-controller` Deployment:
 
 ```yaml
 args:
-- --keep-vm-ip=true
+- --keep-vm-ip=false
 ```
 
 ## CNI Settings

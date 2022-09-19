@@ -121,8 +121,3 @@ This allows VM instances address fixed during start-up, shutdown, upgrade, migra
 making them more compatible with the actual virtualization user experience.
 
 This feature is disabled by default. To use this feature, you need to enable the following args in the `kube-ovn-controller` Deployment:
-
-```yaml
-args:
-- --keep-vm-ip=true
-```
