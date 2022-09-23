@@ -38,11 +38,11 @@ Packets enter the physic network via the node NIC and are exchanged and routed a
 
 ## Overview without Vlan Tag
 
-![](../static/underlay-traffic-6.png)
+![](../static/underlay-traffic-7.png)
 
 ## Overview with Vlan Tag
 
-![](../static/underlay-traffic-7.png)
+![](../static/underlay-traffic-6.png)
 
 ## Pod visit Service IP
 
