@@ -38,11 +38,11 @@
 
 ## 无 Vlan Tag 下总览
 
-![总览](../static/underlay-traffic-6.png)
+![总览](../static/underlay-traffic-7.png)
 
 ## 多 VLAN 总览
 
-![VLAN 总览](../static/underlay-traffic-7.png)
+![VLAN 总览](../static/underlay-traffic-6.png)
 
 ## Pod 访问 Service IP
 
