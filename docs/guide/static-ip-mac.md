@@ -1,7 +1,7 @@
 # 固定地址
 
 Kube-OVN 默认会根据 Pod 所在 Namespace 所属的子网中随机分配 IP 和 Mac。
-针对工作负载需要固定地址的情况，Kube-OVN 根据不同的场景，提供了多中固定地址的方法：
+针对工作负载需要固定地址的情况，Kube-OVN 根据不同的场景，提供了多种固定地址的方法：
 
 - 单个 Pod 固定 IP/Mac。
 - Workload 通用 IP Pool 方式指定固定地址范围。
