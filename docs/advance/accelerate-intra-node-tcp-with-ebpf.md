@@ -76,3 +76,9 @@ kubectl apply -f https://raw.githubusercontent.com/intel/istio-tcpip-bypass/main
 > 在测试的硬件环境下，数据包小于 512 字节时，使用 eBPF 优化吞吐量指标会低于默认配置下的吞吐量。
 > 该情况可能和默认配置下网卡开启 TCP 聚合优化相关。如果应用场景对小包吞吐量敏感，需要在相应环境下
 > 进行测试判断是否开启 eBPF 优化。我们也会后续对 eBPF TCP 小包场景的吞吐量进行优化。
+
+## 参考资料
+
+1. [istio-tcpip-bypass](https://github.com/intel/istio-tcpip-bypass){: target="_blank" }
+2. [Deep Dive TCP/IP Bypass with eBPF in Service Mesh](https://events.istio.io/istiocon-2022/sessions/tcpip-bypass-ebpf/){: target="_blank" }
+3. [Tanzu Service Mesh Acceleration using eBPF](https://blogs.vmware.com/networkvirtualization/2022/08/tanzu-service-mesh-acceleration-using-ebpf.html/){: target="_blank" }
