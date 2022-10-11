@@ -24,7 +24,7 @@ sysctl net.ipv4.conf.eth0.rp_filter=0
 ### 下载安装脚本
 
 ```sh
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.10/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
 ```
 
 ### 修改安装脚本
@@ -44,7 +44,7 @@ done
 
 ```sh
 REGISTRY="kubeovn"                     # 镜像仓库地址
-VERSION="v1.10.6"                      # 镜像版本/Tag
+VERSION="{{ variables.version }}"                      # 镜像版本/Tag
 POD_CIDR="10.16.0.0/16"                # 默认子网 CIDR 不要和 SVC/NODE/JOIN CIDR 重叠
 SVC_CIDR="10.96.0.0/12"                # 需要和 apiserver 的 service-cluster-ip-range 保持一致
 JOIN_CIDR="100.64.0.0/16"              # Pod 和主机通信网络 CIDR，不要和 SVC/NODE/POD CIDR 重叠 
