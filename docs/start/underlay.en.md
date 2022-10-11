@@ -33,8 +33,7 @@ Vlan and security policy in the underlying network device in advance.
 
 1. For OpenStack VM environments, you need to turn off `PortSecurity` on the corresponding network port.
 2. For VMware vswtich networks, `MAC Address Changes`, `Forged Transmits` and `Promiscuous Mode Operation` should be set to `allow`.
-3. For Service access traffic, the Pod sends the packets first to the underlay gateway, 
-   which needs to have the ability to forward the packets back to the network.
+3. The network interface that is bridged into ovs can not be type of Linux Bridge.
 
 For management and container networks using the same NIC, Kube-OVN will transfer the NIC's Mac address, IP address, route, 
 and MTU to the corresponding OVS Bridge to support single NIC deployment of Underlay networks.
