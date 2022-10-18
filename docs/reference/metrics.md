@@ -6,148 +6,147 @@
 
 OVN 自身状态监控指标：
 
-| Type  | Metric                                   | Description                                                                                                  |
-|-------|------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| Gauge | ovn_status                               | OVN Health Status. The values are: (2) for standby or follower, (1) for active or leader, (0) for unhealthy. |
-| Gauge | ovn_info                                 | This metric provides basic information about OVN. It is always set to 1.                                     |
-| Gauge | failed_req_count                         | The number of failed requests to OVN stack.                                                                  |
-| Gauge | log_file_size                            | The size of a log file associated with an OVN component.                                                     |
-| Gauge | db_file_size                             | The size of a database file associated with an OVN component.                                                |
-| Gauge | chassis_info                             | Whether the OVN chassis is up (1) or down (0), together with additional information about the chassis.       |
-| Gauge | db_status                                | The status of OVN NB/SB DB, (1) for healthy, (0) for unhealthy.                                              |
-| Gauge | logical_switch_info                      | The information about OVN logical switch. This metric is always up (1).                                      |
-| Gauge | logical_switch_external_id               | Provides the external IDs and values associated with OVN logical switches. This metric is always up (1).     |
-| Gauge | logical_switch_port_binding              | Provides the association between a logical switch and a logical switch port. This metric is always up (1).   |
-| Gauge | logical_switch_tunnel_key                | The value of the tunnel key associated with the logical switch.                                              |
-| Gauge | logical_switch_ports_num                 | The number of logical switch ports connected to the OVN logical switch.                                      |
-| Gauge | logical_switch_port_info                 | The information about OVN logical switch port. This metric is always up (1).                                 |
-| Gauge | logical_switch_port_tunnel_key           | The value of the tunnel key associated with the logical switch port.                                         |
-| Gauge | cluster_enabled                          | Is OVN clustering enabled (1) or not (0).                                                                    |
-| Gauge | cluster_role                             | A metric with a constant '1' value labeled by server role.                                                   |
-| Gauge | cluster_status                           | A metric with a constant '1' value labeled by server status.                                                 |
-| Gauge | cluster_term                             | The current raft term known by this server.                                                                  |
-| Gauge | cluster_leader_self                      | Is this server consider itself a leader (1) or not (0).                                                      |
-| Gauge | cluster_vote_self                        | Is this server voted itself as a leader (1) or not (0).                                                      |
-| Gauge | cluster_election_timer                   | The current election timer value.                                                                            |
-| Gauge | cluster_log_not_committed                | The number of log entries not yet committed by this server.                                                  |
-| Gauge | cluster_log_not_applied                  | The number of log entries not yet applied by this server.                                                    |
-| Gauge | cluster_log_index_start                  | The log entry index start value associated with this server.                                                 |
-| Gauge | cluster_log_index_next                   | The log entry index next value associated with this server.                                                  |
-| Gauge | cluster_inbound_connections_total        | The total number of inbound connections to the server.                                                       |
-| Gauge | cluster_outbound_connections_total       | The total number of outbound connections from the server.                                                    |
-| Gauge | cluster_inbound_connections_error_total  | The total number of failed inbound connections to the server.                                                |
-| Gauge | cluster_outbound_connections_error_total | The total number of failed outbound connections from the server.                                             |
+| 类型    | 指标项                                               | 描述                                                             |
+|-------|---------------------------------------------------|----------------------------------------------------------------|
+| Gauge | kube_ovn_ovn_status                               | OVN 角色状态， (2) 为 follower； (1) 为 leader, (0) 为异常状态。             |
+| Gauge | kube_ovn_failed_req_count                         | OVN 失败请求数量。                                                    |
+| Gauge | kube_ovn_log_file_size_bytes                      | OVN 组件日志文件大小。                                                  |
+| Gauge | kube_ovn_db_file_size_bytes                       | OVN 组件数据库文件大小。                                                 |
+| Gauge | kube_ovn_chassis_info                             | OVN chassis 状态 (1) 运行中，(0) 停止。                                 |
+| Gauge | kube_ovn_db_status                                | OVN 数据库状态, (1) 为正常； (0) 为异常。                                   |
+| Gauge | kube_ovn_logical_switch_info                      | OVN logical switch 信息，值为 (1)，标签中包含 logical switch 名字。          |
+| Gauge | kube_ovn_logical_switch_external_id               | OVN logical switch external_id 信息，值为 (1)，标签中包含 external-id 内容。 |
+| Gauge | kube_ovn_logical_switch_port_binding              | OVN logical switch 和 logical switch port 关联信息，值为 (1)，通过标签进行关联。 |
+| Gauge | kube_ovn_logical_switch_tunnel_key                | 和 OVN logical switch 关联的 tunnel key 信息。                        |
+| Gauge | kube_ovn_logical_switch_ports_num                 | OVN logical switch 上 logical port 的数量。                         |
+| Gauge | kube_ovn_logical_switch_port_info                 | OVN logical switch port 信息，值为 (1)，标签中包含具体信息。                   |
+| Gauge | kube_ovn_logical_switch_port_tunnel_key           | 和 OVN logical switch port 关联的 tunnel key 信息。                   |
+| Gauge | kube_ovn_cluster_enabled                          | (1) OVN 数据库为集群模式； (0) OVN 数据库为非集群模式。                           |
+| Gauge | kube_ovn_cluster_role                             | 每个数据库实例的角色，值为 (1)，标签中包含对应角色信息。                                 |
+| Gauge | kube_ovn_cluster_status                           | 每个数据库实例的状态，值为 (1)，标签中包含对应状态信息。                                 |
+| Gauge | kube_ovn_cluster_term                             | RAFT term 信息。                                                  |
+| Gauge | kube_ovn_cluster_leader_self                      | 当前数据库实例是否为 leader (1) 是， (0) 不是。                               |
+| Gauge | kube_ovn_cluster_vote_self                        | 当前数据库实例是否选举自己为 leader (1) 是， (0) 不是。                           |
+| Gauge | kube_ovn_cluster_election_timer                   | 当前 election timer 值。                                           |
+| Gauge | kube_ovn_cluster_log_not_committed                | 未 commit 的 RAFT 日志数量。                                          |
+| Gauge | kube_ovn_cluster_log_not_applied                  | 未 apply 的 RAFT 日志数量。                                           |
+| Gauge | kube_ovn_cluster_log_index_start                  | 当前 RAFT 日志条目的起始值。                                              |
+| Gauge | kube_ovn_cluster_log_index_next                   | RAFT 日志条目的下一个值。                                                |
+| Gauge | kube_ovn_cluster_inbound_connections_total        | 当前实例的入向连接数量。                                                   |
+| Gauge | kube_ovn_cluster_outbound_connections_total       | 当前实例的出向连接数量。                                                   |
+| Gauge | kube_ovn_cluster_inbound_connections_error_total  | 当前实例的入向错误连接数量。                                                 |
+| Gauge | kube_ovn_cluster_outbound_connections_error_total | 当前实例的出向错误连接数量。                                                 |
 
 ## ovs-monitor
 
 `ovsdb` 和 `vswitchd` 自身状态监控指标：
 
-| Type  | Metric                  | Description                                                                                                                       |
-|-------|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| Gauge | ovs_status              | OVS Health Status. The values are: health(1), unhealthy(0).                                                                       |
-| Gauge | ovs_info                | This metric provides basic information about OVS. It is always set to 1.                                                          |
-| Gauge | failed_req_count        | The number of failed requests to OVS stack.                                                                                       |
-| Gauge | log_file_size           | The size of a log file associated with an OVS component.                                                                          |
-| Gauge | db_file_size            | The size of a database file associated with an OVS component.                                                                     |
-| Gauge | datapath                | Represents an existing datapath. This metrics is always 1.                                                                        |
-| Gauge | dp_total                | Represents total number of datapaths on the system.                                                                               |
-| Gauge | dp_if                   | Represents an existing datapath interface. This metrics is always 1.                                                              |
-| Gauge | dp_if_total             | Represents the number of ports connected to the datapath.                                                                         |
-| Gauge | dp_flows_total          | The number of flows in a datapath.                                                                                                |
-| Gauge | dp_flows_lookup_hit     | The number of incoming packets in a datapath matching existing flows in the datapath.                                             |
-| Gauge | dp_flows_lookup_missed  | The number of incoming packets in a datapath not matching any existing flow in the datapath.                                      |
-| Gauge | dp_flows_lookup_lost    | The number of incoming packets in a datapath destined for userspace process but subsequently dropped before reaching userspace.   |
-| Gauge | dp_masks_hit            | The total number of masks visited for matching incoming packets.                                                                  |
-| Gauge | dp_masks_total          | The number of masks in a datapath.                                                                                                |
-| Gauge | dp_masks_hit_ratio      | The average number of masks visited per packet. It is the ration between hit and total number of packets processed by a datapath. |
-| Gauge | interface               | Represents OVS interface. This is the primary metric for all other interface metrics. This metrics is always 1.                   |
-| Gauge | interface_admin_state   | The administrative state of the physical network link of OVS interface. The values are: down(0), up(1), other(2).                 |
-| Gauge | interface_link_state    | The state of the physical network link of OVS interface. The values are: down(0), up(1), other(2).                                |
-| Gauge | interface_mac_in_use    | The MAC address in use by OVS interface.                                                                                          |
-| Gauge | interface_mtu           | The currently configured MTU for OVS interface.                                                                                   |
-| Gauge | interface_of_port       | Represents the OpenFlow port ID associated with OVS interface.                                                                    |
-| Gauge | interface_if_index      | Represents the interface index associated with OVS interface.                                                                     |
-| Gauge | interface_tx_packets    | Represents the number of transmitted packets by OVS interface.                                                                    |
-| Gauge | interface_tx_bytes      | Represents the number of transmitted bytes by OVS interface.                                                                      |
-| Gauge | interface_rx_packets    | Represents the number of received packets by OVS interface.                                                                       |
-| Gauge | interface_rx_bytes      | Represents the number of received bytes by OVS interface.                                                                         |
-| Gauge | interface_rx_crc_err    | Represents the number of CRC errors for the packets received by OVS interface.                                                    |
-| Gauge | interface_rx_dropped    | Represents the number of input packets dropped by OVS interface.                                                                  |
-| Gauge | interface_rx_errors     | Represents the total number of packets with errors received by OVS interface.                                                     |
-| Gauge | interface_rx_frame_err  | Represents the number of frame alignment errors on the packets received by OVS interface.                                         |
-| Gauge | interface_rx_missed_err | Represents the number of packets with RX missed received by OVS interface.                                                        |
-| Gauge | interface_rx_over_err   | Represents the number of packets with RX overrun received by OVS interface.                                                       |
-| Gauge | interface_tx_dropped    | Represents the number of output packets dropped by OVS interface.                                                                 |
-| Gauge | interface_tx_errors     | Represents the total number of transmit errors by OVS interface.                                                                  |
-| Gauge | interface_collisions    | Represents the number of collisions on OVS interface.                                                                             |
+| 类型    | 指标项                     | 描述                                        |
+|-------|-------------------------|-------------------------------------------|
+| Gauge | ovs_status              | OVS 健康状态， (1) 为正常，(0) 为异常。                |
+| Gauge | ovs_info                | OVS 基础信息，值为 (1)，标签中包含对应信息。                |
+| Gauge | failed_req_count        | OVS 失败请求数量。                               |
+| Gauge | log_file_size           | OVS 组件日志文件大小。                             |
+| Gauge | db_file_size            | OVS 组件数据库文件大小。                            |
+| Gauge | datapath                | Datapath 基础信息，值为 (1)，标签中包含对应信息。           |
+| Gauge | dp_total                | 当前 OVS 中 datapath 数量。                     |
+| Gauge | dp_if                   | Datapath 接口基础信息，值为 (1)，标签中包含对应信息。         |
+| Gauge | dp_if_total             | 当前 datapath 中 port 数量。                    |
+| Gauge | dp_flows_total          | Datapath 中 flow 数量。                       |
+| Gauge | dp_flows_lookup_hit     | Datapath 中命中当前 flow 数据包数量。                |
+| Gauge | dp_flows_lookup_missed  | Datapath 中未命中当前 flow 数据包数量。               |
+| Gauge | dp_flows_lookup_lost    | Datapath 中需要发送给 userspace 处理的数据包数量。       |
+| Gauge | dp_masks_hit            | Datapath 中命中当前 mask 数据包数量。                |
+| Gauge | dp_masks_total          | Datapath 中 mask 的数量。                      |
+| Gauge | dp_masks_hit_ratio      | Datapath 中 数据包命中 mask 的比率。                |
+| Gauge | interface               | OVS 接口基础信息，值为 (1)，标签中包含对应信息。              |
+| Gauge | interface_admin_state   | 接口管理状态信息 (0) 为 down, (1) 为 up, (2) 为其他状态。 |
+| Gauge | interface_link_state    | 接口链路状态信息 (0) 为 down, (1) 为 up, (2) 为其他状态。 |
+| Gauge | interface_mac_in_use    | OVS Interface 使用的 MAC 地址                  |
+| Gauge | interface_mtu           | OVS Interface 使用的 MTU。                    |
+| Gauge | interface_of_port       | OVS Interface 关联的 OpenFlow Port ID。       |
+| Gauge | interface_if_index      | OVS Interface 关联的 Index。                  |
+| Gauge | interface_tx_packets    | OVS Interface 发送包数量。                      |
+| Gauge | interface_tx_bytes      | OVS Interface 发送包大小。                      |
+| Gauge | interface_rx_packets    | OVS Interface 接收包数量。                      |
+| Gauge | interface_rx_bytes      | OVS Interface 接收包大小。                      |
+| Gauge | interface_rx_crc_err    | OVS Interface 接收包校验和错误数量。                 |
+| Gauge | interface_rx_dropped    | OVS Interface 接收包丢弃数量。                    |
+| Gauge | interface_rx_errors     | OVS Interface 接收包错误数量。                    |
+| Gauge | interface_rx_frame_err  | OVS Interface 接收帧错误数量。                    |
+| Gauge | interface_rx_missed_err | OVS Interface 接收包 miss 数量。                |
+| Gauge | interface_rx_over_err   | OVS Interface 接收包 overrun 数量。             |
+| Gauge | interface_tx_dropped    | OVS Interface 发送包丢弃数量。                    |
+| Gauge | interface_tx_errors     | OVS Interface 发送包错误数量。                    |
+| Gauge | interface_collisions    | OVS interface 冲突数量。                       |
 
 ## kube-ovn-pinger
 
 网络质量相关监控指标：
 
-| Type      | Metric                           | Description                                                 |
-|-----------|----------------------------------|-------------------------------------------------------------|
-| Gauge     | pinger_ovs_up                    | If the ovs on the node is up                                |
-| Gauge     | pinger_ovs_down                  | If the ovs on the node is down                              |
-| Gauge     | pinger_ovn_controller_up         | If the ovn_controller on the node is up                     |
-| Gauge     | pinger_ovn_controller_down       | If the ovn_controller on the node is down                   |
-| Gauge     | pinger_inconsistent_port_binding | The number of mismatch port bindings between ovs and ovn-sb |
-| Gauge     | pinger_apiserver_healthy         | If the apiserver request is healthy on this node            |
-| Gauge     | pinger_apiserver_unhealthy       | If the apiserver request is unhealthy on this node          |
-| Histogram | pinger_apiserver_latency_ms      | The latency ms histogram the node request apiserver         |
-| Gauge     | pinger_internal_dns_healthy      | If the internal dns request is unhealthy on this node       |
-| Gauge     | pinger_internal_dns_unhealthy    | If the internal dns request is unhealthy on this node       |
-| Histogram | pinger_internal_dns_latency_ms   | The latency ms histogram the node request internal dns      |
-| Gauge     | pinger_external_dns_health       | If the external dns request is healthy on this node         |
-| Gauge     | pinger_external_dns_unhealthy    | If the external dns request is unhealthy on this node       |
-| Histogram | pinger_external_dns_latency_ms   | The latency ms histogram the node request external dns      |
-| Histogram | pinger_pod_ping_latency_ms       | The latency ms histogram for pod peer ping                  |
-| Gauge     | pinger_pod_ping_lost_total       | The lost count for pod peer ping                            |
-| Gauge     | pinger_pod_ping_count_total      | The total count for pod peer ping                           |
-| Histogram | pinger_node_ping_latency_ms      | The latency ms histogram for pod ping node                  |
-| Gauge     | pinger_node_ping_lost_total      | The lost count for pod ping node                            |
-| Gauge     | pinger_node_ping_count_total     | The total count for pod ping node                           |
-| Histogram | pinger_external_ping_latency_ms  | The latency ms histogram for pod ping external address      |
-| Gauge     | pinger_node_external_lost_total  | The lost count for pod ping external address                |
+| 类型        | 指标项                              | 描述                                               |
+|-----------|----------------------------------|--------------------------------------------------|
+| Gauge     | pinger_ovs_up                    | 节点 OVS 运行。                                       |
+| Gauge     | pinger_ovs_down                  | 节点 OVS 停止。                                       |
+| Gauge     | pinger_ovn_controller_up         | 节点 ovn-controller 运行。                            |
+| Gauge     | pinger_ovn_controller_down       | 节点 ovn-controller 停止。                            |
+| Gauge     | pinger_inconsistent_port_binding | OVN-SB 里 portbinding 数量和主机 OVS interface 不一致的数量。 |
+| Gauge     | pinger_apiserver_healthy         | kube-ovn-pinger 可以联通 apiserver。                  |
+| Gauge     | pinger_apiserver_unhealthy       | kube-ovn-pinger 无法联通 apiserver。                  |
+| Histogram | pinger_apiserver_latency_ms      | kube-ovn-pinger 访问 apiserver 延迟。                 |
+| Gauge     | pinger_internal_dns_healthy      | kube-ovn-pinger 可以解析内部域名。                        |
+| Gauge     | pinger_internal_dns_unhealthy    | kube-ovn-pinger 无法解析内部域名。                        |
+| Histogram | pinger_internal_dns_latency_ms   | kube-ovn-pinger 解析内部域名延迟。                        |
+| Gauge     | pinger_external_dns_health       | kube-ovn-pinger 可以解析外部域名。                        |
+| Gauge     | pinger_external_dns_unhealthy    | kube-ovn-pinger 无法解析外部域名。                        |
+| Histogram | pinger_external_dns_latency_ms   | kube-ovn-pinger 解析外部域名延迟。                        |
+| Histogram | pinger_pod_ping_latency_ms       | kube-ovn-pinger ping Pod 延迟。                     |
+| Gauge     | pinger_pod_ping_lost_total       | kube-ovn-pinger ping Pod 丢包数量。                   |
+| Gauge     | pinger_pod_ping_count_total      | kube-ovn-pinger ping Pod 数量。                     |
+| Histogram | pinger_node_ping_latency_ms      | kube-ovn-pinger ping Node 延迟。                    |
+| Gauge     | pinger_node_ping_lost_total      | kube-ovn-pinger ping Node 丢包。                    |
+| Gauge     | pinger_node_ping_count_total     | kube-ovn-pinger ping Node 数量。                    |
+| Histogram | pinger_external_ping_latency_ms  | kube-ovn-pinger ping 外部地址 延迟。                    |
+| Gauge     | pinger_external_lost_total       | kube-ovn-pinger ping 外部丢包数量。                     |
 
 ## kube-ovn-controller
 
 `kube-ovn-controller` 相关监控指标：
 
-| Type      | Metric                                  | Description                                                           |
-|-----------|-----------------------------------------|-----------------------------------------------------------------------|
-| Histogram | rest_client_request_latency_seconds     | Request latency in seconds. Broken down by verb and URL               |
-| Counter   | rest_client_requests_total              | Number of HTTP requests, partitioned by status code, method, and host |
-| Counter   | lists_total                             | Total number of API lists done by the reflectors                      |
-| Summary   | list_duration_seconds                   | How long an API list takes to return and decode for the reflectors    |
-| Summary   | items_per_list                          | How many items an API list returns to the reflectors                  |
-| Counter   | watches_total                           | Total number of API watches done by the reflectors                    |
-| Counter   | short_watches_total                     | Total number of short API watches done by the reflectors              |
-| Summary   | watch_duration_seconds                  | How long an API watch takes to return and decode for the reflectors   |
-| Summary   | items_per_watch                         | How many items an API watch returns to the reflectors                 |
-| Gauge     | last_resource_version                   | Last resource version seen for the reflectors                         |
-| Histogram | ovs_client_request_latency_milliseconds | The latency histogram for ovs request                                 |
-| Gauge     | subnet_available_ip_count               | The available num of ip address in subnet                             |
-| Gauge     | subnet_used_ip_count                    | The used num of ip address in subnet                                  |
+| 类型        | 指标项                                     | 描述                    |
+|-----------|-----------------------------------------|-----------------------|
+| Histogram | rest_client_request_latency_seconds     | 请求 apiserver 延迟。      |
+| Counter   | rest_client_requests_total              | 请求 apiserver 数量。      |
+| Counter   | lists_total                             | API list 请求数量。        |
+| Summary   | list_duration_seconds                   | API list 请求延迟。        |
+| Summary   | items_per_list                          | API list 返回结果数量。      |
+| Counter   | watches_total                           | API watch 请求数量。       |
+| Counter   | short_watches_total                     | 短时间 API watch 请求数量。   |
+| Summary   | watch_duration_seconds                  | API watch 持续时间。       |
+| Summary   | items_per_watch                         | API watch 返回结果数量。     |
+| Gauge     | last_resource_version                   | 最新的 resource version。 |
+| Histogram | ovs_client_request_latency_milliseconds | 请求 OVN 组件延迟。          |
+| Gauge     | subnet_available_ip_count               | 子网可用 IP 数量。           |
+| Gauge     | subnet_used_ip_count                    | 子网已用 IP 数量。           |
 
 ## kube-ovn-cni
 
 `kube-ovn-cni` 相关监控指标：
 
-| Type      | Metric                                  | Description                                                           |
-|-----------|-----------------------------------------|-----------------------------------------------------------------------|
-| Histogram | cni_op_latency_seconds                  | The latency seconds for cni operations                                |
-| Counter   | cni_wait_address_seconds_total          | Latency that cni wait controller to assign an address                 |
-| Counter   | cni_wait_connectivity_seconds_total     | Latency that cni wait address ready in overlay network                |
-| Counter   | cni_wait_route_seconds_total            | Latency that cni wait controller to add routed annotation to pod      |
-| Histogram | rest_client_request_latency_seconds     | Request latency in seconds. Broken down by verb and URL               |
-| Counter   | rest_client_requests_total              | Number of HTTP requests, partitioned by status code, method, and host |
-| Counter   | lists_total                             | Total number of API lists done by the reflectors                      |
-| Summary   | list_duration_seconds                   | How long an API list takes to return and decode for the reflectors    |
-| Summary   | items_per_list                          | How many items an API list returns to the reflectors                  |
-| Counter   | watches_total                           | Total number of API watches done by the reflectors                    |
-| Counter   | short_watches_total                     | Total number of short API watches done by the reflectors              |
-| Summary   | watch_duration_seconds                  | How long an API watch takes to return and decode for the reflectors   |
-| Summary   | items_per_watch                         | How many items an API watch returns to the reflectors                 |
-| Gauge     | last_resource_version                   | Last resource version seen for the reflectors                         |
-| Histogram | ovs_client_request_latency_milliseconds | The latency histogram for ovs request                                 |
+| 类型        | 指标项                                     | 描述                    |
+|-----------|-----------------------------------------|-----------------------|
+| Histogram | cni_op_latency_seconds                  | CNI 操作延迟。             |
+| Counter   | cni_wait_address_seconds_total          | CNI 等待地址就绪时间。         |
+| Counter   | cni_wait_connectivity_seconds_total     | CNI 等待连接就绪时间。         |
+| Counter   | cni_wait_route_seconds_total            | CNI 等待路由就绪时间。         |
+| Histogram | rest_client_request_latency_seconds     | 请求 apiserver 延迟。      |
+| Counter   | rest_client_requests_total              | 请求 apiserver 数量。      |
+| Counter   | lists_total                             | API list 请求数量。        |
+| Summary   | list_duration_seconds                   | API list 请求延迟。        |
+| Summary   | items_per_list                          | API list 返回结果数量。      |
+| Counter   | watches_total                           | API watch 请求数量。       |
+| Counter   | short_watches_total                     | 短时间 API watch 请求数量。   |
+| Summary   | watch_duration_seconds                  | API watch 持续时间。       |
+| Summary   | items_per_watch                         | API watch 返回结果数量。     |
+| Gauge     | last_resource_version                   | 最新的 resource version。 |
+| Histogram | ovs_client_request_latency_milliseconds | 请求 OVN 组件延迟。          |
