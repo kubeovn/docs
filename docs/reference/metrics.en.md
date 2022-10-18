@@ -8,35 +8,34 @@ OVN status metrics:
 
 | Type  | Metric                                   | Description                                                                                                  |
 |-------|------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| Gauge | ovn_status                               | OVN Health Status. The values are: (2) for standby or follower, (1) for active or leader, (0) for unhealthy. |
-| Gauge | ovn_info                                 | This metric provides basic information about OVN. It is always set to 1.                                     |
-| Gauge | failed_req_count                         | The number of failed requests to OVN stack.                                                                  |
-| Gauge | log_file_size                            | The size of a log file associated with an OVN component.                                                     |
-| Gauge | db_file_size                             | The size of a database file associated with an OVN component.                                                |
-| Gauge | chassis_info                             | Whether the OVN chassis is up (1) or down (0), together with additional information about the chassis.       |
-| Gauge | db_status                                | The status of OVN NB/SB DB, (1) for healthy, (0) for unhealthy.                                              |
-| Gauge | logical_switch_info                      | The information about OVN logical switch. This metric is always up (1).                                      |
-| Gauge | logical_switch_external_id               | Provides the external IDs and values associated with OVN logical switches. This metric is always up (1).     |
-| Gauge | logical_switch_port_binding              | Provides the association between a logical switch and a logical switch port. This metric is always up (1).   |
-| Gauge | logical_switch_tunnel_key                | The value of the tunnel key associated with the logical switch.                                              |
-| Gauge | logical_switch_ports_num                 | The number of logical switch ports connected to the OVN logical switch.                                      |
-| Gauge | logical_switch_port_info                 | The information about OVN logical switch port. This metric is always up (1).                                 |
-| Gauge | logical_switch_port_tunnel_key           | The value of the tunnel key associated with the logical switch port.                                         |
-| Gauge | cluster_enabled                          | Is OVN clustering enabled (1) or not (0).                                                                    |
-| Gauge | cluster_role                             | A metric with a constant '1' value labeled by server role.                                                   |
-| Gauge | cluster_status                           | A metric with a constant '1' value labeled by server status.                                                 |
-| Gauge | cluster_term                             | The current raft term known by this server.                                                                  |
-| Gauge | cluster_leader_self                      | Is this server consider itself a leader (1) or not (0).                                                      |
-| Gauge | cluster_vote_self                        | Is this server voted itself as a leader (1) or not (0).                                                      |
-| Gauge | cluster_election_timer                   | The current election timer value.                                                                            |
-| Gauge | cluster_log_not_committed                | The number of log entries not yet committed by this server.                                                  |
-| Gauge | cluster_log_not_applied                  | The number of log entries not yet applied by this server.                                                    |
-| Gauge | cluster_log_index_start                  | The log entry index start value associated with this server.                                                 |
-| Gauge | cluster_log_index_next                   | The log entry index next value associated with this server.                                                  |
-| Gauge | cluster_inbound_connections_total        | The total number of inbound connections to the server.                                                       |
-| Gauge | cluster_outbound_connections_total       | The total number of outbound connections from the server.                                                    |
-| Gauge | cluster_inbound_connections_error_total  | The total number of failed inbound connections to the server.                                                |
-| Gauge | cluster_outbound_connections_error_total | The total number of failed outbound connections from the server.                                             |
+| Gauge | kube_ovn_ovn_status                      | OVN Health Status. The values are: (2) for standby or follower, (1) for active or leader, (0) for unhealthy. |
+| Gauge | kube_ovn_failed_req_count                         | The number of failed requests to OVN stack.                                                                  |
+| Gauge | kube_ovn_log_file_size                            | The size of a log file associated with an OVN component.                                                     |
+| Gauge | kube_ovn_db_file_size                             | The size of a database file associated with an OVN component.                                                |
+| Gauge | kube_ovn_chassis_info                             | Whether the OVN chassis is up (1) or down (0), together with additional information about the chassis.       |
+| Gauge | kube_ovn_db_status                                | The status of OVN NB/SB DB, (1) for healthy, (0) for unhealthy.                                              |
+| Gauge | kube_ovn_logical_switch_info                      | The information about OVN logical switch. This metric is always up (1).                                      |
+| Gauge | kube_ovn_logical_switch_external_id               | Provides the external IDs and values associated with OVN logical switches. This metric is always up (1).     |
+| Gauge | kube_ovn_logical_switch_port_binding              | Provides the association between a logical switch and a logical switch port. This metric is always up (1).   |
+| Gauge | kube_ovn_logical_switch_tunnel_key                | The value of the tunnel key associated with the logical switch.                                              |
+| Gauge | kube_ovn_logical_switch_ports_num                 | The number of logical switch ports connected to the OVN logical switch.                                      |
+| Gauge | kube_ovn_logical_switch_port_info                 | The information about OVN logical switch port. This metric is always up (1).                                 |
+| Gauge | kube_ovn_logical_switch_port_tunnel_key           | The value of the tunnel key associated with the logical switch port.                                         |
+| Gauge | kube_ovn_cluster_enabled                          | Is OVN clustering enabled (1) or not (0).                                                                    |
+| Gauge | kube_ovn_cluster_role                             | A metric with a constant '1' value labeled by server role.                                                   |
+| Gauge | kube_ovn_cluster_status                           | A metric with a constant '1' value labeled by server status.                                                 |
+| Gauge | kube_ovn_cluster_term                             | The current raft term known by this server.                                                                  |
+| Gauge | kube_ovn_cluster_leader_self                      | Is this server consider itself a leader (1) or not (0).                                                      |
+| Gauge | kube_ovn_cluster_vote_self                        | Is this server voted itself as a leader (1) or not (0).                                                      |
+| Gauge | kube_ovn_cluster_election_timer                   | The current election timer value.                                                                            |
+| Gauge | kube_ovn_cluster_log_not_committed                | The number of log entries not yet committed by this server.                                                  |
+| Gauge | kube_ovn_cluster_log_not_applied                  | The number of log entries not yet applied by this server.                                                    |
+| Gauge | kube_ovn_cluster_log_index_start                  | The log entry index start value associated with this server.                                                 |
+| Gauge | kube_ovn_cluster_log_index_next                   | The log entry index next value associated with this server.                                                  |
+| Gauge | kube_ovn_cluster_inbound_connections_total        | The total number of inbound connections to the server.                                                       |
+| Gauge | kube_ovn_cluster_outbound_connections_total       | The total number of outbound connections from the server.                                                    |
+| Gauge | kube_ovn_cluster_inbound_connections_error_total  | The total number of failed inbound connections to the server.                                                |
+| Gauge | kube_ovn_cluster_outbound_connections_error_total | The total number of failed outbound connections from the server.                                             |
 
 ## ovs-monitor
 
@@ -108,7 +107,7 @@ Network quality related metrics:
 | Gauge     | pinger_node_ping_lost_total      | The lost count for pod ping node                            |
 | Gauge     | pinger_node_ping_count_total     | The total count for pod ping node                           |
 | Histogram | pinger_external_ping_latency_ms  | The latency ms histogram for pod ping external address      |
-| Gauge     | pinger_node_external_lost_total  | The lost count for pod ping external address                |
+| Gauge     | pinger_external_lost_total       | The lost count for pod ping external address                |
 
 ## kube-ovn-controller
 
