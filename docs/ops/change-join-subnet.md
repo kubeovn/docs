@@ -19,6 +19,18 @@ kubectl delete subnet join
 kubectl annotate node ovn.kubernetes.io/allocated=false --all --overwrite
 ```
 
+## 删除 Join 子网路由
+
+```bash
+kubectl ko nbctl lr-route-del ovn-cluster 0.0.0.0/0
+```
+
+或者进入任意 ovn-central 的 pod 内：
+
+```bash
+./kubectl-ko nbctl lr-route-del ovn-cluster 0.0.0.0/0
+```
+
 ## 修改 Join 子网相关信息
 
 修改 `kube-ovn-controller` 内 Join 子网相关信息：
