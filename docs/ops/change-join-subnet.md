@@ -25,10 +25,10 @@ kubectl annotate node ovn.kubernetes.io/allocated=false --all --overwrite
 kubectl ko nbctl lr-route-del ovn-cluster 0.0.0.0/0
 ```
 
-或者进入任意 ovn-central 的 pod 内：
+或者进入 ovn-central leader 的 pod 内：
 
 ```bash
-./kubectl-ko nbctl lr-route-del ovn-cluster 0.0.0.0/0
+ovn-nbctl lr-route-del ovn-cluster 0.0.0.0/0
 ```
 
 ## 修改 Join 子网相关信息
