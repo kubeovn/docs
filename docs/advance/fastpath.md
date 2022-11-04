@@ -34,11 +34,7 @@ make all
 
 ## 安装内核模块
 
-将 `kube_ovn_fastpath.ko` 复制到每个需要性能优化的节点，执行下列命令：
-
-```bash
-insmod kube_ovn_fastpath.ko
-```
+将 `kube_ovn_fastpath.ko` 复制到每个需要性能优化的节点 `/tmp` 目录下，`kube-ovn-cni` 会自动加载该模块。
 
 使用 `dmesg` 确认安装成功：
 
@@ -50,10 +46,6 @@ insmod kube_ovn_fastpath.ko
 [619631.323801] init_module,kube_ovn_fastpath_local_in
 ```
 
-如需卸载模块，可使用下列命令：
-
-```bash
-rmmod kube_ovn_fastpath.ko
-```
+如需卸载模块，可将该模块从 `/tmp` 目录下移除，`kube-ovn-cni` 会自动卸载该模块。
 
 > 该模块在机器重启后不会自动加载，如需自动加载请根据系统弄配置编写相应自启动脚本。
