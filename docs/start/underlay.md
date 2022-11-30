@@ -161,3 +161,36 @@ spec:
 ```
 
 开启此功能后，Pod 不使用外部网关，而是使用 Kube-OVN 创建的逻辑路由器（Logical Router）。对于跨网段通信进行转发。
+
+## 已知问题
+
+### 物理网络开启 hairpin 时 Pod 网络异常
+
+当物理网络开启 hairpin 或类似行为时，可能出现创建 Pod 时网关检查失败、Pod 网络通信异常等问题。这是因为 OVS 网桥默认的 MAC 学习功能不支持这种网络环境。
+
+要解决此问题，需要关闭 hairpin（或修改物理网络的相关配置），或更新 Kube-OVN 版本。
+
+### Pod 数量较多时新建 Pod 网关检查失败
+
+若同一个节点上运行的 Pod 数量较多（大于 300），可能会出现 ARP 广播包的 OVS 流表 resubmit 次数超过上限导致丢包的现象：
+
+```txt
+2022-11-13T08:43:46.782Z|00222|ofproto_dpif_upcall(handler5)|WARN|Flow: arp,in_port=331,vlan_tci=0x0000,dl_src=00:00:00:25:eb:39,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.131.240,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:25:eb:39,arp_tha=ff:ff:ff:ff:ff:ff
+ 
+bridge("br-int")
+----------------
+ 0. No match.
+     >>>> received packet on unknown port 331 <<<<
+    drop
+ 
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,arp,in_port=331,dl_src=00:00:00:25:eb:39
+Datapath actions: drop
+2022-11-13T08:44:34.077Z|00224|ofproto_dpif_xlate(handler5)|WARN|over 4096 resubmit actions on bridge br-int while processing arp,in_port=13483,vlan_tci=0x0000,dl_src=00:00:00:59:ef:13,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.152.3,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:59:ef:13,arp_tha=ff:ff:ff:ff:ff:ff
+```
+
+要解决此问题，可修改 OVN NB 选项 `bcast_arp_req_flood` 为 `false`：
+
+```sh
+kubectl ko nbctl set NB_Global . options:bcast_arp_req_flood=false
+```
