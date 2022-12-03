@@ -128,18 +128,12 @@ spec:
       "cniVersion": "0.3.0",
       "type": "macvlan",
       "master": "eth1",
-      "mode": "bridge",
-      "ipam": {
-        "type": "kube-ovn",
-        "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
-        "provider": "ovn-vpc-external-network.kube-system"
-      }
+      "mode": "bridge"
     }'
 ```
 
 - This Subnet is used to manage the available external addresses, so please communicate with your network management to give you the available physical segment IPs.
 - The VPC gateway uses Macvlan for physical network configuration, and `master` of `NetworkAttachmentDefinition` should be the NIC name of the corresponding physical network NIC.
-- `provider` format is `<NetworkAttachmentDefinition Name>.<NetworkAttachmentDefinition Namespace>`.
 - `name` must be `ovn-vpc-external-network`.
 
 ### Enabling the VPC Gateway

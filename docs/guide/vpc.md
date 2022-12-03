@@ -125,18 +125,12 @@ spec:
       "cniVersion": "0.3.0",
       "type": "macvlan",
       "master": "eth1",
-      "mode": "bridge",
-      "ipam": {
-        "type": "kube-ovn",
-        "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
-        "provider": "ovn-vpc-external-network.kube-system"
-      }
+      "mode": "bridge"
     }'
 ```
 
 - 该 Subnet 用来管理可用的外部地址，请和网络管理沟通给出可用的物理段 IP。
 - VPC 网关使用 Macvlan 做物理网络配置，`NetworkAttachmentDefinition` 的 `master` 需为对应物理网路网卡的网卡名。
-- `provider` 格式为 `<NetworkAttachmentDefinition Name>.<NetworkAttachmentDefinition Namespace>`。
 - `name` 必须为 ovn-vpc-external-network，这里代码中做了硬编码。
 
 ### 开启 VPC 网关功能
