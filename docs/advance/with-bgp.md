@@ -68,3 +68,5 @@ kubectl annotate subnet ovn-default ovn.kubernetes.io/bgp-
 - `graceful-restart`: 是否启用 BGP Graceful Restart。
 - `graceful-restart-time`: BGP Graceful restart time 可参考 RFC4724 3。
 - `graceful-restart-deferral-time`: BGP Graceful restart deferral time 可参考 RFC4724 4.1。
+- `passivemode`: Speaker 运行在 passive 模式，不主动连接 peer。
+- `ebgp-multihop`: ebgp ttl 默认值为 1。
