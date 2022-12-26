@@ -163,7 +163,24 @@ args:
 - --enable-eip-snat=false
 ```
 
-EIP 和 SNAT 的能力在默认安装中为开启。该功能的相关使用和其他可配参数请参考[EIP 和 SNAT 配置](./eip-snat.md)。
+EIP 和 SNAT 的能力在默认安装中为开启。该功能的相关使用和其他可配参数请参考 [EIP 和 SNAT 配置](./eip-snat.md)。
+
+## Load Balancer 类型 Service 支持开启设置
+
+默认 VPC 下可通过开启该选项来支持 Load Balancer 类型 Service。该功能的相关使用和其他可配参数请参考 [LoadBalancer 类型 Service](./loadbalancer-service.md)。
+
+该功能默认关闭，可在安装脚本中进行配置：
+
+```bash
+ENABLE_LB_SVC=true
+```
+
+或者在安装后通过更改 `kube-ovn-controller` Deployment 的参数进行配置：
+
+```yaml
+args:
+- --enable-lb-svc=true
+```
 
 ## 集中式网关 ECMP 开启设置
 
