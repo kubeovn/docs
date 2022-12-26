@@ -48,6 +48,8 @@ nav:
       - Cilium 网络流量观测: 'advance/cilium-hubble-observe.md'
       - DHCP 设置: 'advance/dhcp.md'
       - VPC 互联: 'advance/vpc-peering.md'
+      - 自定义 VPC 内部负载均衡: 'advance/vpc-internal-lb.md'
+      - 自定义 VPC DNS: 'advance/vpc-dns.md'
       - 外部网关设置: 'advance/external-gateway.md'
       - VIP 预留设置: 'advance/vip.md'
       - Mellanox 网卡 Offload 支持: 'advance/offload-mellanox.md'
@@ -179,6 +181,8 @@ plugins:
           功能成熟度: Feature Stage
           配置原生 Prometheus: Config Native Prometheus
           Iptables 规则: Iptables Rules
+          自定义 VPC 内部负载均衡: VPC Internal Load Balancer
+          自定义 VPC DNS: VPC DNS
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
