@@ -135,21 +135,21 @@ spec:
 
 ```yaml
 apiVersion: v1
-data:
-  coredns-vip: 10.96.0.3
-  enable-vpc-dns: true
-  nad-name: ovn-nad
-  nad-provider: ovn-nad.default.ovn
 kind: ConfigMap
 metadata:
   name: vpc-dns-config
   namespace: kube-system
+data:
+  coredns-vip: 10.96.0.3
+  enable-vpc-dns: "true"
+  nad-name: ovn-nad
+  nad-provider: ovn-nad.default.ovn
 ```
 
 * `enable-vpc-dns`：是否启用功能，默认 `true`。
 * `coredns-image`：dns 部署镜像。默认为集群 coredns 部署版本。
 * `coredns-vip`：为 coredns 提供 lb 服务的 vip。
-* `coredns-template`：coredns 部署模板所在的 URL。默认获取当前版本 ovn 目录下 `coredns-template.yaml` （`https://raw.githubusercontent.com/kubeovn/kube-ovn/当前版本/yamls/coredns-template.yaml`）。
+* `coredns-template`：coredns 部署模板所在的 URL。默认获取当前版本 ovn 目录下 `coredns-template.yaml` 默认为 `https://raw.githubusercontent.com/kubeovn/kube-ovn/当前版本/yamls/coredns-template.yaml` 。
 * `nad-name`：配置的 `network-attachment-definitions` 资源名称。
 * `nad-provider`：使用的 provider 名称。
 * `k8s-service-host`：用于 coredns 访问 k8s apiserver 服务的 ip，默认为集群内 apiserver 地址。
