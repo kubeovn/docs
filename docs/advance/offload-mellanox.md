@@ -18,8 +18,6 @@ Mellanox 网卡支持两种配置 offload 的方式，一种手动配置网卡 S
 
 ### 手动配置 SR-IOV 和 Device Plugin
 
-### 设置网卡 SR-IOV 模式
-
 查询网卡的设备 ID，下面的例子中为 `42:00.0`：
 
 ```bash
@@ -95,8 +93,6 @@ echo 0000:42:00.5 > /sys/bus/pci/drivers/mlx5_core/bind
 systemctl stop NetworkManager
 systemctl disable NetworkManager
 ```
-
-### 安装 SR-IOV Device Plugin
 
 由于每个机器的 VF 数量优先，每个使用加速的 Pod 会占用 VF 资源，我们需要使用 SR-IOV Device Plugin 管理相应资源，使得调度器知道如何根据
 资源进行调度。
