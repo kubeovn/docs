@@ -75,3 +75,6 @@ This list records the feature stages from the 1.8 release.
 | Workload with Fixed IP                           | true    | GA    | 1.8   |       |
 | StatefulSet with Fixed IP                        | true    | GA    | 1.8   |       |
 | VM with Fixed IP                                 | false   | Beta  | 1.9   |       |
+| Load Balance in Custom VPC                       | false   | Alpha | 1.11  |       |
+| DNS in Custom VPC                                | false   | Alpha | 1.11  |       |
+| Underlay and Overlay Interconnection             | false   | Alpha | 1.11  |       |
