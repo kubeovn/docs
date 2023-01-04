@@ -7,12 +7,18 @@ eSwitch 上执行。该技术可以在无需对 OVS 控制平面进行修改的�
 ![](../static/hw-offload.png)
 
 ## 前置条件
-- Mellanox CX5/CX6/BlueField 等支持 ASAP² 的硬件网卡。
+- Mellanox CX5/CX6/CX7/BlueField 等支持 ASAP² 的硬件网卡。
 - CentOS 8 Stream 或上游 Linux 5.7 以上内核支持。
 - 由于当前网卡不支持 `dp_hash` 和 `hash` 操作卸载，需关闭 OVN LB 功能。
 - 为了支持卸载模式，网卡不能做 bond。
 
-## 设置网卡 SR-IOV 模式
+## 配置 SR-IOV 和 Device Plugin
+
+Mellanox 网卡支持两种配置 offload 的方式，一种手动配置网卡 SR-IOV 和 Device Plugin，另一种通过 [sriov-network-operator](https://github.com/kubeovn/sriov-network-operator) 进行自动配置。
+
+### 手动配置 SR-IOV 和 Device Plugin
+
+### 设置网卡 SR-IOV 模式
 
 查询网卡的设备 ID，下面的例子中为 `42:00.0`：
 
@@ -90,7 +96,7 @@ systemctl stop NetworkManager
 systemctl disable NetworkManager
 ```
 
-## 安装 SR-IOV Device Plugin
+### 安装 SR-IOV Device Plugin
 
 由于每个机器的 VF 数量优先，每个使用加速的 Pod 会占用 VF 资源，我们需要使用 SR-IOV Device Plugin 管理相应资源，使得调度器知道如何根据
 资源进行调度。
@@ -134,11 +140,201 @@ mellanox.com/cx5_sriov_switchdev:  4
 mellanox.com/cx5_sriov_switchdev  0           0
 ```
 
+### 使用 sriov-network-operator 配置 SR-IOV 和 Device Plugin
+
+安装 [node-feature-discovery](https://github.com/kubernetes-sigs/node-feature-discovery) 自动检测硬件的功能和系统配置:
+
+```bash
+kubectl apply -k https://github.com/kubernetes-sigs/node-feature-discovery/deployment/overlays/default?ref=v0.11.3
+```
+
+或者通过下面的命令，手动给有 offload 能力的网卡增加 annotation:
+
+```bash
+kubectl label nodes [offloadNicNode] feature.node.kubernetes.io/network-sriov.capable=true
+```
+
+克隆代码仓库并安装 Operator：
+
+```bash
+git clone --depth=1 https://github.com/kubeovn/sriov-network-operator.git
+kubectl apply -k sriov-network-operator/deploy
+```
+
+检查 Operator 组件是否工作正常：
+
+```bash
+# kubectl get -n kube-system all | grep sriov
+NAME                                          READY   STATUS    RESTARTS   AGE
+pod/sriov-network-config-daemon-bf9nt         1/1     Running   0          8s
+pod/sriov-network-operator-54d7545f65-296gb   1/1     Running   0          10s
+
+NAME                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/sriov-network-operator   ClusterIP   10.102.53.223   <none>        8383/TCP   9s
+
+NAME                                         DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                                                 AGE
+daemonset.apps/sriov-network-config-daemon   1         1         1       1            1           beta.kubernetes.io/os=linux,feature.node.kubernetes.io/network-sriov.capable=true   8s
+
+NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/sriov-network-operator   1/1     1            1           10s
+
+NAME                                                DESIRED   CURRENT   READY   AGE
+replicaset.apps/sriov-network-operator-54d7545f65   1         1         1       10s
+```
+
+检查 `SriovNetworkNodeState`，下面以 `node1` 节点为例，该节点上有两个 Mellanox 网卡：
+
+```bash
+# kubectl get sriovnetworknodestates.sriovnetwork.openshift.io -n kube-system node1 -o yaml
+apiVersion: sriovnetwork.openshift.io/v1
+kind: SriovNetworkNodeState
+spec: ...
+status:
+  interfaces:
+  - deviceID: "1017"
+    driver: mlx5_core
+    mtu: 1500
+    pciAddress: "0000:5f:00.0"
+    totalvfs: 8
+    vendor: "15b3"
+    linkSeed: 25000Mb/s
+    linkType: ETH
+    mac: 08:c0:eb:f4:85:bb
+    name: ens41f0np0
+  - deviceID: "1017"
+    driver: mlx5_core
+    mtu: 1500
+    pciAddress: "0000:5f:00.1"
+    totalvfs: 8
+    vendor: "15b3"
+    linkSeed: 25000Mb/s
+    linkType: ETH
+    mac: 08:c0:eb:f4:85:bb
+    name: ens41f1np1
+```
+
+创建 `SriovNetworkNodePolicy` 资源，并通过 `nicSelector` 选择要管理的网卡：
+
+```yaml
+apiVersion: sriovnetwork.openshift.io/v1
+kind: SriovNetworkNodePolicy
+metadata:
+  name: policy
+  namespace: kube-system
+spec:
+  nodeSelector:
+    feature.node.kubernetes.io/network-sriov.capable: "true"
+  eSwitchMode: switchdev
+  numVfs: 3
+  nicSelector:
+    pfNames:
+    - ens41f0np0
+    - ens41f1np1
+  resourceName: cx_sriov_switchdev
+```
+
+再次检查 `SriovNetworkNodeState` 的 `status` 字段：
+
+```bash
+# kubectl get sriovnetworknodestates.sriovnetwork.openshift.io -n kube-system node1 -o yaml
+
+...
+spec:
+  interfaces:
+  - eSwitchMode: switchdev
+    name: ens41f0np0
+    numVfs: 3
+    pciAddress: 0000:5f:00.0
+    vfGroups:
+    - policyName: policy
+      vfRange: 0-2
+      resourceName: cx_sriov_switchdev
+  - eSwitchMode: switchdev
+    name: ens41f1np1
+    numVfs: 3
+    pciAddress: 0000:5f:00.1
+    vfGroups:
+    - policyName: policy
+      vfRange: 0-2
+      resourceName: cx_sriov_switchdev
+status:
+  interfaces
+  - Vfs:
+    - deviceID: 1018
+      driver: mlx5_core
+      pciAddress: 0000:5f:00.2
+      vendor: "15b3"
+    - deviceID: 1018
+      driver: mlx5_core
+      pciAddress: 0000:5f:00.3
+      vendor: "15b3"
+    - deviceID: 1018
+      driver: mlx5_core
+      pciAddress: 0000:5f:00.4
+      vendor: "15b3"
+    deviceID: "1017"
+    driver: mlx5_core
+    linkSeed: 25000Mb/s
+    linkType: ETH
+    mac: 08:c0:eb:f4:85:ab
+    mtu: 1500
+    name: ens41f0np0
+    numVfs: 3
+    pciAddress: 0000:5f:00.0
+    totalvfs: 3
+    vendor: "15b3"
+  - Vfs:
+    - deviceID: 1018
+      driver: mlx5_core
+      pciAddress: 0000:5f:00.5
+      vendor: "15b3"
+    - deviceID: 1018
+      driver: mlx5_core
+      pciAddress: 0000:5f:00.6
+      vendor: "15b3"
+    - deviceID: 1018
+      driver: mlx5_core
+      pciAddress: 0000:5f:00.7
+      vendor: "15b3"
+    deviceID: "1017"
+    driver: mlx5_core
+    linkSeed: 25000Mb/s
+    linkType: ETH
+    mac: 08:c0:eb:f4:85:bb
+    mtu: 1500
+    name: ens41f1np1
+    numVfs: 3
+    pciAddress: 0000:5f:00.1
+    totalvfs: 3
+    vendor: "15b3"
+```
+
+检查 VF 的状态：
+
+```bash
+# lspci -nn | grep ConnectX
+5f:00.0 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5] [15b3:1017]
+5f:00.1 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5] [15b3:1017]
+5f:00.2 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+5f:00.3 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+5f:00.4 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+5f:00.5 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+5f:00.6 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+5f:00.7 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+```
+
+检查 PF 工作模式：
+
+```bash
+# cat /sys/class/net/ens41f0np0/compat/devlink/mode
+switchdev
+```
+
 ## 安装 Multus-CNI
 
 SR-IOV Device Plugin 调度时获得的设备 ID 需要通过 Multus-CNI 传递给 Kube-OVN，因此需要配置 Multus-CNI 配合完成相关任务。
 
-参考 [Multius-CNI 文档](https://github.com/k8snetworkplumbingwg/multus-cni)进行部署：
+参考 [Multus-CNI 文档](https://github.com/k8snetworkplumbingwg/multus-cni)进行部署：
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml

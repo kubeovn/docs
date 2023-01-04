@@ -131,7 +131,7 @@ corigine.com/agilio_sriov  0           0
 
 The device IDs obtained during SR-IOV Device Plugin scheduling need to be passed to Kube-OVN via Multus-CNI, so Multus-CNI needs to be configured to perform the related tasks.
 
-Please read [Multius-CNI Document](https://github.com/k8snetworkplumbingwg/multus-cni) to deploy：
+Please read [Multus-CNI Document](https://github.com/k8snetworkplumbingwg/multus-cni) to deploy：
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml

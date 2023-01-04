@@ -126,7 +126,7 @@ corigine.com/agilio_sriov  0           0
 
 SR-IOV Device Plugin 调度时获得的设备 ID 需要通过 Multus-CNI 传递给 Kube-OVN，因此需要配置 Multus-CNI 配合完成相关任务。
 
-参考 [Multius-CNI 文档](https://github.com/k8snetworkplumbingwg/multus-cni)进行部署：
+参考 [Multus-CNI 文档](https://github.com/k8snetworkplumbingwg/multus-cni)进行部署：
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml
