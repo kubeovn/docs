@@ -162,7 +162,17 @@ spec:
   logicalGateway: true
 ```
 
-开启此功能后，Pod 不使用外部网关，而是使用 Kube-OVN 创建的逻辑路由器（Logical Router）。对于跨网段通信进行转发。
+开启此功能后，Pod 不使用外部网关，而是使用 Kube-OVN 创建的逻辑路由器（Logical Router）对于跨网段通信进行转发。
+
+## Underlay 和 Overlay 网络互通
+
+如果一个集群同时存在 Underlay 和 Overlay 子网，默认情况下 Overlay 子网下的 Pod 可以通过网关以 NAT 的方式访问 Underlay 子网下的 Pod IP。
+在 Underlay 子网的 Pod 看来 Overlay 子网的地址是一个外部的地址，需要通过底层物理设备去转发，但底层物理设备并不清楚 Overlay 子网的地址无法进行转发。
+因此 Underlay 子网下的 Pod 无法通过 Pod IP 直接访问 Overlay 子网的 Pod。
+
+如果需要 Underlay 和 Overlay 互通需要将子网的 `u2oInterconnection` 设置为 `true`，在这个情况下 Kube-OVN 会额外使用一个 Underlay IP 将 Underlay 子网
+和 `ovn-cluster` 逻辑路由器连接，并设置对应的路由规则实现互通。
+和逻辑网关不同，该方案只会连接 Kube-OVN 内部的 Underlay 和 Overlay 子网，其他访问外网的流量还是会通过物理网关进行转发。
 
 ## 已知问题
 

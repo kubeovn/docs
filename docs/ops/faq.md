@@ -54,7 +54,7 @@ ethtool -K eth0 tx off
 Pod 内无法访问 Service 对应的服务，`dmesg` 显示异常：
 
 ```bash
-netlink：Unknown conntrack attr (type=6, max=5)
+netlink: Unknown conntrack attr (type=6, max=5)
 openvswitch: netlink: Flow actions may not be safe on all matching packets.
 ```
 
