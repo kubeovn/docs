@@ -248,3 +248,11 @@ kubectl-ko nbctl ls-del ts
 ```
 
 在对端集群重复同样的步骤。
+
+## 修改 az-name
+
+可以直接通过 `kubectl edit` 的方式对 `ovn-ic-config` 这个 configmap 中的 `az-name` 字段进行修改。
+但是需要在每个 ovn-cni pod 上执行以下命令，否则可能出现最长10分钟的跨集群网络中断。
+```bash
+ovn-appctl -t ovn-controller inc-engine/recompute
+```
