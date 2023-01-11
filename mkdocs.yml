@@ -211,5 +211,5 @@ extra:
       link: https://hub.docker.com/r/kubeovn/kube-ovn
   variables:
     version: v1.11.0
-    branch: release-1.10
+    branch: release-1.11
 copyright: Copyright &copy; 2022 The Linux Foundation
