@@ -31,50 +31,51 @@
 
 本列表统计从 v1.8 版本中包含的功能对应成熟度。
 
-| 功能                     | 默认开启  | 状态    | 开始（Since） | 结束（Until） |
-|------------------------|-------|-------|-----------|-----------|
-| Namespaced Subnet      | true  | GA    | 1.8       |           |
-| 分布式网关                  | true  | GA    | 1.8       |           |
-| 主从模式集中式网关              | true  | GA    | 1.8       |           |
-| ECMP 模式集中式网关           | false | Beta  | 1.8       |           |
-| 子网 ACL                 | true  | Alpha | 1.9       |           |
-| 子网隔离 (未来会和子网 ACL 合并)   | true  | Beta  | 1.8       |           |
-| Underlay 子网            | true  | GA    | 1.8       |           |
-| 子网 QoS                 | true  | Alpha | 1.9       |           |
-| 多网卡管理                  | true  | Beta  | 1.8       |           |
-| 子网 DHCP                | false | Alpha | 1.10      |           |
-| 子网设置外部网关               | false | Alpha | 1.8       |           |
-| 使用 OVN-IC 进行集群互联       | false | Beta  | 1.8       |           |
-| 使用 Submariner 进行集群互联   | false | Alpha | 1.9       |           |
-| 子网 VIP 预留              | true  | Alpha | 1.10      |           |
-| 创建自定义 VPC              | true  | Beta  | 1.8       |           |
-| 自定义 VPC 浮动IP/SNAT/DNAT | true  | Alpha | 1.10      |           |
-| 自定义 VPC 静态路由           | true  | Alpha | 1.10      |           |
-| 自定义 VPC 策略路由           | true  | Alpha | 1.10      |           |
-| 自定义 VPC 安全组            | true  | Alpha | 1.10      |           |
-| 容器最大带宽 QoS             | true  | GA    | 1.8       |           |
-| linux-netem QoS        | true  | Alpha | 1.9       |           |
-| Prometheus 集成          | false | GA    | 1.8       |           |
-| Grafana 集成             | false | GA    | 1.8       |           |
-| 双栈网络                   | false | GA    | 1.8       |           |
-| 默认 VPC EIP/SNAT        | false | Beta  | 1.8       |           |
-| 流量镜像                   | false | GA    | 1.8       |           |
-| NetworkPolicy          | true  | Beta  | 1.8       |           |
-| Webhook                | false | Alpha | 1.10      |           |
-| 性能调优                   | false | Beta  | 1.8       |           |
-| Overlay 子网静态路由对外暴露     | false | Alpha | 1.8       |           |
-| Overlay 子网 BGP 对外暴露    | false | Alpha | 1.9       |           |
-| Cilium 集成              | false | Alpha | 1.10      |           |
-| 自定义 VPC 互联             | false | Alpha | 1.10      |           |
-| Mellanox Offload       | false | Alpha | 1.8       |           |
-| 芯启源 Offload            | false | Alpha | 1.10      |           |
-| Windows 支持             | false | Alpha | 1.10      |           |
-| DPDK 支持                | false | Alpha | 1.10      |           |
-| OpenStack 集成           | false | Alpha | 1.9       |           |
-| 单个 Pod 固定 IP/Mac       | true  | GA    | 1.8       |           |
-| Workload 固定 IP         | true  | GA    | 1.8       |           |
-| StatefulSet 固定 IP      | true  | GA    | 1.8       |           |
-| VM 固定 IP               | false | Beta  | 1.9       |           |
-| 自定义 VPC 内部负载均衡         | false | Alpha | 1.11      |           |
-| 自定义 VPC DNS            | false | Alpha | 1.11      |           |
-| Underlay 和 Overlay 互通  | false | Alpha | 1.11      |           |
+| 功能                              | 默认开启  | 状态    | 开始（Since） | 结束（Until） |
+|---------------------------------|-------|-------|-----------|-----------|
+| Namespaced Subnet               | true  | GA    | 1.8       |           |
+| 分布式网关                           | true  | GA    | 1.8       |           |
+| 主从模式集中式网关                       | true  | GA    | 1.8       |           |
+| ECMP 模式集中式网关                    | false | Beta  | 1.8       |           |
+| 子网 ACL                          | true  | Alpha | 1.9       |           |
+| 子网隔离 (未来会和子网 ACL 合并)            | true  | Beta  | 1.8       |           |
+| Underlay 子网                     | true  | GA    | 1.8       |           |
+| 子网 QoS                          | true  | Alpha | 1.9       |           |
+| 多网卡管理                           | true  | Beta  | 1.8       |           |
+| 子网 DHCP                         | false | Alpha | 1.10      |           |
+| 子网设置外部网关                        | false | Alpha | 1.8       |           |
+| 使用 OVN-IC 进行集群互联                | false | Beta  | 1.8       |           |
+| 使用 Submariner 进行集群互联            | false | Alpha | 1.9       |           |
+| 子网 VIP 预留                       | true  | Alpha | 1.10      |           |
+| 创建自定义 VPC                       | true  | Beta  | 1.8       |           |
+| 自定义 VPC 浮动IP/SNAT/DNAT          | true  | Alpha | 1.10      |           |
+| 自定义 VPC 静态路由                    | true  | Alpha | 1.10      |           |
+| 自定义 VPC 策略路由                    | true  | Alpha | 1.10      |           |
+| 自定义 VPC 安全组                     | true  | Alpha | 1.10      |           |
+| 容器最大带宽 QoS                      | true  | GA    | 1.8       |           |
+| linux-netem QoS                 | true  | Alpha | 1.9       |           |
+| Prometheus 集成                   | false | GA    | 1.8       |           |
+| Grafana 集成                      | false | GA    | 1.8       |           |
+| 双栈网络                            | false | GA    | 1.8       |           |
+| 默认 VPC EIP/SNAT                 | false | Beta  | 1.8       |           |
+| 流量镜像                            | false | GA    | 1.8       |           |
+| NetworkPolicy                   | true  | Beta  | 1.8       |           |
+| Webhook                         | false | Alpha | 1.10      |           |
+| 性能调优                            | false | Beta  | 1.8       |           |
+| Overlay 子网静态路由对外暴露              | false | Alpha | 1.8       |           |
+| Overlay 子网 BGP 对外暴露             | false | Alpha | 1.9       |           |
+| Cilium 集成                       | false | Alpha | 1.10      |           |
+| 自定义 VPC 互联                      | false | Alpha | 1.10      |           |
+| Mellanox Offload                | false | Alpha | 1.8       |           |
+| 芯启源 Offload                     | false | Alpha | 1.10      |           |
+| Windows 支持                      | false | Alpha | 1.10      |           |
+| DPDK 支持                         | false | Alpha | 1.10      |           |
+| OpenStack 集成                    | false | Alpha | 1.9       |           |
+| 单个 Pod 固定 IP/Mac                | true  | GA    | 1.8       |           |
+| Workload 固定 IP                  | true  | GA    | 1.8       |           |
+| StatefulSet 固定 IP               | true  | GA    | 1.8       |           |
+| VM 固定 IP                        | false | Beta  | 1.9       |           |
+| 默认 VPC Load Balancer 类型 Service | false | Alpha | 1.11      |           |
+| 自定义 VPC 内部负载均衡                  | false | Alpha | 1.11      |           |
+| 自定义 VPC DNS                     | false | Alpha | 1.11      |           |
+| Underlay 和 Overlay 互通           | false | Alpha | 1.11      |           |
