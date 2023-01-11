@@ -18,5 +18,4 @@ jobs:
           git config --global user.name "ci-bot"
           git config --global user.email "ci-bot@example.com"
           git fetch origin gh-pages
-          mike deploy --push -f v1.10.x stable -t "v1.10.x (stable)"
-          mike set-default stable --push
+          mike deploy --push -f v1.10.x -t "v1.10.x"
