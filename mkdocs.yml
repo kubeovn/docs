@@ -200,7 +200,7 @@ extra:
     default: stable
   social:
     - icon: fontawesome/brands/weixin
-      link: http://page.alauda.cn/kubeovn
+      link: https://ma.alauda.cn/p/0f39a
     - icon: fontawesome/brands/slack
       link: https://kube-ovn-slackin.herokuapp.com/
     - icon: fontawesome/brands/twitter
