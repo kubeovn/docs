@@ -262,13 +262,13 @@ ENABLE_SSL=true
 SSL 功能默认安装下为关闭模式。
 
 ## 绑定本地ip
-kube-ovn-controller/kube-ovn-cni/kube-ovn-monitor这些服务支持绑定本地ip，如要开启可以调整安装脚本中的如下参数：
+kube-ovn-controller/kube-ovn-cni/kube-ovn-monitor 这些服务支持绑定本地 ip，如要开启可以调整安装脚本中的如下参数：
 
 ```bash
 ENABLE_BIND_LOCAL_IP=true
 ```
 
-比如kube-ovn-monitor会把服务绑定本地的pod ip如下：
+比如 kube-ovn-monitor 会把服务绑定本地的 pod ip 如下：
 
 ```
 # netstat -tunlp |grep kube-ovn
