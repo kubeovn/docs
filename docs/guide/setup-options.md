@@ -268,8 +268,10 @@ kube-ovn-controller/kube-ovn-cni/kube-ovn-monitor这些服务支持绑定本地i
 ENABLE_BIND_LOCAL_IP=true
 ```
 
-比如kube-ovn-monitor会把服务绑定本地的node ip
+比如kube-ovn-monitor会把服务绑定本地的pod ip
 ```
+netstat -tunlp
+...
 tcp        0      0 172.18.0.5:10661        0.0.0.0:*               LISTEN      2612/./kube-ovn-mon
 ```
 
