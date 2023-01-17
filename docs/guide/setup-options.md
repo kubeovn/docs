@@ -275,7 +275,7 @@ ENABLE_BIND_LOCAL_IP=true
 tcp        0      0 172.18.0.5:10661        0.0.0.0:*               LISTEN      2612/./kube-ovn-mon
 ```
 
-安装后也可通过修改服务 Deployment 的参数进行调整：
+安装后也可通过修改服务的 deployment 或者 daemonSet 的环境变量参数进行调整：
 
 ```yaml
 env:
