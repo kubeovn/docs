@@ -51,5 +51,5 @@ make e2e
 ```bash
 make kind-init
 make kind-install-underlay
-make e2e-underlay-single-nic
+make e2e underlay-single-nic
 ```
