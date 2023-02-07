@@ -223,6 +223,7 @@ spec:
 `gatewayNode` format can be changed to `kube-ovn-worker:172.18.0.2, kube-ovn-control-plane:172.18.0.3`.
 - The centralized gateway defaults to primary-backup mode, with only the primary node performing traffic forwarding.
   If you need to switch to ECMP mode, please refer to [ECMP Settings](setup-options.en.md#centralized-gateway-ecmp-settings).
+- The spec field `enableEcmp` has been added to the subnet crd definition since Kube-OVN v1.12.0 to migrate the ECMP switch to the subnet level. You can set whether to enable ECMP mode based on different subnets. The `enable-ecmp` parameter in the `kube-ovn-controller` deployment is no longer used. After the previous version is upgraded to v1.12.0, the subnet switch will automatically inherit the value of the original global switch parameter.
 
 ## Subnet ACL
 
