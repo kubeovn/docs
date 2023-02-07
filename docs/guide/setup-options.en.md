@@ -125,6 +125,8 @@ args:
 
 The LB feature is enabled in the default installation.
 
+The spec field `enableLb` has been added to the subnet crd definition since Kube-OVN v1.12.0 to migrate the LB function of Kube-OVN to the subnet level. You can set whether to enable the LB function based on different subnets. The `enable-lb` parameter in the `kube-ovn-controller` deployment is used as a global switch to control whether to create a load-balancer record. The `enableLb` parameter added in the subnet is used to control whether the subnet is associated with a load-balancer record. After the previous version is upgraded to v1.12.0, the `enableLb` parameter of the subnet will automatically inherit the value of the original global switch parameter.
+
 ## NetworkPolicy Settings
 
 Kube-OVN uses ACLs in OVN to implement NetworkPolicy. 
@@ -178,6 +180,8 @@ args:
 ```
 
 Centralized gateway default installation under the primary-backup mode, more gateway-related content please refer to [Config Subnet](./subnet.en.md).
+
+The spec field `enableEcmp` has been added to the subnet crd definition since Kube-OVN v1.12.0 to migrate the ECMP switch to the subnet level. You can set whether to enable ECMP mode based on different subnets. The `enable-ecmp` parameter in the `kube-ovn-controller` deployment is no longer used. After the previous version is upgraded to v1.12.0, the subnet switch will automatically inherit the value of the original global switch parameter.
 
 ## Kubevirt VM Fixed Address Settings
 
