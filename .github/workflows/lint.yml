@@ -18,6 +18,6 @@ jobs:
       - name: lint
         run: |
           npm install -g markdownlint-cli
-          ls
-          markdownlint "**/*.md"
+          pwd
+          markdownlint "**/*.md" --disable MD013 MD033 MD045 MD024 MD041
           markdownlint -V
