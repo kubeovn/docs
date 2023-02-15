@@ -73,8 +73,8 @@ yaml 代码块需要标识为 yaml。
 <tbody>
 <tr><td>
 
-`````
-````
+`````markdown
+````yaml
 apiVersion: kubeovn.io/v1
 kind: Subnet
 metadata:
@@ -84,7 +84,7 @@ metadata:
 
 </td><td>
 
-`````
+`````markdown
 ````yaml
 apiVersion: kubeovn.io/v1
 kind: Subnet
@@ -103,15 +103,15 @@ metadata:
 <tbody>
 <tr><td>
 
-`````
-````
+`````markdown
+````bash
 wget 127.0.0.1
 ````
 `````
 
 </td><td>
 
-`````
+`````markdown
 ````bash
 wget 127.0.0.1
 ````
@@ -187,13 +187,13 @@ mv /etc/origin/ovn/ovnsb_db.db /tmp
 <tbody>
 <tr><td>
 
-```
+```markdown
 安装前请参考[准备工作](http://kubeovn.github.io/prepare)。
 ```
 
 </td><td>
 
-```
+```markdown
 安装前请参考[准备工作](./prepare.md)。
 ```
 
@@ -205,13 +205,13 @@ mv /etc/origin/ovn/ovnsb_db.db /tmp
 <tbody>
 <tr><td>
 
-```
+```markdown
 如有问题请参考 [Kubernetes 文档](http://kubernetes.io)。
 ```
 
 </td><td>
 
-```
+```markdown
 如有问题请参考 [Kubernetes 文档](http://kubernetes.io){: target="_blank" }。
 ```
 
@@ -227,7 +227,7 @@ mv /etc/origin/ovn/ovnsb_db.db /tmp
 <tbody>
 <tr><td>
 
-````
+````markdown
 下载下面的脚本，进行安装：
 ```bash
 wget 127.0.0.1
@@ -236,7 +236,7 @@ wget 127.0.0.1
 
 </td><td>
 
-````
+````markdown
 下载下面的脚本，进行安装：
 
 ```bash
@@ -254,7 +254,7 @@ wget 127.0.0.1
 <tbody>
 <tr><td>
 
-````
+````markdown
 下载下面的脚本，进行安装：
 
 
@@ -266,7 +266,7 @@ wget 127.0.0.1
 
 </td><td>
 
-````
+````markdown
 下载下面的脚本，进行安装：
 
 ```bash

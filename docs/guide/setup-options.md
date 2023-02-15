@@ -193,6 +193,7 @@ args:
 args:
 - --enable-ecmp=true 
 ```
+
 从 Kube-OVN v1.12.0 版本开始，在 subnet crd 定义中增加了 spec 字段 `enableEcmp`，将集中式子网 ECMP 开关控制迁移到子网层级，可以基于不同的子网分别设置是否开启 ECMP 模式。原有的 `kube-ovn-controller` Deployment 中的 `enable-ecmp` 参数不再使用。之前版本升级到 v1.12.0 之后，子网开关会自动继承原有的全局开关参数取值。
 
 集中式网关默认安装下为主备模式，更多网关相关内容请参考[子网使用](./subnet.md)。
@@ -275,7 +276,7 @@ ENABLE_BIND_LOCAL_IP=true
 
 以 kube-ovn-monitor 为例，开启功能后会把服务绑定本地的 pod ip 如下：
 
-```
+```bash
 # netstat -tunlp |grep kube-ovn
 tcp        0      0 172.18.0.5:10661        0.0.0.0:*               LISTEN      2612/./kube-ovn-mon
 ```
