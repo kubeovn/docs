@@ -66,6 +66,7 @@ nav:
       - 对上游 OVS/OVN 修改: 'reference/ovs-ovn-customized.md'
       - 隧道协议说明: 'reference/tunnel-protocol.md'
       - Kube-OVN 监控指标: 'reference/metrics.md'
+      - Kube-OVN 接口规范: 'reference/kube-ovn-api.md'
       - 文档规范: 'reference/document-convention.md'
   - 联系方式: 'contact.md'
 theme:
@@ -183,6 +184,7 @@ plugins:
           Iptables 规则: Iptables Rules
           自定义 VPC 内部负载均衡: VPC Internal Load Balancer
           自定义 VPC DNS: VPC DNS
+          Kube-OVN 接口规范: Kube-OVN API Reference
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
