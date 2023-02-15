@@ -1,11 +1,11 @@
 # OVN DB Backup and Recovery
 
-This document describes how to perform database backups and how to 
+This document describes how to perform database backups and how to
 perform cluster recovery from existing database files in different situations.
 
 ## Database Backup
 
-The database files can be backed up for recovery in case of failure. Use 
+The database files can be backed up for recovery in case of failure. Use
 the backup command of the kubectl plugin:
 
 ```bash
@@ -20,12 +20,12 @@ backup ovn-nb db to /root/ovnsb_db.060223191654183154.backup
 
 ## Cluster Partial Nodes Failure Recovery
 
-If some nodes in the cluster are working abnormally due to power failure, 
+If some nodes in the cluster are working abnormally due to power failure,
 file system failure or lack of disk space, but the cluster is still working normally, you can recover it by following the steps below.
 
 ### Check the Logs to Confirm Status
 
-Check the log in `/var/log/ovn/ovn-northd.log`, if it shows similar error as follows, 
+Check the log in `/var/log/ovn/ovn-northd.log`, if it shows similar error as follows,
 you can make sue that there is an exception in the database:
 
 ```bash
@@ -102,13 +102,12 @@ As most of the nodes are damaged, the cluster needs to be rebuilt by recovering 
 If you have previously backed up the database you can use the previous backup file to restore it.
 If not you can use the following steps to generate a backup from an existing file.
 
-> Since the database file in the default folder is a cluster format database file containing information about 
-> the current cluster, you can't rebuild the database directly with this file, 
+> Since the database file in the default folder is a cluster format database file containing information about
+> the current cluster, you can't rebuild the database directly with this file,
 > you need to use `ovsdb-tool cluster-to-standalone` to convert the format.
 
-
-Select the first node in the `ovn-central` environment variable `NODE_IPS` to restore the database files. 
-If the database file of the first node is corrupted, copy the file from the other machine `/etc/origin/ovn` to 
+Select the first node in the `ovn-central` environment variable `NODE_IPS` to restore the database files.
+If the database file of the first node is corrupted, copy the file from the other machine `/etc/origin/ovn` to
 the first machine. Run the following command to generate a database file backup.
 
 ```bash
@@ -129,7 +128,7 @@ mv /etc/origin/ovn/ovnsb_db.db /tmp
 
 ### Recovering Database Cluster
 
-Rename the backup databases to `ovnnb_db.db` and `ovnsb_db.db` respectively, 
+Rename the backup databases to `ovnnb_db.db` and `ovnsb_db.db` respectively,
 and copy them to the `/etc/origin/ovn/` directory of the first machine in the `ovn-central` environment variable `NODE_IPS`：
 
 ```bash

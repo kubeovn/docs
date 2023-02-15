@@ -47,12 +47,12 @@ Packets enter the physic network via the node NIC and are exchanged and routed a
 ## Pod visit Service IP
 
 Kube-OVN configures load balancing for each Kubernetes Service on a logical switch on each subnet.
-When a Pod accesses other Pods by accessing the Service IP, a network packet is constructed with the Service IP as 
+When a Pod accesses other Pods by accessing the Service IP, a network packet is constructed with the Service IP as
 the destination address and the MAC address of the gateway as the destination MAC address.
-After the network packet enters the logical switch, load balancing will intercept and DNAT the network packet to modify 
+After the network packet enters the logical switch, load balancing will intercept and DNAT the network packet to modify
 the destination IP and port to the IP and port of one of the Endpoint corresponding to the Service.
-Since the logical switch does not modify the Layer 2 destination MAC address of the network packet, 
-the network packet will still be delivered to the physic gateway after entering the physic switch, 
+Since the logical switch does not modify the Layer 2 destination MAC address of the network packet,
+the network packet will still be delivered to the physic gateway after entering the physic switch,
 and the physic gateway will be required to forward the network packet.
 
 ### Service Backend is the Same Node and Same Subnet Pod

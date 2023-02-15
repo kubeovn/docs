@@ -43,6 +43,7 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/d
 ```
 
 ### 修改脚本中相应配置
+
 ```bash
 NETWORK_TYPE          # 设置为 vlan
 VLAN_INTERFACE_NAME   # 设置为宿主机上承担容器流量的网卡，例如 eth1
@@ -140,6 +141,7 @@ spec:
 将 `vlan` 的值指定为需要使用的 VLAN 名称即可。多个 Subnet 可以引用同一个 VLAN。
 
 ## 容器创建
+
 可按正常容器创建方式进行创建，查看容器 IP 是否在规定范围内，以及容器是否可以和物理网络互通。
 
 如有固定 IP 需求，可参考 [Pod 固定 IP 和 Mac](../guide/static-ip-mac.md)

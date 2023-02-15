@@ -190,6 +190,7 @@ mv /etc/origin/ovn/ovnsb_db.db /tmp
 ```
 安装前请参考[准备工作](http://kubeovn.github.io/prepare)。
 ```
+
 </td><td>
 
 ```
@@ -232,6 +233,7 @@ mv /etc/origin/ovn/ovnsb_db.db /tmp
 wget 127.0.0.1
 ```
 ````
+
 </td><td>
 
 ````
@@ -261,6 +263,7 @@ wget 127.0.0.1
 wget 127.0.0.1
 ```
 ````
+
 </td><td>
 
 ````

@@ -113,7 +113,7 @@ data:
       - role: pod
 ```
 
-Prometheus 提供了基于角色查询 Kubernetes 资源监控的操作，具体配置可以查看官方文档 
+Prometheus 提供了基于角色查询 Kubernetes 资源监控的操作，具体配置可以查看官方文档
 [kubernetes_sd_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)。
 
 在 Kubernetes 集群中，Prometheus 支持查询监控指标的角色包含 node、service、pod、endpoints 和 ingress。在 ConfigMap 配置文件中给出了以上全部资源的监控查询配置示例，可以根据需要选择配置。
@@ -243,11 +243,13 @@ prometheus   10.3.0.7:9090                                                    8d
         target_label: __metrics_path__
         regex: "(.+)"
 ```
+
 Service 默认监控路径为 /metrics。如果 Service 提供的监控指标是其他的路径，可以通过给 Service 添加 annotation `prometheus.io/path` 来指定采集路径。
 
 应用以上 yaml，更新 ConfigMap 信息，重建 Prometheus Pod，使配置生效。
 
 查看 kube-system Namespace 下的 Service 信息：
+
 ```bash
 # kubectl get svc -n kube-system
 NAME                  TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                  AGE

@@ -1,6 +1,6 @@
 # 开发环境构建
 
-## 环境准备:
+## 环境准备
 
 Kube-OVN 使用 [Go](https://golang.org/){: target="_blank" } 1.18 开发并使用 [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" } 管理依赖，
 请确认环境变量 `GO111MODULE="on"`。
@@ -48,6 +48,7 @@ make e2e
 ```
 
 如需运行 Underlay E2E 测试，执行下列命令：
+
 ```bash
 make kind-init
 make kind-install-underlay

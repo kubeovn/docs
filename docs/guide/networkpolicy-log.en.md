@@ -2,9 +2,8 @@
 
 NetworkPolicy is a interface provided by Kubernetes and implemented by Kube-OVN through OVN's ACLs.
 With NetworkPolicy, if the networks are down, it is difficult to determine whether it is caused by a network failure or a NetworkPolicy rule problem.
-Kube-OVN provides NetworkPolicy logging to help administrators quickly locate whether a NetworkPolicy drop rule has been hit, 
+Kube-OVN provides NetworkPolicy logging to help administrators quickly locate whether a NetworkPolicy drop rule has been hit,
 and to record the illegal accesses.
-
 
 > Once NetworkPolicy logging is turned on, logs need to be printed for every packet that hits a Drop rule, which introduces additional performance overhead.
 > Under a malicious attack, a large number of logs in a short period of time may exhaust the CPU.

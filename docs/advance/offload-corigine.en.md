@@ -1,21 +1,22 @@
 # Offload with Corigine
 
-Kube-OVN uses OVS for traffic forwarding in the final data plane, and the associated flow table matching, 
+Kube-OVN uses OVS for traffic forwarding in the final data plane, and the associated flow table matching,
 tunnel encapsulation and other functions are CPU-intensive, which consumes a lot of CPU resources and leads to higher latency and lower throughput under heavy traffic.
 Corigine Agilio CX series SmartNIC can offload OVS-related operations to the hardware.
-This technology can shorten the data path without modifying the OVS control plane, avoiding the use of host CPU resources, 
+This technology can shorten the data path without modifying the OVS control plane, avoiding the use of host CPU resources,
 which dramatically reduce latency and significantly increase the throughput.
 
 ![](../static/hw-offload.png)
 
 ## Prerequisites
+
 - Corigine Agilio CX series SmartNIC.
 - CentOS 8 Stream or Linux 5.7 above.
 - Since the current NIC does not support `dp_hash` and `hash` operation offload, OVN LB function should be disabled.
 
 ## Setup SR-IOV
 
-Please read [Agilio Open vSwitch TC User Guide](https://help.netronome.com/support/solutions/articles/36000081172-agilio-open-vswitch-tc-user-guide) 
+Please read [Agilio Open vSwitch TC User Guide](https://help.netronome.com/support/solutions/articles/36000081172-agilio-open-vswitch-tc-user-guide)
 for the detail usage of this SmartNIC.
 
 The following scripts are saved for subsequent execution of firmware-related operations:
@@ -84,7 +85,7 @@ Check the number of available VFs and create VFs.
 
 ## Install SR-IOV Device Plugin
 
-Since each machine has a limited number of VFs and each Pod that uses acceleration will take up VF resources, 
+Since each machine has a limited number of VFs and each Pod that uses acceleration will take up VF resources,
 we need to use the SR-IOV Device Plugin to manage the corresponding resources so that the scheduler knows how to schedule.
 
 Create SR-IOV Configmap:
@@ -169,7 +170,7 @@ spec:
 
 - `provider`: the format should be {name}.{namespace}.ovn of related `NetworkAttachmentDefinition`.
 
-## Enable Offload in Kube-OVN 
+## Enable Offload in Kube-OVN
 
 Download the scripts:
 
@@ -178,6 +179,7 @@ wget https://raw.githubusercontent.com/alauda/kube-ovn/{{ variables.branch }}/di
 ```
 
 Change the related options，`IFACE` should be the physic NIC and has an IP:
+
 ```bash
 ENABLE_MIRROR=${ENABLE_MIRROR:-false}
 HW_OFFLOAD=${HW_OFFLOAD:-true}

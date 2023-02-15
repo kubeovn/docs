@@ -61,6 +61,7 @@ subjects:
 The startup of Prometheus relies on the configuration file prometheus.yml, the contents of which can be configured in ConfigMap and dynamically mounted to the Pod.
 
 Create the ConfigMap file used by Prometheus by referring to the following yaml:
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -214,7 +215,7 @@ You can see that you can currently query all the service data information on the
 
 ### Configure to Query Specified Resource
 
-The ConfigMap configuration above queries all resource data. 
+The ConfigMap configuration above queries all resource data.
 If you only need resource data for a certain role, you can add filter conditions.
 
 Take Service as an example, modify the ConfigMap content to query only the service monitoring data:

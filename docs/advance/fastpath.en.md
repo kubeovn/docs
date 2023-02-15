@@ -59,5 +59,5 @@ To uninstall a module, use the following command.
 rmmod kube_ovn_fastpath.ko
 ```
 
-> This module will not be loaded automatically after machine reboot. If you want to load it automatically, please write 
+> This module will not be loaded automatically after machine reboot. If you want to load it automatically, please write
 > the corresponding autostart script according to the system configuration.

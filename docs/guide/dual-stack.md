@@ -34,6 +34,7 @@ JOIN_CIDR="100.64.0.0/16,fd00:100:64::/64"
 ## 查看 Pod 地址
 
 配置双栈网络的 Pod 将会从该子网同时分配 IPv4 和 IPv6 的地址，分配结果会显示在 Pod 的 annotation 中:
+
 ```yaml
 apiVersion: v1
 kind: Pod

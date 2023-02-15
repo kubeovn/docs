@@ -1,13 +1,13 @@
 # Integration with OpenStack
 
-In some cases, users need to run virtual machines with OpenStack and containers with Kubernetes, 
+In some cases, users need to run virtual machines with OpenStack and containers with Kubernetes,
 and need the network to interoperate between containers and virtual machines and be under a unified control plane.
-If the OpenStack Neutron side also uses OVN as the underlying network, then Kube-OVN can use either cluster interconnection 
+If the OpenStack Neutron side also uses OVN as the underlying network, then Kube-OVN can use either cluster interconnection
 or shared underlying OVN to connect the OpenStack and Kubernetes networks.
 
 ## Cluster Interconnection
 
-This pattern is similar to [Cluster Inter-Connection with OVN-IC](./with-ovn-ic.md) to connect two Kubernetes cluster networks, 
+This pattern is similar to [Cluster Inter-Connection with OVN-IC](./with-ovn-ic.md) to connect two Kubernetes cluster networks,
 except that the two ends of the cluster are replaced with OpenStack and Kubernetes。
 
 ### Prerequisites
@@ -17,7 +17,7 @@ except that the two ends of the cluster are replaced with OpenStack and Kubernet
 3. Each cluster needs to have a set of machines that can access each other across clusters via IP as the gateway nodes.
 4. This solution only connects to the Kubernetes default subnet with selected VPC in OpenStack.
 
-###  Deploy OVN-IC DB
+### Deploy OVN-IC DB
 
 Start the `OVN-IC` DB with the following command:
 
@@ -82,6 +82,7 @@ Start the `OVN-IC` controller at a node that has access to the `OVN-IC` DB:
   --ovn-northd-sb-db=unix:/run/ovn/ovnsb_db.sock \
   start_ic
 ```
+
 - `ovn-ic-nb-db`，`ovn-ic-sb-db`: OVN-IC Northbound database and southbound database addresses.
 - `ovn-northd-nb-db`， `ovn-northd-sb-db`: Current cluster OVN northbound database and southbound data address.
 
@@ -181,6 +182,7 @@ Query the existing network resources in OpenStack for the following resources th
 ```
 
 On the Kubernetes side, query the VPC resources from OpenStack:
+
 ```bash
 # kubectl get vpc
 NAME                                           STANDBY   SUBNETS

@@ -56,6 +56,7 @@ spec:
       }
     }'
 ```
+
 - `spec.config.ipam.type`: 需要为 `kube-ovn` 来调用 kube-ovn 的插件来获取地址信息。
 - `server_socket`: Kube-OVN 通信使用的 socket 文件。 默认位置为 `/run/openvswitch/kube-ovn-daemon.sock`。
 - `provider`: 当前 NetworkAttachmentDefinition 的 `<name>.<namespace>` , Kube-OVN 将会使用这些信息找到对应的 Subnet 资源。
@@ -89,7 +90,7 @@ spec:
 
 ### 创建一个 Kube-OVN Subnet
 
-创建一个 Kube-OVN Subnet,设置对应的 `cidrBlock` 和 `exclude_ips`, `provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>`, 
+创建一个 Kube-OVN Subnet,设置对应的 `cidrBlock` 和 `exclude_ips`, `provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>`,
 例如用 macvlan 提供附加网卡，创建 Subnet 如下：
 
 ```yaml

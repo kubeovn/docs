@@ -256,6 +256,7 @@ env:
 不同协议在实际使用中的区别请参考[隧道协议说明](../reference/tunnel-protocol.md)。
 
 ## SSL 设置
+
 OVN DB 的 API 接口支持 SSL 加密来保证连接安全，如要开启可调整安装脚本中的如下参数:
 
 ```bash
@@ -265,6 +266,7 @@ ENABLE_SSL=true
 SSL 功能默认安装下为关闭模式。
 
 ## 绑定本地 ip
+
 kube-ovn-controller/kube-ovn-cni/kube-ovn-monitor 这些服务支持绑定本地 ip，该功能设计原因主要是因为某些场景下出于安全考虑不允许服务绑定 0.0.0.0 （比如该服务部署在某个对外网关上，外部用户可以直接通过公网 ip 并指定端口去访问到该服务），该功能默认是打开的，由安装脚本中如下参数控制：
 
 ```bash

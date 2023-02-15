@@ -9,6 +9,7 @@ Cilium 提供了丰富的网络流量观测能力，流量可观测性是由 Hub
 默认的 Cilium 集成安装中，并没有安装 Hubble 相关组件，因此要支持流量观测，需要先在环境上补充安装 Hubble。
 
 执行以下命令，使用 helm 安装 Hubble：
+
 ```bash
 helm upgrade cilium cilium/cilium --version 1.11.6 \
    --namespace kube-system \
@@ -18,6 +19,7 @@ helm upgrade cilium cilium/cilium --version 1.11.6 \
 ```
 
 补充安装 Hubble 之后，执行 `cilium status` 查看组件状态，确认 Hubble 安装成功。
+
 ```bash
 # cilium status
     /¯¯\
@@ -46,17 +48,20 @@ apple@bogon cilium %
 
 安装 Hubble 组件之后，需要安装命令行，用于在环境上查看流量信息。
 执行以下命令，安装 Hubble CLI :
+
 ```bash
 curl -L --fail --remote-name-all https://github.com/cilium/hubble/releases/download/v0.10.0/hubble-linux-amd64.tar.gz
 sudo tar xzvfC hubble-linux-amd64.tar.gz /usr/local/bin
 ```
 
 ## 部署测试业务
+
 Cilium 官方提供了一个流量测试的部署方案，可以直接使用官方部署的业务进行测试。
 
 执行命令 `cilium connectivity test`，Cilium 会自动创建 `cilium-test` 的 Namespace，同时在 cilium-test 下部署测试业务。
 
 正常部署完后，可以查看 cilium-test namespace 下的资源信息，参考如下：
+
 ```bash
 # kubectl get all -n cilium-test
 NAME                                  READY   STATUS    RESTARTS   AGE
@@ -86,6 +91,7 @@ replicaset.apps/echo-same-node-5d466d5444   1         1         1       21s
 
 默认情况下，网络流量观测仅提供每个节点 Cilium 代理观察到的流量。
 可以在 `kube-system namespace` 下的 Cilium 代理 pod 中执行 `hubble observe` 命令，查看该节点上的流量信息。
+
 ```bash
 # kubectl get pod -n kube-system -o wide
 NAME                                             READY   STATUS    RESTARTS   AGE     IP           NODE                     NOMINATED NODE   READINESS GATES
@@ -119,9 +125,11 @@ Jul 29 03:24:25.979: kube-system/kube-ovn-pinger-msvcn -> 172.18.0.3 to-stack FO
 Jul 29 03:24:26.037: kube-system/coredns-6d4b75cb6d-lbgjg:36430 -> 172.18.0.3:6443 to-stack FORWARDED (TCP Flags: ACK)
 Jul 29 03:24:26.282: kube-system/kube-ovn-pinger-msvcn -> 172.18.0.2 to-stack FORWARDED (ICMPv4 EchoRequest)
 ```
+
 部署 Hubble Relay 后，Hubble 可以提供完整的集群范围的网络流量观测。
 
 ### 配置端口转发
+
 为了能正常访问 Hubble API，需要创建端口转发，将本地请求转发到 Hubble Service。可以执行 `kubectl port-forward deployment/hubble-relay -n kube-system 4245:4245` 命令，在当前终端开启端口转发。
 
 端口转发配置可以参考 [端口转发](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/)。
@@ -129,6 +137,7 @@ Jul 29 03:24:26.282: kube-system/kube-ovn-pinger-msvcn -> 172.18.0.2 to-stack FO
 `kubectl port-forward` 命令不会返回，需要打开另一个终端来继续测试。
 
 配置完端口转发之后，在终端执行 `hubble status` 命令，如果有类似如下输出，则端口转发配置正确，可以使用命令行进行流量观测。
+
 ```bash
 # hubble status
 Healthcheck (via localhost:4245): Ok
@@ -138,6 +147,7 @@ Connected Nodes: 2/2
 ```
 
 ### 命令行观测
+
 在终端上执行 `hubble observe` 命令，查看集群的流量信息。
 观测到的 cilium-test 相关的测试流量参考如下：
 ![](../static/cilium-test-cmd.png)
@@ -160,6 +170,7 @@ Connected Nodes: 2/2
 Hubble 组件提供了集群中 Pod 网络行为的监控，为了支持查看 Hubble 提供的监控数据，需要使能监控统计。
 
 参考以下命令，补充 `hubble.metrics.enabled` 配置项:
+
 ```bash
 helm upgrade cilium cilium/cilium --version 1.11.6 \
    --namespace kube-system \
@@ -170,6 +181,7 @@ helm upgrade cilium cilium/cilium --version 1.11.6 \
 ```
 
 部署之后，会在 kube-system namespace 生成名称为 `hubble-metrics` 的服务。通过访问 Endpoints 查询 Hubble 提供的监控指标，参考如下:
+
 ```bash
 # curl 172.18.0.2:9091/metrics
 # HELP hubble_drop_total Number of drops

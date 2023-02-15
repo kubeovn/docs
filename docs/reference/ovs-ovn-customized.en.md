@@ -1,6 +1,6 @@
 # OVS/OVN Customization
 
-Upstream OVN/OVS was originally designed with the goal of a general purpose SDN controller and data plane. 
+Upstream OVN/OVS was originally designed with the goal of a general purpose SDN controller and data plane.
 Due to some specific usage of the Kubernetes network,Kube-OVN only focused on part of the features.
 In order to achieve better performance, stability and specific features, Kube-OVN has made some modifications to the upstream OVN/OVS.
 Users using their own OVN/OVS with Kube-OVN controllers need to be aware of the possible impact of the following changes:

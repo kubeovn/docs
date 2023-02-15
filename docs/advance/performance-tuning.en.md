@@ -1,31 +1,32 @@
 # Performance Tuning
 
-To keep the installation simple and feature-complete, the default installation script for Kube-OVN does not have performance-specific optimizations. 
+To keep the installation simple and feature-complete, the default installation script for Kube-OVN does not have performance-specific optimizations.
 If the applications are sensitive to latency and throughput, administrators can use this document to make specific performance optimizations.
 
-The community will continue to iterate on the performance. 
-Some general performance optimizations have been integrated into the latest version, 
+The community will continue to iterate on the performance.
+Some general performance optimizations have been integrated into the latest version,
 so it is recommended to use the latest version to get better default performance.
 
 For more on the process and methodology of performance optimization, please watch the video [Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web)。
 
 ## Benchmarking
 
-> Because the hardware and software environments vary greatly, the performance test data provided here can only be used as a reference, 
+> Because the hardware and software environments vary greatly, the performance test data provided here can only be used as a reference,
 > and the actual test results may differ significantly from the results in this document.
-> It is recommended to compare the performance test results before and after optimization, 
+> It is recommended to compare the performance test results before and after optimization,
 > and the performance comparison between the host network and the container network.
 
 ### Overlay Performance Comparison before and after Optimization
 
 *Environment:*
+
 - Kubernetes: 1.22.0
 - OS: CentOS 7
 - Kube-OVN: 1.8.0 *Overlay* Mode
 - CPU: Intel(R) Xeon(R) E-2278G
 - Network: 2*10Gbps, xmit_hash_policy=layer3+4
 
-We use `qperf -t 60 <server ip> -ub -oo msg_size:1 -vu tcp_lat tcp_bw udp_lat udp_bw` 
+We use `qperf -t 60 <server ip> -ub -oo msg_size:1 -vu tcp_lat tcp_bw udp_lat udp_bw`
 to test bandwidth and latency of tcp/udp in 1-byte packets and the host network, respectively.
 
 | Type               | tcp_lat (us) | udp_lat (us) | tcp_bw (Mb/s) | udp_bw(Mb/s) |
@@ -34,12 +35,12 @@ to test bandwidth and latency of tcp/udp in 1-byte packets and the host network,
 | Kube-OVN Optimized | 13.9         | 12.9         | 27.6          | 5.57         |
 | HOST Network       | 13.1         | 12.4         | 28.2          | 6.02         |
 
-
 ### Overlay， Underlay and Calico Comparison
 
 Next, we compare the overlay and underlay performance of the optimized Kube-OVN at different packet sizes with Calico's `IPIP Always`, `IPIP never` and the host network.
 
 *Environment*:
+
 - Kubernetes: 1.22.0
 - OS: CentOS 7
 - Kube-OVN: 1.8.0
@@ -77,17 +78,17 @@ Next, we compare the overlay and underlay performance of the optimized Kube-OVN 
 | HOST Network       | 35.9         | 45.9         | 14.6          | 5.59         |
 
 > In some cases the container network outperforms the host network, this is because the container network path is optimized to completely bypass netfilter.
-> Due to the existence of `kube-proxy`, all packets in host network have to go through netfilter, which will lead to more CPU consumption, 
+> Due to the existence of `kube-proxy`, all packets in host network have to go through netfilter, which will lead to more CPU consumption,
 > so that container network in some environments has better performance.
 
 ## Dataplane performance optimization methods
 
-The optimization methods described here are related to the hardware and software environment and the desired functionality, 
+The optimization methods described here are related to the hardware and software environment and the desired functionality,
 so please carefully understand the prerequisites for optimization before attempting it.
 
 ### CPU Performance Mode Tuning
 
-In some environments the CPU is running in power saving mode, performance in this mode will be unstable and latency will increase significantly, 
+In some environments the CPU is running in power saving mode, performance in this mode will be unstable and latency will increase significantly,
 it is recommended to use the CPU's performance mode for more stable performance.
 
 ```bash
@@ -99,6 +100,7 @@ cpupower frequency-set -g performance
 In the case of increased traffic, a small buffer queue may lead to significant performance degradation due to a high packet loss rate and needs to be tuned.
 
 Check the current NIC queue length:
+
 ```bash
 # ethtool -g eno1
  Ring parameters for eno1:
@@ -156,7 +158,7 @@ args:
 ...
 ```
 
-> In Underlay mode `kube-proxy` cannot use iptables or ipvs to control container network traffic, 
+> In Underlay mode `kube-proxy` cannot use iptables or ipvs to control container network traffic,
 > if you want to disable the LB function, you need to confirm whether you do not need the Service function.
 
 ### FastPath Kernel Module
@@ -171,7 +173,7 @@ We pre-compiled the `FastPath` module for part of the kernels, which can be acce
 
 You can also compile it manually, see [Compiling FastPath Module](./fastpath.md)
 
-After obtaining the kernel module, you can load the `FastPath` module on each node 
+After obtaining the kernel module, you can load the `FastPath` module on each node
 using `insmod kube_ovn_fastpath.ko` and verify that the module was loaded successfully using `dmesg`:
 
 ```bash
@@ -186,10 +188,10 @@ using `insmod kube_ovn_fastpath.ko` and verify that the module was loaded succes
 
 ### OVS Kernel Module Optimization
 
-OVS flow processing including hashing, matching, etc. consumes about 10% of the CPU resources. 
-Some instruction sets on modern x86 CPUs such as `popcnt` and `sse4.2` can speed up the computation process, 
-but the kernel is not compiled with these options enabled. 
-It has been tested that the CPU consumption of flow-related operations is reduced to about 5% 
+OVS flow processing including hashing, matching, etc. consumes about 10% of the CPU resources.
+Some instruction sets on modern x86 CPUs such as `popcnt` and `sse4.2` can speed up the computation process,
+but the kernel is not compiled with these options enabled.
+It has been tested that the CPU consumption of flow-related operations is reduced to about 5%
 when the corresponding instruction set optimizations are enabled.
 
 Similar to the compilation of the `FastPath` module, it is not possible to provide a single kernel module artifact for all kernels.
@@ -228,7 +230,7 @@ Copy the RPM to each node and install:
 rpm -i openvswitch-kmod-2.15.2-1.el7.x86_64.rpm
 ```
 
-If you have previously started Kube-OVN and the older version of the OVS module has been loaded into the kernel. 
+If you have previously started Kube-OVN and the older version of the OVS module has been loaded into the kernel.
 It is recommended to reboot the machine to reload the new version of the kernel module.
 
 #### Compile and Install in Ubuntu
@@ -269,12 +271,12 @@ It is recommended to reboot the machine to reload the new version of the kernel 
 ### Using STT Type Tunnel
 
 Common tunnel encapsulation protocols such as Geneve and Vxlan use the UDP protocol to encapsulate packets and are well supported in the kernel.
-However, when TCP packets are encapsulated using UDP, the optimization and offload features of modern operating systems and 
+However, when TCP packets are encapsulated using UDP, the optimization and offload features of modern operating systems and
 network cards for the TCP protocol do not work well, resulting in a significant drop in TCP throughput.
 In some virtualization scenarios, due to CPU limitations, TCP packet throughput may even be a tenth of that of the host network.
 
 STT provides an innovative tunneling protocol that uses TCP formatted header for encapsulation.
-This encapsulation only emulates the TCP protocol header format without actually establishing a TCP connection, 
+This encapsulation only emulates the TCP protocol header format without actually establishing a TCP connection,
 but can take full advantage of the TCP optimization capabilities of modern operating systems and network cards.
 In our tests TCP packet throughput can be improved several times, reaching performance levels close to those of the host network.
 

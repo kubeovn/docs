@@ -1,11 +1,11 @@
 # Cluster Inter-Connection with OVN-IC
 
-Kube-OVN supports interconnecting two Kubernetes cluster Pod networks via [OVN-IC](https://docs.ovn.org/en/latest/tutorials/ovn-interconnection.html), 
+Kube-OVN supports interconnecting two Kubernetes cluster Pod networks via [OVN-IC](https://docs.ovn.org/en/latest/tutorials/ovn-interconnection.html),
 and the Pods in the two clusters can communicate directly via Pod IPs .
-Kube-OVN uses tunnels to encapsulate cross-cluster traffic, allowing container networks to interconnect between two clusters 
+Kube-OVN uses tunnels to encapsulate cross-cluster traffic, allowing container networks to interconnect between two clusters
 as long as there is a set of IP reachable machines.
 
-> This mode of multi-cluster interconnection is for Overlay network. 
+> This mode of multi-cluster interconnection is for Overlay network.
 > For Underlay network, it needs the underlying infrastructure to do the inter-connection work.
 
 ![](../static/inter-connection.png)
@@ -36,7 +36,7 @@ ctr -n k8s.io run -d --net-host --privileged --mount="type=bind,src=/etc/ovn/,ds
 
 ## Automatic Routing Mode
 
-In auto-routing mode, each cluster synchronizes the CIDR information of the Subnet under its own default VPC to `OVN-IC`, 
+In auto-routing mode, each cluster synchronizes the CIDR information of the Subnet under its own default VPC to `OVN-IC`,
 so make sure there is no overlap between the Subnet CIDRs of the two clusters.
 
 Create `ovn-ic-config` ConfigMap in `kube-system` Namespace:
@@ -65,7 +65,7 @@ data:
 - `gw-nodes`: The name of the nodes in the cluster interconnection that takes on the work of the gateways, separated by commas.
 - `auto-route`: Whether to automatically publish and learn routes.
 
-**Note:** To ensure the correct operation, the ConfigMap `ovn-ic-config` is not allowed to be modified. 
+**Note:** To ensure the correct operation, the ConfigMap `ovn-ic-config` is not allowed to be modified.
 If any parameter needs to be changed, please delete this ConfigMap, modify it and then apply it again.
 
 Check if the interconnected logical switch `ts` has been established in the `ovn-ic` container with the following command：
@@ -91,6 +91,7 @@ availability-zone az2
 ```
 
 At each cluster observe if logical routes have learned peer routes:
+
 ```bash
 # kubectl ko nbctl lr-route-list ovn-cluster
 IPv4 Routes
@@ -106,7 +107,7 @@ IPv4 Routes
 
 Next, you can try `ping` a Pod IP in Cluster 1 directly from a Pod in Cluster 2 to see if you can work.
 
-For a subnet that does not want to automatically publish routes to the other end, 
+For a subnet that does not want to automatically publish routes to the other end,
 you can disable route broadcasting by modifying `disableInterConnection` in the Subnet spec.
 
 ```yaml
@@ -121,7 +122,7 @@ spec:
 
 ## Manual Routing Mode
 
-For cases where there are overlapping CIDRs between clusters, 
+For cases where there are overlapping CIDRs between clusters,
 and you only want to do partial subnet interconnection, you can manually publish subnet routing by following the steps below.
 
 Create `ovn-ic-config` ConfigMap in `kube-system` Namespace, and set `auto-route` to `false`:
@@ -165,7 +166,7 @@ switch da6138b8-de81-4908-abf9-b2224ec4edf3 (ts)
         
 ```
 
-The output above shows that the remote address from cluster `az1` to cluster `az2` is `169.254.100.31` 
+The output above shows that the remote address from cluster `az1` to cluster `az2` is `169.254.100.31`
 and the remote address from `az2` to `az1` is `169.254.100.79`.
 
 In this example, the subnet CIDR within cluster `az1` is `10.16.0.0/24` and the subnet CIDR within cluster `az2` is `10.17.0.0/24`.
@@ -241,7 +242,7 @@ data:
 
 ## Manual Reset
 
-In some cases, the entire interconnection configuration needs to be cleaned up due to configuration errors, 
+In some cases, the entire interconnection configuration needs to be cleaned up due to configuration errors,
 you can refer to the following steps to clean up your environment.
 
 Delete the current `ovn-ic-config` Configmap:

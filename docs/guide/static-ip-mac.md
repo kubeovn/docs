@@ -43,6 +43,7 @@ IP Pool 的 Annotation 需要加在 `template` 内的 `annotation` 字段，除�
 其他用户自定义的 Workload 也可以使用同样的方式进行固定地址分配。
 
 ### Deployment 固定 IP 示例
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -75,6 +76,7 @@ spec:
 3. 当 `ovn.kubernetes.io/ip_pool` 中的 IP 数量小于 replicas 数量时，多出的 Pod 将无法创建。你需要根据 Workload 的更新策略以及扩容规划调整 `ovn.kubernetes.io/ip_pool` 中 IP 的数量。
 
 ## StatefulSet 固定地址
+
 StatefulSet 和其他 Workload 相同可以使用 `ovn.kubernetes.io/ip_pool` 来指定 Pod 使用的 IP。
 
 由于 StatefulSet 多用于有状态服务，对网络标示的固定有更高的要求，Kube-OVN 做了特殊的强化：
@@ -84,6 +86,7 @@ StatefulSet 和其他 Workload 相同可以使用 `ovn.kubernetes.io/ip_pool` �
 3. 基于 2 的能力，对于没有 `ovn.kubernetes.io/ip_pool` 注解的 StatefulSet，Pod 第一次生成时会随机分配 IP/Mac，之后在整个 StatefulSet 的生命周期内，网络信息都会保持固定。
 
 ### StatefulSet 示例
+
 ```yaml
 apiVersion: apps/v1
 kind: StatefulSet

@@ -206,7 +206,6 @@ NAME                VIP         PORT(S)                  SERVICE                
 vpc-dns-test-cjh1   10.96.0.3   53/UDP,53/TCP,9153/TCP   kube-system/slr-vpc-dns-test-cjh1   113s
 ```
 
-
 进入该 VPC 下的 Pod，测试 dns 解析：
 
 ```bash

@@ -7,6 +7,7 @@ Kube-OVN 在最终的数据平面使用 OVS 来完成流量转发，相关的流
 ![](../static/hw-offload.png)
 
 ## 前置条件
+
 - 芯启源 Agilio CX 系列的硬件网卡。
 - CentOS 8 Stream 或上游 Linux 5.7 以上内核支持。
 - 由于当前网卡不支持 `dp_hash` 和 `hash` 操作卸载，需关闭 OVN LB 功能。
@@ -17,6 +18,7 @@ Kube-OVN 在最终的数据平面使用 OVS 来完成流量转发，相关的流
 获得该网卡使用的更多详细信息。
 
 保存下列脚本用于后续执行固件相关操作：
+
 ```bash
 #!/bin/bash
 DEVICE=${1}
@@ -71,6 +73,7 @@ modprobe nfp
 ```
 
 检查可用 VF 数量，并创建 VF：
+
 ```bash
 # cat /sys/class/net/ens3/device/sriov_totalvfs
 65
@@ -84,6 +87,7 @@ modprobe nfp
 资源进行调度。
 
 创建 SR-IOV 相关 Configmap：
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -173,6 +177,7 @@ wget https://raw.githubusercontent.com/alauda/kube-ovn/{{ variables.branch }}/di
 ```
 
 修改相关参数，`IFACE` 需要为物理网卡名，该网卡需要有可路由 IP：
+
 ```bash
 ENABLE_MIRROR=${ENABLE_MIRROR:-false}
 HW_OFFLOAD=${HW_OFFLOAD:-true}

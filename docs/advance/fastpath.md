@@ -20,12 +20,14 @@ yum install -y kernel-devel-$(uname -r) gcc elfutils-libelf-devel
 ## 编译相关模块
 
 针对 3.x 的内核：
+
 ```bash
 cd kube-ovn/fastpath
 make all
 ```
 
 针对 4.x 的内核：
+
 ```bash
 cd kube-ovn/fastpath/4.18
 cp ../Makefile .

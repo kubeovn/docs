@@ -69,6 +69,7 @@ Server listening on 5201
 ```
 
 进入另一个 Pod 请求之前的 Pod：
+
 ```bash
 # kubectl exec -it perf-d4mqc -n ls1 sh
 # iperf3 -c 10.66.0.12
@@ -100,6 +101,7 @@ kubectl annotate --overwrite  pod perf-4n4gt -n ls1 ovn.kubernetes.io/ingress_ra
 ```
 
 再次从第二个 Pod 测试第一个 Pod 带宽：
+
 ```bash
 # iperf3 -c 10.66.0.12
 Connecting to host 10.66.0.12, port 5201
@@ -125,7 +127,7 @@ iperf Done.
 
 ## linux-netem QoS
 
-Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` 和 
+Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` 和
 `ovn.kubernetes.io/loss`。
 
 - `ovn.kubernetes.io/latency`：设置 Pod 流量延迟，取值为整数，单位为 ms。

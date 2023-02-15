@@ -1,6 +1,6 @@
 # One-Click Installation
 
-Kube-OVN provides a one-click installation script to help you quickly install a highly available, 
+Kube-OVN provides a one-click installation script to help you quickly install a highly available,
 production-ready Kube-OVN container network with Overlay networking by default.
 
 If you need Underlay/Vlan networking as the default container network，please read [Underlay Installation](./underlay.en.md)

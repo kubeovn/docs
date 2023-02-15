@@ -1,6 +1,6 @@
 # 使用 OVN-IC 进行多集群互联
 
-Kube-OVN 支持通过 [OVN-IC](https://docs.ovn.org/en/latest/tutorials/ovn-interconnection.html) 
+Kube-OVN 支持通过 [OVN-IC](https://docs.ovn.org/en/latest/tutorials/ovn-interconnection.html)
 将两个 Kubernetes 集群 Pod 网络打通，打通后的两个集群内的 Pod 可以通过 Pod IP 进行直接通信。
 Kube-OVN 使用隧道对跨集群流量进行封装，两个集群之间只要存在一组 IP 可达的机器即可完成容器网络的互通。
 
@@ -86,6 +86,7 @@ availability-zone az2
 ```
 
 在每个集群观察逻辑路由是否有学习到的对端路由：
+
 ```bash
 # kubectl ko nbctl lr-route-list ovn-cluster
 IPv4 Routes
@@ -253,6 +254,7 @@ kubectl-ko nbctl ls-del ts
 
 可以直接通过 `kubectl edit` 的方式对 `ovn-ic-config` 这个 configmap 中的 `az-name` 字段进行修改。
 但是需要在每个 ovn-cni pod 上执行以下命令，否则可能出现最长10分钟的跨集群网络中断。
+
 ```bash
 ovn-appctl -t ovn-controller inc-engine/recompute
 ```

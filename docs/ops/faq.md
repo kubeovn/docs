@@ -63,5 +63,5 @@ openvswitch: netlink: Flow actions may not be safe on all matching packets.
 ### 解决方法
 
 1. 升级内核模块或手动编译 OVS 内核模块。
-2. 若只使用 Overlay 网络可以更改 `kube-ovn-controller` 启动参数设置 `--enable-lb=false` 
+2. 若只使用 Overlay 网络可以更改 `kube-ovn-controller` 启动参数设置 `--enable-lb=false`
 关闭 OVN LB 使用 kube-proxy 进行 Service 转发。

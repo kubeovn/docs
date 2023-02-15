@@ -5,8 +5,11 @@ Kube-OVN 当前已经支持与 Cilium 集成，具体操作可以参考 [Cilium�
 在集成 Cilium 之后，就可以使用 Cilium 优秀的网络策略能力，实现对流量访问的控制。以下文档提供了对 Cilium L3 和 L4 网络策略能力的集成验证。
 
 ## 验证步骤
+
 ### 创建测试 Pod
+
 创建 namespace `test`。参考以下 yaml，在 test namespace 中创建指定 label `app=test` 的 Pod，作为测试访问的目的 Pod。
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -37,6 +40,7 @@ spec:
 ```
 
 同样参考以下 yaml，在 default namespace 下创建指定 label `app=dynamic` 的 Pod 为发起访问测试的 Pod。
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -68,6 +72,7 @@ spec:
 ```
 
 查看测试 Pod 以及 Label 信息:
+
 ```bash
 # kubectl get pod -o wide --show-labels
 NAME                         READY   STATUS    RESTARTS   AGE   IP           NODE                     NOMINATED NODE   READINESS GATES   LABELS
@@ -84,7 +89,9 @@ test-54c98bc466-mft5s          1/1     Running   0          8h      10.16.0.41  
 ```
 
 ### L3 网络策略测试
+
 参考以下 yaml，创建 `CiliumNetworkPolicy` 资源:
+
 ```yaml
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -105,6 +112,7 @@ spec:
 但是在 test namespace 下，测试到目的 Pod 的访问，测试正常。
 
 default namespace 下测试结果:
+
 ```bash
 # kubectl exec -it dynamic-7d8d7874f5-9v5c4 -- bash
 bash-5.0# ping -c 3 10.16.0.41
@@ -115,6 +123,7 @@ PING 10.16.0.41 (10.16.0.41): 56 data bytes
 ```
 
 test namepsace 下 Pod 的测试，访问正常:
+
 ```bash
 # kubectl exec -it -n test dynamic-7d8d7874f5-6dsg6 -- bash
 bash-5.0# ping -c 3 10.16.0.41
@@ -135,6 +144,7 @@ round-trip min/avg/max = 0.223/1.028/2.558 ms
 如果想实现跨 Namespace 的访问，需要在规则中明确指定 Namespace 信息。
 
 参考文档，修改 `CiliumNetworkPolicy` 资源，增加 namespace 信息:
+
 ```yaml
   ingress:
   - fromEndpoints:
@@ -142,7 +152,9 @@ round-trip min/avg/max = 0.223/1.028/2.558 ms
         app: dynamic
         k8s:io.kubernetes.pod.namespace: default    // 控制其他 Namespace 下的 Pod 访问
 ```
+
 查看修改后的 `CiliumNetworkPolicy` 资源信息:
+
 ```bash
 # kubectl get cnp -n test  -o yaml l3-rule
 apiVersion: cilium.io/v2
@@ -164,6 +176,7 @@ spec:
 ```
 
 再次测试 default namespace 下的 Pod 访问，目的 Pod 访问正常:
+
 ```bash
 # kubectl exec -it dynamic-7d8d7874f5-9v5c4 -n test -- bash
 bash-5.0# ping -c 3 10.16.0.41
@@ -182,7 +195,9 @@ round-trip min/avg/max = 0.115/0.880/2.383 ms
 这点与 Kube-OVN 实现是不同的。Kube-OVN 支持标准的 k8s 网络策略，限制了具体 Namespace 下的**目的 Pod**，但是对源地址 Pod，是没有 Namespace 限制的，任何 Namespace 下符合限制规则的 Pod，都可以实现对目的 Pod 的访问。
 
 ### L4 网络策略测试
+
 参考以下 yaml，创建 L4 层的网络策略资源:
+
 ```yaml
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -204,6 +219,7 @@ spec:
 ```
 
 测试相同 Namespace 下，符合网络策略规则的 Pod 的访问
+
 ```bash
 # kubectl exec -it -n test dynamic-7d8d7874f5-6dsg6 -- bash
 bash-5.0# ping -c 3 10.16.0.41
@@ -242,6 +258,7 @@ bash-5.0# curl 10.16.0.41:80
 ```
 
 相同 Namespace 下，不符合网络策略规则的 Pod 访问测试
+
 ```bash
 # kubectl exec -it -n test label-test1-77b6764857-swq4k -- bash
 bash-5.0# ping -c 3 10.16.0.41
@@ -266,6 +283,7 @@ curl: (28) Connection timeout after 10001 ms
 关于 ICMP 的限制，可以参考官方说明 [L4 限制说明](https://docs.cilium.io/en/stable/policy/language/#layer-4-examples)。
 
 ### L7 网络策略测试
+
 chaining 模式下，L7 网络策略目前是存在问题的。在 Cilium 官方文档中，对这种情况给出了说明，参考 [Generic Veth Chaining](https://docs.cilium.io/en/stable/gettingstarted/cni-chaining-generic-veth/)。
 
 这个问题使用 [issue 12454](https://github.com/cilium/cilium/issues/12454) 跟踪，目前还没有解决。

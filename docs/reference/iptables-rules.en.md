@@ -13,7 +13,6 @@ The ipset used is shown in the following table:
 | ovn40other-node/ovn60other-node                         | hash:net | Internal IP addresses for other Nodes             |
 | ovn40local-pod-ip-nat/ovn60local-pod-ip-nat             | hash:ip  | Deprecated                                        |
 
-
 The iptables rules (IPv4) used are shown in the following table:
 
 | Table  | Chain           | Rule                                                                                                                                | Usage                                                                                                                                                     | Note                                                                                      |

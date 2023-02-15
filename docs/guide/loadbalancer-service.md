@@ -5,6 +5,7 @@ Kube-OVN 已经支持了 VPC 和 VPC 网关的实现，具体配置可以参考 
 由于 VPC 网关的使用比较复杂，基于 VPC 网关的实现做了简化，支持在默认 VPC 下创建 `LoadBalancer` 类型的 Service，实现通过 LoadBalancerIP 来访问默认 VPC 下的 Service。
 
 首先确认环境上满足以下条件：
+
 1. 安装了 `multus-cni` 和 `macvlan cni`。
 2. LoadBalancer Service 的支持，是对 VPC 网关代码进行简化实现的，仍然使用 `vpc-nat-gw` 的镜像，依赖 macvlan 提供多网卡功能支持。
 3. 目前只支持在`默认 VPC` 配置，自定义 VPC 下的 LoadBalancer 支持可以参考 VPC 的文档 [VPC 配置](vpc.md)。
@@ -12,7 +13,9 @@ Kube-OVN 已经支持了 VPC 和 VPC 网关的实现，具体配置可以参考 
 ## 默认 VPC LoadBalancer Service 配置步骤
 
 ### 开启特性开关
+
 修改 kube-system namespace 下的 deployment `kube-ovn-controller`，在 `args` 中增加参数  `--enable-lb-svc=true`，开启功能开关，该参数默认为 false。
+
 ```yaml
 containers:
 - args:
@@ -41,6 +44,7 @@ spec:
       "mode": "bridge"
     }'
 ```
+
 默认情况下，通过物理网卡 `eth0` 来实现多网卡功能，如果需要使用其他物理网卡，可以通过修改 `master` 取值，指定使用的物理网卡名称。
 
 ### 创建 Subnet
@@ -94,6 +98,7 @@ spec:
   sessionAffinity: None
   type: LoadBalancer
 ```
+
 在 yaml 中，annotation `ovn.kubernetes.io/attchmentprovider`  为必填项，取值由第一步创建的 `net-attach-def` 资源的 Name.Namespace 组成。该 annotation 用于在创建 Pod 时，查找 `net-attach-def` 资源。
 
 可以通过 annotation 指定多网卡地址分配使用的子网。annotation key 格式为 net-attach-def 资源的 `Name.Namespace.kubernetes.io/logical_switch`。该配置为`可选`选项，在没有指定 LoadBalancerIP 地址的情况下，将从该子网动态分配地址，填充到 LoadBalancerIP 字段。
@@ -110,6 +115,7 @@ lb-svc-test-service-6869d98dd8-cjvll      1/1     Running   0          107m
 NAME              TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
 test-service      LoadBalancer   10.109.201.193   172.18.0.18   80:30056/TCP   107m
 ```
+
 指定 `service.spec.loadBalancerIP` 参数时，最终将该参数赋值给 service external-ip 字段。不指定的情况下，该参数为随机分配值。
 
 查看测试 Pod 的 yaml 输出，存在多网卡分配的地址信息：
@@ -215,6 +221,7 @@ status:
 ## 测试 LoadBalancerIP 访问
 
 参考以下 yaml, 创建测试 Pod，作为 Service 的 Endpoints 提供服务:
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -248,6 +255,7 @@ spec:
 ```
 
 正常情况下，提供的子网地址，在集群外应该可以访问到。为了简单验证，在集群内访问 Service 的 `LoadBalancerIP:Port`，查看是否正常访问成功。
+
 ```bash
 # curl 172.18.0.11:80
 <html>
@@ -279,6 +287,7 @@ spec:
 ```
 
 进入 Service 创建的 Pod，查看网络的信息
+
 ```bash
 # ip a
 4: net1@if62: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
@@ -295,11 +304,11 @@ spec:
        valid_lft forever preferred_lft forever
 
 # ip rule
-0:	from all lookup local
-32764:	from all iif eth0 lookup 100
-32765:	from all iif net1 lookup 100
-32766:	from all lookup main
-32767:	from all lookup default
+0: from all lookup local
+32764: from all iif eth0 lookup 100
+32765: from all iif net1 lookup 100
+32766: from all lookup main
+32767: from all lookup default
 
 # ip route show table 100
 default via 172.18.0.1 dev net1

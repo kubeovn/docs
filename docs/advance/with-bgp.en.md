@@ -1,13 +1,13 @@
 # BGP Support
 
-Kube-OVN supports broadcasting the IP address of the Pod or Subnet to the outside world via BGP protocol, 
+Kube-OVN supports broadcasting the IP address of the Pod or Subnet to the outside world via BGP protocol,
 so that the outside world can access the Pod directly through the Pod IP.
-To use this feature, you need to install `kube-ovn-speaker` on specific nodes and 
+To use this feature, you need to install `kube-ovn-speaker` on specific nodes and
 add the corresponding annotation to the Pod or Subnet that needs to be exposed to the outside world.
 
 ## Install kube-ovn-speaker
 
-`kube-ovn-speaker` use [GoBGP](https://osrg.github.io/gobgp/) to publish routing information to the outside world and 
+`kube-ovn-speaker` use [GoBGP](https://osrg.github.io/gobgp/) to publish routing information to the outside world and
 set the next-hop route to itself.
 
 Since the node where `kube-ovn-speaker` is deployed needs to carry return traffic, specific labeled nodes need to be selected for deployment:
@@ -17,7 +17,7 @@ kubectl label nodes speaker-node-1 ovn.kubernetes.io/bgp=true
 kubectl label nodes speaker-node-2 ovn.kubernetes.io/bgp=true
 ```
 
-> When there are multiple instances of kube-ovn-speaker, 
+> When there are multiple instances of kube-ovn-speaker,
 > each of them will publish routes to the outside world, the upstream router needs to support multi-path ECMP.
 
 Download the corresponding yaml:

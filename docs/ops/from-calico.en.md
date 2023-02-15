@@ -2,7 +2,7 @@
 
 If a Kubernetes cluster already has Calico installed and needs to change to Kube-OVN you can refer to this document.
 
-> Since the installation of Calico may vary from version to version and the existing Pod network may be disrupted during the replacement process, 
+> Since the installation of Calico may vary from version to version and the existing Pod network may be disrupted during the replacement process,
 > it is recommended that you plan ahead and compare the differences in Calico installation from version to version.
 
 ## Uninstall Calico
@@ -29,7 +29,7 @@ rm -f /etc/cni/net.d/10-calico.conflist
 rm -f /etc/cni/net.d/calico-kubeconfig
 ```
 
-Calico still leaves routing rules, iptables rules, veth network interfaces and other configuration information on the node, 
+Calico still leaves routing rules, iptables rules, veth network interfaces and other configuration information on the node,
 so it is recommended to reboot the node to clean up the relevant configuration to avoid problems that are difficult to troubleshoot.
 
 ## Install Kube-OVN

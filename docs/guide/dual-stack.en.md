@@ -3,7 +3,7 @@
 Different subnets in Kube-OVN can support different IP protocols. IPv4, IPv6 and dual-stack types of subnets can exist within one cluster.
 However, it is recommended to use a uniform protocol type within a cluster to simplify usage and maintenance.
 
-In order to support dual-stack, the host network needs to meet the dual-stack requirements, 
+In order to support dual-stack, the host network needs to meet the dual-stack requirements,
 and the Kubernetes-related parameters need to be adjusted, please refer to [official guide to dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack).
 
 ## Create dual-stack Subnet
@@ -34,7 +34,7 @@ JOIN_CIDR="100.64.0.0/16,fd00:100:64::/64"
 
 ## Check Pod Address
 
-Pods configured for dual-stack networks will be assigned both IPv4 and IPv6 addresses from that subnet, 
+Pods configured for dual-stack networks will be assigned both IPv4 and IPv6 addresses from that subnet,
 and the results will be displayed in the annotation of the Pod:
 
 ```yaml

@@ -2,17 +2,17 @@
 
 ## Environmental Preparation
 
-Kube-OVN uses [Golang](https://golang.org/){: target="_blank" } 1.18 to develop and [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" } 
+Kube-OVN uses [Golang](https://golang.org/){: target="_blank" } 1.18 to develop and [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" }
 to manage dependency, please check env `GO111MODULE="on"`。
 
-[gosec](https://github.com/securego/gosec){: target="_blank" } is used to scan for code security related issues 
+[gosec](https://github.com/securego/gosec){: target="_blank" } is used to scan for code security related issues
 and requires to be installed in the development environment:
 
 ```bash
 go get github.com/securego/gosec/v2/cmd/gosec
 ```
 
-To reduce the size of the final generated image, Kube-OVN uses some of the Docker buildx experimental features, 
+To reduce the size of the final generated image, Kube-OVN uses some of the Docker buildx experimental features,
 please update Docker to the latest version and enable buildx:
 
 ```bash

@@ -3,7 +3,7 @@
 本文档将介绍 Kube-OVN 的总体架构，和各个组件的功能以及其之间的交互。
 
 总体来看，Kube-OVN 作为 Kubernetes 和 OVN 之间的一个桥梁，将成熟的 SDN 和云原生相结合。
-这意味着 Kube-OVN 不仅通过 OVN 实现了 Kubernetes 下的网络规范，例如 CNI，Service 和 Networkpolicy，还将大量的 SDN 
+这意味着 Kube-OVN 不仅通过 OVN 实现了 Kubernetes 下的网络规范，例如 CNI，Service 和 Networkpolicy，还将大量的 SDN
 领域能力带入云原生，例如逻辑交换机，逻辑路由器，VPC，网关，QoS，ACL 和流量镜像。
 
 同时 Kube-OVN 还保持了良好的开放性可以和诸多技术方案集成，例如 Cilium，Submariner，Prometheus，KubeVirt 等等。
@@ -30,9 +30,9 @@ Kube-OVN 的组件可以大致分为三类：
 
 `ovn-central` Deployment 运行 OVN 的管理平面组件，包括 `ovn-nb`, `ovn-sb`, 和 `ovn-northd`。
 
-- `ovn-nb`： 保存虚拟网络配置，并提供 API 进行虚拟网络管理。`kube-ovn-controller` 将会主要和 `ovn-nb` 进行交互配置虚拟网络。
-- `ovn-sb`： 保存从 `ovn-nb` 的逻辑网络生成的逻辑流表，以及各个节点的实际物理网络状态。
-- `ovn-northd`：将 `ovn-nb` 的虚拟网络翻译成 `ovn-sb` 中的逻辑流表。 
+* `ovn-nb`： 保存虚拟网络配置，并提供 API 进行虚拟网络管理。`kube-ovn-controller` 将会主要和 `ovn-nb` 进行交互配置虚拟网络。
+* `ovn-sb`： 保存从 `ovn-nb` 的逻辑网络生成的逻辑流表，以及各个节点的实际物理网络状态。
+* `ovn-northd`：将 `ovn-nb` 的虚拟网络翻译成 `ovn-sb` 中的逻辑流表。
 
 多个 `ovn-central` 实例会通过 Raft 协议同步数据保证高可用。
 
@@ -53,7 +53,7 @@ Kube-OVN 的组件可以大致分为三类：
 Pod，Service，Endpoint，Node，NetworkPolicy，VPC，Subnet，Vlan，ProviderNetwork。
 
 以 Pod 事件为例， `kube-ovn-controller` 监听到 Pod 创建事件后，通过内置的内存 IPAM 功能分配地址，并调用 `ovn-central` 创建
-逻辑端口，静态路由和可能的 ACL 规则。接下来 `kube-ovn-controller` 将分配到的地址，和子网信息例如 CIDR，网关，路由等信息写会到 Pod 
+逻辑端口，静态路由和可能的 ACL 规则。接下来 `kube-ovn-controller` 将分配到的地址，和子网信息例如 CIDR，网关，路由等信息写会到 Pod
 的 annotation 中。该 annotation 后续会被 `kube-ovn-cni` 读取用来配置本地网络。
 
 #### kube-ovn-cni
@@ -64,6 +64,7 @@ Pod，Service，Endpoint，Node，NetworkPolicy，VPC，Subnet，Vlan，Provider
 发送给 `kube-ovn-cni` 执行。该二进制文件默认会被复制到 `/opt/cni/bin` 目录下。
 
 `kube-ovn-cni` 会配置具体的网络来执行相应流量操作，主要工作包括：
+
 1. 配置 `ovn-controller` 和 `vswitchd`。
 2. 处理 CNI add/del 请求：
     1. 创建删除 veth 并和 OVS 端口绑定。
