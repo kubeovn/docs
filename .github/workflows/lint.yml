@@ -19,5 +19,5 @@ jobs:
         run: |
           npm install -g markdownlint-cli
           ls
-          markdownlint **/*.md
+          markdownlint "**/*.md"
           markdownlint -V
