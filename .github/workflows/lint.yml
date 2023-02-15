@@ -19,5 +19,5 @@ jobs:
         run: |
           npm install -g markdownlint-cli
           pwd
-          markdownlint **/*.md --disable MD013 MD033 MD045 MD024 MD041
+          markdownlint "**/*.md" --disable MD013 MD033 MD045 MD024 MD041
           markdownlint -V
