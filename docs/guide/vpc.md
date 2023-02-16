@@ -431,6 +431,7 @@ data:
 - `k8s-service-port`：（可缺省）用于 coredns 访问 k8s apiserver 服务的 port。
 
 ### 部署 vpc-dns 依赖资源
+
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
