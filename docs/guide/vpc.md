@@ -423,11 +423,90 @@ data:
 
 - `enable-vpc-dns`：（可缺省）`true` 启用功能，`false` 关闭功能。默认 `true`。
 - `coredns-image`：（可省略）：dns 部署镜像。默认为集群 coredns 部署版本。
+- `coredns-template`：（可省略）：dns 部署模板所在的 URL。默认：当前版本仓库里的 `yamls/coredns-template.yaml`。
 - `coredns-vip`：为 coredns 提供 lb 服务的 vip。
 - `nad-name`：配置的 `network-attachment-definitions` 资源名称。
 - `nad-provider`：使用的 provider 名称。
 - `k8s-service-host`：（可缺省） 用于 coredns 访问 k8s apiserver 服务的 ip。
 - `k8s-service-port`：（可缺省）用于 coredns 访问 k8s apiserver 服务的 port。
+
+### 部署 vpc-dns 依赖资源
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+  name: system:vpc-dns
+rules:
+  - apiGroups:
+    - ""
+    resources:
+    - endpoints
+    - services
+    - pods
+    - namespaces
+    verbs:
+    - list
+    - watch
+  - apiGroups:
+    - discovery.k8s.io
+    resources:
+    - endpointslices
+    verbs:
+    - list
+    - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+  name: vpc-dns
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:vpc-dns
+subjects:
+- kind: ServiceAccount
+  name: vpc-dns
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vpc-dns
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vpc-dns-corefile
+  namespace: kube-system
+data:
+  Corefile: |
+    .:53 {
+        errors
+        health {
+          lameduck 5s
+        }
+        ready
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+          pods insecure
+          fallthrough in-addr.arpa ip6.arpa
+        }
+        prometheus :9153
+        forward . /etc/resolv.conf {
+          prefer_udp
+        }
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+```
 
 ### 部署 vpc-dns
 
@@ -453,7 +532,7 @@ test-cjh1   false    cjh-vpc-1   cjh-subnet-1
 test-cjh2   true     cjh-vpc-1   cjh-subnet-2 
 ```
 
-- `ACTIVE`: `true` 部署了自定义 dns 组件，`false` 无部署
+- `ACTIVE`: `true` 成功部署了自定义 dns 组件，`false` 无部署
 
 ### 限制
 
