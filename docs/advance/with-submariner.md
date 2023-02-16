@@ -42,6 +42,23 @@ subctl  join broker-info.subm --clusterid  cluster1 --clustercidr 11.16.0.0/16  
 kubectl label nodes cluster1 submariner.io/gateway=true
 ```
 
+如果执行`join`命令之后没有新的`gateway, routeagent`pod 出现的话, 请为`submariner-operator`这个`clusterrole`增加以下权限:
+
+```yaml
+- apiGroups:
+  - "apps"
+  resources:
+  - daemonsets
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+```
+
+对于多节点的集群，需要将默认的`subnet` `ovn-default`的网关配置改为`centralized`。为 submariner 配置的`gateway`节点需要和`subnet`节点完全相同。 
+
 接下来可以在两个集群内分别启动 Pod 并尝试使用 IP 进行相互访问。
 
 如果出现网络互通问题可通过 `subctl` 命令进行诊断：
