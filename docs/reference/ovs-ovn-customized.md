@@ -18,9 +18,9 @@ OVN/OVS 做了部分修改。用户如果使用自己的 OVN/OVS 配合 Kube-OVN
 - [08a95db2ca](https://github.com/kubeovn/ovs/commit/08a95db2ca506fce4d89fdf4fafab74607b2bb9f) 支持 Windows 下的 github action 构建。
 - [680e77a190](https://github.com/kubeovn/ovs/commit/680e77a190ae7df3086bc35bb6150238e97f9020) Windows 下默认使用 tcp 监听。
 - [05e57b3227](https://github.com/kubeovn/ovn/commit/05e57b322758461c54d5cad030486c3d25942c73) 支持 Windows 编译。
-- [0181b68be1](https://github.com/kubeovn/ovn/commit/0181b68be18e96bc4ca68a0c3e5082da34c9dcdd) br-int controller 默认监听 127.0.0.1:6653。
 - [b3801ecb73](https://github.com/kubeovn/ovs/commit/b3801ecb732a788efd2380a7daca4e2a7726128e) 修改源路由的优先级。
 - [977e569539](https://github.com/kubeovn/ovs/commit/977e569539893460cd27b2287d6042b62079ea65) 修复 Underlay 模式下 Pod 数量过多导致 OVS 流表 resubmit 次数超过上限的问题。
+- [45a4a22161](https://github.com/kubeovn/ovn/commit/45a4a22161e42f17f21baee9106a45964dfd3a1b) ovn-nbctl：vips 为空时不删除 Load Balancer。
 - [540592b9ff](https://github.com/kubeovn/ovn/commit/540592b9fff8c5574ae605086fdaa16b718551f7) DNAT 后替换 Mac 地址为目标地址，减少额外性能开销。
 - [10972d9632](https://github.com/kubeovn/ovs/commit/10972d963208490c5fe6ff66247b86b947136da6) 修复 vswitchd ofport_usage 内存泄露。
 
