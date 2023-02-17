@@ -8,15 +8,15 @@
 === ":octicons-file-code-16: AMD64"
 
     ```bash
-    wget https://github.com/labring/sealos/releases/download/v4.0.0/sealos_4.0.0_linux_amd64.tar.gz \
-      && tar zxvf sealos_4.0.0_linux_amd64.tar.gz sealos && chmod +x sealos && mv sealos /usr/bin
+    wget  https://github.com/labring/sealos/releases/download/v4.1.4/sealos_4.1.4_linux_amd64.tar.gz  && \
+    tar -zxvf sealos_4.1.4_linux_amd64.tar.gz sealos &&  chmod +x sealos && mv sealos /usr/bin
     ```
 
 === ":octicons-file-code-16: ARM64"
 
     ```bash
-    wget https://github.com/labring/sealos/releases/download/v4.0.0/sealos_4.0.0_linux_arm64.tar.gz \
-      && tar zxvf sealos_4.0.0_linux_arm64.tar.gz sealos && chmod +x sealos && mv sealos /usr/bin
+    wget  https://github.com/labring/sealos/releases/download/v4.1.4/sealos_4.1.4_linux_arm64.tar.gz  && \
+    tar -zxvf sealos_4.1.4_linux_arm64.tar.gz sealos &&  chmod +x sealos && mv sealos /usr/bin
     ```
 
 ## 部署 Kubernetes 和 Kube-OVN
