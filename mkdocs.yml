@@ -63,6 +63,7 @@ nav:
       - 功能成熟度: 'reference/feature-stage.md'
       - Underlay 流量拓扑: 'reference/underlay-topology.md'
       - Iptables 规则: 'reference/iptables-rules.md'
+      - kube-ovn-pinger 参数描述: 'reference/kube-ovn-pinger-args.md'
       - 开发环境构建: 'reference/dev-env.md'
       - 对上游 OVS/OVN 修改: 'reference/ovs-ovn-customized.md'
       - 隧道协议说明: 'reference/tunnel-protocol.md'
