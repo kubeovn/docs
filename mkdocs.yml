@@ -63,6 +63,7 @@ nav:
       - 功能成熟度: 'reference/feature-stage.md'
       - Underlay 流量拓扑: 'reference/underlay-topology.md'
       - Iptables 规则: 'reference/iptables-rules.md'
+      - kube-ovn-pinger 参数描述: 'reference/kube-ovn-pinger-args.md'
       - 开发环境构建: 'reference/dev-env.md'
       - 对上游 OVS/OVN 修改: 'reference/ovs-ovn-customized.md'
       - 隧道协议说明: 'reference/tunnel-protocol.md'
@@ -184,6 +185,7 @@ plugins:
           功能成熟度: Feature Stage
           配置原生 Prometheus: Config Native Prometheus
           Iptables 规则: Iptables Rules
+          kube-ovn-pinger 参数描述: kube-ovn-pinger args description
           自定义 VPC 内部负载均衡: VPC Internal Load Balancer
           自定义 VPC DNS: VPC DNS
           Kube-OVN 接口规范: Kube-OVN API Reference
