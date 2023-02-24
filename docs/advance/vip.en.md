@@ -41,11 +41,11 @@ metadata:
   name: static-vip01
 spec:
   subnet: ovn-default 
-  v4Ip: "10.16.0.121"
+  V4ip: "10.16.0.121"
 ```
 
 - `subnet`: reserve the IP from this Subnet.
-- `v4Ip`: A fixed-assigned IP address that should within the CIDR range of `subnet`.
+- `V4ip`: A fixed-assigned IP address that should within the CIDR range of `subnet`.
 
 Query the VIP after creation:
 
