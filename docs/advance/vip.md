@@ -41,11 +41,11 @@ metadata:
   name: static-vip01
 spec:
   subnet: ovn-default 
-  v4Ip: "10.16.0.121"
+  v4ip: "10.16.0.121"
 ```
 
 - `subnet`: 将从该 Subnet 中预留 IP。
-- `v4Ip`: 固定分配的 IP 地址，该地址需在 `subnet` 的 CIDR 范围内。
+- `v4ip`: 固定分配的 IP 地址，该地址需在 `subnet` 的 CIDR 范围内。
 
 创建成功后查询该 VIP：
 
