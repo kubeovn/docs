@@ -481,12 +481,12 @@ For detailed configuration information of SwitchLBRule, you can refer to [Custom
 | --- | --- | --- |
 | ipVersion | String | IP version number, `ipv4` or `ipv6` |
 | protocol | String | The value of `icmp`, `tcp`, or `udp` |
-| priority | Int | Acl priority |
+| priority | Int | Acl priority. The value range is 1-200, the smaller the value, the higher the priority. |
 | remoteType | String | The value is either `address` or `securityGroup` |
 | remoteAddress | String | The address of the other side |
 | remoteSecurityGroup | String | The name of security group on the other side |
-| portRangeMin | Int | The starting value of the port range |
-| portRangeMax | Int | The max value of the port range |
+| portRangeMin | Int | The starting value of the port range, the minimum value is 1. |
+| portRangeMax | Int | The ending value of the port range, the maximum value is 65535. |
 | policy | String | The value is `allow` or `drop` |
 
 #### SecurityGroupStatus
