@@ -481,12 +481,12 @@ SwitchLBRule 的详细配置信息，可以参考 [自定义 VPC 内部负载均
 | --- | --- | --- |
 | ipVersion | String | IP版本号，取值为 `ipv4` 或者 `ipv6` |
 | protocol | String | 取值为 `all`、`icmp`、`tcp` 或者 `udp` |
-| priority | Int | Acl 优先级 |
+| priority | Int | Acl 优先级，取值范围为 1-200，数值越小，优先级越高 |
 | remoteType | String | 取值为 `address` 或者 `securityGroup` |
 | remoteAddress | String | 对端地址 |
 | remoteSecurityGroup | String | 对端安全组 |
-| portRangeMin | Int | 端口范围起始值 |
-| portRangeMax | Int | 端口范围最大值 |
+| portRangeMin | Int | 端口范围起始值，最小取值为 1 |
+| portRangeMax | Int | 端口范围最大值，最大取值为 65535 |
 | policy | String | 取值为 `allow` 或者 `drop` |
 
 #### SecurityGroupStatus
