@@ -58,6 +58,8 @@ nav:
       - Windows 支持: 'advance/windows.md'
       - DPDK 支持: 'advance/dpdk.md'
       - OpenStack 集成: 'advance/with-openstack.md'
+      - ovn eip fip snat 支持: 'advance/ovn-eip-fip-snat.md'
+      - ovn snat 基于 ecmp bfd 静态路由的 L3 ha 支持: 'advance/ovn-l3-ha-based-ecmp-with-bfd.md'
       - SecurityGroup 使用: 'advance/security-group.md'
   - 技术参考:
       - 总体架构: 'reference/architecture.md'
@@ -148,6 +150,8 @@ plugins:
           配置监控和面板: Monitor and Dashboard
           双栈使用: DualStack
           EIP 和 SNAT 配置: EIP and SNAT
+          ovn eip fip snat 支持: support ovn eip fip snat 
+          ovn snat 基于 ecmp bfd 静态路由的 L3 ha 支持: support ovn snat l3 ha based ecmp bfd static route 
           流量镜像: Traffic Mirror
           NetworkPolicy 日志: NetworkPolicy Logging
           Webhook 使用: Webhook
