@@ -27,7 +27,7 @@ external-subnet-->gw-node3-ovnext0--> node3-external-switch
 
 以上部分和 [ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) 完全一致，这些功能验证通过后，可以直接基于如下方式，将vpc切换到基于ecmp的bfd静态路由，当然也可以切回。
 
-自定义vpc使用该功能之前，需要先提供好网关节点，至少需要提供2个以上网关节点。
+自定义vpc使用该功能之前，需要先提供好网关节点，至少需要提供2个以上网关节点，注意当前实现ovn-eip的名字必须和网关节点名保持一致，目前没有做该资源的自动化维护。
 
 ``` yaml
 # cat gw-node-eip.yaml
