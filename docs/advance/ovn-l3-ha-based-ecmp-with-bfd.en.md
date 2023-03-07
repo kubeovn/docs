@@ -30,6 +30,7 @@ The above section is exactly the same with [ovn-eip-fip-snat.md](./ovn-eip-fip-s
 After these functions are verified, the vpc can be switched directly to the ecmp-based bfd static route based on the following way, or of course, switched directly back.
 
 Before customizing vpc to use this feature, you need to provide some gateway nodes, at least 2.
+Note that the name of the current implementation of ovn-eip must be consistent with the gateway node name, no automated maintenance is currently done for this resource.
 
 ``` yaml
 # cat gw-node-eip.yaml
