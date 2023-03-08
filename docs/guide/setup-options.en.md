@@ -91,7 +91,7 @@ and copy all container network traffic from the current machine to that NIC，
 Users can perform traffic analysis with tcpdump and other tools. This function can be enabled in the installation script:
 
 ```bash
-ENABLE_MIRROR=tue
+ENABLE_MIRROR=true
 ```
 
 It can also be adjusted after installation by modifying the args of the `kube-ovn-cni` DaemonSet:
