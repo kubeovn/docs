@@ -1,6 +1,6 @@
 # Manage Multiple Interface
 
-Kube-OVN can provide cluster-level IPAM capabilities for other CNI network plugins such as macvlan, vlan, host-device, etc. 
+Kube-OVN can provide cluster-level IPAM capabilities for other CNI network plugins such as macvlan, vlan, host-device, etc.
 Other network plugins can then use the subnet and fixed IP capabilities in Kube-OVN.
 
 Kube-OVN also supports address management when multiple NICs are all of Kube-OVN type.
@@ -10,7 +10,7 @@ Kube-OVN also supports address management when multiple NICs are all of Kube-OVN
 By using [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni), we can add multiple NICs of different networks to a Pod.
 However, we still lack the ability to manage the IP addresses of different networks within a cluster.
 In Kube-OVN, we have been able to perform advanced IP management such as subnet management, IP reservation, random assignment, fixed assignment, etc. through CRD of Subnet and IP.
-Now Kueb-OVN extend the subnet to integrate with other different network plugins, 
+Now Kube-OVN extend the subnet to integrate with other different network plugins,
 so that other network plugins can also use the IPAM functionality of Kube-OVN.
 
 ### Workflow
@@ -21,10 +21,10 @@ The above diagram shows how to manage the IP addresses of other network plugins 
 The eth0 NIC of the container is connected to the OVN network and the net1 NIC is connected to other CNI networks.
 The network definition for the net1 network is taken from the NetworkAttachmentDefinition resource definition in multus-cni.
 
-When a Pod is created, `kube-ovn-controller` will get the Pod add event, find the corresponding Subnet according to the annotation in the Pod, 
+When a Pod is created, `kube-ovn-controller` will get the Pod add event, find the corresponding Subnet according to the annotation in the Pod,
 then manage the address from it, and write the address information assigned to the Pod back to the Pod annotation.
 
-The CNI on the container machine can configure `kube-ovn-cni` as the ipam plugin. 
+The CNI on the container machine can configure `kube-ovn-cni` as the ipam plugin.
 `kube-ovn-cni` will read the Pod annotation and return the address information to the corresponding CNI plugin using the standard format of the CNI protocol.
 
 ## Usage
@@ -58,6 +58,7 @@ spec:
       }
     }'
 ```
+
 - `spec.config.ipam.type`: Need to be set to `kube-ovn` to call the kube-ovn plugin to get the address information.
 - `server_socket`: The socket file used for communication to Kube-OVN. The default location is `/run/openvswitch/kube-ovn-daemon.sock`.
 - `provider`: The current NetworkAttachmentDefinition's `<name>. <namespace>` , Kube-OVN will use this information to find the corresponding Subnet resource.
@@ -130,7 +131,7 @@ spec:
 
 ### Create a Pod with Multiple NIC
 
-For Pods with randomly assigned addresses, 
+For Pods with randomly assigned addresses,
 simply add the following annotation `k8s.v1.cni.cncf.io/networks`, taking the value `<namespace>/<name>` of the corresponding NetworkAttachmentDefinition.：
 
 ```yaml
