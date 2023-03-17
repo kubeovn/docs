@@ -92,7 +92,7 @@ args:
 用户可以通过 tcpdump 及其他工具进行流量分析，该功能可以在安装脚本中通过下面的配置开启：
 
 ```bash
-ENABLE_MIRROR=tue
+ENABLE_MIRROR=true
 ```
 
 也可在安装后通过修改 `kube-ovn-cni` DaemonSet 的参数方式进行调整:
