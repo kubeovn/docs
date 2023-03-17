@@ -81,7 +81,7 @@ kind: Service
 metadata:
   annotations:
     lb-svc-attachment.kube-system.kubernetes.io/logical_switch: attach-subnet   #可选
-    ovn.kubernetes.io/attchmentprovider: lb-svc-attachment.kube-system          #必须
+    ovn.kubernetes.io/attachmentprovider: lb-svc-attachment.kube-system          #必须
   labels:
     app: dynamic
   name: test-service
@@ -99,7 +99,7 @@ spec:
   type: LoadBalancer
 ```
 
-在 yaml 中，annotation `ovn.kubernetes.io/attchmentprovider`  为必填项，取值由第一步创建的 `net-attach-def` 资源的 Name.Namespace 组成。该 annotation 用于在创建 Pod 时，查找 `net-attach-def` 资源。
+在 yaml 中，annotation `ovn.kubernetes.io/attachmentprovider`  为必填项，取值由第一步创建的 `net-attach-def` 资源的 Name.Namespace 组成。该 annotation 用于在创建 Pod 时，查找 `net-attach-def` 资源。
 
 可以通过 annotation 指定多网卡地址分配使用的子网。annotation key 格式为 net-attach-def 资源的 `Name.Namespace.kubernetes.io/logical_switch`。该配置为`可选`选项，在没有指定 LoadBalancerIP 地址的情况下，将从该子网动态分配地址，填充到 LoadBalancerIP 字段。
 
