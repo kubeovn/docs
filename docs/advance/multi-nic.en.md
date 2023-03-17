@@ -10,7 +10,7 @@ Kube-OVN also supports address management when multiple NICs are all of Kube-OVN
 By using [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni), we can add multiple NICs of different networks to a Pod.
 However, we still lack the ability to manage the IP addresses of different networks within a cluster.
 In Kube-OVN, we have been able to perform advanced IP management such as subnet management, IP reservation, random assignment, fixed assignment, etc. through CRD of Subnet and IP.
-Now Kueb-OVN extend the subnet to integrate with other different network plugins,
+Now Kube-OVN extend the subnet to integrate with other different network plugins,
 so that other network plugins can also use the IPAM functionality of Kube-OVN.
 
 ### Workflow
