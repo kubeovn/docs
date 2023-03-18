@@ -114,10 +114,8 @@ spec:
 
 You can try to delete the Pod under StatefulSet to observe if the Pod IP changes.
 
-## Kubevirt VM Fixed Address
+## KubeVirt VM Fixed Address
 
-For VM instances created by Kubevirt, `kube-ovn-controller` can assign and manage IP addresses in a similar way to the StatefulSet Pod.
+For VM instances created by KubeVirt, `kube-ovn-controller` can assign and manage IP addresses in a similar way to the StatefulSet Pod.
 This allows VM instances address fixed during start-up, shutdown, upgrade, migration, and other operations throughout their lifecycle,
 making them more compatible with the actual virtualization user experience.
-
-This feature is disabled by default. To use this feature, you need to enable the following args in the `kube-ovn-controller` Deployment:
