@@ -4,6 +4,8 @@ on:
     branches:
       - main
       - master
+      - v1.11
+      - v1.10
 jobs:
   deploy:
     runs-on: ubuntu-latest
