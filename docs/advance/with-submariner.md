@@ -38,7 +38,7 @@ kubectl label nodes cluster0 submariner.io/gateway=true
 切换 `kubeconfig` 至 `cluster1` 注册集群至 broker，并注册网关节点:
 
 ```bash
-subctl  join broker-info.subm --clusterid  cluster1 --clustercidr 100.64.0.0/16,11.16.0.0/16  --natt=false --cable-driver vxlan --health-check=false
+subctl  join broker-info.subm --clusterid  cluster1 --clustercidr 100.68.0.0/16,11.16.0.0/16  --natt=false --cable-driver vxlan --health-check=false
 kubectl label nodes cluster1 submariner.io/gateway=true
 ```
 
