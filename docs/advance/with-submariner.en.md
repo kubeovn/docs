@@ -27,7 +27,7 @@ Change `kubeconfig` context to the cluster that need to deploy `submariner-broke
 subctl deploy-broker
 ```
 
-In this document the default subnet CIDR for `cluster0` is `10.16.0.0/16` and the join subnet CIDR for `cluster0` is `100.64.0.0/16`. the default subnet CIDR for `cluster1` is `11.16.0.0/16` and the join subnet CIDR for `cluster1` is `100.68.0.0/16`.
+In this document the default subnet CIDR for `cluster0` is `10.16.0.0/16` and the join subnet CIDR for `cluster0` is `100.64.0.0/16`, the default subnet CIDR for `cluster1` is `11.16.0.0/16` and the join subnet CIDR for `cluster1` is `100.68.0.0/16`.
 
 Switch `kubeconfig` to `cluster0` to register the cluster to the broker, and register the gateway node:
 
