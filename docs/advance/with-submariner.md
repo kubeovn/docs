@@ -26,19 +26,19 @@ echo export PATH=\$PATH:~/.local/bin >> ~/.profile
 subctl deploy-broker
 ```
 
-在本文档中 `cluster0` 的默认子网 CIDR 为 `10.16.0.0/16`，`cluster1` 的默认子网 CIDR 为 `11.16.0.0/16`。
+在本文档中 `cluster0` 的默认子网 CIDR 为 `10.16.0.0/16`，join 子网 CIDR 为 `100.64.0.0/16`，`cluster1` 的默认子网 CIDR 为 `11.16.0.0/16`，join 子网 CIDR 为 '100.68.0.0/16'。
 
 切换 `kubeconfig` 至 `cluster0` 注册集群至 broker，并注册网关节点:
 
 ```bash
-subctl  join broker-info.subm --clusterid  cluster0 --clustercidr 10.16.0.0/16  --natt=false --cable-driver vxlan --health-check=false
+subctl  join broker-info.subm --clusterid  cluster0 --clustercidr 100.64.0.0/16,10.16.0.0/16  --natt=false --cable-driver vxlan --health-check=false
 kubectl label nodes cluster0 submariner.io/gateway=true
 ```
 
 切换 `kubeconfig` 至 `cluster1` 注册集群至 broker，并注册网关节点:
 
 ```bash
-subctl  join broker-info.subm --clusterid  cluster1 --clustercidr 11.16.0.0/16  --natt=false --cable-driver vxlan --health-check=false
+subctl  join broker-info.subm --clusterid  cluster1 --clustercidr 100.64.0.0/16,11.16.0.0/16  --natt=false --cable-driver vxlan --health-check=false
 kubectl label nodes cluster1 submariner.io/gateway=true
 ```
 
