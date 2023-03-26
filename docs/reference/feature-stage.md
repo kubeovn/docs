@@ -48,7 +48,7 @@
 | 使用 Submariner 进行集群互联            | false | Alpha | 1.9       |           |
 | 子网 VIP 预留                       | true  | Alpha | 1.10      |           |
 | 创建自定义 VPC                       | true  | Beta  | 1.8       |           |
-| 自定义 VPC 浮动IP/SNAT/DNAT          | true  | Alpha | 1.10      |           |
+| 自定义 VPC 浮动 IP/SNAT/DNAT          | true  | Alpha | 1.10      |           |
 | 自定义 VPC 静态路由                    | true  | Alpha | 1.10      |           |
 | 自定义 VPC 策略路由                    | true  | Alpha | 1.10      |           |
 | 自定义 VPC 安全组                     | true  | Alpha | 1.10      |           |

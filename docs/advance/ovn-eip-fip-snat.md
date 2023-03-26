@@ -7,7 +7,7 @@ graph LR
 pod-->vpc1-subnet-->vpc1-->snat-->lrp-->external-subnet-->gw-node-external-nic
 ```
 
-pod基于snat出公网的大致流程，最后是经过网关节点的公网网卡。
+pod 基于 snat 出公网的大致流程，最后是经过网关节点的公网网卡。
 
 ``` mermaid
 graph LR
@@ -16,19 +16,19 @@ graph LR
 pod-->vpc1-subnet-->vpc1-->fip-->lrp-->external-subnet-->local-node-external-nic
 ```
 
-pod基于fip出公网的大致流程，最后可以基于本地节点的公网网卡出公网。
+pod 基于 fip 出公网的大致流程，最后可以基于本地节点的公网网卡出公网。
 
 ## 1. 部署
 
-目前允许所有（默认以及自定义）vpc使用同一个provider vlan subnet 资源，类似neutron ovn模式，同时兼容之前**默认vpc可以使用enable_eip_snat**的场景。
+目前允许所有（默认以及自定义）vpc 使用同一个 provider vlan subnet 资源，类似 neutron ovn 模式，同时兼容之前**默认 vpc 可以使用 enable_eip_snat**的场景。
 
-执行install.sh 需要指定默认公网逻辑交换机。
+执行 install.sh 需要指定默认公网逻辑交换机。
 该配置项的设计和使用主要考虑了如下因素：
 
-- 基于该配置项可以对接到provider network，vlan，subnet的资源。
-- 基于该配置项可以将默认vpc enable_eip_snat 功能对接到已有的vlan，subnet资源，同时支持公网ip的ipam。
-- 如果仅使用默认vpc的enable_eip_snat模式, 且仅使用旧的基于pod annotaion的 eip fip snat，那么这个配置无需配置。
-- 基于该配置可以不使用默认vpc enable_eip_snat 流程，仅通过对应到vlan，subnet流程，可以兼容仅自定义vpc使用eip snat的使用场景。
+- 基于该配置项可以对接到 provider network，vlan，subnet 的资源。
+- 基于该配置项可以将默认 vpc enable_eip_snat 功能对接到已有的 vlan，subnet 资源，同时支持公网 ip 的 ipam。
+- 如果仅使用默认 vpc 的 enable_eip_snat 模式, 且仅使用旧的基于 pod annotaion 的 eip fip snat，那么这个配置无需配置。
+- 基于该配置可以不使用默认 vpc enable_eip_snat 流程，仅通过对应到 vlan，subnet 流程，可以兼容仅自定义 vpc 使用 eip snat 的使用场景。
 
 neutron ovn 模式也有一定的静态文件配置指定设计，目前来说，大致一致。
 
@@ -41,13 +41,13 @@ neutron ovn 模式也有一定的静态文件配置指定设计，目前来说�
 # 2. kube-ovn-cni 启动参数需要配置:
           - --external-gateway-switch=external204 
 
-### 以上配置都和下面的公网网络配置vlan id 和资源名保持一致，目前仅支持指定一个underlay公网作为默认外部公网。
+### 以上配置都和下面的公网网络配置 vlan id 和资源名保持一致，目前仅支持指定一个 underlay 公网作为默认外部公网。
 ```
 
-### 1.1 准备underlay公网网络
+### 1.1 准备 underlay 公网网络
 
 ``` bash
-# 准备provider-network， vlan， subnet
+# 准备 provider-network， vlan， subnet
 # cat 01-provider-network.yaml
 apiVersion: kubeovn.io/v1
 kind: ProviderNetwork
@@ -77,10 +77,10 @@ spec:
   - 10.5.204.1..10.5.204.100
 ```
 
-### 1.2 默认vpc启用eip_snat
+### 1.2 默认 vpc 启用 eip_snat
 
 ``` bash
-# 启用默认vpc和上述underlay公网provider subnet互联
+# 启用默认 vpc 和上述 underlay 公网 provider subnet 互联
 cat 00-centralized-external-gw-no-ip.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -91,16 +91,16 @@ data:
   enable-external-gw: "true"
   external-gw-nodes: "pc-node-1,pc-node-2,pc-node-3"
   type: "centralized" 
-  external-gw-nic: "vlan" # 用于接入ovs公网网桥的网卡
-  external-gw-addr: "10.5.204.254/24" # underlay物理网关的ip
+  external-gw-nic: "vlan" # 用于接入 ovs 公网网桥的网卡
+  external-gw-addr: "10.5.204.254/24" # underlay 物理网关的 ip
 ```
 
-目前该功能已支持可以不指定lrp ip和mac，已支持自动获取，创建lrp 类型的ovn eip资源。
+目前该功能已支持可以不指定 lrp ip 和 mac，已支持自动获取，创建 lrp 类型的 ovn eip 资源。
 
-如果指定了，则相当于指定ip创建lrp类型的ovn-eip。
-当然也可以提前手动创建lrp类型的ovn eip。
+如果指定了，则相当于指定 ip 创建 lrp 类型的 ovn-eip。
+当然也可以提前手动创建 lrp 类型的 ovn eip。
 
-### 1.3 自定义vpc启用eip snat fip功能
+### 1.3 自定义 vpc 启用 eip snat fip 功能
 
 ``` bash
 # cat 00-ns.yml
@@ -118,7 +118,7 @@ spec:
   namespaces:
   - vpc1
   enableExternal: true
-# vpc 启用 enableExternal 会自动创建lrp关联到上述指定的公网
+# vpc 启用 enableExternal 会自动创建 lrp 关联到上述指定的公网
 
 # cat 02-subnet.yml
 apiVersion: kubeovn.io/v1
@@ -142,7 +142,7 @@ spec:
   namespaces:
   - vpc1
 
-# 这里子网和之前使用子网一样，该功能在subnet上没有新增属性，没有任何变更
+# 这里子网和之前使用子网一样，该功能在 subnet 上没有新增属性，没有任何变更
 ```
 
 以上模板应用后，应该可以看到如下资源存在
@@ -173,12 +173,12 @@ Route Table <main>:
 
 ## 2. ovn-eip
 
-该功能和iptables-eip设计和使用方式基本一致，ovn-eip目前有四种type
+该功能和 iptables-eip 设计和使用方式基本一致，ovn-eip 目前有四种 type
 
-- lrp: 用于vpc和公网相连的资源
-- fip: 用于ovn nat dnat_and_snat 资源
-- snat: 用于snat，支持一对一到pod ip，以及对应到subnet cidr
-- node-ext-gw: 用于ovn 基于bfd的ecmp路由场景
+- lrp: 用于 vpc 和公网相连的资源
+- fip: 用于 ovn nat dnat_and_snat 资源
+- snat: 用于 snat，支持一对一到 pod ip，以及对应到 subnet cidr
+- node-ext-gw: 用于 ovn 基于 bfd 的 ecmp 路由场景
 
 ``` bash
 ---
@@ -190,10 +190,10 @@ spec:
   externalSubnet: external204
   type: fip
   
-# 动态分配一个eip资源，该资源预留用于fip场景
+# 动态分配一个 eip 资源，该资源预留用于 fip 场景
 ```
 
-### 3.1 ovn-fip 为pod绑定一个fip
+### 3.1 ovn-fip 为 pod 绑定一个 fip
 
 ``` bash
 # k get po -o wide -n vpc1 vpc-1-busybox01
@@ -221,7 +221,7 @@ metadata:
   name: eip-static
 spec:
   ovnEip: eip-static
-  ipName: vpc-1-busybox01.vpc1  # 注意这里是ip crd的名字，具有唯一性
+  ipName: vpc-1-busybox01.vpc1  # 注意这里是 ip crd 的名字，具有唯一性
 ```
 
 ``` bash
@@ -244,11 +244,11 @@ PING 10.5.204.101 (10.5.204.101) 56(84) bytes of data.
 rtt min/avg/max/mdev = 0.368/0.734/1.210/0.352 ms
 [root@pc-node-1 03-cust-vpc]#
 
-# 可以看到在node ping 默认vpc下的pod的公网ip 是能通的
+# 可以看到在 node ping 默认 vpc 下的 pod 的公网 ip 是能通的
 ```
 
 ``` bash
-# 该公网ip能通的关键资源主要包括以下部分
+# 该公网 ip 能通的关键资源主要包括以下部分
 # k ko nbctl show vpc1
 router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
     port vpc1-vpc1-subnet1
@@ -264,14 +264,14 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
         type: "dnat_and_snat"
 ```
 
-### 3.2 ovn-fip 为vip绑定一个fip
+### 3.2 ovn-fip 为 vip 绑定一个 fip
 
-为了便于一些vip场景的使用，比如kubevirt虚拟机内部我可能会使用一些vip提供给keepalived，kube-vip等场景来使用，同时支持公网访问。
+为了便于一些 vip 场景的使用，比如 kubevirt 虚拟机内部我可能会使用一些 vip 提供给 keepalived，kube-vip 等场景来使用，同时支持公网访问。
 
-那么可以基于fip绑定vpc内部的vip的方式来提供vip的公网能力。
+那么可以基于 fip 绑定 vpc 内部的 vip 的方式来提供 vip 的公网能力。
 
 ``` bash
-# 先创建vip，eip，再将eip绑定到vip
+# 先创建 vip，eip，再将 eip 绑定到 vip
 # cat vip.yaml
 apiVersion: kubeovn.io/v1
 kind: Vip
@@ -297,7 +297,7 @@ metadata:
   name: eip-for-vip
 spec:
   ovnEip: eip-for-vip
-  ipType: vip         # 默认情况下fip是面向pod ip的，这里需要标注指定对接到vip资源
+  ipType: vip         # 默认情况下 fip 是面向 pod ip 的，这里需要标注指定对接到 vip 资源
   ipName: test-fip-vip
 ```
 
@@ -312,10 +312,10 @@ PING 10.5.204.106 (10.5.204.106) 56(84) bytes of data.
 64 bytes from 10.5.204.106: icmp_seq=1 ttl=62 time=0.694 ms
 64 bytes from 10.5.204.106: icmp_seq=2 ttl=62 time=0.436 ms
 
-# 在node上是ping得通的
+# 在 node 上是 ping 得通的
 
 
-# pod内部的ip使用方式大致就是如下这种情况
+# pod 内部的 ip 使用方式大致就是如下这种情况
 
 [root@pc-node-1 fip-vip]# k -n vpc1 exec -it vpc-1-busybox03 -- bash
 [root@vpc-1-busybox03 /]#
@@ -331,7 +331,7 @@ PING 10.5.204.106 (10.5.204.106) 56(84) bytes of data.
     link/ether 00:00:00:56:40:e5 brd ff:ff:ff:ff:ff:ff link-netnsid 0
     inet 192.168.0.5/24 brd 192.168.0.255 scope global eth0
        valid_lft forever preferred_lft forever
-    inet 192.168.0.3/24 scope global secondary eth0  # 可以看到vip的配置
+    inet 192.168.0.3/24 scope global secondary eth0  # 可以看到 vip 的配置
        valid_lft forever preferred_lft forever
     inet6 fe80::200:ff:fe56:40e5/64 scope link
        valid_lft forever preferred_lft forever
@@ -343,14 +343,14 @@ tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 byt
 00:00:00:56:40:e5 > 00:00:00:ed:8e:c7, ethertype IPv4 (0x0800), length 98: (tos 0x0, ttl 64, id 43962, offset 0, flags [none], proto ICMP (1), length 84)
     192.168.0.3 > 10.5.32.51: ICMP echo reply, id 177, seq 1, length 64
 
-# pod内部可以抓到fip相关的icmp包
+# pod 内部可以抓到 fip 相关的 icmp 包
 ```
 
 ## 4. ovn-snat
 
-### 4.1 ovn-snat 对应一个subnet的cidr
+### 4.1 ovn-snat 对应一个 subnet 的 cidr
 
-该功能和iptables-snat设计和使用方式基本一致
+该功能和 iptables-snat 设计和使用方式基本一致
 
 ```bash
 # cat 03-subnet-snat.yaml
@@ -373,9 +373,9 @@ spec:
   vpcSubnet: vpc1-subnet1 # eip 对应整个网段
 ```
 
-### 4.2 ovn-fip 对应到一个pod ip
+### 4.2 ovn-fip 对应到一个 pod ip
 
-该功能和iptables-fip 设计和使用方式基本一致
+该功能和 iptables-fip 设计和使用方式基本一致
 
 ```bash
 # cat 03-pod-snat.yaml
@@ -395,11 +395,11 @@ metadata:
   name: snat01
 spec:
   ovnEip: snat-for-pod-vpc-ip
-  ipName: vpc-1-busybox02.vpc1 # eip 对应单个pod ip
+  ipName: vpc-1-busybox02.vpc1 # eip 对应单个 pod ip
 
 ```
 
-以上资源创建后，可以看到snat公网功能依赖的如下资源。
+以上资源创建后，可以看到 snat 公网功能依赖的如下资源。
 
 ``` bash
 # kubectl ko nbctl show vpc1
@@ -479,5 +479,5 @@ PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
 4 packets transmitted, 3 received, 25% packet loss, time 3064ms
 rtt min/avg/max/mdev = 22.126/22.518/22.741/0.278 ms
 
-# 可以看到两个pod可以分别基于这两种snat资源上外网
+# 可以看到两个 pod 可以分别基于这两种 snat 资源上外网
 ```

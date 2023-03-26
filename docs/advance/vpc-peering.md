@@ -78,7 +78,7 @@ spec:
 - `cidr`：另一端 Subnet 的 CIDR。
 - `nextHopIP`：互联 VPC 另一端的 `localConnectIP`。
 
-分别在两个Subnet下创建Pod
+分别在两个 Subnet 下创建 Pod
 
 ```yaml
 apiVersion: v1

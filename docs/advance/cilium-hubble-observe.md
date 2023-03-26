@@ -1,6 +1,6 @@
 # Cilium 网络流量观测
 
-Kube-OVN 当前已经支持与 Cilium 集成，具体操作可以参考 [Cilium集成](with-cilium.md)。
+Kube-OVN 当前已经支持与 Cilium 集成，具体操作可以参考 [Cilium 集成](with-cilium.md)。
 
 Cilium 提供了丰富的网络流量观测能力，流量可观测性是由 Hubble 提供的。Hubble 可以观察节点、集群甚至多集群场景下跨集群的流量。
 

@@ -1,6 +1,6 @@
 # Cilium NetworkPolicy 支持
 
-Kube-OVN 当前已经支持与 Cilium 集成，具体操作可以参考 [Cilium集成](with-cilium.md)。
+Kube-OVN 当前已经支持与 Cilium 集成，具体操作可以参考 [Cilium 集成](with-cilium.md)。
 
 在集成 Cilium 之后，就可以使用 Cilium 优秀的网络策略能力，实现对流量访问的控制。以下文档提供了对 Cilium L3 和 L4 网络策略能力的集成验证。
 

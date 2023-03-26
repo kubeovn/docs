@@ -27,7 +27,7 @@
 <tbody>
 <tr><td>
 
-Kube-OVN提供了一键安装脚本来安装1.10版本Kube-OVN。
+Kube-OVN 提供了一键安装脚本来安装 1.10 版本 Kube-OVN。
 
 </td><td>
 

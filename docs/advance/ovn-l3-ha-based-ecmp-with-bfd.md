@@ -1,9 +1,9 @@
-# 基于ecmp with bfd路由实现公网高可用
+# 基于 ecmp with bfd 路由实现公网高可用
 
-自定义 vpc 基于ovn snat 后基于ecmp静态路由哈希到多个 gw node ovnext0网卡出公网
+自定义 vpc 基于 ovn snat 后基于 ecmp 静态路由哈希到多个 gw node ovnext0 网卡出公网
 
-- 支持基于bfd的高可用
-- 仅支持hash负载均衡
+- 支持基于 bfd 的高可用
+- 仅支持 hash 负载均衡
 
 ``` mermaid
 graph LR
@@ -13,21 +13,21 @@ external-subnet-->gw-node2-ovnext0--> node2-external-switch
 external-subnet-->gw-node3-ovnext0--> node3-external-switch
 ```
 
-该功能的使用方式和[ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) 基本一致，一致的部分包括install.sh的部署部分，provider-network，vlan，subnet的准备部分。
+该功能的使用方式和[ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) 基本一致，一致的部分包括 install.sh 的部署部分，provider-network，vlan，subnet 的准备部分。
 
-至于不相同的部分，会在以下部分具体阐述，主要包括node-ext-gw 类型的ovn-eip的创建，以及基于vpc enable_bfd 自动维护 bfd以及ecmp静态路由。
+至于不相同的部分，会在以下部分具体阐述，主要包括 node-ext-gw 类型的 ovn-eip 的创建，以及基于 vpc enable_bfd 自动维护 bfd 以及 ecmp 静态路由。
 
 ## 1. 部署
 
-### 1.1 准备underlay公网网络
+### 1.1 准备 underlay 公网网络
 
-### 1.2 默认vpc启用eip_snat
+### 1.2 默认 vpc 启用 eip_snat
 
-### 1.3 自定义vpc启用eip snat fip功能
+### 1.3 自定义 vpc 启用 eip snat fip 功能
 
-以上部分和 [ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) 完全一致，这些功能验证通过后，可以直接基于如下方式，将vpc切换到基于ecmp的bfd静态路由，当然也可以切回。
+以上部分和 [ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) 完全一致，这些功能验证通过后，可以直接基于如下方式，将 vpc 切换到基于 ecmp 的 bfd 静态路由，当然也可以切回。
 
-自定义vpc使用该功能之前，需要先提供好网关节点，至少需要提供2个以上网关节点，注意当前实现ovn-eip的名字必须和网关节点名保持一致，目前没有做该资源的自动化维护。
+自定义 vpc 使用该功能之前，需要先提供好网关节点，至少需要提供 2 个以上网关节点，注意当前实现 ovn-eip 的名字必须和网关节点名保持一致，目前没有做该资源的自动化维护。
 
 ``` yaml
 # cat gw-node-eip.yaml
@@ -59,9 +59,9 @@ spec:
   type: node-ext-gw
 ```
 
-由于这个场景目前设计上是供vpc ecmp 出公网使用，所以以上在没有vpc启用bfd的时候，即不存在带有enable bfd标签的lrp的ovn eip的时候，网关节点不会触发创建网关网卡，也无法成功启动对端bfd会话的监听。
+由于这个场景目前设计上是供 vpc ecmp 出公网使用，所以以上在没有 vpc 启用 bfd 的时候，即不存在带有 enable bfd 标签的 lrp 的 ovn eip 的时候，网关节点不会触发创建网关网卡，也无法成功启动对端 bfd 会话的监听。
 
-## 2. 自定义vpc启用ecmp bfd L3 HA公网功能
+## 2. 自定义 vpc 启用 ecmp bfd L3 HA 公网功能
 
 ``` bash
 # cat 01-vpc-ecmp-enable-external-bfd.yml
@@ -73,7 +73,7 @@ spec:
   namespaces:
   - vpc1
   enableExternal: true
-  enableBfd: true # bfd开关可以随意切换，开表示启用bfd ecmp路由
+  enableBfd: true # bfd 开关可以随意切换，开表示启用 bfd ecmp 路由
   #enableBfd: false 
 
 
@@ -87,7 +87,7 @@ spec:
   default: false
   disableGatewayCheck: false
   disableInterConnection: true
-  enableEcmp: true  # 只需开启ecmp
+  enableEcmp: true  # 只需开启 ecmp
   gatewayNode: ""
   gatewayType: distributed
   #gatewayType: centralized
@@ -102,26 +102,26 @@ spec:
 
 **使用上的注意点:**
 
-1. 自定义vpc下的ecmp只用静态ecmp bfd路由，vpc enableBfd和subnet enableEcmp 同时开启的情况下才会生效，才会自动管理静态ecmp bfd路由。
+1. 自定义 vpc 下的 ecmp 只用静态 ecmp bfd 路由，vpc enableBfd 和 subnet enableEcmp 同时开启的情况下才会生效，才会自动管理静态 ecmp bfd 路由。
 2. 上述配置关闭的情况下，会自动切回常规默认静态路由。
-3. 默认vpc无法使用该功能，仅支持自定义vpc，默认vpc有更复杂的策略路由以及snat设计。
-4. 自定义vpc的subnet的enableEcmp仅使用静态路由，网关类型gatewayType没有作用。
-5. 当关闭EnableExternal时，vpc内无法通外网。
-6. 当开启EnableExternal时，关闭EnableBfd 时，会基于普通默认路由上外网，不具备高可用。
+3. 默认 vpc 无法使用该功能，仅支持自定义 vpc，默认 vpc 有更复杂的策略路由以及 snat 设计。
+4. 自定义 vpc 的 subnet 的 enableEcmp 仅使用静态路由，网关类型 gatewayType 没有作用。
+5. 当关闭 EnableExternal 时，vpc 内无法通外网。
+6. 当开启 EnableExternal 时，关闭 EnableBfd 时，会基于普通默认路由上外网，不具备高可用。
 
 ``` bash
-# 上述模板应用后ovn逻辑层应该可以看到如下资源
-# 查看vpc
+# 上述模板应用后 ovn 逻辑层应该可以看到如下资源
+# 查看 vpc
 # k get vpc
 NAME          ENABLEEXTERNAL   ENABLEBFD   STANDBY   SUBNETS                                NAMESPACES
 ovn-cluster   true                         true      ["external204","join","ovn-default"]
 vpc1          true             true        true      ["vpc1-subnet1"]                       ["vpc1"]
 
-# 默认vpc 未支持ENABLEBFD
-# 自定义vpc已支持且已启用
+# 默认 vpc 未支持 ENABLEBFD
+# 自定义 vpc 已支持且已启用
 
 
-# 1. 创建了bfd会话
+# 1. 创建了 bfd 会话
 # k ko nbctl list bfd
 _uuid               : be7df545-2c4c-4751-878f-b3507987f050
 detect_mult         : 3
@@ -153,9 +153,9 @@ min_tx              : 100
 options             : {}
 status              : up
 
-### 注意所有status 正常都应该是up的
+### 注意所有 status 正常都应该是 up 的
 
-# 2. 创建了基于bfd的静态路由
+# 2. 创建了基于 bfd 的静态路由
 # k ko nbctl lr-route-list vpc1
 IPv4 Routes
 Route Table <main>:
@@ -223,14 +223,14 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 0.0.0.0         10.5.204.254    0.0.0.0         UG    0      0        0 ovnext0
 10.5.204.0      0.0.0.0         255.255.255.0   U     0      0        0 ovnext0
 
-## 注意以上内容和一个internal port unerlay公网pod内部的ns大致是一致的，这里只是在网关节点上单独维护了一个ns
+## 注意以上内容和一个 internal port unerlay 公网 pod 内部的 ns 大致是一致的，这里只是在网关节点上单独维护了一个 ns
 
 [root@pc-node-1 ~]# ip netns exec ovnext bfdd-control status
 There are 1 sessions:
 Session 1
  id=1 local=10.5.204.108 (p) remote=10.5.204.122 state=Up
 
-## 这里即是lrp bfd会话的另一端，也是lrp ecmp的下一跳的其中一个
+## 这里即是 lrp bfd 会话的另一端，也是 lrp ecmp 的下一跳的其中一个
 
 
 [root@pc-node-1 ~]# ip netns exec ovnext ping -c1 223.5.5.5
@@ -240,7 +240,7 @@ PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
 # 到公网没问题
 ```
 
-可以在某一个网关节点的ovnext ns内抓到出去的包
+可以在某一个网关节点的 ovnext ns 内抓到出去的包
 
 ```bash
 # tcpdump -i ovnext0 host 223.5.5.5 -netvv
@@ -280,14 +280,14 @@ tcpdump: listening on ovnext0, link-type EN10MB (Ethernet), capture size 262144 
 0 packets dropped by kernel
 [root@pc-node-3 ~]#
 
-# 可以在该节点down掉出去的网卡，然后看pod出去的包在网络中断中会出现几个包
-# 一般都会看到丢3个包
+# 可以在该节点 down 掉出去的网卡，然后看 pod 出去的包在网络中断中会出现几个包
+# 一般都会看到丢 3 个包
 
 ```
 
-## 3. 关闭bfd模式
+## 3. 关闭 bfd 模式
 
-在某些场景下，可能想直接使用（集中式）单个网关直接出公网，这个时候和默认vpc enable_eip_snat的使用模式是一致的
+在某些场景下，可能想直接使用（集中式）单个网关直接出公网，这个时候和默认 vpc enable_eip_snat 的使用模式是一致的
 
 ``` bash
 # cat 01-vpc-ecmp-enable-external-bfd.yml
@@ -302,7 +302,7 @@ spec:
   #enableBfd: true
   enableBfd: false
 
-## 将bfd功能直接禁用即可
+## 将 bfd 功能直接禁用即可
 
 # k ko nbctl lr-route-list vpc2
 IPv4 Routes
@@ -310,8 +310,8 @@ Route Table <main>:
                 0.0.0.0/0              10.5.204.254 dst-ip
 
 # 应用后路由会切换回正常的默认静态路由
-# 同时nbctl list bfd  可以看到lrp关联的bfd会话已经移除
-# 而且ovnext ns中的对端bfd会话也自动移除
-# 该切换过程保持vpc subnet内保持ping 未看到(秒级)丢包
+# 同时 nbctl list bfd  可以看到 lrp 关联的 bfd 会话已经移除
+# 而且 ovnext ns 中的对端 bfd 会话也自动移除
+# 该切换过程保持 vpc subnet 内保持 ping 未看到(秒级)丢包
 # 再切换回去 也未看到(秒级)丢包
 ```

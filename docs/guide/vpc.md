@@ -175,7 +175,7 @@ spec:
 
 ### 创建 EIP
 
-EIP 为外部网络段的某个 IP 分配给 VPC 网关后可进行浮动IP，SNAT 和 DNAT 操作。
+EIP 为外部网络段的某个 IP 分配给 VPC 网关后可进行浮动 IP，SNAT 和 DNAT 操作。
 
 随机分配一个地址给 EIP：
 

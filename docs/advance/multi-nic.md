@@ -9,7 +9,7 @@ Kube-OVN 可以为其他 CNI 网络插件，例如 macvlan、vlan、host-device 
 
 通过使用 [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni), 我们可以给一个 Pod 添加多块不同网络的网卡。
 然而我们仍然缺乏对集群范围内不同网络的 IP 地址进行管理的能力。在 Kube-OVN 中，我们已经能够通过 Subnet 和 IP 的 CRD 来进行 IP 的高级管理，
-例如子网管理，IP 预留，随机分配，固定分配等。现在我们对子网进行扩展，来接入其他不同的网络插件，使得其他网络插件也可以使用 Kube-OVN 的IPAM功能。
+例如子网管理，IP 预留，随机分配，固定分配等。现在我们对子网进行扩展，来接入其他不同的网络插件，使得其他网络插件也可以使用 Kube-OVN 的 IPAM 功能。
 
 ### 工作流程
 
@@ -21,7 +21,7 @@ net1 网络的网络定义来自于 multus-cni 中的 NetworkAttachmentDefinitio
 当 Pod 创建时，`kube-ovn-controller` 会监听到 Pod 添加事件，并根据 Pod 中的 annotation 去寻找到对应的 Subnet 并从中进行 IP 的分配和管理，
 并将 Pod 所分配到的地址信息写回到 Pod annotation 中。
 
-在容器所在机器的 CNI 可以通过在配置中配置 `kube-ovn-cni` 作为 ipam 插件, `kube-ovn-cni` 将会读取 Pod annotation 并将地址信息通过CNI 协议的标准格式返回给相应的 CNI 插件。
+在容器所在机器的 CNI 可以通过在配置中配置 `kube-ovn-cni` 作为 ipam 插件, `kube-ovn-cni` 将会读取 Pod annotation 并将地址信息通过 CNI 协议的标准格式返回给相应的 CNI 插件。
 
 ## 使用方法
 

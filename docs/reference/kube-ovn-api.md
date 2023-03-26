@@ -53,8 +53,8 @@
 | disableGatewayCheck | Bool | 创建 Pod 时是否跳过网关联通性检查 |
 | disableInterConnection | Bool | 控制是否开启子网跨集群互联 |
 | enableDHCP | Bool | 控制是否配置子网下 lsp 的 dhcp 配置选项 |
-| dhcpV4Options | String | 子网下 lsp dhcpv4_options 关联的 DHCP_Options记录 |
-| dhcpV6Options | String | 子网下 lsp dhcpv6_options 关联的 DHCP_Options记录 |
+| dhcpV4Options | String | 子网下 lsp dhcpv4_options 关联的 DHCP_Options 记录 |
+| dhcpV6Options | String | 子网下 lsp dhcpv6_options 关联的 DHCP_Options 记录 |
 | enableIPv6RA | Bool | 控制子网连接路由器的 lrp 端口，是否配置 ipv6_ra_configs 参数 |
 | ipv6RAConfigs | String | 子网连接路由器的 lrp 端口，ipv6_ra_configs 参数配置信息 |
 | acls | []Acl | 子网对应 logical-switch 关联的 acls 记录 |
@@ -479,7 +479,7 @@ SwitchLBRule 的详细配置信息，可以参考 [自定义 VPC 内部负载均
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
-| ipVersion | String | IP版本号，取值为 `ipv4` 或者 `ipv6` |
+| ipVersion | String | IP 版本号，取值为 `ipv4` 或者 `ipv6` |
 | protocol | String | 取值为 `all`、`icmp`、`tcp` 或者 `udp` |
 | priority | Int | Acl 优先级，取值范围为 1-200，数值越小，优先级越高 |
 | remoteType | String | 取值为 `address` 或者 `securityGroup` |

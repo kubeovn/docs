@@ -17,7 +17,7 @@ Kube-OVN 的 Underlay 模式和 Macvlan 工作模式十分类似，在功能和�
 1. 由于 Macvlan 的内核路径更短，并且不需要 OVS 对数据包进行处理，Macvlan 在吞吐量和延迟性能指标上表现会更好。
 2. Kube-OVN 通过流表提供了 arp-proxy 功能，可以缓解大规模网络下的 arp 广播风暴风险。
 3. 由于 Macvlan 工作在内核底层，会绕过宿主机的 netfilter，Service 和 NetworkPolicy 功能需要额外开发。Kube-OVN 通过 OVS 流表提供了 Service 和 NetworkPolicy 的能力。
-4. Kube-OVN 的 Underlay 模式相比 Macvlan 额外提供了地址管理，固定IP 和 QoS 等功能。
+4. Kube-OVN 的 Underlay 模式相比 Macvlan 额外提供了地址管理，固定 IP 和 QoS 等功能。
 
 ## 环境要求
 
@@ -49,7 +49,7 @@ NETWORK_TYPE          # 设置为 vlan
 VLAN_INTERFACE_NAME   # 设置为宿主机上承担容器流量的网卡，例如 eth1
 VLAN_ID               # 交换机所接受的 VLAN Tag，若设置为 0 则不做 VLAN 封装
 POD_CIDR              # 设置为物理网络 CIDR， 例如 192.168.1.0/24
-POD_GATEWAY           # 设置为物理网络网关，例如192.168.1.1
+POD_GATEWAY           # 设置为物理网络网关，例如 192.168.1.1
 EXCLUDE_IPS           # 排除范围，避免容器网段和物理网络已用 IP 冲突，例如 192.168.1.1..192.168.1.100
 EXCHANGE_LINK_NAME    # 是否交换默认 provider-network 下 OVS 网桥和桥接网卡的名字，默认为 false
 LS_DNAT_MOD_DL_DST    # DNAT 时是否对 MAC 地址进行转换，可加速 Service 的访问，默认为 true
