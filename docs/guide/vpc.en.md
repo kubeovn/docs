@@ -316,3 +316,19 @@ spec:
       nextHopIP: 10.0.1.252
       priority: 10
 ```
+
+
+
+## **Custom VPC Image**
+
+The image used for VPC could be configured via `ovn-vpc-nat-config`  under `kube-system`:
+
+```yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ovn-vpc-nat-config
+  namespace: kube-system
+data:
+  image: 'kubeovn/vpc-nat-gateway:{{ variables.version }}' 
+```
