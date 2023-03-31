@@ -142,13 +142,21 @@ spec:
 VPC gateway functionality needs to be enabled via `ovn-vpc-nat-gw-config` under `kube-system`:
 
 ```yaml
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ovn-vpc-nat-config
+  namespace: kube-system
+data:
+  image: 'kubeovn/vpc-nat-gateway:{{ variables.version }}' 
+---
 kind: ConfigMap
 apiVersion: v1
 metadata:
   name: ovn-vpc-nat-gw-config
   namespace: kube-system
 data:
-  image: 'kubeovn/vpc-nat-gateway:{{ variables.version }}' 
   enable-vpc-nat-gw: 'true'
 ```
 
@@ -174,7 +182,7 @@ spec:
 - `subnet`: A Subnet within the VPC, the VPC Gateway Pod will use `lanIp` to connect to the tenant network under that subnet.
 - `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use for the Pod.
 - `selector`: Node selector for the VPC Gateway Pod.
-- `nextHopIP`: Needs to be the same as `lanIp`.
+- `lanIp`: Needs to be the same as `nextHopIP`.
 
 ### Create EIP
 
