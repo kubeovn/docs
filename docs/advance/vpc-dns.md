@@ -84,7 +84,7 @@ data:
     }
 ```
 
-除了以上资源，该功能还依赖nat-gw-pod镜像进行路由配置。
+除了以上资源，该功能还依赖 nat-gw-pod 镜像进行路由配置。
 
 ## 配置附加网卡
 
@@ -214,4 +214,4 @@ vpc-dns-test-cjh1   10.96.0.3   53/UDP,53/TCP,9153/TCP   kube-system/slr-vpc-dns
 nslookup kubernetes.default.svc.cluster.local 10.96.0.3
 ```
 
-vpc下switch所在的子网以及同一vpc下的其他子网下的pod都是可以解析
+该 vpc 下的 switch lb rule 所在的子网以及同一 vpc 下的其他子网下的 pod 都可以解析
