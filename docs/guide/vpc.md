@@ -139,13 +139,21 @@ spec:
 VPC 网关功能需要通过 `kube-system` 下的 `ovn-vpc-nat-gw-config` 开启：
 
 ```yaml
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ovn-vpc-nat-config
+  namespace: kube-system
+data:
+  image: 'kubeovn/vpc-nat-gateway:{{ variables.version }}' 
+---
 kind: ConfigMap
 apiVersion: v1
 metadata:
   name: ovn-vpc-nat-gw-config
   namespace: kube-system
 data:
-  image: 'kubeovn/vpc-nat-gateway:{{ variables.version }}' 
   enable-vpc-nat-gw: 'true'
 ```
 
@@ -171,7 +179,7 @@ spec:
 - `subnet`： 为 VPC 内某个 Subnet 名，VPC 网关 Pod 会在该子网下用 `lanIp` 来连接租户网络。
 - `lanIp`：`subnet` 内某个未被使用的 IP，VPC 网关 Pod 最终会使用该 Pod。
 - `selector`: VPC 网关 Pod 的节点选择器。
-- `nextHopIP`：需和 `lanIp` 相同。
+- `lanIp` : 需和 vpc 静态路由中的 `nextHopIP` 相同。
 
 ### 创建 EIP
 
@@ -539,20 +547,4 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 
 - 一个 vpc 下只会部署一个自定义 dns 组件;
 - 当一个 vpc 下配置多个 vpc-dns 资源（即同一个 vpc 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `fasle`;
-- 当 `ture` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。
-
-
-
-## **自定义VPC镜像**
-
-VPC使用的镜像可以通过 `kube-system` 下的 `ovn-vpc-nat-config` 进行配置：
-
-```yaml
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: ovn-vpc-nat-config
-  namespace: kube-system
-data:
-  image: 'kubeovn/vpc-nat-gateway:{{ variables.version }}' 
-```
+- 当 `true` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。

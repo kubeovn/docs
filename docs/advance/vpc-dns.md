@@ -84,6 +84,8 @@ data:
     }
 ```
 
+除了以上资源，该功能还依赖 nat-gw-pod 镜像进行路由配置。
+
 ## 配置附加网卡
 
 ```yaml
@@ -125,7 +127,7 @@ spec:
   natOutgoing: true
   private: false
   protocol: IPv4
-  provider: ovn-nad.default.ovn
+  provider: ovn-nad.default.ovn # 只需修改该字段
   vpc: ovn-cluster
 ```
 
@@ -185,7 +187,7 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 
 * 限制：一个 vpc 下只会部署一个自定义 dns 组件;
 * 当一个 vpc 下配置多个 vpc-dns 资源（即同一个 vpc 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `fasle`;
-* 当 `ture` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。
+* 当 `true` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。
 
 ## 验证部署结果
 
@@ -206,8 +208,10 @@ NAME                VIP         PORT(S)                  SERVICE                
 vpc-dns-test-cjh1   10.96.0.3   53/UDP,53/TCP,9153/TCP   kube-system/slr-vpc-dns-test-cjh1   113s
 ```
 
-进入该 VPC 下的 Pod，测试 dns 解析：
+进入该 VPC 下的 Pod，测试 dns 解析:
 
 ```bash
 nslookup kubernetes.default.svc.cluster.local 10.96.0.3
 ```
+
+该 vpc 下的 switch lb rule 所在的子网以及同一 vpc 下的其他子网下的 pod 都可以解析
