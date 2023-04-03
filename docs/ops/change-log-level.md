@@ -1,4 +1,4 @@
-打开 kube-ovn.yaml，在服务启动脚本的参数列表中设置log等级，比如：
+打开 kube-ovn.yaml，在服务启动脚本的参数列表中设置 log 等级，比如：
 
 ``` bash
 vi kube-ovn.yaml
@@ -10,5 +10,5 @@ vi kube-ovn.yaml
           - /kube-ovn/start-controller.sh
           - --v=3
 # ...
-# log等级越高，log就越详细
+# log 等级越高，log 就越详细
 ```
