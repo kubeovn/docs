@@ -23,10 +23,24 @@ kubectl exec -it ovs-ovn-test1 -n kube-system -- ovs-pki init
 
 ### 生成密钥和证书请求
 
-在每个 daemonset ovs-ovn 下执行
+在每个 daemonset ovs-ovn 下执行：
 
 ```bash
-kubectl exec -it ovs-ovn-testx -n kube-system -- ovs-vsctl list Open_vSwitch
+kubectl exec -it ovs-ovn-testx -n kube-system -- ovs-vsctl get Open_vSwitch . external_ids
+```
+
+找到 system-id 例如：system_id=3855defa-d26b-47b4-b554-787f77b41dd9
+
+然后执行：
+
+```bash
+ovs-pki req -u 3855defa-d26b-47b4-b554-787f77b41dd9
+```
+会生成认证请求和密钥两个文件如下：
+
+```
+3855defa-d26b-47b4-b554-787f77b41dd9-req.pem
+3855defa-d26b-47b4-b554-787f77b41dd9-privkey.pem
 ```
 
 
