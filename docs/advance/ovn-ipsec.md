@@ -8,7 +8,7 @@
 sh start-ipsec.sh
 ```
 
-执行完毕后，ipsec 协商大约 60s 以内，可以通过命令来查看 ipsec 状态，如下表示在节点 IP 为 172.18.0.2 的 节点上建立了从 172.18.0.2 到 172.18.0.4 的 ipsec tunnel， security association 个数得是偶数个，不然表示 ipsec 还没有建立成功。
+执行完毕后，ipsec 协商大约 60s 以内，可以通过命令来查看 ipsec 状态，如下表示在节点 IP 为 172.18.0.2 的 节点上建立了从 172.18.0.2 到 172.18.0.4 的 ipsec tunnel。
 
 ```bash
 # kubectl exec -it ovs-ovn-9x8jq -n kube-system -- ovs-appctl -t ovs-monitor-ipsec tunnels/show
@@ -37,4 +37,12 @@ Kernel security associations installed:
   sel src 172.18.0.4/32 dst 172.18.0.2/32 proto udp sport 6081
   sel src 172.18.0.2/32 dst 172.18.0.4/32 proto udp sport 6081
   sel src 172.18.0.4/32 dst 172.18.0.2/32 proto udp dport 6081
+```
+
+建立完成后可以抓包观察报文已经被加密：
+
+```bash
+#tcpdump -i eth0 -nel esp
+10:01:40.349896 IP kube-ovn-worker > kube-ovn-control-plane.kind: ESP(spi=0xcc91322a,seq=0x13d0), length 156
+10:01:40.350015 IP kube-ovn-control-plane.kind > kube-ovn-worker: ESP(spi=0xc8df4221,seq=0x1d37), length 156
 ```
