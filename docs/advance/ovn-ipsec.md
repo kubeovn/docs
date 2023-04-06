@@ -2,13 +2,13 @@
 
 ## 启动 ipsec 
 
-从 kube-ovn 源码拷贝脚本，路径是： dist/image/start-ipsec.sh，执行命令：
+从 kube-ovn 源码拷贝脚本，路径是： dist/image/start-ipsec.sh，执行命令，该脚本会调用 ovs-pki 生成和分配加密需要的证书：
 
 ```bash
 sh start-ipsec.sh
 ```
 
-执行完毕后，ipsec 协商大约 60s 以内，可以通过命令来查看 ipsec 状态，如下表示在节点 IP 为 172.18.0.2 的 节点上建立了从 172.18.0.2 到 172.18.0.4 的 ipsec tunnel。
+执行完毕后，节点之间会协商一段时间建立 ipsec 隧道，经验值是十几秒到一分钟之间，可以通过命令来查看 ipsec 状态，如下表示在节点 IP 为 172.18.0.2 的 节点上建立了从 172.18.0.2 到 172.18.0.4 的 ipsec 隧道。
 
 ```bash
 # kubectl exec -it ovs-ovn-9x8jq -n kube-system -- ovs-appctl -t ovs-monitor-ipsec tunnels/show
