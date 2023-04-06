@@ -1,6 +1,6 @@
 # 使用 ovn ipsec 加密 ovn 内部节点之间的通信
 
-## 启动 ipsec 
+## 启动 ipsec
 
 从 kube-ovn 源码拷贝脚本，路径是： dist/image/start-ipsec.sh，执行命令，该脚本会调用 ovs-pki 生成和分配加密需要的证书：
 
@@ -46,3 +46,13 @@ Kernel security associations installed:
 10:01:40.349896 IP kube-ovn-worker > kube-ovn-control-plane.kind: ESP(spi=0xcc91322a,seq=0x13d0), length 156
 10:01:40.350015 IP kube-ovn-control-plane.kind > kube-ovn-worker: ESP(spi=0xc8df4221,seq=0x1d37), length 156
 ```
+
+当执行完脚本后，可以通过执行命令关闭 ipsec ：
+```
+kubectl ko nbctl set nb_global . ipsec=false
+```
+或者执行命令再次打开：
+```
+kubectl ko nbctl set nb_global . ipsec=true
+```
+
