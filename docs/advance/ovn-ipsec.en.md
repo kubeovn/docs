@@ -57,3 +57,5 @@ Or execute the command to open it again:
 
 ```bash
 kubectl ko nbctl set nb_global . ipsec=true
+
+This feature is supported from v1.10
