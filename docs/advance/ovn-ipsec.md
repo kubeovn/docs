@@ -48,11 +48,13 @@ Kernel security associations installed:
 ```
 
 当执行完脚本后，可以通过执行命令关闭 ipsec：
+
 ```bash
 # kubectl ko nbctl set nb_global . ipsec=false
 ```
 
 或者执行命令再次打开：
+
 ```bash
 # kubectl ko nbctl set nb_global . ipsec=true
 ```
