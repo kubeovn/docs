@@ -58,3 +58,5 @@ Kernel security associations installed:
 ```bash
 # kubectl ko nbctl set nb_global . ipsec=true
 ```
+
+该功能从 v1.10 开始支持。
