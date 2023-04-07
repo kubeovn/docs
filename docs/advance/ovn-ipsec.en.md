@@ -42,7 +42,7 @@ Kernel security associations installed:
 After the establishment is complete, you can capture packets and observe that the packets have been encrypted:
 
 ```bash
-#tcpdump -i eth0 -nel esp
+# tcpdump -i eth0 -nel esp
 10:01:40.349896 IP kube-ovn-worker > kube-ovn-control-plane.kind: ESP(spi=0xcc91322a,seq=0x13d0), length 156
 10:01:40.350015 IP kube-ovn-control-plane.kind > kube-ovn-worker: ESP(spi=0xc8df4221,seq=0x1d37), length 156
 ```
@@ -50,12 +50,13 @@ After the establishment is complete, you can capture packets and observe that th
 After executing the script, you can turn off ipsec by executing the command:
 
 ```bash
-kubectl ko nbctl set nb_global . ipsec=false
+# kubectl ko nbctl set nb_global . ipsec=false
 ```
 
 Or execute the command to open it again:
 
 ```bash
-kubectl ko nbctl set nb_global . ipsec=true
+# kubectl ko nbctl set nb_global . ipsec=true
+```
 
 This feature is supported from v1.10
