@@ -62,7 +62,7 @@ nav:
       - ovn eip fip snat 支持: 'advance/ovn-eip-fip-snat.md'
       - ovn snat 基于 ecmp bfd 静态路由的 L3 ha 支持: 'advance/ovn-l3-ha-based-ecmp-with-bfd.md'
       - SecurityGroup 使用: 'advance/security-group.md'
-      - ovn ipsec: 'advance/ovn-ipsec.md'
+      - ovn ipsec 支持: 'advance/ovn-ipsec.md'
   - 技术参考:
       - 总体架构: 'reference/architecture.md'
       - 功能成熟度: 'reference/feature-stage.md'
@@ -197,7 +197,7 @@ plugins:
           自定义 VPC DNS: VPC DNS
           Kube-OVN 接口规范: Kube-OVN API Reference
           SecurityGroup 使用: SecurityGroup Usage
-          ovn ipsec 使用：ovn ipsec Usage
+          ovn ipsec 支持: ovn ipsec Support
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
