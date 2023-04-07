@@ -2,13 +2,13 @@
 
 ## 启动 ipsec
 
-从 kube-ovn 源码拷贝脚本，路径是： dist/image/start-ipsec.sh，执行命令，该脚本会调用 ovs-pki 生成和分配加密需要的证书：
+从 kube-ovn 源码拷贝脚本，路径是： dist/image/start-ipsec.sh，执行命令如下，该脚本会调用 ovs-pki 生成和分配加密需要的证书：
 
 ```bash
 sh start-ipsec.sh
 ```
 
-执行完毕后，节点之间会协商一段时间建立 ipsec 隧道，经验值是十几秒到一分钟之间，可以通过命令来查看 ipsec 状态，如下表示在节点 IP 为 172.18.0.2 的 节点上建立了从 172.18.0.2 到 172.18.0.4 的 ipsec 隧道。
+执行完毕后，节点之间会协商一段时间建立 ipsec 隧道，经验值是十几秒到一分钟之间，可以通过如下命令来查看 ipsec 状态，如下表示在节点 IP 为 172.18.0.2 的 节点上建立了从 172.18.0.2 到 172.18.0.4 的 ipsec 隧道。
 
 ```bash
 # kubectl exec -it ovs-ovn-9x8jq -n kube-system -- ovs-appctl -t ovs-monitor-ipsec tunnels/show
@@ -42,17 +42,17 @@ Kernel security associations installed:
 建立完成后可以抓包观察报文已经被加密：
 
 ```bash
-#tcpdump -i eth0 -nel esp
+# tcpdump -i eth0 -nel esp
 10:01:40.349896 IP kube-ovn-worker > kube-ovn-control-plane.kind: ESP(spi=0xcc91322a,seq=0x13d0), length 156
 10:01:40.350015 IP kube-ovn-control-plane.kind > kube-ovn-worker: ESP(spi=0xc8df4221,seq=0x1d37), length 156
 ```
 
 当执行完脚本后，可以通过执行命令关闭 ipsec：
 ```bash
-kubectl ko nbctl set nb_global . ipsec=false
+# kubectl ko nbctl set nb_global . ipsec=false
 ```
 
 或者执行命令再次打开：
 ```bash
-kubectl ko nbctl set nb_global . ipsec=true
+# kubectl ko nbctl set nb_global . ipsec=true
 ```
