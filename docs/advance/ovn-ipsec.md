@@ -47,12 +47,12 @@ Kernel security associations installed:
 10:01:40.350015 IP kube-ovn-control-plane.kind > kube-ovn-worker: ESP(spi=0xc8df4221,seq=0x1d37), length 156
 ```
 
-当执行完脚本后，可以通过执行命令关闭 ipsec ：
-```
+当执行完脚本后，可以通过执行命令关闭 ipsec：
+```bash
 kubectl ko nbctl set nb_global . ipsec=false
 ```
+
 或者执行命令再次打开：
-```
+```bash
 kubectl ko nbctl set nb_global . ipsec=true
 ```
-
