@@ -182,6 +182,7 @@ spec:
 - `lanIp` : 需和 vpc 静态路由中的 `nextHopIP` 相同。
 
 其他可配参数：
+
 - `tolerations` : 为 VPC 网关配置容忍度，具体配置参考 [污点和容忍度](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/taint-and-toleration/)。
 - `affinity` :  为 VPC 网关 Pod 或节点配置亲和性，具体设置参考 [亲和性与反亲和性](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)。
 
