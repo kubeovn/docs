@@ -128,7 +128,12 @@ spec:
       "cniVersion": "0.3.0",
       "type": "macvlan",
       "master": "eth1",
-      "mode": "bridge"
+      "mode": "bridge",
+      "ipam": {
+        "type": "kube-ovn",
+        "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
+        "provider": "ovn-vpc-external-network.kube-system"
+      }
     }'
 ```
 
