@@ -5,38 +5,70 @@
 Copy the script from the kube-ovn source code, the path is : dist/image/start-ipsec.sh, execute the command as follows, the script will call ovs-pki to generate and distribute the certificate required for encryption:
 
 ```bash
-sh start-ipsec.sh
+sh ipsec.sh init
 ```
 
 After the execution is completed, the nodes will negotiate for a period of time to establish an ipsec tunnel. The experience value is between ten seconds and one minute. You can use the following command to view the ipsec status. ipsec tunnel from 172.18.0.2 to 172.18.0.4.
 
 ```bash
-# kubectl exec -it ovs-ovn-9x8jq -n kube-system -- ovs-appctl -t ovs-monitor-ipsec tunnels/show
-Interface name: ovn-9aa51f-0 v1 (CONFIGURED)
+# sh ipsec.sh status
+ Pod {ovs-ovn-d7hdt} ipsec status...
+Interface name: ovn-a4718e-0 v1 (CONFIGURED)
   Tunnel Type:    geneve
   Local IP:       172.18.0.2
   Remote IP:      172.18.0.4
   Address Family: IPv4
   SKB mark:       None
-  Local cert:     /etc/ipsec.d/certs/6b8c6eec-eddc-4c02-a12d-c958690f6cd3-cert.pem
-  Local name:     6b8c6eec-eddc-4c02-a12d-c958690f6cd3
-  Local key:      /etc/ipsec.d/private/6b8c6eec-eddc-4c02-a12d-c958690f6cd3-privkey.pem
+  Local cert:     /etc/ipsec.d/certs/8aebd9df-46ef-47b9-85e3-73e9a765296d-cert.pem
+  Local name:     8aebd9df-46ef-47b9-85e3-73e9a765296d
+  Local key:      /etc/ipsec.d/private/8aebd9df-46ef-47b9-85e3-73e9a765296d-privkey.pem
   Remote cert:    None
-  Remote name:    9aa51f22-8ae4-49a1-8937-b0741f5c6bbc
+  Remote name:    a4718e55-5b85-4f46-90e6-63527d080590
   CA cert:        /etc/ipsec.d/cacerts/cacert.pem
   PSK:            None
+  Custom Options: {}
+  Ofport:         2
+  CFM state:      Disabled
+Kernel policies installed:
+  src 172.18.0.2/32 dst 172.18.0.4/32 proto udp sport 6081
+  src 172.18.0.2/32 dst 172.18.0.4/32 proto udp sport 6081
+  src 172.18.0.2/32 dst 172.18.0.4/32 proto udp dport 6081
+  src 172.18.0.2/32 dst 172.18.0.4/32 proto udp dport 6081
+Kernel security associations installed:
+  sel src 172.18.0.2/32 dst 172.18.0.4/32 proto udp sport 6081
+  sel src 172.18.0.4/32 dst 172.18.0.2/32 proto udp dport 6081
+  sel src 172.18.0.2/32 dst 172.18.0.4/32 proto udp dport 6081
+  sel src 172.18.0.4/32 dst 172.18.0.2/32 proto udp sport 6081
+IPsec connections that are active:
+
+ Pod {ovs-ovn-fvbbj} ipsec status...
+Interface name: ovn-8aebd9-0 v1 (CONFIGURED)
+  Tunnel Type:    geneve
+  Local IP:       172.18.0.4
+  Remote IP:      172.18.0.2
+  Address Family: IPv4
+  SKB mark:       None
+  Local cert:     /etc/ipsec.d/certs/a4718e55-5b85-4f46-90e6-63527d080590-cert.pem
+  Local name:     a4718e55-5b85-4f46-90e6-63527d080590
+  Local key:      /etc/ipsec.d/private/a4718e55-5b85-4f46-90e6-63527d080590-privkey.pem
+  Remote cert:    None
+  Remote name:    8aebd9df-46ef-47b9-85e3-73e9a765296d
+  CA cert:        /etc/ipsec.d/cacerts/cacert.pem
+  PSK:            None
+  Custom Options: {}
   Ofport:         1
   CFM state:      Disabled
 Kernel policies installed:
-  src 172.18.0.2/32 dst 172.18.0.4/32 proto udp dport 6081
-  src 172.18.0.2/32 dst 172.18.0.4/32 proto udp dport 6081
-  src 172.18.0.2/32 dst 172.18.0.4/32 proto udp sport 6081
-  src 172.18.0.2/32 dst 172.18.0.4/32 proto udp sport 6081
+  src 172.18.0.4/32 dst 172.18.0.2/32 proto udp dport 6081
+  src 172.18.0.4/32 dst 172.18.0.2/32 proto udp dport 6081
+  src 172.18.0.4/32 dst 172.18.0.2/32 proto udp sport 6081
+  src 172.18.0.4/32 dst 172.18.0.2/32 proto udp sport 6081
 Kernel security associations installed:
-  sel src 172.18.0.2/32 dst 172.18.0.4/32 proto udp dport 6081
-  sel src 172.18.0.4/32 dst 172.18.0.2/32 proto udp sport 6081
-  sel src 172.18.0.2/32 dst 172.18.0.4/32 proto udp sport 6081
   sel src 172.18.0.4/32 dst 172.18.0.2/32 proto udp dport 6081
+  sel src 172.18.0.2/32 dst 172.18.0.4/32 proto udp sport 6081
+  sel src 172.18.0.4/32 dst 172.18.0.2/32 proto udp sport 6081
+  sel src 172.18.0.2/32 dst 172.18.0.4/32 proto udp dport 6081
+IPsec connections that are active:
 ```
 
 After the establishment is complete, you can capture packets and observe that the packets have been encrypted:
@@ -50,13 +82,13 @@ After the establishment is complete, you can capture packets and observe that th
 After executing the script, you can turn off ipsec by executing the command:
 
 ```bash
-# kubectl ko nbctl set nb_global . ipsec=false
+# sh ipsec.sh stop
 ```
 
 Or execute the command to open it again:
 
 ```bash
-# kubectl ko nbctl set nb_global . ipsec=true
+# sh ipsec.sh start
 ```
 
 This feature is supported from v1.10
