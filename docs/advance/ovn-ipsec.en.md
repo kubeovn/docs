@@ -8,7 +8,7 @@ Copy the script from the kube-ovn source code, the path is : dist/image/start-ip
 sh ipsec.sh init
 ```
 
-After the execution is completed, the nodes will negotiate for a period of time to establish an ipsec tunnel. The experience value is between ten seconds and one minute. You can use the following command to view the ipsec status. ipsec tunnel from 172.18.0.2 to 172.18.0.4.
+After the execution is completed, the nodes will negotiate for a period of time to establish an ipsec tunnel. The experience value is between ten seconds and one minute.
 
 ```bash
 # sh ipsec.sh status
