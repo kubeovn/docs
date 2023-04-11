@@ -60,4 +60,3 @@ eip-2   172.18.11.16   00:00:00:E5:38:37         gw2       true
 
 * 创建 QoS 策略后，不能更改带宽限制规则。如果需要为 EIP 设置新的速率限制规则，则可以将新的 QoS 策略更新到`IptablesEIP.spec.qosPolicy`字段中。
 * 只有在未使用时才能删除 QoS 策略。因此，在删除 QoS 策略之前，必须先从任何相关的`IptablesEIP`中删除`IptablesEIP.spec.qosPolicy`字段。
-
