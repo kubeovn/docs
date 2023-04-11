@@ -29,7 +29,7 @@ spec:
     ingressMax: "1" # Mbps
 ```
 
-## EIP QoS
+## 设置 EIP QoS
 
 创建时指定：
 
@@ -49,7 +49,7 @@ spec:
 
 通过`label`查看已经设置对应 qos 的 eip：
 
-````bash
+```bash
 # kubectl get eip  -l ovn.kubernetes.io/qos=qos-example2
 NAME    IP             MAC                 NAT   NATGWDP   READY
 eip-1   172.18.11.2    00:00:00:C7:5E:99         gw1       true
