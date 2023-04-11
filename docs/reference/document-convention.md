@@ -74,7 +74,7 @@ yaml 代码块需要标识为 yaml。
 <tr><td>
 
 `````markdown
-````yaml
+````
 apiVersion: kubeovn.io/v1
 kind: Subnet
 metadata:
@@ -104,7 +104,7 @@ metadata:
 <tr><td>
 
 `````markdown
-````bash
+````
 wget 127.0.0.1
 ````
 `````
