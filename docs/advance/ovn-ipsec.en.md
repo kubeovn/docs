@@ -2,7 +2,7 @@
 
 ## start ipsec
 
-Copy the script from the kube-ovn source code, the path is : dist/image/start-ipsec.sh, execute the command as follows, the script will call ovs-pki to generate and distribute the certificate required for encryption:
+Copy the script from the kube-ovn source code, the path is : dist/image/ipsec.sh, execute the command as follows, the script will call ovs-pki to generate and distribute the certificate required for encryption:
 
 ```bash
 sh ipsec.sh init
