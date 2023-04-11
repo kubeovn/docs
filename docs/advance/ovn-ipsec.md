@@ -2,7 +2,7 @@
 
 ## 启动 ipsec
 
-从 kube-ovn 源码拷贝脚本，路径是： dist/image/start-ipsec.sh，执行命令如下，该脚本会调用 ovs-pki 生成和分配加密需要的证书：
+从 kube-ovn 源码拷贝脚本，路径是： dist/image/ipsec.sh，执行命令如下，该脚本会调用 ovs-pki 生成和分配加密需要的证书：
 
 ```bash
 sh ipsec.sh init
