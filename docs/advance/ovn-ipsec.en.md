@@ -92,5 +92,3 @@ Or execute the command to open it again:
 ```bash
 # bash ipsec.sh start
 ```
-
-This feature is supported from v1.10
