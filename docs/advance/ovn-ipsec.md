@@ -7,7 +7,7 @@
 该功能从 v1.10.11 和 v1.11.4 后开始支持，kernel 版本至少是 3.10.0 以上
 
 ```bash
-sh ipsec.sh init
+bash ipsec.sh init
 ```
 
 执行完毕后，节点之间会协商一段时间建立 ipsec 隧道，经验值是十几秒到一分钟之间，可以通过如下命令来查看 ipsec 状态：
@@ -84,11 +84,11 @@ IPsec connections that are active:
 当执行完脚本后，可以通过执行命令关闭 ipsec：
 
 ```bash
-# sh ipsec.sh stop
+# bash ipsec.sh stop
 ```
 
 或者执行命令再次打开：
 
 ```bash
-# sh ipsec.sh start
+# bash ipsec.sh start
 ```
