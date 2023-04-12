@@ -1,14 +1,16 @@
-# 使用 ovn ipsec 加密 ovn 内部节点之间的通信
+# 使用 IPsec 加密节点间通信
 
 ## 启动 ipsec
 
-从 kube-ovn 源码拷贝脚本，路径是： dist/image/ipsec.sh，执行命令如下，该脚本会调用 ovs-pki 生成和分配加密需要的证书：
+从 kube-ovn 源码拷贝脚本，链接在 https://github.com/kubeovn/kube-ovn/blob/master/dist/images/ipsec.sh ，执行命令如下，该脚本会调用 ovs-pki 生成和分配加密需要的证书：
+
+该功能从 v1.10.11 和 v1.11.4 后开始支持，kernel 版本至少是 3.10.0 以上
 
 ```bash
 sh ipsec.sh init
 ```
 
-执行完毕后，节点之间会协商一段时间建立 ipsec 隧道，经验值是十几秒到一分钟之间，可以通过如下命令来查看 ipsec 状态
+执行完毕后，节点之间会协商一段时间建立 ipsec 隧道，经验值是十几秒到一分钟之间，可以通过如下命令来查看 ipsec 状态：
 
 ```bash
 # sh ipsec.sh status
@@ -90,5 +92,3 @@ IPsec connections that are active:
 ```bash
 # sh ipsec.sh start
 ```
-
-该功能从 v1.10 开始支持。
