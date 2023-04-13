@@ -55,3 +55,35 @@ make kind-init
 make kind-install-underlay
 make e2e-underlay-single-nic
 ```
+
+To run the ovn vpc nat gw eip, fip, snat, dnat E2E test, run the following commands:
+
+```bash
+make kind-init
+make kind-install
+make ovn-vpc-nat-gw-conformance-e2e
+```
+
+To run the iptables vpc nat gw eip, fip, snat, dnat E2E test, run the following commands:
+
+```bash
+make kind-init
+make kind-install
+make kind-install-multus
+make iptables-vpc-nat-gw-conformance-e2e
+```
+
+To run the loadbalancer service E2E test, run the following commands:
+
+```bash
+make kind-init
+make kind-install
+make kind-install-lb-svc
+make kube-ovn-lb-svc-conformance-e2e
+```
+
+To clean, run the following commands:
+
+```bash
+make kind-clean
+```
