@@ -1,16 +1,16 @@
 # Encrypt inter-node communication using IPsec
 
-This function is supported after v1.10.11 and v1.11.4, and the kernel version is at least 3.10.0 or above
+This function is supported after v1.10.11 and v1.11.4, and the kernel version is at least 3.10.0 or above.
 
-## start ipsec
+## start IPsec
 
-Copy the script from the kube-ovn source code [ipsec.sh](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/ipsec.sh), execute the command as follows, the script will call ovs-pki to generate and distribute the certificate required for encryption:
+Copy the script from the kube-ovn source code [ipsec.sh](https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/ipsec.sh), execute the command as follows, the script will call ovs-pki to generate and distribute the certificate required for encryption:
 
 ```bash
 bash ipsec.sh init
 ```
 
-After the execution is completed, the nodes will negotiate for a period of time to establish an ipsec tunnel. The experience value is between ten seconds and one minute.You can check the ipsec status with the following command:
+After the execution is completed, the nodes will negotiate for a period of time to establish an IPsec tunnel. The experience value is between ten seconds and one minute.You can check the IPsec status with the following command:
 
 ```bash
 # bash ipsec.sh status
@@ -81,7 +81,7 @@ After the establishment is complete, you can capture packets and observe that th
 10:01:40.350015 IP kube-ovn-control-plane.kind > kube-ovn-worker: ESP(spi=0xc8df4221,seq=0x1d37), length 156
 ```
 
-After executing the script, you can turn off ipsec by executing the command:
+After executing the script, you can turn off IPsec by executing the command:
 
 ```bash
 # bash ipsec.sh stop
