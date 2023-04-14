@@ -4,7 +4,7 @@
 
 ## 启动 IPsec
 
-从 kube-ovn 源码拷贝脚本 [ipsec.sh](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/ipsec.sh)，执行命令如下，该脚本会调用 ovs-pki 生成和分配加密需要的证书：
+从 kube-OVN 源码拷贝脚本 [ipsec.sh](https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/ipsec.sh)，执行命令如下，该脚本会调用 ovs-pki 生成和分配加密需要的证书：
 
 ```bash
 bash ipsec.sh init
