@@ -81,7 +81,7 @@ IPsec connections that are active:
 10:01:40.350015 IP kube-ovn-control-plane.kind > kube-ovn-worker: ESP(spi=0xc8df4221,seq=0x1d37), length 156
 ```
 
-当执行完脚本后，可以通过执行命令关闭 ipsec：
+当执行完脚本后，可以通过执行命令关闭 IPsec：
 
 ```bash
 # bash ipsec.sh stop
