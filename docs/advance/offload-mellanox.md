@@ -165,9 +165,6 @@ NAME                                          READY   STATUS    RESTARTS   AGE
 pod/sriov-network-config-daemon-bf9nt         1/1     Running   0          8s
 pod/sriov-network-operator-54d7545f65-296gb   1/1     Running   0          10s
 
-NAME                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/sriov-network-operator   ClusterIP   10.102.53.223   <none>        8383/TCP   9s
-
 NAME                                         DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                                                 AGE
 daemonset.apps/sriov-network-config-daemon   1         1         1       1            1           beta.kubernetes.io/os=linux,feature.node.kubernetes.io/network-sriov.capable=true   8s
 
