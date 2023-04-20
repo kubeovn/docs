@@ -1,4 +1,4 @@
-# ovn eip fip snat
+# ovn eip fip snat dnat 
 
 ``` mermaid
 graph LR
@@ -482,4 +482,73 @@ PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
 rtt min/avg/max/mdev = 22.126/22.518/22.741/0.278 ms
 
 # the two pods can access the external network based on these two type snat resources respectively
+```
+
+## 4. ovn-dnat
+
+### 4.1 ovn-dnat binds a DNAT to a pod
+
+```yaml
+kind: OvnEip
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-static
+spec:
+  externalSubnet: underlay
+---
+kind: OvnDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-dnat
+spec:
+  ovnEip: eip-dnat
+  ipName: vpc-1-busybox01.vpc1 # Note that this is the name of the pod IP CRD and it is unique
+  protocol: tcp
+  internalPort: "22"
+  externalPort: "22"
+```
+
+The configuration of OvnDnatRule is similar to that of IptablesDnatRule.
+
+```bash
+# kubectl get oeip eip-dnat
+NAME       V4IP        V6IP   MAC                 TYPE   READY
+eip-dnat   10.5.49.4          00:00:00:4D:CE:49   dnat   true
+
+# kubectl get odnat
+NAME                   EIP                    PROTOCOL   V4EIP        V4IP           INTERNALPORT   EXTERNALPORT   IPNAME                                READY
+eip-dnat               eip-dnat               tcp        10.5.49.4    192.168.0.3    22             22             vpc-1-busybox01.vpc1                  true
+
+```
+
+### 4.2 ovn-dnat binds a DNAT to a VIP
+
+```yaml
+kind: OvnDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-dnat
+spec:
+  ipType: vip  # By default, Dnat is oriented towards pod IPs. Here, it is necessary to specify that it is connected to VIP resources
+  ovnEip: eip-dnat
+  ipName: test-dnat-vip
+  protocol: tcp
+  internalPort: "22"
+  externalPort: "22"
+```
+
+The configuration of OvnDnatRule is similar to that of IptablesDnatRule.
+
+```bash
+# kubectl get vip test-dnat-vip
+NAME            V4IP          PV4IP   MAC                 PMAC   V6IP   PV6IP   SUBNET         READY
+test-dnat-vip   192.168.0.4           00:00:00:D0:C0:B5                         vpc1-subnet1   true
+
+# kubectl get oeip eip-dnat
+NAME       V4IP        V6IP   MAC                 TYPE   READY
+eip-dnat   10.5.49.4          00:00:00:4D:CE:49   dnat   true
+
+# kubectl get odnat eip-dnat 
+NAME       EIP        PROTOCOL   V4EIP       V4IP          INTERNALPORT   EXTERNALPORT   IPNAME          READY
+eip-dnat   eip-dnat   tcp        10.5.49.4   192.168.0.4   22             22             test-dnat-vip   true
 ```
