@@ -1,4 +1,4 @@
-# ovn eip fip snat
+# ovn eip fip snat dnat
 
 ``` mermaid
 graph LR
@@ -193,7 +193,7 @@ spec:
 # 动态分配一个 eip 资源，该资源预留用于 fip 场景
 ```
 
-### 3.1 ovn-fip 为 pod 绑定一个 fip
+### 2.1 ovn-fip 为 pod 绑定一个 fip
 
 ``` bash
 # k get po -o wide -n vpc1 vpc-1-busybox01
@@ -264,7 +264,7 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
         type: "dnat_and_snat"
 ```
 
-### 3.2 ovn-fip 为 vip 绑定一个 fip
+### 2.2 ovn-fip 为 vip 绑定一个 fip
 
 为了便于一些 vip 场景的使用，比如 kubevirt 虚拟机内部我可能会使用一些 vip 提供给 keepalived，kube-vip 等场景来使用，同时支持公网访问。
 
@@ -346,9 +346,9 @@ tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 byt
 # pod 内部可以抓到 fip 相关的 icmp 包
 ```
 
-## 4. ovn-snat
+## 3. ovn-snat
 
-### 4.1 ovn-snat 对应一个 subnet 的 cidr
+### 3.1 ovn-snat 对应一个 subnet 的 cidr
 
 该功能和 iptables-snat 设计和使用方式基本一致
 
@@ -373,7 +373,7 @@ spec:
   vpcSubnet: vpc1-subnet1 # eip 对应整个网段
 ```
 
-### 4.2 ovn-fip 对应到一个 pod ip
+### 3.2 ovn-fip 对应到一个 pod ip
 
 该功能和 iptables-fip 设计和使用方式基本一致
 
@@ -480,4 +480,73 @@ PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
 rtt min/avg/max/mdev = 22.126/22.518/22.741/0.278 ms
 
 # 可以看到两个 pod 可以分别基于这两种 snat 资源上外网
+```
+
+## 4. ovn-dnat
+
+### 4.1 ovn-dnat 为 pod 绑定一个 dnat
+
+```yaml
+kind: OvnEip
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-static
+spec:
+  externalSubnet: underlay
+---
+kind: OvnDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-dnat
+spec:
+  ovnEip: eip-dnat
+  ipName: vpc-1-busybox01.vpc1 # 注意这里是 pod ip crd 的名字，具有唯一性
+  protocol: tcp
+  internalPort: "22"
+  externalPort: "22"
+```
+
+OvnDnatRule 的配置与 IptablesDnatRule 类似
+
+```bash
+# kubectl get oeip eip-dnat
+NAME       V4IP        V6IP   MAC                 TYPE   READY
+eip-dnat   10.5.49.4          00:00:00:4D:CE:49   dnat   true
+
+# kubectl get odnat
+NAME                   EIP                    PROTOCOL   V4EIP        V4IP           INTERNALPORT   EXTERNALPORT   IPNAME                                READY
+eip-dnat               eip-dnat               tcp        10.5.49.4    192.168.0.3    22             22             vpc-1-busybox01.vpc1                  true
+
+```
+
+### 4.2 ovn-dnat 为 vip 绑定一个 dnat
+
+```yaml
+kind: OvnDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-dnat
+spec:
+  ipType: vip  # 默认情况下 fip 是面向 pod ip 的，这里需要标注指定对接到 vip 资源
+  ovnEip: eip-dnat
+  ipName: test-dnat-vip
+  protocol: tcp
+  internalPort: "22"
+  externalPort: "22"
+```
+
+OvnDnatRule 的配置与 IptablesDnatRule 类似
+
+```bash
+# kubectl get vip test-dnat-vip
+NAME            V4IP          PV4IP   MAC                 PMAC   V6IP   PV6IP   SUBNET         READY
+test-dnat-vip   192.168.0.4           00:00:00:D0:C0:B5                         vpc1-subnet1   true
+
+# kubectl get oeip eip-dnat
+NAME       V4IP        V6IP   MAC                 TYPE   READY
+eip-dnat   10.5.49.4          00:00:00:4D:CE:49   dnat   true
+
+# kubectl get odnat eip-dnat 
+NAME       EIP        PROTOCOL   V4EIP       V4IP          INTERNALPORT   EXTERNALPORT   IPNAME          READY
+eip-dnat   eip-dnat   tcp        10.5.49.4   192.168.0.4   22             22             test-dnat-vip   true
 ```
