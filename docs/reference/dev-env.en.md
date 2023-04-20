@@ -69,7 +69,7 @@ To run the iptables vpc nat gw eip, fip, snat, dnat E2E test, run the following 
 ```bash
 make kind-init
 make kind-install
-make kind-install-multus
+make kind-install-vpc-nat-gw
 make iptables-vpc-nat-gw-conformance-e2e
 ```
 
