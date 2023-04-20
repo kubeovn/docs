@@ -527,7 +527,7 @@ apiVersion: kubeovn.io/v1
 metadata:
   name: eip-dnat
 spec:
-  ipType: vip  # 默认情况下 fip 是面向 pod ip 的，这里需要标注指定对接到 vip 资源
+  ipType: vip  # 默认情况下 dnat 是面向 pod ip 的，这里需要标注指定对接到 vip 资源
   ovnEip: eip-dnat
   ipName: test-dnat-vip
   protocol: tcp
