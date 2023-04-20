@@ -20,8 +20,7 @@ The pod access the public network based on the fip
 
 ## 1. Deployment
 
-Currently allows all vpcs to share the same provider vlan subnet resources, similar to neutron ovn mode.
-Also compatible with previous scenarios **default vpc enable_eip_snat**
+Currently allows all vpcs to share the same provider vlan subnet resources, similar to neutron ovn mode. Also compatible with previous scenarios **default vpc enable_eip_snat**.
 
 Executing install.sh requires specifying the default public logical switch.
 
