@@ -196,7 +196,7 @@ spec:
 # Dynamically allocate an eip resource that is reserved for fip scenarios
 ```
 
-### 3.1 Create an fip for pod
+### 2.1 Create an fip for pod
 
 ``` bash
 # k get po -o wide -n vpc1 vpc-1-busybox01
@@ -268,7 +268,7 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
         type: "dnat_and_snat"
 ```
 
-### 3.2 Create an fip for vip
+### 2.2 Create an fip for vip
 
 In order to facilitate the use of some vip scenarios, such as inside kubevirt VM, keepalived use vip, kube-vip use vip, etc. the vip need public network access.
 
@@ -348,9 +348,9 @@ tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 byt
 
 ```
 
-## 4. ovn-snat
+## 3. ovn-snat
 
-### 4.1 ovn-snat 对应一个 subnet 的 cidr
+### 3.1 ovn-snat corresponds to the CIDR of a subnet
 
 This feature is designed and used in much the same way as iptables-snat
 
@@ -375,7 +375,7 @@ spec:
   vpcSubnet: vpc1-subnet1 # eip corresponds to the entire network segment
 ```
 
-### 4.2 ovn-fip 对应到一个 pod ip
+### 3.2 ovn-fip corresponds to a pod IP
 
 This feature is designed and used in much the same way as iptables-fip
 
