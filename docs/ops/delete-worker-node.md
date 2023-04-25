@@ -30,6 +30,12 @@ systemctl stop kubelet
 systemctl stop docker
 ```
 
+如果使用的 CRI 为 containerd，需要执行下面的命令来停止 `ovs-ovn` 容器：
+
+```bash
+crictl rm -f $(crictl ps | grep openvswitch | awk '{print $1}')
+```
+
 ## 清理 Node 上的残留数据
 
 ```bash
