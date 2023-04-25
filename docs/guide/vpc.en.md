@@ -182,6 +182,10 @@ spec:
   selector:
     - "kubernetes.io/hostname: kube-ovn-worker"
     - "kubernetes.io/os: linux"
+  staticRoutes:
+    - cidr: 0.0.0.0/0
+      nextHopIP: 10.0.1.254
+      policy: policyDst
 ```
 
 - `subnet`: A Subnet within the VPC, the VPC Gateway Pod will use `lanIp` to connect to the tenant network under that subnet.
