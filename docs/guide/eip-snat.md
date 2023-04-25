@@ -115,6 +115,8 @@ kubectl annotate pod pod-gw ovn.kubernetes.io/eip=172.56.0.221 --overwrite
 kubectl annotate pod pod-gw ovn.kubernetes.io/routed-
 ```
 
+当 EIP 或 SNAT 规则生效后，`ovn.kubernetes.io/routed` annotation 会被重新添加。
+
 ## 高级配置
 
 `kube-ovn-controller` 的部分启动参数可对 SNAT 和 EIP 功能进行高阶配置：
