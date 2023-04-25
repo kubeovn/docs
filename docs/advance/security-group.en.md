@@ -27,7 +27,7 @@ spec:
     remoteType: address
 ```
 
-The specific meaning of each field of the SecurityGroup can be found in the [Kube-OVN API Reference](. /reference/kube-ovn-api.en.md).
+The specific meaning of each field of the SecurityGroup can be found in the [Kube-OVN API Reference](../reference/kube-ovn-api.en.md).
 
 Pods bind security-groups by adding annotations, two annotations are used.
 
