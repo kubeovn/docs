@@ -18,9 +18,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: static-ip
-  namespace: ls1
   annotations:
-    ovn.kubernetes.io/ip_address: 10.16.0.15
+    ovn.kubernetes.io/ip_address: 10.16.0.15   // 双栈地址使用逗号分隔 10.16.0.15,fd00:10:16::15
     ovn.kubernetes.io/mac_address: 00:00:00:53:6B:B6
 spec:
   containers:
@@ -48,7 +47,6 @@ IP Pool 的 Annotation 需要加在 `template` 内的 `annotation` 字段，除�
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: ls1
   name: starter-backend
   labels:
     app: starter-backend
@@ -62,7 +60,7 @@ spec:
       labels:
         app: starter-backend
       annotations:
-        ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17
+        ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17 // 双栈地址使用分号进行分隔 10.16.0.15,fd00:10:16::000E;10.16.0.16,fd00:10:16::000F;10.16.0.17,fd00:10:16::0010
     spec:
       containers:
       - name: backend
