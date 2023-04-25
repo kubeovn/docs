@@ -117,6 +117,8 @@ kubectl annotate pod pod-gw ovn.kubernetes.io/eip=172.56.0.221 --overwrite
 kubectl annotate pod pod-gw ovn.kubernetes.io/routed-
 ```
 
+When the EIP or SNAT takes into effect, the `ovn.kubernetes.io/routed` annotation will be added back.
+
 ## Advanced Configuration
 
 Some args of `kube-ovn-controller` allow for advanced configuration of SNAT and EIP:
