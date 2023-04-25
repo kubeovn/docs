@@ -53,7 +53,10 @@ Available Subcommands:
   dpctl {nodeName} [ovs-dpctl options ...]   invoke ovs-dpctl on the specified node
   appctl {nodeName} [ovs-appctl options ...]   invoke ovs-appctl on the specified node
   tcpdump {namespace/podname} [tcpdump options ...]     capture pod traffic
-  trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp or udp port]    trace ovn microflow of specific packet
+  trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]    trace ICMP/TCP/UDP
+  trace {namespace/podname} {target ip address} [target mac address] arp {request|reply}                     trace ARP request/reply
+  trace {node//nodename} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]       trace ICMP/TCP/UDP
+  trace {node//nodename} {target ip address} [target mac address] arp {request|reply}                        trace ARP request/reply
   diagnose {all|node} [nodename]    diagnose connectivity of all nodes or a specific node
   tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]  deploy  kernel optimisation components to the system
   reload    restart all kube-ovn components
@@ -342,10 +345,21 @@ listening on d7176fe7b4e0_h, link-type EN10MB (Ethernet), capture size 262144 by
 06:52:38.619973 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 3, length 64
 ```
 
-### trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp or udp port]
+### trace [arguments ...]
 
-This command will print the OVN logical flow table and the final Openflow flow table when the Pod accesses an address through a specific protocol,
+This command will print the OVN logical flow table and the final Openflow flow table when the Pod/node accesses an address through a specific protocol,
 so that it make locate flow table related problems during development or troubleshooting much easy.
+
+Supported commands:
+
+```bash
+kubectl ko trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]
+kubectl ko trace {namespace/podname} {target ip address} [target mac address] arp {request|reply}
+kubectl ko trace {node//nodename} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]
+kubectl ko trace {node//nodename} {target ip address} [target mac address] arp {request|reply}
+```
+
+Example:
 
 ```bash
 # kubectl ko trace default/ds1-l6n7p 8.8.8.8 icmp
