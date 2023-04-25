@@ -1,9 +1,11 @@
 # Manage QoS
 
-Kube-OVN supports two types of QoS:
+Kube-OVN supports two types of Pod level QoS:
 
 - Maximum bandwidth limit QoS.
 - `linux-netem`, QoS for simulating latency and packet loss that can be used for simulation testing.
+
+> Currently, only Pod level QoS is supported, and QoS restrictions at the Namespace or Subnet level are not supported.
 
 ## Maximum Bandwidth Limit QoS
 
