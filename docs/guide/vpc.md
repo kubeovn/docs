@@ -137,7 +137,16 @@ spec:
 
 - 该 Subnet 用来管理可用的外部地址，请和网络管理沟通给出可用的物理段 IP。
 - VPC 网关使用 Macvlan 做物理网络配置，`NetworkAttachmentDefinition` 的 `master` 需为对应物理网路网卡的网卡名。
-- `name` 必须为 ovn-vpc-external-network，这里代码中做了硬编码。
+- `name` 必须为 `ovn-vpc-external-network`，这里代码中做了硬编码。
+
+在 Macvlan 模式下，附属网卡会将数据包直接通过该节点网卡对外发送，L2/L3 层面的转发能力需要依赖底层网络设备。
+需要预先在底层网络设备配置对应的网关、Vlan 和安全策略等配置。
+
+1. 对于 OpenStack 的 VM 环境，需要将对应网络端口的 `PortSecurity` 关闭。
+2. 对于 VMware 的 vSwitch 网络，需要将 `MAC Address Changes`, `Forged Transmits` 和 `Promiscuous Mode Operation` 设置为 `allow`。
+3. 对于 Hyper-V 虚拟化，需要开启虚拟机网卡高级功能中的 `MAC Address Spoofing`。
+4. 公有云，例如 AWS、GCE、阿里云等由于不支持用户自定义 Mac 无法支持 Underlay 模式网络。
+5. 桥接网卡不能为 Linux Bridge。
 
 ### 开启 VPC 网关功能
 
@@ -260,7 +269,7 @@ kind: IptablesSnatRule
 apiVersion: kubeovn.io/v1
 metadata:
   name: snat01
-spec
+spec:
   eip: eips01
   internalCIDR: 10.0.1.0/24
 ```
