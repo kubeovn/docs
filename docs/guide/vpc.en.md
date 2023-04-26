@@ -141,6 +141,16 @@ spec:
 - The VPC gateway uses Macvlan for physical network configuration, and `master` of `NetworkAttachmentDefinition` should be the NIC name of the corresponding physical network NIC.
 - `name` must be `ovn-vpc-external-network`.
 
+For macvlan mode, the nic will send packets directly through that node NIC,
+relying on the underlying network devices for L2/L3 level forwarding capabilities. You need to configure the corresponding gateway,
+Vlan and security policy in the underlying network device in advance.
+
+1. For OpenStack VM environments, you need to turn off `PortSecurity` on the corresponding network port.
+2. For VMware vSwitch networks, `MAC Address Changes`, `Forged Transmits` and `Promiscuous Mode Operation` should be set to `allow`.
+3. For Hyper-V virtualization,  `MAC Address Spoofing` should be enabled in VM nic advanced features.
+4. Public clouds, such as AWS, GCE, AliCloud, etc., do not support user-defined Mac, so they cannot support Underlay mode network.
+5. The network interface that is bridged into ovs can not be type of Linux Bridge.
+
 ### Enabling the VPC Gateway
 
 VPC gateway functionality needs to be enabled via `ovn-vpc-nat-gw-config` under `kube-system`:
@@ -249,7 +259,7 @@ kind: IptablesSnatRule
 apiVersion: kubeovn.io/v1
 metadata:
   name: snat01
-spec
+spec:
   eip: eips01
   internalCIDR: 10.0.1.0/24
 ```
@@ -307,7 +317,7 @@ Traffic matched by static routes can be controlled at a finer granularity by pol
 Policy routing provides more precise matching rules, priority control and more forwarding actions.
 This feature brings the OVN internal logical router policy function directly to the outside world, for more information on its use, please refer to [Logical Router Policy](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE){: target = "_blank" }.
 
-A example of policy routes:
+An example of policy routes:
 
 ```yaml
 kind: Vpc

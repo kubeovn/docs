@@ -32,8 +32,10 @@ relying on the underlying network devices for L2/L3 level forwarding capabilitie
 Vlan and security policy in the underlying network device in advance.
 
 1. For OpenStack VM environments, you need to turn off `PortSecurity` on the corresponding network port.
-2. For VMware vswtich networks, `MAC Address Changes`, `Forged Transmits` and `Promiscuous Mode Operation` should be set to `allow`.
-3. The network interface that is bridged into ovs can not be type of Linux Bridge.
+2. For VMware vSwitch networks, `MAC Address Changes`, `Forged Transmits` and `Promiscuous Mode Operation` should be set to `allow`.
+3. For Hyper-V virtualization,  `MAC Address Spoofing` should be enabled in VM nic advanced features.
+4. Public clouds, such as AWS, GCE, AliCloud, etc., do not support user-defined Mac, so they cannot support Underlay mode network.
+5. The network interface that is bridged into ovs can not be type of Linux Bridge.
 
 For management and container networks using the same NIC, Kube-OVN will transfer the NIC's Mac address, IP address, route, 
 and MTU to the corresponding OVS Bridge to support single NIC deployment of Underlay networks.
@@ -57,7 +59,7 @@ NETWORK_TYPE          # set to vlan
 VLAN_INTERFACE_NAME   # set to the NIC that carries the Underlay traffic, e.g. eth1
 VLAN_ID               # The VLAN Tag need to be added，if set 0 no vlan tag will be added
 POD_CIDR              # The Underlay network CIDR， e.g. 192.168.1.0/24
-POD_GATEWAY           # Underlay physic gatewa address, e.g. 192.168.1.1
+POD_GATEWAY           # Underlay physic gateway address, e.g. 192.168.1.1
 EXCLUDE_IPS           # Exclude ranges to avoid conflicts between container network and IPs already in use on the physical network, e.g. 192.168.1.1..192.168.1.100
 ```
 
