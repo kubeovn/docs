@@ -39,12 +39,6 @@ If the underlay subnet needs to use the local DNS function, you need to enable t
 kubectl patch deployment kube-ovn-controller -n kube-system --type=json -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--node-local-dns-ip=169.254.20.10"}]'
 ```
 
-#### Specify the corresponding local dns ip for kube-ovn-cni
-
-```bash
-kubectl patch daemonset kube-ovn-cni -n kube-system --type=json -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--node-local-dns-ip=169.254.20.10"}]'
-```
-
 #### Rebuild the created pods
 
 The reason for this step is to let the pod regenerate /etc/resolv.conf so that the nameserver points to the local dns ip. If the nameserver of the pod is not rebuilt, it will still use the dns cluster ip of the cluster. At the same time, if the u2o switch is turned on, the pod needs to be rebuilt to regenerate the pod gateway.
