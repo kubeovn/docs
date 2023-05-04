@@ -1,12 +1,12 @@
-# NodeLocal DNSCache and kube-ovn adaptation
+# NodeLocal DNSCache and Kube-OVN adaptation
 
-NodeLocal DNSCache improves cluster DNS performance by running DNS cache as a DaemonSet on cluster nodes. This function can also be adapted to kube-ovn.
+NodeLocal DNSCache improves cluster DNS performance by running DNS cache as a DaemonSet on cluster nodes. This function can also be adapted to Kube-OVN.
 
 ## Nodelocal DNSCache deployment
 
-### Deploy k8s nodelocaldnscache
+### Deploy Kubernetes NodeLocal DNScache
 
-This step refers to k8s official website configuration [nodelocaldnscache](https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/nodelocaldns/).
+This step refers to Kubernetes official website configuration [nodelocaldnscache](https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/nodelocaldns/).
 
 Deploy with the following script:
 
@@ -25,15 +25,15 @@ kubectl apply -f nodelocaldns.yaml
 
 Modify the kubelet configuration file on each node, modify the clusterDNS field in /var/lib/kubelet/config.yaml to the local dns ip 169.254.20.10, and then restart the kubelet service.
 
-### kube-ovn corresponding DNS configuration
+### Kube-OVN corresponding DNS configuration
 
-After deploying the nodelocaldnscache component of k8s, kube-ovn needs to make the following modifications:
+After deploying the Nodelocal DNScache component of Kubernetes, Kube-OVN needs to make the following modifications:
 
-#### underlay subnet enable u2o switch
+#### Underlay subnet enable U2O switch
 
-If the underlay subnet needs to use the local DNS function, you need to enable the u2o function, that is, configure spec.u2oInterconnection = true in kubectl edit subnet {your subnet}. If it is an overlay subnet, this step is not required.
+If the underlay subnet needs to use the local DNS function, you need to enable the U2O function, that is, configure spec.u2oInterconnection = true in kubectl edit subnet {your subnet}. If it is an overlay subnet, this step is not required.
 
-#### Specify the corresponding local dns ip for kube-ovn-controller
+#### Specify the corresponding local DNS ip for kube-ovn-controller
 
 ```bash
 kubectl edit deployment kube-ovn-controller -n kube-system
@@ -41,13 +41,13 @@ kubectl edit deployment kube-ovn-controller -n kube-system
 
 Add field to spec.template.spec.containers.args --node-local-dns-ip=169.254.20.10
 
-#### Rebuild the created pods
+#### Rebuild the created Pods
 
-The reason for this step is to let the pod regenerate /etc/resolv.conf so that the nameserver points to the local dns ip. If the nameserver of the pod is not rebuilt, it will still use the dns cluster ip of the cluster. At the same time, if the u2o switch is turned on, the pod needs to be rebuilt to regenerate the pod gateway.
+The reason for this step is to let the Pod regenerate /etc/resolv.conf so that the nameserver points to the local DNS IP. If the nameserver of the Pod is not rebuilt, it will still use the DNS Cluster IP of the cluster. At the same time, if the u2o switch is turned on, the Pod needs to be rebuilt to regenerate the Pod gateway.
 
 ## Validator local DNS cache function
 
-After the above configuration is completed, you can find the pod verification as follows. You can see that the pod's dns server points to the local 169.254.20.10 and successfully resolves the domain name:
+After the above configuration is completed, you can find the Pod verification as follows. You can see that the Pod's DNS server points to the local 169.254.20.10 and successfully resolves the domain name:
 
 ```bash
 # kubectl exec -it pod1 -- nslookup github.com
@@ -59,7 +59,7 @@ Name:   github.com
 Address: 20.205.243.166
 ```
 
-You can also capture packets at the node and verify as follows. You can see that the dns query message reaches the local dns service through the ovn0 network card, and the dns response message returns in the same way:
+You can also capture packets at the node and verify as follows. You can see that the DNS query message reaches the local DNS service through the ovn0 network card, and the DNS response message returns in the same way:
 
 ```bash
 # tcpdump -i any port 53
