@@ -12,6 +12,7 @@ and can be configured separately with Subnet CIDRs, routing policies, security p
 > The custom VPC supports static routing, EIP and NAT gateways as described in this document.
 > Common isolation requirements can be achieved through network policies and Subnet ACLs under the default VPC,
 > so before using a custom VPC, please make sure whether you need VPC-level isolation and understand the limitations under the custom VPC.
+> For Underlay subnets, physical switches are responsible for data-plane forwarding, so VPCs cannot isolate Underlay subnets.
 
 ![](../static/network-topology.png)
 
