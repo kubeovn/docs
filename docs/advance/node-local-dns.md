@@ -39,12 +39,6 @@ kubectl apply -f nodelocaldns.yaml
 kubectl patch deployment kube-ovn-controller -n kube-system --type=json -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--node-local-dns-ip=169.254.20.10"}]'
 ```
 
-#### 给 kube-ovn-cni 指定对应的本地 dns ip
-
-```bash
-kubectl patch daemonset kube-ovn-cni -n kube-system --type=json -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--node-local-dns-ip=169.254.20.10"}]'
-```
-
 #### 重建已经创建的 pod
 
 这步原因是让 pod 重新生成 /etc/resolv.conf 让 nameserver 指向本地 dns ip，如果没有重建 pod 的 nameserver 将仍然使用集群的 dns cluster ip。同时 u2o 开关如果开启也需要重建 pod 来重新生成 pod 网关。
