@@ -39,7 +39,7 @@ kubectl apply -f nodelocaldns.yaml
 
 ## 验证本地 DNS
 
-以上配置完成后可以找到 pod 验证如下，可以看到 pod 的 dns 服务器是指向本地 169.254.20.10 ：
+以上配置完成后可以找到 pod 验证如下，可以看到 pod 的 dns 服务器是指向本地 169.254.20.10 ，并成功解析域名：
 
 ```bash
 kubectl exec -it pod1 -- nslookup github.com
