@@ -33,11 +33,15 @@ After deploying the nodelocaldnscache component of k8s, kube-ovn needs to make t
 
 2. Specify the corresponding local dns ip for kube-ovn-controller:
 
-kubectl edit deployment kube-ovn-controller -n kubs-system Add --node-local-dns-ip=169.254.20.10 in spec.template.spec.containers.args.
+```bash
+kubectl patch deployment kube-ovn-controller -n kube-system --type=json -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--node-local-dns-ip=169.254.20.10"}]'
+```
 
 3. Specify the corresponding local dns ip for kube-ovn-cni:
 
-kubectl edit daemonset kube-ovn-cni -n kube-system Add --node-local-dns-ip=169.254.20.10 in spec.template.spec.containers.args.
+```bash
+kubectl patch daemonset kube-ovn-cni -n kube-system --type=json -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--node-local-dns-ip=169.254.20.10"}]'
+```
 
 4. Rebuild the created pods:
 
