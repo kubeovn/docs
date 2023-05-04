@@ -10,7 +10,7 @@ NodeLocal DNSCache 是通过集群节点上作为 DaemonSet 运行 DNS 缓存来
 
 使用以下脚本部署：
 
-```shell
+```bash
 #!bin/bash
 
 localdns=169.254.20.10
@@ -29,19 +29,19 @@ kubectl apply -f nodelocaldns.yaml
 
 部署好 k8s 的 nodelocaldnscache 组件后， kube-ovn 需要做出下面修改：
 
-1. 如果是 underlay subnet需要使用本地 DNS 功能，需要开启  underlaytooverlay 功能，即在 kubectl edit subnet {your subnet} 中配置 spec.u2oInterconnection = true , 如果是 overlay subnet 则不需要这步操作。
+1. 如果是 underlay subnet 需要使用本地 DNS 功能，需要开启 u2o 功能，即在 kubectl edit subnet {your subnet} 中配置 spec.u2oInterconnection = true , 如果是 overlay subnet 则不需要这步操作。
 
 2. kubectl edit deployment kube-ovn-controller -n kubs-system 在 spec.template.spec.containers.args 添加 - --node-local-dns-ip=169.254.20.10。
 
 3. kubectl edit daemonset kube-ovn-cni -n kube-system 在 spec.template.spec.containers.args 添加 - --node-local-dns-ip=169.254.20.10。
 
-4. 重建已经创建的pod，这步原因是重新生成 /etc/resolv.conf 让 nameserver 指向本地 dns ip。同时 u2o 开关如果开启也需要重建 pod 来重新生成 pod 网关。
+4. 重建已经创建的 pod，这步原因是让 pod 重新生成 /etc/resolv.conf 让 nameserver 指向本地 dns ip，如果没有重建 pod 的 nameserver 将仍然使用集群的 dns cluster ip。同时 u2o 开关如果开启也需要重建 pod 来重新生成 pod 网关。
 
 ## 验证本地 DNS 
 
 以上配置完成后可以找到 pod 验证如下，可以看到 pod 的 dns 服务器是指向本地 169.254.20.10 ：
 
-```
+```bash
 kubectl exec -it pod1 -- nslookup github.com
 Server:         169.254.20.10
 Address:        169.254.20.10:53
@@ -50,8 +50,3 @@ Address:        169.254.20.10:53
 Name:   github.com
 Address: 20.205.243.166
 ```
-
-
-
-
-
