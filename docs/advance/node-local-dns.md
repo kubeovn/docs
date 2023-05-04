@@ -29,21 +29,21 @@ kubectl apply -f nodelocaldns.yaml
 
 部署好 k8s 的 nodelocaldnscache 组件后， kube-ovn 需要做出下面修改：
 
-如果是 underlay subnet 需要使用本地 DNS 功能，需要开启 u2o 功能，即在 kubectl edit subnet {your subnet} 中配置 spec.u2oInterconnection = true , 如果是 overlay subnet 则不需要这步操作。
+#### 如果是 underlay subnet 需要使用本地 DNS 功能，需要开启 u2o 功能，即在 kubectl edit subnet {your subnet} 中配置 spec.u2oInterconnection = true , 如果是 overlay subnet 则不需要这步操作。
 
-给 kube-ovn-controller 指定对应的本地 dns ip：
+#### 给 kube-ovn-controller 指定对应的本地 dns ip：
 
 ```bash
 kubectl patch deployment kube-ovn-controller -n kube-system --type=json -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--node-local-dns-ip=169.254.20.10"}]'
 ```
 
-给 kube-ovn-cni 指定对应的本地 dns ip:
+#### 给 kube-ovn-cni 指定对应的本地 dns ip:
 
 ```bash
 kubectl patch daemonset kube-ovn-cni -n kube-system --type=json -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--node-local-dns-ip=169.254.20.10"}]'
 ```
 
-重建已经创建的 pod：
+#### 重建已经创建的 pod：
 
 这步原因是让 pod 重新生成 /etc/resolv.conf 让 nameserver 指向本地 dns ip，如果没有重建 pod 的 nameserver 将仍然使用集群的 dns cluster ip。同时 u2o 开关如果开启也需要重建 pod 来重新生成 pod 网关。
 
