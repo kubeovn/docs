@@ -43,7 +43,7 @@ kubectl edit deployment kube-ovn-controller -n kube-system
 
 #### 重建已经创建的 Pod
 
-这步原因是让 Pod 重新生成 `/etc/resolv.conf` 让 nameserver 指向本地 DNS ip，如果没有重建 Pod 的 nameserver 将仍然使用集群的 DNS cluster ip。同时 u2o 开关如果开启也需要重建 Pod 来重新生成 Pod 网关。
+这步原因是让 Pod 重新生成 `/etc/resolv.conf` 让 nameserver 指向本地 DNS ip，如果没有重建 Pod 的 nameserver 将仍然使用集群的 DNS ClusterIP。同时 u2o 开关如果开启也需要重建 Pod 来重新生成 Pod 网关。
 
 ## 验证节点本地 DNS 缓存功能
 
