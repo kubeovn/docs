@@ -36,8 +36,10 @@ If the underlay subnet needs to use the local DNS function, you need to enable t
 #### Specify the corresponding local dns ip for kube-ovn-controller
 
 ```bash
-kubectl patch deployment kube-ovn-controller -n kube-system --type=json -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--node-local-dns-ip=169.254.20.10"}]'
+kubectl edit deployment kube-ovn-controller -n kube-system
 ```
+
+Add field to spec.template.spec.containers.args --node-local-dns-ip=169.254.20.10
 
 #### Rebuild the created pods
 
