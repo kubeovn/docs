@@ -35,9 +35,11 @@ kubectl apply -f nodelocaldns.yaml
 
 #### 给 kube-ovn-controller 指定对应的本地 dns ip
 
+```bash
+kubectl edit deployment kube-ovn-controller -n kube-system
 ```
-spec.template.spec.containers.args 添加 --node-local-dns-ip=169.254.20.10
-```
+
+给spec.template.spec.containers.args 增加字段 --node-local-dns-ip=169.254.20.10
 
 #### 重建已经创建的 pod
 
