@@ -14,6 +14,7 @@ achieving better performance and connectivity with the physical network.
 
 Since the container network in this mode uses physical network directly for L2 packet forwarding, 
 L3 functions such as SNAT/EIP, distributed gateway/centralized gateway in Overlay mode cannot be used.
+VPC level isolation is also not available for underlay subnet.
 
 ## Comparison with Macvlan
 
