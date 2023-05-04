@@ -23,7 +23,7 @@ sed -i "s/__PILLAR__LOCAL__DNS__/$localdns/g; s/__PILLAR__DNS__DOMAIN__/$domain/
 kubectl apply -f nodelocaldns.yaml
 ```
 
-Modify the kubelet configuration file on each node, modify the clusterDNS field in /var/lib/kubelet/config.yaml to the local dns ip 169.254.20.10, and then restart the kubelet service.
+Modify the kubelet configuration file on each node, modify the clusterDNS field in /var/lib/kubelet/config.yaml to the local DNS IP 169.254.20.10, and then restart the kubelet service.
 
 ### Kube-OVN corresponding DNS configuration
 
@@ -33,7 +33,7 @@ After deploying the Nodelocal DNScache component of Kubernetes, Kube-OVN needs t
 
 If the underlay subnet needs to use the local DNS function, you need to enable the U2O function, that is, configure spec.u2oInterconnection = true in kubectl edit subnet {your subnet}. If it is an overlay subnet, this step is not required.
 
-#### Specify the corresponding local DNS ip for kube-ovn-controller
+#### Specify the corresponding local DNS IP for kube-ovn-controller
 
 ```bash
 kubectl edit deployment kube-ovn-controller -n kube-system
