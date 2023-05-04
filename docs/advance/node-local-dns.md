@@ -1,6 +1,12 @@
-# 本地节点 DNS 配置
+# NodeLocal DNSCache 应用于 kube-ovn
 
-## 部署 k8s 的 nodelocaldnscache 组件
+NodeLocal DNSCache 是通过集群节点上作为 DaemonSet 运行 DNS 缓存来提高集群 DNS 性能，该功能也可以和 kube-ovn 适配。
+
+## 本地 DNS 部署
+
+### 部署 k8s 的 nodelocaldnscache
+
+该步骤参考 k8s 官网配置 [nodelocaldnscache](https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/nodelocaldns/)
 
 使用以下脚本部署：
 
@@ -19,7 +25,7 @@ kubectl apply -f nodelocaldns.yaml
 
 修改每个节点上的 kubelet 配置文件，将 /var/lib/kubelet/config.yaml 中的 clusterDNS 字段修改为本地 dns ip 169.254.20.10，然后重启 kubelet 服务。
 
-## kube-ovn 本地 DNS 配置
+### kube-ovn 配置
 
 部署好 k8s 的 nodelocaldnscache 组件后， kube-ovn 需要做出下面修改：
 
@@ -30,4 +36,22 @@ kubectl apply -f nodelocaldns.yaml
 3. kubectl edit daemonset kube-ovn-cni -n kube-system 在 spec.template.spec.containers.args 添加 - --node-local-dns-ip=169.254.20.10。
 
 4. 重建已经创建的pod，这步原因是重新生成 /etc/resolv.conf 让 nameserver 指向本地 dns ip。同时 u2o 开关如果开启也需要重建 pod 来重新生成 pod 网关。
+
+## 验证本地 DNS 
+
+以上配置完成后可以找到 pod 验证如下，可以看到 pod 的 dns 服务器是指向本地 169.254.20.10 ：
+
+```
+kubectl exec -it pod1 -- nslookup github.com
+Server:         169.254.20.10
+Address:        169.254.20.10:53
+
+
+Name:   github.com
+Address: 20.205.243.166
+```
+
+
+
+
 
