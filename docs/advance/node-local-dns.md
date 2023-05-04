@@ -33,7 +33,7 @@ kubectl apply -f nodelocaldns.yaml
 
 如果是 Underlay Subnet 需要使用本地 DNS 功能，需要开启 U2O 功能，即在 kubectl edit subnet {your subnet} 中配置 spec.u2oInterconnection = true , 如果是 Overlay Subnet 则不需要这步操作。
 
-#### 给 Kube-ovn-controller 指定对应的本地 DNS ip
+#### 给 Kube-ovn-controller 指定对应的本地 DNS IP
 
 ```bash
 kubectl edit deployment kube-ovn-controller -n kube-system
@@ -43,7 +43,7 @@ kubectl edit deployment kube-ovn-controller -n kube-system
 
 #### 重建已经创建的 Pod
 
-这步原因是让 Pod 重新生成 `/etc/resolv.conf` 让 nameserver 指向本地 DNS ip，如果没有重建 Pod 的 nameserver 将仍然使用集群的 DNS ClusterIP。同时 u2o 开关如果开启也需要重建 Pod 来重新生成 Pod 网关。
+这步原因是让 Pod 重新生成 `/etc/resolv.conf` 让 nameserver 指向本地 DNS IP，如果没有重建 Pod 的 nameserver 将仍然使用集群的 DNS ClusterIP。同时 u2o 开关如果开启也需要重建 Pod 来重新生成 Pod 网关。
 
 ## 验证节点本地 DNS 缓存功能
 
