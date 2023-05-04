@@ -37,7 +37,7 @@ kubectl apply -f nodelocaldns.yaml
 
 4. 重建已经创建的 pod，这步原因是让 pod 重新生成 /etc/resolv.conf 让 nameserver 指向本地 dns ip，如果没有重建 pod 的 nameserver 将仍然使用集群的 dns cluster ip。同时 u2o 开关如果开启也需要重建 pod 来重新生成 pod 网关。
 
-## 验证本地 DNS 
+## 验证本地 DNS
 
 以上配置完成后可以找到 pod 验证如下，可以看到 pod 的 dns 服务器是指向本地 169.254.20.10 ：
 
