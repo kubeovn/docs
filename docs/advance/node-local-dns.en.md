@@ -43,7 +43,7 @@ Add field to spec.template.spec.containers.args --node-local-dns-ip=169.254.20.1
 
 #### Rebuild the created Pods
 
-The reason for this step is to let the Pod regenerate /etc/resolv.conf so that the nameserver points to the local DNS IP. If the nameserver of the Pod is not rebuilt, it will still use the DNS Cluster IP of the cluster. At the same time, if the u2o switch is turned on, the Pod needs to be rebuilt to regenerate the Pod gateway.
+The reason for this step is to let the Pod regenerate `/etc/resolv.conf` so that the nameserver points to the local DNS IP. If the nameserver of the Pod is not rebuilt, it will still use the DNS Cluster IP of the cluster. At the same time, if the u2o switch is turned on, the Pod needs to be rebuilt to regenerate the Pod gateway.
 
 ## Validator local DNS cache function
 
