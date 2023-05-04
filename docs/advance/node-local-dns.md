@@ -6,7 +6,7 @@ NodeLocal DNSCache 是通过集群节点上作为 DaemonSet 运行 DNS 缓存来
 
 ### 部署 k8s 的节点本地 DNS 缓存
 
-该步骤参考 k8s 官网配置 [nodelocaldnscache](https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/nodelocaldns/)
+该步骤参考 k8s 官网配置 [nodelocaldnscache](https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/nodelocaldns/)。
 
 使用以下脚本部署：
 
