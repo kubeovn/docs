@@ -313,10 +313,12 @@ spec:
     - cidr: 172.31.0.0/24
       nextHopIP: 10.0.1.253
       policy: policySrc
+      routeTable: "rtb1"
 ```
 
 - `policy`: 支持目的地址路由 `policyDst` 和源地址路由 `policySrc`。
 - 当路由规则存在重叠时，CIDR 掩码较长的规则优先级更高，若掩码长度相同则目的地址路由优先于源地址路由。
+- `routeTable`: 可指定静态路由所在的路由表，默认在主路由表。子网关联路由表请参考[创建子网](subnet.md/#_5)
 
 ### 策略路由
 
