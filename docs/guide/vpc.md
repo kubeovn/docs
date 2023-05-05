@@ -146,8 +146,8 @@ spec:
 1. 对于 OpenStack 的 VM 环境，需要将对应网络端口的 `PortSecurity` 关闭。
 2. 对于 VMware 的 vSwitch 网络，需要将 `MAC Address Changes`, `Forged Transmits` 和 `Promiscuous Mode Operation` 设置为 `allow`。
 3. 对于 Hyper-V 虚拟化，需要开启虚拟机网卡高级功能中的 `MAC Address Spoofing`。
-4. 公有云，例如 AWS、GCE、阿里云等由于不支持用户自定义 Mac 无法支持 Underlay 模式网络。
-5. 桥接网卡不能为 Linux Bridge。
+4. 公有云，例如 AWS、GCE、阿里云等由于不支持用户自定义 Mac 无法支持 Macvlan 模式网络。
+5. 由于 Macvlan 本身的限制，Macvlan 子接口无法访问父接口地址。
 
 ### 开启 VPC 网关功能
 
