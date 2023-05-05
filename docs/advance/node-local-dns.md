@@ -25,7 +25,7 @@ kubectl apply -f nodelocaldns.yaml
 
 修改每个节点上的 kubelet 配置文件，将 /var/lib/kubelet/config.yaml 中的 clusterDNS 字段修改为本地 DNS IP 169.254.20.10，然后重启 kubelet 服务。
 
-### kube-OVN 相应 DNS 配置
+### Kube-OVN 相应 DNS 配置
 
 部署好 Kubernetes 的 Nodelocal DNScache 组件后， Kube-OVN 需要做出下面修改：
 
