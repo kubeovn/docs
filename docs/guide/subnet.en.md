@@ -127,6 +127,7 @@ spec:
   gateway: 10.66.0.1
   gatewayType: distributed
   natOutgoing: true
+  routeTable: ""
   namespaces:
   - ns1
   - ns2
@@ -137,6 +138,7 @@ EOF
 - `excludeIps`: The address list is reserved so that the container network will not automatically assign addresses in the list, which can be used as a fixed IP address assignment segment or to avoid conflicts with existing devices in the physical network in Underlay mode.
 - `gateway`：For this subnet gateway address, Kube-OVN will automatically assign the corresponding logical gateway in Overlay mode, and the address should be the underlying physical gateway address in Underlay mode.
 - `namespaces`: Bind the list of Namespace for this Subnet. Pods under the Namespace will be assigned addresses from the current Subnet after binding.
+- `routeTable`: Associate the route table, default is main table, route table definition please defer to [Static Routes](vpc.en.md#_3)
 
 ### Create Pod in the Subnet
 
