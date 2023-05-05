@@ -149,8 +149,8 @@ Vlan and security policy in the underlying network device in advance.
 1. For OpenStack VM environments, you need to turn off `PortSecurity` on the corresponding network port.
 2. For VMware vSwitch networks, `MAC Address Changes`, `Forged Transmits` and `Promiscuous Mode Operation` should be set to `allow`.
 3. For Hyper-V virtualization,  `MAC Address Spoofing` should be enabled in VM nic advanced features.
-4. Public clouds, such as AWS, GCE, AliCloud, etc., do not support user-defined Mac, so they cannot support Underlay mode network.
-5. The network interface that is bridged into ovs can not be type of Linux Bridge.
+4. Public clouds, such as AWS, GCE, AliCloud, etc., do not support user-defined Mac, so they cannot support Macvlan mode network.
+5. Due to the limitations of Macvlan, the Macvlan sub-interface cannot access the parent interface address.
 
 ### Enabling the VPC Gateway
 
