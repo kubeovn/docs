@@ -152,6 +152,7 @@ Vlan and security policy in the underlying network device in advance.
 3. For Hyper-V virtualization,  `MAC Address Spoofing` should be enabled in VM nic advanced features.
 4. Public clouds, such as AWS, GCE, AliCloud, etc., do not support user-defined Mac, so they cannot support Macvlan mode network.
 5. Due to the limitations of Macvlan, the Macvlan sub-interface cannot access the parent interface address.
+6. If the physical network card corresponds to a switch interface in Trunk mode, a sub-interface needs to be created on the network card and provided to Macvlan for use.
 
 ### Enabling the VPC Gateway
 
