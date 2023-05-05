@@ -147,6 +147,7 @@ spec:
 3. 对于 Hyper-V 虚拟化，需要开启虚拟机网卡高级功能中的 `MAC Address Spoofing`。
 4. 公有云，例如 AWS、GCE、阿里云等由于不支持用户自定义 Mac 无法支持 Macvlan 模式网络。
 5. 由于 Macvlan 本身的限制，Macvlan 子接口无法访问父接口地址。
+6. 如果物理网卡对应交换机接口为 Trunk 模式，需要在该网卡上创建子接口再提供给 Macvlan 使用。
 
 ### 开启 VPC 网关功能
 
