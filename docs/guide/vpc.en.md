@@ -317,11 +317,13 @@ spec:
     - cidr: 172.31.0.0/24
       nextHopIP: 10.0.1.253
       policy: policySrc
+      routeTable: "rtb1"
 ```
 
 - `policy`: Supports destination routing `policyDst` and source routing `policySrc`.
 - When there are overlapping routing rules, the rule with the longer CIDR mask has higher priority,
   and if the mask length is the same, the destination route has a higher priority over the source route.
+- `routeTable`: You can store the route in specific table, default is main table. Associate with subnet please defer to [Create Custom Subnets](subnet.en.md/#_5)
 
 ### Policy Routes
 
