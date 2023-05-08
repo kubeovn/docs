@@ -46,6 +46,7 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/d
 ### 修改脚本中相应配置
 
 ```bash
+ENABLE_ARP_DETECT_IP_CONFLICT # 如有需要，可以选择关闭 vlan 网络 arp 冲突检测
 NETWORK_TYPE          # 设置为 vlan
 VLAN_INTERFACE_NAME   # 设置为宿主机上承担容器流量的网卡，例如 eth1
 VLAN_ID               # 交换机所接受的 VLAN Tag，若设置为 0 则不做 VLAN 封装
