@@ -6,7 +6,7 @@ For workloads that require fixed addresses, Kube-OVN provides multiple methods o
 - Single Pod fixed IP/Mac.
 - Workload IP Pool to specify fixed addresses.
 - StatefulSet fixed address.
-- Kubevirt VM fixed address.
+- KubeVirt VM fixed address.
 
 ## Single Pod Fixed IP/Mac
 
@@ -14,18 +14,27 @@ You can specify the IP/Mac required for the Pod by annotation when creating the 
 The `kube-ovn-controller` will skip the address random assignment phase and use the specified address directly after conflict detection, as follows:
 
 ```yaml
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: static-ip
-  namespace: ls1
-  annotations:
-    ovn.kubernetes.io/ip_address: 10.16.0.15 // for dualstack static ip, use comma to separate addresses 10.16.0.15,fd00:10:16::15
-    ovn.kubernetes.io/mac_address: 00:00:00:53:6B:B6
+  name: ippool
+  labels:
+    app: ippool
 spec:
-  containers:
-  - name: static-ip
-    image: nginx:alpine
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ippool
+  template:
+    metadata:
+      labels:
+        app: ippool
+      annotations:
+        ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17 // 双栈地址使用分号进行分隔 10.16.0.15,fd00:10:16::000E;10.16.0.16,fd00:10:16::0
+    spec:
+      containers:
+        - name: ippool
+          image: nginx:alpine
 ```
 
 The following points need to be noted when using annotation.

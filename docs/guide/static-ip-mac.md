@@ -6,7 +6,7 @@ Kube-OVN 默认会根据 Pod 所在 Namespace 所属的子网中随机分配 IP 
 - 单个 Pod 固定 IP/Mac。
 - Workload 通用 IP Pool 方式指定固定地址范围。
 - StatefulSet 固定地址。
-- Kubevirt VM 固定地址。
+- KubeVirt VM 固定地址。
 
 ## 单个 Pod 固定 IP 和 Mac
 
@@ -46,23 +46,23 @@ IP Pool 的 Annotation 需要加在 `template` 内的 `annotation` 字段，除�
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: starter-backend
+  name: ippool
   labels:
-    app: starter-backend
+    app: ippool
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: starter-backend
+      app: ippool
   template:
     metadata:
       labels:
-        app: starter-backend
+        app: ippool
       annotations:
         ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17 // 双栈地址使用分号进行分隔 10.16.0.15,fd00:10:16::000E;10.16.0.16,fd00:10:16::000F;10.16.0.17,fd00:10:16::0010
     spec:
       containers:
-      - name: backend
+      - name: ippool
         image: nginx:alpine
 ```
 
