@@ -88,7 +88,7 @@ Using a fixed IP for Workload requires the following:
 
 StatefulSet, like other workloads, can use `ovn.kubernetes.io/ip_pool` to specify the IP used by the Pod.
 
-Since StatefulSet is mostly used for stateful services, 
+Since StatefulSet is mostly used for stateful services,
 which have higher requirements for fixed addresses, Kube-OVN has made special enhancements:
 
 1. Pods are assigned IPs in `ovn.kubernetes.io/ip_pool` in order. For example, if the name of the StatefulSet is web, web-0 will use the first IP in `ovn.kubernetes.io/ip_pool`, web-1 will use the second IP, and so on.

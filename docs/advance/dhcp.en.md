@@ -1,7 +1,7 @@
 # DHCP
 
 When using SR-IOV or DPDK type networks, KubeVirt's built-in DHCP does not work in this network mode.
-Kube-OVN can use the DHCP capabilities of OVN to set DHCP options at the subnet level to help KubeVirt 
+Kube-OVN can use the DHCP capabilities of OVN to set DHCP options at the subnet level to help KubeVirt
 VMs of these network types to properly use DHCP to obtain assigned IP addresses.
 Kube-OVN supports both DHCPv4 and DHCPv6.
 

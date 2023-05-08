@@ -1,16 +1,17 @@
 # VPC Peering
 
-VPC peering provides a mechanism for bridging two VPC networks through logical routes so that workloads within two VPCs 
+VPC peering provides a mechanism for bridging two VPC networks through logical routes so that workloads within two VPCs
 can access each other through private addresses as if they were on the same private network, without the need for NAT forwarding through a gateway.
 
 ## Prerequisites
+
 1. This feature is only available for customized VPCs.
 2. To avoid route overlap the subnet CIDRs within the two VPCs cannot overlap.
 3. Currently, only interconnection of two VPCs is supported.
 
 ## Usage
 
-First create two non-interconnected VPCs with one Subnet under each VPC, 
+First create two non-interconnected VPCs with one Subnet under each VPC,
 and the CIDRs of the Subnets do not overlap with each other.
 
 ```yaml

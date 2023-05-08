@@ -1,6 +1,5 @@
 # 修改 Join 子网 CIDR
 
-
 若发现创建的 Join 子网 CIDR 冲突或不符合预期，可以通过本文档进行修改。
 
 > 修改 Join 子网 CIDR 后之前创建的 Pod 将无法正常访问外部网络，需要等重建完成,
@@ -56,4 +55,3 @@ ovn-default   ovn        ovn-cluster   IPv4       10.17.0.0/16    false     true
 ```bash
 kubectl delete pod -n kube-system -l app=kube-ovn-cni
 ```
-

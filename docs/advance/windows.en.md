@@ -1,6 +1,6 @@
 # Windows Support
 
-Kube-OVN supports Kubernetes cluster networks that include Windows system nodes, 
+Kube-OVN supports Kubernetes cluster networks that include Windows system nodes,
 allowing unified containers network management.
 
 ## Prerequisites

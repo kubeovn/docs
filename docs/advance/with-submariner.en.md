@@ -1,10 +1,10 @@
 # Cluster Inter-Connection with Submariner
 
-[Submariner](https://submariner.io/) is an open source networking component that connects multiple Kubernetes cluster Pod and Service 
+[Submariner](https://submariner.io/) is an open source networking component that connects multiple Kubernetes cluster Pod and Service
 networks which can help Kube-OVN interconnect multiple clusters.
 
 Compared to [OVN-IC](./with-ovn-ic.md), Submariner can connect Kube-OVN and non-Kube-OVN cluster networks, and
-Submariner can provide cross-cluster capability for services. However, Submariner currently only enables the default subnets to be connected, 
+Submariner can provide cross-cluster capability for services. However, Submariner currently only enables the default subnets to be connected,
 and cannot selectively connect multiple subnets.
 
 ## Prerequisites

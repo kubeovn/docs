@@ -1,10 +1,10 @@
 # Interconnection with Routes in Overlay Mode
 
-In some scenarios, the network environment does not support Underlay mode, 
-but still need Pods and external devices directly access through IP, 
+In some scenarios, the network environment does not support Underlay mode,
+but still need Pods and external devices directly access through IP,
 then you can use the routing method to connect the container network and the external.
 
-> In this case, the Pod IP goes directly to the underlying network, 
+> In this case, the Pod IP goes directly to the underlying network,
 > which needs to disable IP checks for source and destination addresses.
 
 ## Prerequisites
@@ -15,7 +15,7 @@ then you can use the routing method to connect the container network and the ext
 
 ## Steps
 
-For subnets that require direct external routing, you need to set `natOutgoing` of the subnet to `false` 
+For subnets that require direct external routing, you need to set `natOutgoing` of the subnet to `false`
 to turn off nat mapping and make the Pod IP directly accessible to the external network.
 
 ```yaml
@@ -34,10 +34,10 @@ spec:
   natOutgoing: false
 ```
 
-At this point, the Pod's packets can reach the peer node via the host route, 
+At this point, the Pod's packets can reach the peer node via the host route,
 but the peer node does not yet know where the return packets should be sent to and needs to add a return route.
 
-If the peer host and the container host are on the same Layer 2 network, 
+If the peer host and the container host are on the same Layer 2 network,
 we can add a static route directly to the peer host to point the next hop of the container network to any machine in the Kubernetes cluster.
 
 ```bash

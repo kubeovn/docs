@@ -9,6 +9,7 @@ which dramatically reduce latency and significantly increase the throughput.
 ![](../static/hw-offload.png)
 
 ## Prerequisites
+
 - Mellanox CX5/CX6/BlueField that support ASAP².
 - CentOS 8 Stream or Linux 5.7 above.
 - Since the current NIC does not support `dp_hash` and `hash` operation offload, OVN LB function should be disabled.
@@ -52,6 +53,7 @@ Create VFs and do not exceeding the number found above:
 ```
 
 Find the device IDs corresponding to the above VFs:
+
 ```bash
 # lspci -nn | grep ConnectX-5
 42:00.0 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5] [15b3:1017]
@@ -79,6 +81,7 @@ ethtool -K enp66s0f0 hw-tc-offload on
 ```
 
 Rebind the driver and complete the VF setup:
+
 ```bash
 echo 0000:42:00.2 > /sys/bus/pci/drivers/mlx5_core/bind
 echo 0000:42:00.3 > /sys/bus/pci/drivers/mlx5_core/bind
@@ -86,7 +89,7 @@ echo 0000:42:00.4 > /sys/bus/pci/drivers/mlx5_core/bind
 echo 0000:42:00.5 > /sys/bus/pci/drivers/mlx5_core/bind
 ```
 
-Some behaviors of `NetworkManager` may cause driver exceptions, 
+Some behaviors of `NetworkManager` may cause driver exceptions,
 if offloading problems occur we recommended to close `NetworkManager` and try again.
 
 ```bash
@@ -190,6 +193,7 @@ wget https://raw.githubusercontent.com/alauda/kube-ovn/{{ variables.branch }}/di
 ```
 
 Change the related options，`IFACE` should be the physic NIC and has an IP:
+
 ```bash
 ENABLE_MIRROR=${ENABLE_MIRROR:-false}
 HW_OFFLOAD=${HW_OFFLOAD:-true}
@@ -224,6 +228,7 @@ spec:
       limits:
         mellanox.com/cx5_sriov_switchdev: '1'
 ```
+
 - `v1.multus-cni.io/default-network`: should be the {namespace}/{name} of related `NetworkAttachmentDefinition`.
 
 Running the following command in the `ovs-ovn` container of the Pod run node to observe if offload success.

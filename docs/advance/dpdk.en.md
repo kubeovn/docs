@@ -54,7 +54,7 @@ bash install.sh --with-hybrid-dpdk
 
 Here we verify the OVS-DPDK functionality by creating a virtual machine with a vhostuser type NIC.
 
-Here we use the KVM Device Plugin to create virtual machines. For more information on how to use it, please refer to [KVM Device Plugin].(https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md).
+Here we use the KVM Device Plugin to create virtual machines. For more information on how to use it, please refer to [KVM Device Plugin].(<https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md>).
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/kubevirt/kubernetes-device-plugins/master/manifests/kvm-ds.yml

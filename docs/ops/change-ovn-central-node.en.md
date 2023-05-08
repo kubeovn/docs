@@ -1,8 +1,8 @@
 # Replace ovn-central Node
 
-Since `ovn-nb` and `ovn-sb` within `ovn-central` create separate etcd-like raft clusters, 
+Since `ovn-nb` and `ovn-sb` within `ovn-central` create separate etcd-like raft clusters,
 replacing the `ovn-central` node requires additional operations to ensure correct cluster state and consistent data.
-It is recommended that only one node be up and down at a time to avoid the cluster going into an unavailable state 
+It is recommended that only one node be up and down at a time to avoid the cluster going into an unavailable state
 and affecting the overall cluster network.
 
 ## ovn-central Nodes Offline
@@ -214,7 +214,7 @@ rm -rf /etc/origin/ovn
 
 ### Check Current ovn-central Status
 
-If the current `ovn-central` cluster state is already abnormal, 
+If the current `ovn-central` cluster state is already abnormal,
 adding new nodes may cause the voting election to fail to pass the majority, affecting subsequent operations.
 
 ```bash

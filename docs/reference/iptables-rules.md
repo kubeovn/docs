@@ -13,7 +13,6 @@ Kube-OVN 使用 ipset 及 iptables 辅助实现默认 VPC 下容器网络（Over
 | ovn40other-node/ovn60other-node                         | hash:net | 其它节点的内部 IP 地址                      |
 | ovn40local-pod-ip-nat/ovn60local-pod-ip-nat             | hash:ip  | 已弃用                                |
 
-
 使用的 iptables 规则（IPv4）如下表所示：
 
 | 表      | 链               | 规则                                                                                                                      | 用途                                                                         | 备注                                                                                        |

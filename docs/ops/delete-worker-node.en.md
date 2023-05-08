@@ -1,7 +1,7 @@
 # Delete Work Node
 
-If the node is simply removed from Kubernetes, the `ovn-controller` process running in `ovs-ovn` on the node will periodically 
-connect to `ovn-central` to register relevant network information. 
+If the node is simply removed from Kubernetes, the `ovn-controller` process running in `ovs-ovn` on the node will periodically
+connect to `ovn-central` to register relevant network information.
 This leads to additional resource waste and potential rule conflict risk。
 Therefore, when removing nodes from within Kubernetes, follow the steps below to ensure that related resources are cleaned up properly.
 
@@ -24,7 +24,7 @@ This document describes the steps to delete a worker node, if you want to change
 
 ## Stop kubelet and docker
 
-This step stops the `ovs-ovn` container to avoid registering information to `ovn-central`. 
+This step stops the `ovs-ovn` container to avoid registering information to `ovn-central`.
 Log into to the corresponding node and ruu the following commands:
   
 ```bash

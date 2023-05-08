@@ -128,7 +128,7 @@ iperf Done.
 
 ## linux-netem QoS
 
-Pod can use annotation below to config `linux-netem` type QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` and 
+Pod can use annotation below to config `linux-netem` type QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` and
 `ovn.kubernetes.io/loss`。
 
 - `ovn.kubernetes.io/latency`: Set the Pod traffic delay to an integer value in ms.

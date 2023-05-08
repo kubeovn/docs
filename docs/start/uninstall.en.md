@@ -1,7 +1,7 @@
 # Uninstall
 
-If you need to remove the Kube-OVN and replace it with another network plugin, 
-please follow the steps below to remove all the corresponding Kube-OVN component and OVS configuration 
+If you need to remove the Kube-OVN and replace it with another network plugin,
+please follow the steps below to remove all the corresponding Kube-OVN component and OVS configuration
 to avoid interference with other network plugins.
 
 Feel free to contact us with an Issue to give us feedback on why you don't use Kube-OVN to help us improve it.
@@ -33,7 +33,7 @@ rm -fr /var/log/kube-ovn
 
 ## Reboot Node
 
-Reboot the machine to ensure that the corresponding NIC information and iptable/ipset rules 
+Reboot the machine to ensure that the corresponding NIC information and iptable/ipset rules
 are cleared to avoid the interference with other network plugins:
 
 ```bash

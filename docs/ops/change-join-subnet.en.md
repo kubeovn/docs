@@ -1,9 +1,8 @@
 # Change Join Subnet CIDR
 
-
 If the Join subnet CIDR created conflicts or does not meet expectations, you can use this document to modify.
 
-> After modifying the Join Subnet CIDR, the previously created Pods will not be able to access the external 
+> After modifying the Join Subnet CIDR, the previously created Pods will not be able to access the external
 > network normally and need to wait for the rebuild completed.
 
 ## Delete Join Subnet
@@ -56,4 +55,3 @@ The `ovn0` NIC information for each node needs to be re-updated, which can be do
 ```bash
 kubectl delete pod -n kube-system -l app=kube-ovn-cni
 ```
-

@@ -1,6 +1,6 @@
 # OpenStack 集成
 
-在一些情况下，用户需要使用 OpenStack 运行虚拟机，使用 Kubernetes 运行容器，并需要容器和虚机之间网络互通并处于统一控制平面下。如果 OpenStack 
+在一些情况下，用户需要使用 OpenStack 运行虚拟机，使用 Kubernetes 运行容器，并需要容器和虚机之间网络互通并处于统一控制平面下。如果 OpenStack
 Neutron 侧同样使用 OVN 作为底层网络控制，那么 Kube-OVN 可以使用集群互联和共享底层 OVN 两种方式打通 OpenStack 和 Kubernetes 的网络。
 
 ## 集群互联
@@ -14,7 +14,7 @@ Neutron 侧同样使用 OVN 作为底层网络控制，那么 Kube-OVN 可以使
 3. 每个集群需要有一组可以通过 IP 进行跨集群互访的机器作为之后的网关节点。
 4. 该方案只打通 Kubernetes 默认子网和 OpenStack 的选定 VPC。
 
-###  部署 OVN-IC 数据库
+### 部署 OVN-IC 数据库
 
 使用下面的命令启动 `OVN-IC` 数据库：
 
@@ -79,6 +79,7 @@ ovn-nbctl set NB_Global . name=op-az
   --ovn-northd-sb-db=unix:/run/ovn/ovnsb_db.sock \
   start_ic
 ```
+
 - `ovn-ic-nb-db`，`ovn-ic-sb-db`: OVN-IC 北向数据库和南向数据库地址。
 - `ovn-northd-nb-db`， `ovn-northd-sb-db`: 当前集群 OVN 北向数据库和南向数据地址。
 
@@ -116,7 +117,7 @@ IPv4 Routes
 
 在该方案下，OpenStack 和 Kubernetes 共享使用同一个 OVN，因此可以将两者的 VPC 和 Subnet 等概念拉齐，实现更好的控制和互联。
 
-在该模式下我们正常使用 Kube-OVN 部署 OVN，OpenStack 修改 Neutron 配置实现连接同一个 OVN 数据库。OpenStack 需使用 networking-ovn 作为 
+在该模式下我们正常使用 Kube-OVN 部署 OVN，OpenStack 修改 Neutron 配置实现连接同一个 OVN 数据库。OpenStack 需使用 networking-ovn 作为
 Neutron 后端实现。
 
 ### Neutron 配置修改
@@ -178,6 +179,7 @@ ovs-vsctl set open . external-ids:ovn-encap-ip=192.168.137.200
 ```
 
 在 Kubernetes 侧，查询 VPC 资源：
+
 ```bash
 # kubectl get vpc
 NAME                                           STANDBY   SUBNETS

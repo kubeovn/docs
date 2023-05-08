@@ -27,6 +27,7 @@ bcdedit /set nointegritychecks ON
 在 Windows 节点下载 [Windows 安装包](https://github.com/kubeovn/kube-ovn/releases/download/v1.10.0/kube-ovn-win64.zip)并解压安装。
 
 安装完成后确认服务正常运行：
+
 ```bash
 PS > Get-Service | findstr ovs
 Running  ovsdb-server  Open vSwitch DB Service
@@ -38,6 +39,7 @@ Running  ovs-vswitchd  Open vSwitch Service
 在 Windows 节点下载安装脚本 [install.ps1](https://github.com/kubeovn/kube-ovn/blob/{{ variables.branch }}/dist/windows/install.ps1)。
 
 补充相关参数并执行：
+
 ```bash
 .\install.ps1 -KubeConfig C:\k\admin.conf -ApiServer https://192.168.140.180:6443 -ServiceCIDR 10.96.0.0/12
 ```

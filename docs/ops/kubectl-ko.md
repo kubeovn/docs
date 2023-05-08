@@ -641,7 +641,7 @@ I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
 
 该命令执行性能调优相关操作，具体使用请参考[性能调优](../advance/performance-tuning.md)。
 
-### reload 
+### reload
 
 该命令重启所有 Kube-OVN 相关组件：
 
@@ -669,5 +669,3 @@ pod "kube-ovn-monitor-7fb67d5488-7q6zb" deleted
 Waiting for deployment "kube-ovn-monitor" rollout to finish: 0 of 1 updated replicas are available...
 deployment "kube-ovn-monitor" successfully rolled out
 ```
-
-

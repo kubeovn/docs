@@ -1,6 +1,6 @@
 # Integration with Cilium
 
-[Cilium](https://cilium.io/) is an eBPF-based networking and security component. Kube-OVN uses the 
+[Cilium](https://cilium.io/) is an eBPF-based networking and security component. Kube-OVN uses the
 [CNI Chaining](https://docs.cilium.io/en/stable/gettingstarted/cni-chaining/) mode to enhance existing features.
 Users can use both the rich network abstraction capabilities of Kube-OVN and the monitoring and security capabilities that come with eBPF.
 
@@ -18,7 +18,7 @@ By integrating Cilium, Kube-OVN users can have the following gains:
 
 ## Configure Kube-OVN
 
-In order to fully utilize the security capabilities of Cilium, you need to disable the `networkpolicy` feature within Kube-OVN 
+In order to fully utilize the security capabilities of Cilium, you need to disable the `networkpolicy` feature within Kube-OVN
 and adjust the CNI configuration priority.
 
 Change the following variables in the `install.sh` script:

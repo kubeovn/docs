@@ -43,7 +43,7 @@ data:
 
 ## 观察 OVN 和 OVS 状态确认配置生效
 
-检查 OVN-NB 状态, 确认 `ovn-external` 逻辑交换机存在，并且 `ovn-cluster-ovn-external` 
+检查 OVN-NB 状态, 确认 `ovn-external` 逻辑交换机存在，并且 `ovn-cluster-ovn-external`
 逻辑路由器端口上 绑定了正确的地址和 chassis。
 
 ```bash

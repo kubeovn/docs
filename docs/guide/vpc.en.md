@@ -1,16 +1,16 @@
 # Config VPC
 
-Kube-OVN supports multi-tenant isolation level VPC networks. Different VPC networks are independent of each other 
+Kube-OVN supports multi-tenant isolation level VPC networks. Different VPC networks are independent of each other
 and can be configured separately with Subnet CIDRs, routing policies, security policies, outbound gateways, EIP, etc.
 
-> VPC is mainly used in scenarios where there requires strong isolation of multi-tenant networks 
+> VPC is mainly used in scenarios where there requires strong isolation of multi-tenant networks
 > and some Kubernetes networking features conflict under multi-tenant networks.
-> For example, node and pod access, NodePort functionality, network access-based health checks, 
+> For example, node and pod access, NodePort functionality, network access-based health checks,
 > and DNS capabilities are not supported in multi-tenant network scenarios at this time.
-> In order to facilitate common Kubernetes usage scenarios, Kube-OVN has a special design for the default 
+> In order to facilitate common Kubernetes usage scenarios, Kube-OVN has a special design for the default
 > VPC where the Subnet under the VPC can meet the Kubernetes specification.
 > The custom VPC supports static routing, EIP and NAT gateways as described in this document.
-> Common isolation requirements can be achieved through network policies and Subnet ACLs under the default VPC, 
+> Common isolation requirements can be achieved through network policies and Subnet ACLs under the default VPC,
 > so before using a custom VPC, please make sure whether you need VPC-level isolation and understand the limitations under the custom VPC.
 > For Underlay subnets, physical switches are responsible for data-plane forwarding, so VPCs cannot isolate Underlay subnets.
 
@@ -37,6 +37,7 @@ spec:
   namespaces:
     - ns2
 ```
+
 - `namespaces`: Limit which namespaces can use this VPC. If empty, all namespaces can use this VPC.
 
 Create two Subnets, belonging to two different VPCs and having the same CIDR:
@@ -93,7 +94,7 @@ spec:
       image: nginx:alpine
 ```
 
-After running successfully, you can observe that the two Pod addresses belong to the same CIDR, 
+After running successfully, you can observe that the two Pod addresses belong to the same CIDR,
 but the two Pods cannot access each other because they are running on different tenant VPCs.
 
 ## Create VPC NAT Gateway
@@ -306,7 +307,7 @@ spec:
 ```
 
 - `policy`: Supports destination routing `policyDst` and source routing `policySrc`.
-- When there are overlapping routing rules, the rule with the longer CIDR mask has higher priority, 
+- When there are overlapping routing rules, the rule with the longer CIDR mask has higher priority,
   and if the mask length is the same, the destination route has a higher priority over the source route.
 
 ### Policy Routes

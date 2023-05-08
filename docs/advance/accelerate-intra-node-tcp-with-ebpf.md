@@ -1,6 +1,6 @@
 # 使用 eBPF 加速节点内 TCP 通信
 
-在一些边缘和 5G 的场景下，同节点内的 Pod 之间会进行大量的 TCP 通信，通过使用 Intel 开源的 [istio-tcpip-bypass](https://github.com/intel/istio-tcpip-bypass){: target="_blank" } 
+在一些边缘和 5G 的场景下，同节点内的 Pod 之间会进行大量的 TCP 通信，通过使用 Intel 开源的 [istio-tcpip-bypass](https://github.com/intel/istio-tcpip-bypass){: target="_blank" }
 项目，Pod 可以借助 eBPF 的能力绕过主机的 TCP/IP 协议栈，直接进行 socket 通信，从而大幅降低延迟并提升吞吐量。
 
 ## 基本原理

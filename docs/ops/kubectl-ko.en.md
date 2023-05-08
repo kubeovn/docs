@@ -1,13 +1,13 @@
 # Kubectl Plugin
 
 To facilitate daily operations and maintenance, Kube-OVN provides the kubectl plug-in tool, which allows administrators to perform daily operations through this command.
-For examples: Check OVN database information and status, OVN database backup and restore, OVS related information, 
+For examples: Check OVN database information and status, OVN database backup and restore, OVS related information,
 tcpdump specific containers, specific link logical topology, network problem diagnosis and performance optimization.
 
 ## Plugin Installation
 
-Kube-OVN installation will deploy the plugin to each node by default. 
-If the machine that runs kubectl is not in the cluster, 
+Kube-OVN installation will deploy the plugin to each node by default.
+If the machine that runs kubectl is not in the cluster,
 or if you need to reinstall the plugin, please refer to the following steps:
 
 Download `kubectl-ko` file:
@@ -63,8 +63,8 @@ The specific functions and usage of each command are described below.
 
 ### [nb | sb] [status | kick | backup | dbstatus | restore]
 
-This subcommand mainly operates on OVN northbound or southbound databases, 
-including database cluster status check, database node offline, database backup, 
+This subcommand mainly operates on OVN northbound or southbound databases,
+including database cluster status check, database node offline, database backup,
 database storage status check and database repair.
 
 #### DB Cluster Status Check
@@ -99,7 +99,7 @@ Servers:
 status: ok
 ```
 
-If the `match_index` under `Server` has a large difference and the `last msg` time is long, 
+If the `match_index` under `Server` has a large difference and the `last msg` time is long,
 the corresponding Server may not respond for a long time and needs to be checked further.
 
 #### DB Nodes Offline
@@ -325,8 +325,8 @@ bundles            OFF        ERR       INFO
 
 ### tcpdump {namespace/podname} [tcpdump options ...]
 
-This command will enter the `kube-ovn-cni` container on the machine where `namespace/podname` is located, 
-and run `tcpdump` to capture the traffic on the veth NIC of the corresponding container, 
+This command will enter the `kube-ovn-cni` container on the machine where `namespace/podname` is located,
+and run `tcpdump` to capture the traffic on the veth NIC of the corresponding container,
 which can be used to troubleshoot network-related problems.
 
 ```bash
@@ -344,7 +344,7 @@ listening on d7176fe7b4e0_h, link-type EN10MB (Ethernet), capture size 262144 by
 
 ### trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp or udp port]
 
-This command will print the OVN logical flow table and the final Openflow flow table when the Pod accesses an address through a specific protocol, 
+This command will print the OVN logical flow table and the final Openflow flow table when the Pod accesses an address through a specific protocol,
 so that it make locate flow table related problems during development or troubleshooting much easy.
 
 ```bash
@@ -387,7 +387,7 @@ kubectl ko trace default/virt-handler-7lvml 8.8.8.8 82:7c:9f:83:8c:01 icmp
 
 ### diagnose {all|node} [nodename]
 
-Diagnose the status of cluster network components and go to the corresponding node's `kube-ovn-pinger` 
+Diagnose the status of cluster network components and go to the corresponding node's `kube-ovn-pinger`
 to detect connectivity and network latency from the current node to other nodes and critical services.
 
 ```bash
@@ -644,7 +644,7 @@ I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
 
 This command performs performance tuning related operations, please refer to [Performance Tunning](../advance/performance-tuning.en.md).
 
-### reload 
+### reload
 
 This command restarts all Kube-OVN related components:
 
@@ -672,5 +672,3 @@ pod "kube-ovn-monitor-7fb67d5488-7q6zb" deleted
 Waiting for deployment "kube-ovn-monitor" rollout to finish: 0 of 1 updated replicas are available...
 deployment "kube-ovn-monitor" successfully rolled out
 ```
-
-

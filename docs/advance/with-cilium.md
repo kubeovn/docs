@@ -1,6 +1,6 @@
 # Cilium 集成
 
-[Cilium](https://cilium.io/) 是一款基于 eBPF 的网络和安全组件，Kube-OVN 利用其中的 
+[Cilium](https://cilium.io/) 是一款基于 eBPF 的网络和安全组件，Kube-OVN 利用其中的
 [CNI Chaining](https://docs.cilium.io/en/stable/gettingstarted/cni-chaining/) 模式来对已有功能进行增强。
 用户可以同时使用 Kube-OVN 丰富的网络抽象能力和 eBPF 带来的监控和安全能力。
 
