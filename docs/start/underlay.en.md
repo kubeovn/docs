@@ -56,6 +56,7 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/d
 #### Modify Configuration Options
 
 ```bash
+ENABLE_ARP_DETECT_IP_CONFLICT # disable vlan arp conflict detection if necessary
 NETWORK_TYPE          # set to vlan
 VLAN_INTERFACE_NAME   # set to the NIC that carries the Underlay traffic, e.g. eth1
 VLAN_ID               # The VLAN Tag need to be added，if set 0 no vlan tag will be added
