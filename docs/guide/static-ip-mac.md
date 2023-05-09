@@ -24,7 +24,7 @@ metadata:
 spec:
   containers:
   - name: static-ip
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
 ```
 
 在使用 annotation 定义单个 Pod IP/Mac 时需要注意以下几点：
@@ -64,7 +64,7 @@ spec:
     spec:
       containers:
       - name: ippool
-        image: nginx:alpine
+        image: docker.io/library/nginx:alpine
 ```
 
 对 Workload 使用固定 IP 需要注意以下几点：
@@ -103,7 +103,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:alpine
+        image: docker.io/library/nginx:alpine
         ports:
         - containerPort: 80
           name: web

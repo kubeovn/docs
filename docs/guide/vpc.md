@@ -76,7 +76,7 @@ metadata:
 spec:
   containers:
     - name: vpc1-pod
-      image: nginx:alpine
+      image: docker.io/library/nginx:alpine
 ---
 apiVersion: v1
 kind: Pod
@@ -88,7 +88,7 @@ metadata:
 spec:
   containers:
     - name: vpc2-pod
-      image: nginx:alpine
+      image: docker.io/library/nginx:alpine
 ```
 
 运行成功后可观察两个 Pod 地址属于同一个 CIDR，但由于运行在不同的租户 VPC，两个 Pod 无法相互访问。

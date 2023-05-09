@@ -40,5 +40,5 @@ metadata:
 spec:
   containers:
   - name: mirror-pod
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
 ```

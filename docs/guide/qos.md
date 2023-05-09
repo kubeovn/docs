@@ -24,7 +24,7 @@ metadata:
 spec:
   containers:
   - name: qos
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
 ```
 
 使用 annotation 动态调整 QoS：
@@ -56,7 +56,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: kubeovn/perf
+        image: docker.io/kubeovn/perf
 ```
 
 进入其中一个 Pod 并开启 iperf3 server：

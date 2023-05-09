@@ -94,7 +94,7 @@ metadata:
 spec:
   containers:
   - name: snat-pod
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
 ---
 apiVersion: v1
 kind: Pod
@@ -105,7 +105,7 @@ metadata:
 spec:
   containers:
   - name: eip-pod
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
 ```
 
 The EIP or SNAT rules configured by the Pod can be dynamically adjusted via kubectl or other tools,

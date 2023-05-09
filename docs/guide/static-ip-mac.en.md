@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
         - name: ippool
-          image: nginx:alpine
+          image: docker.io/library/nginx:alpine
 ```
 
 The following points need to be noted when using annotation.
@@ -75,7 +75,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: nginx:alpine
+        image: docker.io/library/nginx:alpine
 ```
 
 Using a fixed IP for Workload requires the following:
@@ -115,7 +115,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:alpine
+        image: docker.io/library/nginx:alpine
         ports:
         - containerPort: 80
           name: web

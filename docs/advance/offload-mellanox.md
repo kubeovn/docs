@@ -407,7 +407,7 @@ metadata:
 spec:
   containers:
   - name: nginx
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
     resources:
       requests:
         mellanox.com/cx5_sriov_switchdev: '1'

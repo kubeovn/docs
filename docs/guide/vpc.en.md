@@ -79,7 +79,7 @@ metadata:
 spec:
   containers:
     - name: vpc1-pod
-      image: nginx:alpine
+      image: docker.io/library/nginx:alpine
 ---
 apiVersion: v1
 kind: Pod
@@ -91,7 +91,7 @@ metadata:
 spec:
   containers:
     - name: vpc2-pod
-      image: nginx:alpine
+      image: docker.io/library/nginx:alpine
 ```
 
 After running successfully, you can observe that the two Pod addresses belong to the same CIDR,

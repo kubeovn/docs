@@ -247,9 +247,9 @@ spec:
         app: dynamic
     spec:
       containers:
-      - image: qaimages:helloworld
+      - image: docker.io/library/docker.io/library/nginx:alpine
         imagePullPolicy: IfNotPresent
-        name: qaimages
+        name: nginx
       dnsPolicy: ClusterFirst
       restartPolicy: Always
 ```

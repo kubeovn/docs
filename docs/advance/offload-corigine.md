@@ -206,7 +206,7 @@ metadata:
 spec:
   containers:
     - name: nginx
-      image: nginx:alpine
+      image: docker.io/library/nginx:alpine
       resources:
         requests:
           corigine.com/agilio_sriov: '1'
