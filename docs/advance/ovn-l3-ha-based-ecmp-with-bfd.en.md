@@ -1,4 +1,4 @@
-# L3 snat gw HA based Ecmp static route with BFD
+# Support OVN SNAT L3 HA Based ECMP and BFD Static Route
 
 Custom vpc based on ovn snat after ecmp based static route hash to multiple gw node ovnext0 NICs out of the public network
 
@@ -13,7 +13,7 @@ external-subnet-->gw-node2-ovnext0--> node2-external-switch
 external-subnet-->gw-node3-ovnext0--> node3-external-switch
 ```
 
-This functionis basically the same as [ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) .
+This functions basically the same as [ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) .
 
 As for the different parts, which will be specified in the following sections, mainly including the creation of ovn-eip of node-ext-gw type and the automatic maintenance of bfd as well as ecmp static routes based on vpc enable_bfd.
 

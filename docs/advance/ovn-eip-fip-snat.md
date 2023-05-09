@@ -1,4 +1,4 @@
-# ovn eip fip snat dnat
+# OVN EIP FIP SNAT 支持
 
 ``` mermaid
 graph LR
@@ -7,7 +7,7 @@ graph LR
 pod-->vpc1-subnet-->vpc1-->snat-->lrp-->external-subnet-->gw-node-external-nic
 ```
 
-pod 基于 snat 出公网的大致流程，最后是经过网关节点的公网网卡。
+Pod 基于 SNAT 出公网的大致流程，最后是经过网关节点的公网网卡。
 
 ``` mermaid
 graph LR
@@ -16,7 +16,7 @@ graph LR
 pod-->vpc1-subnet-->vpc1-->fip-->lrp-->external-subnet-->local-node-external-nic
 ```
 
-pod 基于 fip 出公网的大致流程，最后可以基于本地节点的公网网卡出公网。
+Pod 基于 FIP 出公网的大致流程，最后可以基于本地节点的公网网卡出公网。
 
 ## 1. 部署
 

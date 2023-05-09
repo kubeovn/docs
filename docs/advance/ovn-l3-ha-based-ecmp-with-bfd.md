@@ -1,4 +1,4 @@
-# 基于 ecmp with bfd 路由实现公网高可用
+# OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持
 
 自定义 vpc 基于 ovn snat 后基于 ecmp 静态路由哈希到多个 gw node ovnext0 网卡出公网
 
