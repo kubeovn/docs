@@ -34,7 +34,7 @@ nav:
       - 修改子网 CIDR: 'ops/change-default-subnet.md'
       - 修改 Join 子网 CIDR: 'ops/change-join-subnet.md'
       - 卸载 Calico 安装 Kube-OVN: 'ops/from-calico.md'
-      - 调整log等级: 'ops/change-log-level.md'
+      - 调整日志等级: 'ops/change-log-level.md'
       - 其他常见问题: 'ops/faq.md'
   - 高级功能:
       - 多网卡管理: 'advance/multi-nic.md'
@@ -202,6 +202,7 @@ plugins:
           ovn ipsec 支持: ovn ipsec Support
           OVN 流量镜像: OVN Remote Port Mirroring
           节点本地 DNS 缓存和 Kube-OVN 适配 : Node Local DNS Cache and Kube-OVN Adaptation
+          调整日志等级: Change Log Level
   - git-revision-date-localized:
       type: date
       enable_creation_date: true

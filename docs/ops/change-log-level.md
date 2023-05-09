@@ -1,4 +1,6 @@
-打开 kube-ovn.yaml，在服务启动脚本的参数列表中设置 log 等级，比如：
+# 调整日志等级
+
+打开 `kube-ovn.yaml`，在服务启动脚本的参数列表中设置 log 等级，比如：
 
 ``` bash
 vi kube-ovn.yaml
