@@ -47,14 +47,15 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/d
 
 ```bash
 ENABLE_ARP_DETECT_IP_CONFLICT # 如有需要，可以选择关闭 vlan 网络 arp 冲突检测
-NETWORK_TYPE          # 设置为 vlan
-VLAN_INTERFACE_NAME   # 设置为宿主机上承担容器流量的网卡，例如 eth1
-VLAN_ID               # 交换机所接受的 VLAN Tag，若设置为 0 则不做 VLAN 封装
-POD_CIDR              # 设置为物理网络 CIDR， 例如 192.168.1.0/24
-POD_GATEWAY           # 设置为物理网络网关，例如 192.168.1.1
-EXCLUDE_IPS           # 排除范围，避免容器网段和物理网络已用 IP 冲突，例如 192.168.1.1..192.168.1.100
-EXCHANGE_LINK_NAME    # 是否交换默认 provider-network 下 OVS 网桥和桥接网卡的名字，默认为 false
-LS_DNAT_MOD_DL_DST    # DNAT 时是否对 MAC 地址进行转换，可加速 Service 的访问，默认为 true
+NETWORK_TYPE                  # 设置为 vlan
+VLAN_INTERFACE_NAME           # 设置为宿主机上承担容器流量的网卡，例如 eth1
+VLAN_ID                       # 交换机所接受的 VLAN Tag，若设置为 0 则不做 VLAN 封装
+POD_CIDR                      # 设置为物理网络 CIDR， 例如 192.168.1.0/24
+POD_GATEWAY                   # 设置为物理网络网关，例如 192.168.1.1
+EXCLUDE_IPS                   # 排除范围，避免容器网段和物理网络已用 IP 冲突，例如 192.168.1.1..192.168.1.100
+ENABLE_LB                     # 如果 Underlay 子网需要使用 Service 需要设置为 true 
+EXCHANGE_LINK_NAME            # 是否交换默认 provider-network 下 OVS 网桥和桥接网卡的名字，默认为 false
+LS_DNAT_MOD_DL_DST            # DNAT 时是否对 MAC 地址进行转换，可加速 Service 的访问，默认为 true
 ```
 
 ### 运行安装脚本

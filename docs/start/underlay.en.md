@@ -57,12 +57,15 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/d
 
 ```bash
 ENABLE_ARP_DETECT_IP_CONFLICT # disable vlan arp conflict detection if necessary
-NETWORK_TYPE          # set to vlan
-VLAN_INTERFACE_NAME   # set to the NIC that carries the Underlay traffic, e.g. eth1
-VLAN_ID               # The VLAN Tag need to be added，if set 0 no vlan tag will be added
-POD_CIDR              # The Underlay network CIDR， e.g. 192.168.1.0/24
-POD_GATEWAY           # Underlay physic gateway address, e.g. 192.168.1.1
-EXCLUDE_IPS           # Exclude ranges to avoid conflicts between container network and IPs already in use on the physical network, e.g. 192.168.1.1..192.168.1.100
+NETWORK_TYPE                  # set to vlan
+VLAN_INTERFACE_NAME           # set to the NIC that carries the Underlay traffic, e.g. eth1
+VLAN_ID                       # The VLAN Tag need to be added，if set 0 no vlan tag will be added
+POD_CIDR                      # The Underlay network CIDR， e.g. 192.168.1.0/24
+POD_GATEWAY                   # Underlay physic gateway address, e.g. 192.168.1.1
+EXCLUDE_IPS                   # Exclude ranges to avoid conflicts between container network and IPs already in use on the physical network, e.g. 192.168.1.1..192.168.1.100
+ENABLE_LB                     # If Underlay Subnet needs to visit Service set it to true
+EXCHANGE_LINK_NAME            # If swap the names of the OVS bridge and the bridge interface under the default provider-network. Default to false.
+LS_DNAT_MOD_DL_DST            # If DNAT translate MAC addresses to accelerate service access. Default to true.
 ```
 
 ### Run the Script
