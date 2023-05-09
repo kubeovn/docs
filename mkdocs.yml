@@ -18,6 +18,7 @@ nav:
       - 子网使用: 'guide/subnet.md'
       - LoadBalancer 类型 Service: 'guide/loadbalancer-service.md'
       - VPC 使用: 'guide/vpc.md'
+      - VPC QoS 配置: 'guide/vpc-qos.md'
       - 容器网络 QoS 配置: 'guide/qos.md'
       - 配置监控和面板: 'guide/prometheus-grafana.md'
       - 配置原生 Prometheus: 'guide/prometheus.md'
@@ -150,6 +151,7 @@ plugins:
           子网使用: Config Subnet
           LoadBalancer 类型 Service: LoadBalancer Type Service
           VPC 使用: Config VPC
+          VPC QoS 配置: VPC QoS
           容器网络 QoS 配置: Manage QoS
           配置监控和面板: Monitor and Dashboard
           双栈使用: DualStack
