@@ -9,7 +9,7 @@ nav:
       - 准备工作: 'start/prepare.md'
       - 一键安装: 'start/one-step-install.md'
       - Underlay 网络安装: 'start/underlay.md'
-      - 使用 sealos 一键部署 Kubernetes 和 Kube-OVN: 'start/sealos-install.md'
+      - 使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: 'start/sealos-install.md'
       - 卸载: 'start/uninstall.md'
   - 使用指南:
       - 安装和配置选项: 'guide/setup-options.md'
