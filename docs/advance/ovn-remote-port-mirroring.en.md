@@ -82,7 +82,7 @@ metadata:
 spec:
   containers:
   - name: bash
-    image: kubeovn/kube-ovn:v1.12.0
+    image: docker.io/kubeovn/kube-ovn:{{ variables.version }}
     args:
     - bash
     - -c

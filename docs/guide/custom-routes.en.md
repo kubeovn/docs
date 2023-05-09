@@ -18,7 +18,7 @@ metadata:
 spec:
   containers:
   - name: nginx
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
 ```
 
 > Do not set the `dst` field if you want to configure the default route.
@@ -52,5 +52,5 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:alpine
+        image: docker.io/library/nginx:alpine
 ```

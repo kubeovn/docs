@@ -60,7 +60,7 @@ metadata:
 spec:
   nodeName: kube-ovn-worker
   containers:
-  - image: qaimages:helloworld
+  - image: docker.io/library/nginx:alpine
     imagePullPolicy: IfNotPresent
     name: qatest
 ```
@@ -163,7 +163,7 @@ metadata:
 spec:
   nodeName: kube-ovn-worker
   containers:
-  - image: qaimages:helloworld
+  - image: docker.io/library/nginx:alpine
     imagePullPolicy: IfNotPresent
     name: qatest
 ```

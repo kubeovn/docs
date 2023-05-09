@@ -74,5 +74,5 @@ metadata:
 spec:
   containers:
     - name: static-ip
-      image: nginx:alpine
+      image: docker.io/library/nginx:alpine
 ```

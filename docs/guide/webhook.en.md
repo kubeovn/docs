@@ -59,7 +59,7 @@ metadata:
   namespace: default
 spec:
   containers:
-  - image: nginx:alpine
+  - image: docker.io/library/nginx:alpine
     imagePullPolicy: IfNotPresent
     name: qatest
 ```

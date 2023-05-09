@@ -91,7 +91,7 @@ metadata:
 spec:
   containers:
     - name: vpc-1-pod
-      image: nginx:alpine
+      image: docker.io/library/nginx:alpine
 ---
 apiVersion: v1
 kind: Pod
@@ -102,7 +102,7 @@ metadata:
 spec:
   containers:
     - name: vpc-2-pod
-      image: nginx:alpine
+      image: docker.io/library/nginx:alpine
 ```
 
 Test the network connectivity

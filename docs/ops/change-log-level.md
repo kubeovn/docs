@@ -6,7 +6,7 @@
 vi kube-ovn.yaml
 # ...
         - name: kube-ovn-controller
-          image: "kubeovn/kube-ovn:v1.12.0"
+          image: "docker.io/kubeovn/kube-ovn:{{ variables.version }}"
           imagePullPolicy: IfNotPresent
           args:
           - /kube-ovn/start-controller.sh

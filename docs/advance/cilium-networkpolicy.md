@@ -34,9 +34,9 @@ spec:
         app: test
     spec:
       containers:
-      - image: qaimages:helloworld
+      - image: docker.io/library/nginx:alpine
         imagePullPolicy: IfNotPresent
-        name: qaimages
+        name: nginx
 ```
 
 同样参考以下 yaml，在 default namespace 下创建指定 label `app=dynamic` 的 Pod 为发起访问测试的 Pod。
@@ -66,9 +66,9 @@ spec:
         app: dynamic
     spec:
       containers:
-      - image: qaimages:helloworld
+      - image: docker.io/library/nginx:alpine
         imagePullPolicy: IfNotPresent
-        name: qaimages
+        name: nginx
 ```
 
 查看测试 Pod 以及 Label 信息:

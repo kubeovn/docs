@@ -146,7 +146,7 @@ spec:
   containers:
   - name: samplepod
     command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
-    image: alpine
+    image: docker.io/library/alpine:edge
 
 ```
 
@@ -169,7 +169,7 @@ metadata:
 spec:
   containers:
   - name: static-ip
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
 ```
 
 ### Create Workloads with Fixed IPs
@@ -200,5 +200,5 @@ spec:
     spec:
       containers:
       - name: static-workload
-        image: nginx:alpine
+        image: docker.io/library/nginx:alpine
 ```

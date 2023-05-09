@@ -93,7 +93,7 @@ metadata:
 spec:
   containers:
   - name: snat-pod
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
 ---
 apiVersion: v1
 kind: Pod
@@ -104,7 +104,7 @@ metadata:
 spec:
   containers:
   - name: eip-pod
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
 ```
 
 可通过 kubectl 或其他工具动态调整 Pod 所配置的 EIP 或 SNAT 规则，更改时请注意要同时删除 `ovn.kubernetes.io/routed` annotation

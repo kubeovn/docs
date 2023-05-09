@@ -148,7 +148,7 @@ spec:
       serviceAccountName: prometheus
       serviceAccount: prometheus
       containers:
-      - image: prom/prometheus:latest
+      - image: docker.io/prom/prometheus:latest
         imagePullPolicy: IfNotPresent
         name: prometheus
         command:

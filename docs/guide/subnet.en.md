@@ -146,7 +146,7 @@ EOF
 # kubectl create ns ns1
 namespace/ns1 created
 
-# kubectl run nginx --image=nginx:alpine -n ns1
+# kubectl run nginx --image=docker.io/library/nginx:alpine -n ns1
 deployment.apps/nginx created
 
 # kubectl get pod -n ns1 -o wide

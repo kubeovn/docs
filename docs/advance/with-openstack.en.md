@@ -234,7 +234,7 @@ metadata:
   namespace: net2
 spec:
   containers:
-    - image: kubeovn/kube-ovn:v1.8.0
+    - image: docker.io/kubeovn/kube-ovn:v1.8.0
       command:
         - "sleep"
         - "604800"

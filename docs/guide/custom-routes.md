@@ -18,7 +18,7 @@ metadata:
 spec:
   containers:
   - name: nginx
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
 ```
 
 > `dst` 字段为空表示修改默认路由。
@@ -52,5 +52,5 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:alpine
+        image: docker.io/library/nginx:alpine
 ```
