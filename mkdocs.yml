@@ -201,7 +201,7 @@ plugins:
           SecurityGroup 使用: SecurityGroup Usage
           ovn ipsec 支持: ovn ipsec Support
           OVN 流量镜像: OVN Remote Port Mirroring
-          节点本地 DNS 缓存和 Kube-OVN 适配 : Node Local DNS Cache Adaptation
+          节点本地 DNS 缓存和 Kube-OVN 适配 : Node Local DNS Cache and Kube-OVN Adaptation
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
