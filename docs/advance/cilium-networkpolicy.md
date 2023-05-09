@@ -34,7 +34,7 @@ spec:
         app: test
     spec:
       containers:
-      - image: docker.io/library/docker.io/library/nginx:alpine
+      - image: docker.io/library/nginx:alpine
         imagePullPolicy: IfNotPresent
         name: nginx
 ```
@@ -66,7 +66,7 @@ spec:
         app: dynamic
     spec:
       containers:
-      - image: docker.io/library/docker.io/library/nginx:alpine
+      - image: docker.io/library/nginx:alpine
         imagePullPolicy: IfNotPresent
         name: nginx
 ```
