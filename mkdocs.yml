@@ -64,7 +64,7 @@ nav:
       - SecurityGroup 使用: 'advance/security-group.md'
       - ovn ipsec 支持: 'advance/ovn-ipsec.md'
       - OVN 流量镜像: 'advance/ovn-remote-port-mirroring.md'
-      - 节点本地 DNS 缓存适配: 'advance/node-local-dns.md'
+      - 节点本地 DNS 缓存和 Kube-OVN 适配 : 'advance/node-local-dns.md'
   - 技术参考:
       - 总体架构: 'reference/architecture.md'
       - 功能成熟度: 'reference/feature-stage.md'
@@ -201,7 +201,7 @@ plugins:
           SecurityGroup 使用: SecurityGroup Usage
           ovn ipsec 支持: ovn ipsec Support
           OVN 流量镜像: OVN Remote Port Mirroring
-          节点本地 DNS 缓存适配: Node Local Dns Cache Adaptation
+          节点本地 DNS 缓存和 Kube-OVN 适配 : Node Local DNS Cache Adaptation
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
