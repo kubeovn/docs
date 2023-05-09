@@ -23,7 +23,7 @@ sed -i "s/__PILLAR__LOCAL__DNS__/$localdns/g; s/__PILLAR__DNS__DOMAIN__/$domain/
 kubectl apply -f nodelocaldns.yaml
 ```
 
-修改每个节点上的 kubelet 配置文件，将 /var/lib/kubelet/config.yaml 中的 clusterDNS 字段修改为本地 DNS IP 169.254.20.10，然后重启 kubelet 服务。
+修改每个节点上的 kubelet 配置文件，将 `/var/lib/kubelet/config.yaml` 中的 clusterDNS 字段修改为本地 DNS IP 169.254.20.10，然后重启 kubelet 服务。
 
 ### Kube-OVN 相应 DNS 配置
 
@@ -31,7 +31,7 @@ kubectl apply -f nodelocaldns.yaml
 
 #### Underlay Subnet 开启 U2O 开关
 
-如果是 Underlay Subnet 需要使用本地 DNS 功能，需要开启 U2O 功能，即在 kubectl edit subnet {your subnet} 中配置 spec.u2oInterconnection = true , 如果是 Overlay Subnet 则不需要这步操作。
+如果是 Underlay Subnet 需要使用本地 DNS 功能，需要开启 U2O 功能，即在 `kubectl edit subnet {your subnet}` 中配置 `spec.u2oInterconnection = true` , 如果是 Overlay Subnet 则不需要这步操作。
 
 #### 给 Kube-ovn-controller 指定对应的本地 DNS IP
 
@@ -39,7 +39,7 @@ kubectl apply -f nodelocaldns.yaml
 kubectl edit deployment kube-ovn-controller -n kube-system
 ```
 
-给 spec.template.spec.containers.args 增加字段 --node-local-dns-ip=169.254.20.10
+给 `spec.template.spec.containers.args` 增加字段 `--node-local-dns-ip=169.254.20.10`
 
 #### 重建已经创建的 Pod
 
