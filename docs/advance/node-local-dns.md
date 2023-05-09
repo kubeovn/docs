@@ -1,4 +1,4 @@
-# NodeLocal DNSCache 和 Kube-OVN 适配
+# 节点本地 DNS 缓存适配
 
 NodeLocal DNSCache 是通过集群节点上作为 DaemonSet 运行 DNS 缓存来提高集群 DNS 性能，该功能也可以和 Kube-OVN 适配。
 
