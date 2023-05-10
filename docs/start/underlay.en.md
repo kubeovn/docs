@@ -177,3 +177,49 @@ spec:
 
 When this feature is turned on, the Pod does not use an external gateway,
 but a Logical Router created by Kube-OVN to forward cross-subnet communication.
+
+## Interconnection of Underlay and Overlay Networks
+
+If a cluster has both Underlay and Overlay subnets, by default, Pods in the Overlay subnet can access the Pod IPs in the Underlay subnet via a gateway using NAT.
+From the perspective of Pods in the Underlay subnet, the addresses in the Overlay subnet are external,
+and require the underlying physical device to forward,
+but the underlying physical device does not know the addresses in the Overlay subnet and cannot forward.
+Therefore, Pods in the Underlay subnet cannot access Pods in the Overlay subnet directly via Pod IPs.
+
+If you need to enable communication between Underlay and Overlay networks, you need to set the `u2oInterconnection` of the subnet to `true`.
+In this case, Kube-OVN will use an additional Underlay IP to connect the Underlay subnet and the `ovn-cluster` logical router,
+and set the corresponding routing rules to enable communication. Unlike the logical gateway,
+this solution only connects the Underlay and Overlay subnets within Kube-OVN, and other traffic accessing the Internet will still be forwarded through the physical gateway.
+
+## Known Issues
+
+### When the physical network is enabled with hairpin, Pod network is abnormal
+
+When physical networks enable hairpin or similar behaviors, problems such as gateway check failure when creating Pods and abnormal network communication of Pods may occur. This is because the default MAC learning function of OVS bridge does not support this kind of network environment.
+
+To solve this problem, it is necessary to turn off hairpin (or modify the relevant configuration of physical network), or update the Kube-OVN version.
+
+### When there are a large number of Pods, gateway check for new Pods fails
+
+If there are a large number of Pods running on the same node (more than 300), it may cause packet loss due to the OVS flow table resubmit times exceeding the upper limit of ARP broadcast packets.
+
+```txt
+2022-11-13T08:43:46.782Z|00222|ofproto_dpif_upcall(handler5)|WARN|Flow: arp,in_port=331,vlan_tci=0x0000,dl_src=00:00:00:25:eb:39,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.131.240,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:25:eb:39,arp_tha=ff:ff:ff:ff:ff:ff
+ 
+bridge("br-int")
+----------------
+ 0. No match.
+     >>>> received packet on unknown port 331 <<<<
+    drop
+ 
+Final flow: unchanged
+Megaflow: recirc_id=0,eth,arp,in_port=331,dl_src=00:00:00:25:eb:39
+Datapath actions: drop
+2022-11-13T08:44:34.077Z|00224|ofproto_dpif_xlate(handler5)|WARN|over 4096 resubmit actions on bridge br-int while processing arp,in_port=13483,vlan_tci=0x0000,dl_src=00:00:00:59:ef:13,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.152.3,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:59:ef:13,arp_tha=ff:ff:ff:ff:ff:ff
+```
+
+To solve this issue, modify the OVN NB option `bcast_arp_req_flood` to `false`:
+
+```sh
+kubectl ko nbctl set NB_Global . options:bcast_arp_req_flood=false
+```
