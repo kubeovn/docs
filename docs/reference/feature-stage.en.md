@@ -40,7 +40,6 @@ This list records the feature stages from the 1.8 release.
 | Subnet ACL                                       | true    | Alpha | 1.9   |       |
 | Subnet Isolation (Will be replaced by ACL later) | true    | Beta  | 1.8   |       |
 | Underlay Subnet                                  | true    | GA    | 1.8   |       |
-| Subnet QoS                                       | true    | Alpha | 1.9   |       |
 | Multiple Pod Interface                           | true    | Beta  | 1.8   |       |
 | Subnet DHCP                                      | false   | Alpha | 1.10  |       |
 | Subnet with External Gateway                     | false   | Alpha | 1.8   |       |
