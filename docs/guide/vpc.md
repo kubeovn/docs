@@ -138,7 +138,7 @@ spec:
 
 - 该 Subnet 用来管理可用的外部地址，请和网络管理沟通给出可用的物理段 IP。
 - VPC 网关使用 Macvlan 做物理网络配置，`NetworkAttachmentDefinition` 的 `master` 需为对应物理网路网卡的网卡名。
-- `name` 必须为 `ovn-vpc-external-network`，这里代码中做了硬编码。
+- `name` 外部网络名称。
 
 在 Macvlan 模式下，附属网卡会将数据包直接通过该节点网卡对外发送，L2/L3 层面的转发能力需要依赖底层网络设备。
 需要预先在底层网络设备配置对应的网关、Vlan 和安全策略等配置。
@@ -190,12 +190,15 @@ spec:
   selector:
     - "kubernetes.io/hostname: kube-ovn-worker"
     - "kubernetes.io/os: linux"
+  externalSubnets:
+    - ovn-vpc-external-network
 ```
 
 - `subnet`： 为 VPC 内某个 Subnet 名，VPC 网关 Pod 会在该子网下用 `lanIp` 来连接租户网络。
 - `lanIp`：`subnet` 内某个未被使用的 IP，VPC 网关 Pod 最终会使用该 Pod。
 - `selector`: VPC 网关 Pod 的节点选择器。
 - `lanIp` : 需和 vpc 静态路由中的 `nextHopIP` 相同。
+- `externalSubnets`： VPC 网关使用的外部网络，如果不配置则默认使用 `ovn-vpc-external-network`，当前版本只支持配置一个外部网络。
 
 其他可配参数：
 
@@ -228,6 +231,20 @@ spec:
   natGwDp: gw1
   v4ip: 10.0.1.111
 ```
+
+指定 EIP 所在的外部网络：
+
+```yaml
+kind: IptablesEIP
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-random
+spec:
+  natGwDp: gw1
+  externalSubnet: ovn-vpc-external-network
+```
+
+- `externalSubnet`： EIP 所在外部网络名称，如果不指定则默认为 `ovn-vpc-external-network`，如果指定则必须为所在 VPC 网关的 `externalSubnets` 中的一个。
 
 ### 创建 DNAT 规则
 
