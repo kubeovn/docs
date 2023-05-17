@@ -103,7 +103,7 @@ spec:
 
 ## net1 网卡特定流量 QoS
 
-对 net1 网卡上特定流量进行限速，限速值为 5Mbps，优先级为 2，这里 `shard=true`，表示这个 QoSPolicy  可以同时给多个资源使用，此时不允许修改 QoSPolicy 的内容。
+对 net1 网卡上特定流量进行限速，限速值为 5Mbps，优先级为 2，这里 `shared=true`，表示这个 QoSPolicy  可以同时给多个资源使用，此时不允许修改 QoSPolicy 的内容。
 
 QoSPolicy 配置如下：
 
@@ -169,3 +169,7 @@ NAME                SHARED   BINDINGTYPE
 qos-eip-example     false    EIP
 qos-natgw-example   true     NATGW
 ```
+
+## 限制
+
+* 只有在未使用时才能删除 QoS 策略。因此，在删除 QoS 策略之前，请先查看已启用 QoS 的 EIP 和 NATGW，去掉它们的 `spec.qosPolicy` 配置。

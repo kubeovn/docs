@@ -141,7 +141,7 @@ spec:
 
 - This Subnet is used to manage the available external addresses, so please communicate with your network management to give you the available physical segment IPs.
 - The VPC gateway uses Macvlan for physical network configuration, and `master` of `NetworkAttachmentDefinition` should be the NIC name of the corresponding physical network NIC.
-- `name` must be `ovn-vpc-external-network`.
+- `name`: External network name.
 
 For macvlan mode, the nic will send packets directly through that node NIC,
 relying on the underlying network devices for L2/L3 level forwarding capabilities. You need to configure the corresponding gateway,
@@ -194,12 +194,15 @@ spec:
   selector:
     - "kubernetes.io/hostname: kube-ovn-worker"
     - "kubernetes.io/os: linux"
+  externalSubnets:
+    - ovn-vpc-external-network
 ```
 
 - `subnet`: A Subnet within the VPC, the VPC Gateway Pod will use `lanIp` to connect to the tenant network under that subnet.
 - `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use for the Pod.
 - `selector`: Node selector for the VPC Gateway Pod.
 - `lanIp`: Needs to be the same as `nextHopIP`.
+- `externalSubnets`: External network used by the VPC gateway, if not configured, `ovn-vpc-external-network` is used by default, and only one external network is supported in the current version.
 
 Other configurable parameters:
 
@@ -232,6 +235,20 @@ spec:
   natGwDp: gw1
   v4ip: 10.0.1.111
 ```
+
+Specify the external network on which the EIP is located:
+
+```yaml
+kind: IptablesEIP
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-random
+spec:
+  natGwDp: gw1
+  externalSubnet: ovn-vpc-external-network
+```
+
+- `externalSubnet`: The name of the external network on which the EIP is located. If not specified, it defaults to `ovn-vpc-external-network`. If specified, it must be one of the `externalSubnets` of the VPC gateway.
 
 ### Create DNAT Rules
 

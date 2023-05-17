@@ -103,7 +103,7 @@ The value of `.spec.qosPolicy` supports both creation and subsequent modificatio
 
 ## QoS for specific traffic on net1 NIC
 
-Limit the specific traffic on net1 NIC to 5Mbps and set the priority to 2. Here `shard=true`, which means that this QoSPolicy can be used by multiple resources at the same time, and does not allow the modification of the contents of the QoSPolicy in this scenario.
+Limit the specific traffic on net1 NIC to 5Mbps and set the priority to 2. Here `shared=true`, which means that this QoSPolicy can be used by multiple resources at the same time, and does not allow the modification of the contents of the QoSPolicy in this scenario.
 
 The QoSPolicy configuration is as follows:
 
@@ -169,3 +169,7 @@ NAME                SHARED   BINDINGTYPE
 qos-eip-example     false    EIP
 qos-natgw-example   true     NATGW
 ```
+
+## Limitations
+
+* QoSPolicy can only be deleted when it is not in use. Therefore, before deleting the QoSPolicy, please check the EIP and NATGW that have enabled QoS, and remove their `spec.qosPolicy` configuration.
