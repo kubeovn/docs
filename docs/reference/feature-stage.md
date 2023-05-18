@@ -33,48 +33,48 @@
 
 | 功能                              | 默认开启  | 状态    | 开始（Since） | 结束（Until） |
 |---------------------------------|-------|-------|-----------|-----------|
-| [Namespaced Subnet](https://kubeovn.github.io/docs/{{ variables.version }}/guide/subnet/#_5) | true  | GA    | 1.8       |           |
-| [分布式网关](https://kubeovn.github.io/docs/{{ variables.version }}/guide/subnet/#_7) | true  | GA    | 1.8       |           |
-| [主从模式集中式网关](https://kubeovn.github.io/docs/{{ variables.version }}/guide/subnet/#_8) | true  | GA    | 1.8       |           |
-| [ECMP 模式集中式网关](https://kubeovn.github.io/docs/{{ variables.version }}/guide/setup-options/#ecmp) | false | Beta  | 1.8       |           |
-| [子网 ACL](https://kubeovn.github.io/docs/{{ variables.version }}/guide/subnet/#acl) | true  | Alpha | 1.9       |           |
-| [子网隔离 (未来会和子网 ACL 合并)](https://kubeovn.github.io/docs/{{ variables.version }}/guide/subnet/#_9) | true  | Beta  | 1.8       |           |
-| [Underlay 子网](https://kubeovn.github.io/docs/{{ variables.version }}/start/underlay/) | true  | GA    | 1.8       |           |
-| [多网卡管理](https://kubeovn.github.io/docs/{{ variables.version }}/advance/multi-nic/) | true  | Beta  | 1.8       |           |
-| [子网 DHCP](https://kubeovn.github.io/docs/{{ variables.version }}/advance/dhcp/) | false | Alpha | 1.10      |           |
-| [子网设置外部网关](https://kubeovn.github.io/docs/{{ variables.version }}/advance/external-gateway/) | false | Alpha | 1.8       |           |
-| [使用 OVN-IC 进行集群互联](https://kubeovn.github.io/docs/{{ variables.version }}/advance/with-ovn-ic/) | false | Beta  | 1.8       |           |
-| [使用 Submariner 进行集群互联](https://kubeovn.github.io/docs/{{ variables.version }}/advance/with-submariner/) | false | Alpha | 1.9       |           |
-| [子网 VIP 预留](https://kubeovn.github.io/docs/{{ variables.version }}/advance/vip/) | true  | Alpha | 1.10      |           |
-| [创建自定义 VPC](https://kubeovn.github.io/docs/{{ variables.version }}/guide/vpc/#vpc_1) | true  | Beta  | 1.8       |           |
-| [自定义 VPC 浮动 IP/SNAT/DNAT](https://kubeovn.github.io/docs/{{ variables.version }}/guide/vpc/#eip) | true  | Alpha | 1.10      |           |
-| [自定义 VPC 静态路由](https://kubeovn.github.io/docs/{{ variables.version }}/guide/vpc/#_2) | true  | Alpha | 1.10      |           |
-| [自定义 VPC 策略路由](https://kubeovn.github.io/docs/{{ variables.version }}/guide/vpc/#_2) | true  | Alpha | 1.10      |           |
-| [自定义 VPC 安全组](https://kubeovn.github.io/docs/{{ variables.version }}/advance/security-group/) | true  | Alpha | 1.10      |           |
-| [容器最大带宽 QoS](https://kubeovn.github.io/docs/{{ variables.version }}/guide/qos/) | true  | GA    | 1.8       |           |
-| [linux-netem QoS](https://kubeovn.github.io/docs/{{ variables.version }}/guide/qos/#linux-netem-qos) | true  | Alpha | 1.9       |           |
-| [Prometheus 集成](https://kubeovn.github.io/docs/{{ variables.version }}/guide/prometheus/) | false | GA    | 1.8       |           |
-| [Grafana 集成](https://kubeovn.github.io/docs/{{ variables.version }}/guide/prometheus-grafana/) | false | GA    | 1.8       |           |
-| [双栈网络](https://kubeovn.github.io/docs/{{ variables.version }}/guide/dual-stack/) | false | GA    | 1.8       |           |
-| [默认 VPC EIP/SNAT](https://kubeovn.github.io/docs/{{ variables.version }}/guide/eip-snat/) | false | Beta  | 1.8       |           |
-| [流量镜像](https://kubeovn.github.io/docs/{{ variables.version }}/guide/mirror/) | false | GA    | 1.8       |           |
-| [NetworkPolicy](https://kubeovn.github.io/docs/{{ variables.version }}/guide/setup-options/#networkpolicy) | true  | Beta  | 1.8       |           |
-| [Webhook](https://kubeovn.github.io/docs/{{ variables.version }}/guide/webhook/) | false | Alpha | 1.10      |           |
-| [性能调优](https://kubeovn.github.io/docs/{{ variables.version }}/advance/performance-tuning/) | false | Beta  | 1.8       |           |
-| [Overlay 子网静态路由对外暴露](https://kubeovn.github.io/docs/{{ variables.version }}/advance/overlay-with-route/) | false | Alpha | 1.8       |           |
-| [Overlay 子网 BGP 对外暴露](https://kubeovn.github.io/docs/{{ variables.version }}/advance/with-bgp/#podsubnet) | false | Alpha | 1.9       |           |
-| [Cilium 集成](https://kubeovn.github.io/docs/{{ variables.version }}/advance/with-cilium/) | false | Alpha | 1.10      |           |
-| [自定义 VPC 互联](https://kubeovn.github.io/docs/{{ variables.version }}/advance/vpc-peering/) | false | Alpha | 1.10      |           |
-| [Mellanox Offload](https://kubeovn.github.io/docs/{{ variables.version }}/advance/offload-mellanox/) | false | Alpha | 1.8       |           |
-| [芯启源 Offload](https://kubeovn.github.io/docs/{{ variables.version }}/advance/offload-corigine/) | false | Alpha | 1.10      |           |
-| [Windows 支持](https://kubeovn.github.io/docs/{{ variables.version }}/advance/windows/) | false | Alpha | 1.10      |           |
-| [DPDK 支持](https://kubeovn.github.io/docs/{{ variables.version }}/advance/dpdk/) | false | Alpha | 1.10      |           |
-| [OpenStack 集成](https://kubeovn.github.io/docs/{{ variables.version }}/advance/dpdk/) | false | Alpha | 1.9       |           |
-| [单个 Pod 固定 IP/Mac](https://kubeovn.github.io/docs/{{ variables.version }}/guide/static-ip-mac/#pod-ip-mac) | true  | GA    | 1.8       |           |
-| [Workload 固定 IP](https://kubeovn.github.io/docs/{{ variables.version }}/guide/static-ip-mac/#workload-ip-pool) | true  | GA    | 1.8       |           |
-| [StatefulSet 固定 IP](https://kubeovn.github.io/docs/{{ variables.version }}/guide/static-ip-mac/#statefulset) | true  | GA    | 1.8       |           |
-| [VM 固定 IP](https://kubeovn.github.io/docs/{{ variables.version }}/guide/static-ip-mac/#kubevirt-vm) | false | Beta  | 1.9       |           |
-| [默认 VPC Load Balancer 类型 Service](https://kubeovn.github.io/docs/{{ variables.version }}/guide/loadbalancer-service/#vpc-loadbalancer-service) | false | Alpha | 1.11      |           |
-| [自定义 VPC 内部负载均衡](https://kubeovn.github.io/docs/{{ variables.version }}/guide/loadbalancer-service/#vpc-loadbalancer-service) | false | Alpha | 1.11      |           |
-| [自定义 VPC DNS](https://kubeovn.github.io/docs/{{ variables.version }}/guide/loadbalancer-service/#vpc-loadbalancer-service) | false | Alpha | 1.11      |           |
-| [Underlay 和 Overlay 互通](https://kubeovn.github.io/docs/{{ variables.version }}/start/underlay/#underlay-overlay) | false | Alpha | 1.11      |           |
+| [Namespaced Subnet](../guide/subnet.md) | true  | GA    | 1.8       |           |
+| [分布式网关](../guide/subnet.md) | true  | GA    | 1.8       |           |
+| [主从模式集中式网关](../guide/subnet.md) | true  | GA    | 1.8       |           |
+| [ECMP 模式集中式网关](../guide/setup-options.md) | false | Beta  | 1.8       |           |
+| [子网 ACL](../guide/subnet.md) | true  | Alpha | 1.9       |           |
+| [子网隔离 (未来会和子网 ACL 合并)](../guide/subnet.md) | true  | Beta  | 1.8       |           |
+| [Underlay 子网](../start/underlay.md) | true  | GA    | 1.8       |           |
+| [多网卡管理](../advance/multi-nic.md) | true  | Beta  | 1.8       |           |
+| [子网 DHCP](../advance/dhcp.md) | false | Alpha | 1.10      |           |
+| [子网设置外部网关](../advance/external-gateway.md) | false | Alpha | 1.8       |           |
+| [使用 OVN-IC 进行集群互联](../advance/with-ovn-ic.md) | false | Beta  | 1.8       |           |
+| [使用 Submariner 进行集群互联](../advance/with-submariner.md) | false | Alpha | 1.9       |           |
+| [子网 VIP 预留](../advance/vip.md) | true  | Alpha | 1.10      |           |
+| [创建自定义 VPC](../guide/vpc.md) | true  | Beta  | 1.8       |           |
+| [自定义 VPC 浮动 IP/SNAT/DNAT](../guide/vpc.md) | true  | Alpha | 1.10      |           |
+| [自定义 VPC 静态路由](../guide/vpc.md) | true  | Alpha | 1.10      |           |
+| [自定义 VPC 策略路由](../guide/vpc.md) | true  | Alpha | 1.10      |           |
+| [自定义 VPC 安全组](../advance/security-group.md) | true  | Alpha | 1.10      |           |
+| [容器最大带宽 QoS](../guide/qos.md) | true  | GA    | 1.8       |           |
+| [linux-netem QoS](../guide/qos.md) | true  | Alpha | 1.9       |           |
+| [Prometheus 集成](../guide/prometheus.md) | false | GA    | 1.8       |           |
+| [Grafana 集成](../guide/prometheus-grafana.md) | false | GA    | 1.8       |           |
+| [双栈网络](../guide/dual-stack.md) | false | GA    | 1.8       |           |
+| [默认 VPC EIP/SNAT](../guide/eip-snat.md) | false | Beta  | 1.8       |           |
+| [流量镜像](../guide/mirror.md) | false | GA    | 1.8       |           |
+| [NetworkPolicy](../guide/setup-options.md) | true  | Beta  | 1.8       |           |
+| [Webhook](../guide/webhook.md) | false | Alpha | 1.10      |           |
+| [性能调优](../advance/performance-tuning.md) | false | Beta  | 1.8       |           |
+| [Overlay 子网静态路由对外暴露](../advance/overlay-with-route.md) | false | Alpha | 1.8       |           |
+| [Overlay 子网 BGP 对外暴露](../advance/with-bgp.md) | false | Alpha | 1.9       |           |
+| [Cilium 集成](../advance/with-cilium.md) | false | Alpha | 1.10      |           |
+| [自定义 VPC 互联](../advance/vpc-peering.md) | false | Alpha | 1.10      |           |
+| [Mellanox Offload](../advance/offload-mellanox.md) | false | Alpha | 1.8       |           |
+| [芯启源 Offload](../advance/offload-corigine.md) | false | Alpha | 1.10      |           |
+| [Windows 支持](../advance/windows.md) | false | Alpha | 1.10      |           |
+| [DPDK 支持](../advance/dpdk.md) | false | Alpha | 1.10      |           |
+| [OpenStack 集成](../advance/dpdk.md) | false | Alpha | 1.9       |           |
+| [单个 Pod 固定 IP/Mac](../guide/static-ip-mac.md) | true  | GA    | 1.8       |           |
+| [Workload 固定 IP](../guide/static-ip-mac.md) | true  | GA    | 1.8       |           |
+| [StatefulSet 固定 IP](../guide/static-ip-mac.md) | true  | GA    | 1.8       |           |
+| [VM 固定 IP](../guide/static-ip-mac.md) | false | Beta  | 1.9       |           |
+| [默认 VPC Load Balancer 类型 Service](../guide/loadbalancer-service.md) | false | Alpha | 1.11      |           |
+| [自定义 VPC 内部负载均衡](../guide/loadbalancer-service.md) | false | Alpha | 1.11      |           |
+| [自定义 VPC DNS](../guide/loadbalancer-service.md) | false | Alpha | 1.11      |           |
+| [Underlay 和 Overlay 互通](../start/underlay.md) | false | Alpha | 1.11      |           |
