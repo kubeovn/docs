@@ -16,9 +16,11 @@ metadata:
   name: vip-dynamic-01
 spec:
   subnet: ovn-default
+  type: ""
 ```
 
 - `subnet`: 将从该 Subnet 中预留 IP。
+- `type`: 目前支持两种类型，为空表示仅用于 ipam ip 占位，`switch_lb_vip` 表示该 vip 仅用于 switch lb 前端 vip 和后端 ip 需处于同一子网。
 
 创建成功后查询该 VIP：
 

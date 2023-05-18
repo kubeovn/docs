@@ -16,9 +16,11 @@ metadata:
   name: vip-dynamic-01
 spec:
   subnet: ovn-default
+  type: ""
 ```
 
 - `subnet`: reserve the IP from this Subnet.
+- `type`: Currently, two types are supported. If the value is empty, it indicates that it is only used for occupying ip addresses of ipam. `switch_lb_vip` The front-end vip address and back-end ip address of the switch lb must be on the same subnet.
 
 Query the VIP after creation.
 
