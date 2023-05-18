@@ -69,8 +69,11 @@ Kubernetes 提供的 Service 可以用作集群内的负载均衡， 但是在�
   ```
 
 - `sessionAffinity` 和 `port` 使用方式同 Kubernetes Service。
+
 - `vip`：自定义负载均衡的 IP 地址。
+
 - `namespace`：`selector` 所选择 Pod 所在命名空间。
-- `endpoints`：负载均衡后端 IP 列表
+
+- `endpoints`：负载均衡后端 IP 列表。
   
-  > **注：**如果同时配置了`selector`和`endpoints`,会自动忽略`selector`配置
+  > **注：**如果同时配置了`selector`和`endpoints`,会自动忽略`selector`配置。
