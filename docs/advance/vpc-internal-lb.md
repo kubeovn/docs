@@ -12,35 +12,35 @@ Kubernetes 提供的 Service 可以用作集群内的负载均衡， 但是在�
 
 1. `Selector`自动生成负载均衡规则
 
-   通过`selector`可以通过`label`自动关联`pod`配置生成负载均衡规则。
+  通过`selector`可以通过`label`自动关联`pod`配置生成负载均衡规则。
 
-     `SwitchLBRule` 样例如下：
+  `SwitchLBRule` 样例如下：
 
-     ```yaml
-   apiVersion: kubeovn.io/v1
-   kind: SwitchLBRule
-   metadata:
-     name:  cjh-slr-nginx
-   spec:
-     vip: 1.1.1.1
-     sessionAffinity: ClientIP
-     namespace: default
-     selector:
-       - app:nginx
-     ports:
-     - name: dns
-       port: 8888
-       targetPort: 80
-       protocol: TCP
-     ```
+  ```yaml
+  apiVersion: kubeovn.io/v1
+  kind: SwitchLBRule
+  metadata:
+    name:  cjh-slr-nginx
+  spec:
+    vip: 1.1.1.1
+    sessionAffinity: ClientIP
+    namespace: default
+    selector:
+      - app:nginx
+    ports:
+    - name: dns
+      port: 8888
+      targetPort: 80
+      protocol: TCP
+  ```
 
-   - `selector`, `sessionAffinity` 和 `port` 使用方式同 Kubernetes Service。
+- `selector`, `sessionAffinity` 和 `port` 使用方式同 Kubernetes Service。
 
-   - `vip`：自定义负载均衡的 IP 地址。
+- `vip`：自定义负载均衡的 IP 地址。
 
-   - `namespace`：`selector` 所选择 Pod 所在命名空间。
+- `namespace`：`selector` 所选择 Pod 所在命名空间。
 
-     Kube-OVN 会根据 `SwitchLBRule` 定义选择的 Pod 得出 Pod 所在 VPC 并设置对应的 L2 LB。
+    Kube-OVN 会根据 `SwitchLBRule` 定义选择的 Pod 得出 Pod 所在 VPC 并设置对应的 L2 LB。
 
 2. `Endpoints`自定义负载均衡规则
 
