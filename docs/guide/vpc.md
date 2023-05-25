@@ -134,7 +134,7 @@ spec:
     }'
 ```
 
-- 该 Subnet 用来管理可用的外部地址，请和网络管理沟通给出可用的物理段 IP。
+- 该 Subnet 用来管理可用的外部地址，网段内的地址将会通过 Macvlan 分配给 VPC 网关，请和网络管理沟通给出可用的物理段 IP。
 - VPC 网关使用 Macvlan 做物理网络配置，`NetworkAttachmentDefinition` 的 `master` 需为对应物理网路网卡的网卡名。
 - `provider` 格式为 `<NetworkAttachmentDefinition Name>.<NetworkAttachmentDefinition Namespace>`。
 - `name` 必须为 ovn-vpc-external-network，这里代码中做了硬编码。

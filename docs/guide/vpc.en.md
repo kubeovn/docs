@@ -137,7 +137,7 @@ spec:
     }'
 ```
 
-- This Subnet is used to manage the available external addresses, so please communicate with your network management to give you the available physical segment IPs.
+- This Subnet is used to manage the available external addresses and the address will be allocated to VPC NAT Gateway through Macvlan, so please communicate with your network management to give you the available physical segment IPs.
 - The VPC gateway uses Macvlan for physical network configuration, and `master` of `NetworkAttachmentDefinition` should be the NIC name of the corresponding physical network NIC.
 - `provider` format is `<NetworkAttachmentDefinition Name>.<NetworkAttachmentDefinition Namespace>`.
 - `name` must be `ovn-vpc-external-network`.
