@@ -183,6 +183,7 @@ plugins:
           Iptables 规则: Iptables Rules
           自定义 VPC 内部负载均衡: VPC Internal Load Balancer
           自定义 VPC DNS: VPC DNS
+          使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: Use Sealos to Deploy Kubernetes and Kube-OVN
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
