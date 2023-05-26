@@ -205,6 +205,7 @@ plugins:
           OVN 流量镜像: OVN Remote Port Mirroring
           节点本地 DNS 缓存和 Kube-OVN 适配 : Node Local DNS Cache and Kube-OVN Adaptation
           调整日志等级: Change Log Level
+          使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: Use Sealos to Deploy Kubernetes and Kube-OVN
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
