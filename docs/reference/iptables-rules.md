@@ -12,6 +12,9 @@ Kube-OVN 使用 ipset 及 iptables 辅助实现默认 VPC 下容器网络（Over
 | ovn40subnets-distributed-gw/ovn60subnets-distributed-gw | hash:net | 开启分布式网关的 Overlay 子网网段          |
 | ovn40other-node/ovn60other-node                         | hash:net | 其它节点的内部 IP 地址                     |
 | ovn40local-pod-ip-nat/ovn60local-pod-ip-nat             | hash:ip  | 已弃用                                     |
+| ovn40subnets-nat-policy                                 | hash:net | 配置了 natOutgoingPolicyRules 的所有子网网段 |
+| ovn40natpr-418e79269dc5-dst                             | hash:net | natOutgoingPolicyRules 中 rule 对应的 dstIPs  |
+| ovn40natpr-418e79269dc5-src                             | hash:net | natOutgoingPolicyRules 中 rule 对应的 srcIPs  |
 
 使用的 iptables 规则（IPv4）如下表所示：
 
@@ -41,7 +44,7 @@ Kube-OVN 使用 ipset 及 iptables 辅助实现默认 VPC 下容器网络（Over
 | nat    | OVN-POSTROUTING | -p tcp -m tcp --tcp-flags SYN NONE -m conntrack --ctstate NEW -j RETURN                                                             | Pod IP 对外暴露时，不执行 SNAT                                                                 | --                                                                                        |
 | nat    | OVN-POSTROUTING | -s 10.16.0.0/16 -m set ! --match-set ovn40subnets dst -j SNAT --to-source 192.168.0.101                                             | Pod 访问集群外网络时，若子网开启 NatOutgoing 且使用指定 IP 的集中式网关，执行 SNAT             | 10.16.0.0/16 为子网网段，192.168.0.101 为指定的网关节点 IP                                |
 | nat    | OVN-POSTROUTING | -m set --match-set ovn40subnets-nat src -m set ! --match-set ovn40subnets dst -j MASQUERADE                                         | Pod 访问集群外网络时，若子网开启 NatOutgoing，执行 SNAT                                        | --                                                                                        |
-| nat    | OVN-POSTROUTING | -m set --match-set ovn40subnets-nat-policy src -m set ! --match-set ovn40subnets dst -j OVN-NAT-POLICY           | Pod 访问集群外网络时，若子网开启 natOutgoingPolicyRules，指定策略的报文执行 SNAT                 |  ovn40subnets-nat-policy 是配置了 natOutgoingPolicyRules 的所有子网网段                                                                                       |
+| nat    | OVN-POSTROUTING | -m set --match-set ovn40subnets-nat-policy src -m set ! --match-set ovn40subnets dst -j OVN-NAT-POLICY           | Pod 访问集群外网络时，若子网开启 natOutgoingPolicyRules，指定策略的报文执行 SNAT                 |  配置了 natOutgoingPolicyRules 子网的出外网报文的进入链 OVN-NAT-POLICY                                                                                      |
 | nat    | OVN-POSTROUTING | -m mark --mark 0x90001/0x90001 -j MASQUERADE --random-fully                                                      | 同上                                                                                        |  从 OVN-NAT-POLICY 出来后，如果被打上 tag 0x90001/0x90001 就会做 SNAT                                                                                       |
 | nat    | OVN-POSTROUTING | -m mark --mark 0x90002/0x90002 -j RETURN                                                                         | 同上                                                                                        |  从 OVN-NAT-POLICY 出来后, 如果被打上 tag 0x90002/0x90002 不会做 SNAT                                                                                       |
 | nat    | OVN-NAT-POLICY | -s 10.0.11.0/24 -m comment --comment natPolicySubnet-net1 -j OVN-NAT-PSUBNET-aa98851157c5                         | 同上                                                                                        | 10.0.11.0/24 表示子网 net1 的 CIDR，  OVN-NAT-PSUBNET-aa98851157c5 这条链下的规则就对应这个子网的 natOutgoingPolicyRules 配置                                                                                   |
