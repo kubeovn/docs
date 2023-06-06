@@ -4,7 +4,7 @@ In some scenarios, the network environment does not support Underlay mode,
 but still need Pods and external devices directly access through IP,
 then you can use the routing method to connect the container network and the external.
 
-> In this case, the Pod IP goes directly to the underlying network,
+> Only Overlay Subnets in default VPC support this method. In this case, the Pod IP goes directly to the underlying network,
 > which needs to disable IP checks for source and destination addresses.
 
 ## Prerequisites
