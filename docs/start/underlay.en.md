@@ -195,6 +195,8 @@ In this case, Kube-OVN will use an additional Underlay IP to connect the Underla
 and set the corresponding routing rules to enable communication. Unlike the logical gateway,
 this solution only connects the Underlay and Overlay subnets within Kube-OVN, and other traffic accessing the Internet will still be forwarded through the physical gateway.
 
+After the intercommunication function is enabled, an IP will be randomly selected from the subnet subnet as the logical gateway. If you need to specify the logical gateway of the Underlay Subnet, you can specify the field `u2oInterconnectionIP`.
+
 ## Known Issues
 
 ### When the physical network is enabled with hairpin, Pod network is abnormal
