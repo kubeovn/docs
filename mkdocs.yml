@@ -173,10 +173,13 @@ plugins:
           多网卡管理: Manage Multiple Interface
           性能调优: Performance Tuning
           手动编译 FastPath 模块: Compile FastPath Module
+          使用 eBPF 加速节点内 TCP 通信: Accelerate TCP Communication in Node with eBPF
           使用 OVN-IC 进行多集群互联: Cluster Inter-Connection with OVN-IC
           使用 Submariner 进行多集群互联: Cluster Inter-Connection with Submariner
           BGP 支持: BGP Support
           Cilium 集成: Integration with Cilium
+          Cilium NetworkPolicy 支持: Cilium NetworkPolicy Support
+          Cilium 网络流量观测: Cilium Network Traffic Observation
           DHCP 设置: DHCP
           VPC 互联: VPC Peering
           外部网关设置: External Gateway
