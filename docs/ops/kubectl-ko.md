@@ -57,9 +57,11 @@ Available Subcommands:
   trace {namespace/podname} {target ip address} [target mac address] arp {request|reply}                     trace ARP request/reply
   trace {node//nodename} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]       trace ICMP/TCP/UDP
   trace {node//nodename} {target ip address} [target mac address] arp {request|reply}                        trace ARP request/reply
-  diagnose {all|node} [nodename]    diagnose connectivity of all nodes or a specific node
+  diagnose {all|node|subnet} [nodename|subnetName]    diagnose connectivity of all nodes or a specific node or specify subnet's ds pod
   tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]  deploy  kernel optimisation components to the system
   reload    restart all kube-ovn components
+  log {kube-ovn|ovn|ovs|linux|all}    save log to ./kubectl-ko-log/
+  perf [image] performance test default image is kubeovn/test:v1.12.0  
 ```
 
 下面将介绍每个命令的具体功能和使用。
@@ -397,7 +399,7 @@ ct_next(ct_state=new|trk)
 kubectl ko trace default/virt-handler-7lvml 8.8.8.8 82:7c:9f:83:8c:01 icmp
 ```
 
-### diagnose {all|node} [nodename]
+### diagnose {all|node|subnet} [nodename|subnetName]
 
 诊断集群网络组件状态，并去对应节点的 `kube-ovn-pinger` 检测当前节点到其他节点和关键服务的连通性和网络延迟：
 
@@ -651,6 +653,8 @@ I0603 10:35:05.458460   17619 ping.go:159] ping pod: kube-ovn-pinger-vh2xg 10.16
 I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
 ```
 
+如果指定为 subnet 该脚本会在 subnet 上建立 daemonset，由 `kube-ovn-pinger` 去探测这个 daemonset 的所有 pod 的连通性和网络延时，测试完后自动销毁该 daemonset
+
 ### tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]
 
 该命令执行性能调优相关操作，具体使用请参考[性能调优](../advance/performance-tuning.md)。
@@ -682,4 +686,94 @@ daemon set "kube-ovn-pinger" successfully rolled out
 pod "kube-ovn-monitor-7fb67d5488-7q6zb" deleted
 Waiting for deployment "kube-ovn-monitor" rollout to finish: 0 of 1 updated replicas are available...
 deployment "kube-ovn-monitor" successfully rolled out
+```
+
+### log {kube-ovn|ovn|ovs|linux|all}
+
+使用该命令会抓取 kube-ovn 所有节点上的 kube-ovn，ovn，ovs 的 log 以及 linux 常用的一些debug信息，方便出问题时 debug 使用。
+
+```bash
+# kubectl ko log all
+Collecting kube-ovn logging files
+Collecting ovn logging files
+Collecting openvswitch logging files
+Collecting linux dmesg files
+Collecting linux iptables-legacy files
+Collecting linux iptables-nft files
+Collecting linux route files
+Collecting linux link files
+Collecting linux neigh files
+Collecting linux memory files
+Collecting linux top files
+Collecting linux sysctl files
+Collecting linux netstat files
+Collecting linux addr files
+Collecting linux ipset files
+Collecting linux tcp files
+Collected files have been saved in the directory /root/kubectl-ko-log
+```
+
+### perf [image]
+
+该命令会去测试 kube-ovn 的一些性能指标如下：
+
+1. 容器网络的性能指标
+2. hostnetwork 网络性能指标
+3. 容器网络组播报文性能指标
+4. ovn-nb, ovn-sb, ovn-northd leader删除恢复所需时间。
+
+```bash
+# kubectl ko perf
+pod/test-client created
+pod/test-host-client created
+pod/test-server created
+pod/test-host-server created
+pod/test-client condition met
+pod/test-host-client condition met
+pod/test-host-server condition met
+pod/test-server condition met
+Start doing pod network performance
+=================================== unicast performance test =============================================================
+Size            TCP Latency     TCP Bandwidth   UDP Latency     UDP Lost Rate   UDP Bandwidth
+64              93.7 us         93.3 Mbits/sec  74.5 us         (0%)            8.28 Mbits/sec
+128             83 us           155 Mbits/sec   69.8 us         (0%)            16.5 Mbits/sec
+512             85 us           400 Mbits/sec   70.7 us         (0%)            62.7 Mbits/sec
+1k              83.5 us         622 Mbits/sec   71.1 us         (0%)            130 Mbits/sec
+4k              137 us          979 Mbits/sec   71.9 us         (0%)            508 Mbits/sec
+=========================================================================================================================
+Start doing host network performance
+=================================== unicast performance test =============================================================
+Size            TCP Latency     TCP Bandwidth   UDP Latency     UDP Lost Rate   UDP Bandwidth
+64              51.1 us         114 Mbits/sec   40.5 us         (0%)            18.6 Mbits/sec
+128             50.7 us         207 Mbits/sec   38.5 us         (0%)            36.5 Mbits/sec
+512             50.5 us         579 Mbits/sec   38.5 us         (0%)            146 Mbits/sec
+1k              50.4 us         926 Mbits/sec   38.4 us         (0%)            295 Mbits/sec
+4k              74.4 us         1.96 Gbits/sec  39.2 us         (0%)            1.18 Gbits/sec
+=========================================================================================================================
+Start doing pod multicast network performance
+=================================== multicast performance test =========================================================
+Size            UDP Latency     UDP Lost Rate   UDP Bandwidth
+64              0.015 ms        (0%)            5.73 Mbits/sec
+128             0.012 ms        (0%)            11.1 Mbits/sec
+512             0.018 ms        (0%)            44.1 Mbits/sec
+1k              0.022 ms        (0.058%)        85.0 Mbits/sec
+4k              0.017 ms        (1%)            130 Mbits/sec
+=========================================================================================================================
+Start doing leader recovery time test
+Delete ovn central nb pod
+pod "ovn-central-7bb79c5c57-m82vv" deleted
+Waiting for ovn central nb pod running
+================================  OVN nb recover takes 4.107957572 s ==================================
+Delete ovn central sb pod
+pod "ovn-central-7bb79c5c57-97474" deleted
+Waiting for ovn central sb pod running
+================================  OVN sb recover takes 3.713956419 s ==================================
+Delete ovn central northd pod
+pod "ovn-central-7bb79c5c57-59gh4" deleted
+Waiting for ovn central northd pod running
+================================  OVN northd recover takes 3.701646071 s ==================================
+pod "test-client" deleted
+pod "test-host-client" deleted
+pod "test-host-server" deleted
+pod "test-server" deleted
 ```
