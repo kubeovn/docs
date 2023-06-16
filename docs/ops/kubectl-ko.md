@@ -711,8 +711,8 @@ Collecting linux addr files
 Collecting linux ipset files
 Collecting linux tcp files
 Collected files have been saved in the directory /root/kubectl-ko-log
-
 ```
+
 目录如下：
 
 ```bash
