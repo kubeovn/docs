@@ -653,7 +653,7 @@ I0603 10:35:05.458460   17619 ping.go:159] ping pod: kube-ovn-pinger-vh2xg 10.16
 I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
 ```
 
-如果指定为 subnet 该脚本会在 subnet 上建立 daemonset，由 `kube-ovn-pinger` 去探测这个 daemonset 的所有 pod 的连通性和网络延时，测试完后自动销毁该 daemonset
+如果 diagnose 的目标指定为 subnet 该脚本会在 subnet 上建立 daemonset，由 `kube-ovn-pinger` 去探测这个 daemonset 的所有 pod 的连通性和网络延时，测试完后自动销毁该 daemonset
 
 ### tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]
 
@@ -690,7 +690,7 @@ deployment "kube-ovn-monitor" successfully rolled out
 
 ### log {kube-ovn|ovn|ovs|linux|all}
 
-使用该命令会抓取 kube-ovn 所有节点上的 kube-ovn，ovn，ovs 的 log 以及 linux 常用的一些debug信息，方便出问题时 debug 使用。
+使用该命令会抓取 kube-ovn 所有节点上的 Kube-OVN，OVN，Openvswitch 的 log 以及 linux 常用的一些debug信息，方便出问题时 debug 使用。
 
 ```bash
 # kubectl ko log all
@@ -712,15 +712,50 @@ Collecting linux ipset files
 Collecting linux tcp files
 Collected files have been saved in the directory /root/kubectl-ko-log
 ```
+目录如下：
+
+```bash
+# tree kubectl-ko-log/
+kubectl-ko-log/
+|-- kube-ovn-control-plane
+|   |-- kube-ovn
+|   |   |-- kube-ovn-cni.log
+|   |   |-- kube-ovn-monitor.log
+|   |   `-- kube-ovn-pinger.log
+|   |-- linux
+|   |   |-- addr.log
+|   |   |-- dmesg.log
+|   |   |-- ipset.log
+|   |   |-- iptables-legacy.log
+|   |   |-- iptables-nft.log
+|   |   |-- link.log
+|   |   |-- memory.log
+|   |   |-- neigh.log
+|   |   |-- netstat.log
+|   |   |-- route.log
+|   |   |-- sysctl.log
+|   |   |-- tcp.log
+|   |   `-- top.log
+|   |-- openvswitch
+|   |   |-- ovs-vswitchd.log
+|   |   `-- ovsdb-server.log
+|   `-- ovn
+|       |-- ovn-controller.log
+|       |-- ovn-northd.log
+|       |-- ovsdb-server-nb.log
+|       `-- ovsdb-server-sb.log
+```
 
 ### perf [image]
 
-该命令会去测试 kube-ovn 的一些性能指标如下：
+该命令会去测试 Kube-OVN 的一些性能指标如下：
 
-1. 容器网络的性能指标
-2. hostnetwork 网络性能指标
-3. 容器网络组播报文性能指标
-4. ovn-nb, ovn-sb, ovn-northd leader删除恢复所需时间。
+1. 容器网络的性能指标；
+2. Hostnetwork 网络性能指标；
+3. 容器网络组播报文性能指标；
+4. OVN-NB, OVN-SB, OVN-Northd leader删除恢复所需时间。
+
+参数 image 用于指定性能测试 pod 所用的镜像，默认情况下是 kubeovn/test:v1.12.0, 设置该参数主要是为了离线场景，将镜像拉到内网环境可能会有镜像名变化。
 
 ```bash
 # kubectl ko perf
