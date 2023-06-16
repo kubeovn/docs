@@ -690,7 +690,7 @@ deployment "kube-ovn-monitor" successfully rolled out
 
 ### log {kube-ovn|ovn|ovs|linux|all}
 
-使用该命令会抓取 kube-ovn 所有节点上的 Kube-OVN，OVN，Openvswitch 的 log 以及 linux 常用的一些debug信息，方便出问题时 debug 使用。
+使用该命令会抓取 kube-ovn 所有节点上的 Kube-OVN，OVN，Openvswitch 的 log 以及 linux 常用的一些 debug 信息。
 
 ```bash
 # kubectl ko log all
@@ -753,7 +753,7 @@ kubectl-ko-log/
 1. 容器网络的性能指标；
 2. Hostnetwork 网络性能指标；
 3. 容器网络组播报文性能指标；
-4. OVN-NB, OVN-SB, OVN-Northd leader删除恢复所需时间。
+4. OVN-NB, OVN-SB, OVN-Northd leader 删除恢复所需时间。
 
 参数 image 用于指定性能测试 pod 所用的镜像，默认情况下是 kubeovn/test:v1.12.0, 设置该参数主要是为了离线场景，将镜像拉到内网环境可能会有镜像名变化。
 
