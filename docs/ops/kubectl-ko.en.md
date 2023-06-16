@@ -758,7 +758,7 @@ This command will test some performance indicators of Kube-OVN as follows:
 2. Hostnetwork network performance indicators;
 3. Container network multicast packet performance indicators;
 4. Time required for OVN-NB, OVN-SB, and OVN-Northd leader deletion recovery.
-The parameter image is used to specify the image used by the performance test pod. By default, it is ```kubeovn/test:v1.12.0```. This parameter is mainly set for offline scenarios, and the image name may change when the image is pulled to the intranet environment.
+The parameter image is used to specify the image used by the performance test pod. By default, it is `kubeovn/test:v1.12.0`. This parameter is mainly set for offline scenarios, and the image name may change when the image is pulled to the intranet environment.
 
 ```bash
 # kubectl ko perf
