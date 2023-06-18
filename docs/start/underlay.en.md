@@ -191,7 +191,13 @@ In this case, Kube-OVN will use an additional Underlay IP to connect the Underla
 and set the corresponding routing rules to enable communication. Unlike the logical gateway,
 this solution only connects the Underlay and Overlay subnets within Kube-OVN, and other traffic accessing the Internet will still be forwarded through the physical gateway.
 
-After the intercommunication function is enabled, an IP will be randomly selected from the subnet subnet as the logical gateway. If you need to specify the logical gateway of the Underlay Subnet, you can specify the field `u2oInterconnectionIP`.
+### Specify logical gateway IP
+
+After the interworking function is enabled, an IP from the subnet will be randomly selected as the logical gateway. If you need to specify the logical gateway of the Underlay Subnet, you can specify the field `u2oInterconnectionIP`.
+
+### Specify custom VPC for Underlay Subnet connection
+
+By default, the Underlay Subnet will communicate with the Overlay Subnet on the default VPC. If you want to specify to communicate with a certain VPC, after setting `u2oInterconnection` to `true`, specify the `subnet.spec.vpc` field as the name of the VPC.
 
 ## Known Issues
 
