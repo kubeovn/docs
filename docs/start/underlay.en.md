@@ -199,6 +199,39 @@ After the interworking function is enabled, an IP from the subnet will be random
 
 By default, the Underlay Subnet will communicate with the Overlay Subnet on the default VPC. If you want to specify to communicate with a certain VPC, after setting `u2oInterconnection` to `true`, specify the `subnet.spec.vpc` field as the name of the VPC.
 
+## Notice
+
+If there are IP addresses on the host nic, the OS you are using is Ubuntu, and the networking is configured with Netplan, it's recomanded to set NetworkManager as the renderer and to set static IP addresses for the nic (disable DHCP):
+
+```yaml
+network:
+  renderer: NetworkManager
+  ethernets:
+    eth0:
+      dhcp4: no
+      addresses:
+        - 172.16.143.129/24
+  version: 2
+```
+
+If the host networking service is NetworkManager, Kube-OVN will remove the host nic from the managed devices (managed by NetworkManager is no) after creating ProviderNetwork:
+
+```shell
+root@ubuntu:~# nmcli device status
+DEVICE   TYPE      STATE      CONNECTION
+eth0     ethernet  unmanaged  netplan-eth0
+```
+
+If you want to change the host nic's IP/route configuration, you need to set the nic managed by NetworkManager manually:
+
+```sh
+nmcli device set eth0 managed yes
+```
+
+After setting managed to yes，Kube-OVN will transfer IP and routes on the nic to the OVS bridge, and remove the nic from the managed devices again.
+
+**Notice**：If the host nic's MAC is changed, Kube-OVN will not change the OVS bridge's MAC unless kube-ovn-cni is restarted.
+
 ## Known Issues
 
 ### When the physical network is enabled with hairpin, Pod network is abnormal
