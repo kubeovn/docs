@@ -1,16 +1,14 @@
 name: markdown-lint
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - master
-      - main
   pull_request:
 
 jobs:
   markdown-lint:
     name: lint
     runs-on: ubuntu-22.04
+    continue-on-error: true
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -22,3 +20,8 @@ jobs:
           pwd
           markdownlint "**/*.md" --disable MD013 MD033 MD045 MD024 MD041 -r markdownlint-rule-search-replace
           markdownlint -V
+      - uses: mshick/add-pr-comment@v2
+        if: failure()
+        with:
+          message: |
+            Please fix the lint errors and update the PR.     
