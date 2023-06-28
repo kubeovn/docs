@@ -200,8 +200,8 @@ spec:
 
 - `vpc`: The VPC to which this VpcNatGateway belongs.
 - `subnet`: A Subnet within the VPC, the VPC Gateway Pod will use `lanIp` to connect to the tenant network under that subnet.
-- `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use for the Pod. When configuring routing for a VPC, the  `nextHopIP` needs to be set to the ﻿lanIp of the current VpcNatGateway.
-- `selector`: "The node selector for VpcNatGateway Pod has the same format as NodeSelector in Kubernetes."
+- `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use for the Pod. When configuring routing for a VPC, the  `nextHopIP` needs to be set to the `lanIp` of the current VpcNatGateway.
+- `selector`: The node selector for VpcNatGateway Pod has the same format as NodeSelector in Kubernetes.
 - `externalSubnets`: External network used by the VPC gateway, if not configured, `ovn-vpc-external-network` is used by default, and only one external network is supported in the current version.
 
 Other configurable parameters:
