@@ -188,10 +188,11 @@ spec:
     - "kubernetes.io/os: linux"
 ```
 
+- `vpc`: The VPC to which this VpcNatGateway belongs.
 - `subnet`: A Subnet within the VPC, the VPC Gateway Pod will use `lanIp` to connect to the tenant network under that subnet.
-- `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use for the Pod.
-- `selector`: Node selector for the VPC Gateway Pod.
-- `nextHopIP`: Needs to be the same as `lanIp`.
+- `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use for the Pod. When configuring routing for a VPC, the  `nextHopIP` needs to be set to the `lanIp` of the current VpcNatGateway.
+- `selector`: The node selector for VpcNatGateway Pod has the same format as NodeSelector in Kubernetes.
+- `tolerations`: Configure tolerance for the VPC gateway. For details, see [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-nodes-by-condition).
 
 ### Create EIP
 
