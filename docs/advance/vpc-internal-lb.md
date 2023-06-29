@@ -10,9 +10,9 @@ Kubernetes 提供的 Service 可以用作集群内的负载均衡， 但是在�
 
 `SwitchLBRule` 支持以下两种方式设置自定义 VPC 内的内部负载均衡规则。
 
-## **`Selector`自动生成负载均衡规则**
+## `Selector` 自动生成负载均衡规则
 
-  通过`selector`可以通过`label`自动关联`pod`配置生成负载均衡规则。
+  通过 `selector` 可以通过 `label` 自动关联 `pod` 配置生成负载均衡规则。
 
   `SwitchLBRule` 样例如下：
 
@@ -42,9 +42,9 @@ Kubernetes 提供的 Service 可以用作集群内的负载均衡， 但是在�
 
     Kube-OVN 会根据 `SwitchLBRule` 定义选择的 Pod 得出 Pod 所在 VPC 并设置对应的 L2 LB。
 
-## **`Endpoints`自定义负载均衡规则**
+## `Endpoints` 自定义负载均衡规则
 
-  通过`endpoints`可以自定义负载均衡规则，用以支持无法通过`selector`自动生成负载均衡规则的场景，比如负载均衡后端是`kubevirt`创建的`vm`。
+  通过 `endpoints` 可以自定义负载均衡规则，用以支持无法通过 `selector` 自动生成负载均衡规则的场景，比如负载均衡后端是 `kubevirt` 创建的 `vm` 。
 
   `SwitchLBRule` 样例如下：
 
@@ -76,4 +76,4 @@ Kubernetes 提供的 Service 可以用作集群内的负载均衡， 但是在�
 
 - `endpoints`：负载均衡后端 IP 列表。
   
-  > **注：**如果同时配置了`selector`和`endpoints`,会自动忽略`selector`配置。
+  > **注：**如果同时配置了 `selector` 和 `endpoints`,会自动忽略`selector`配置。

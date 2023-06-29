@@ -185,8 +185,8 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 
 `ACTIVE` : `true` 部署了自定义 dns 组件，`false` 无部署。
 
-* 限制：一个 vpc 下只会部署一个自定义 dns 组件;
-* 当一个 vpc 下配置多个 vpc-dns 资源（即同一个 vpc 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `fasle`;
+* 限制：一个 VPC 下只会部署一个自定义 dns 组件;
+* 当一个 VPC 下配置多个 vpc-dns 资源（即同一个 VPC 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `fasle`;
 * 当 `true` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。
 
 ## 验证部署结果
@@ -214,4 +214,4 @@ vpc-dns-test-cjh1   10.96.0.3   53/UDP,53/TCP,9153/TCP   kube-system/slr-vpc-dns
 nslookup kubernetes.default.svc.cluster.local 10.96.0.3
 ```
 
-该 vpc 下的 switch lb rule 所在的子网以及同一 vpc 下的其他子网下的 pod 都可以解析
+该 VPC 下的 switch lb rule 所在的子网以及同一 VPC 下的其他子网下的 pod 都可以解析。

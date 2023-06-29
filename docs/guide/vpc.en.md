@@ -366,7 +366,7 @@ spec:
       priority: 10
 ```
 
-## **Custom VPC Image**
+## *Custom VPC Image
 
 The image used for VPC could be configured via `ovn-vpc-nat-config`  under `kube-system`:
 
