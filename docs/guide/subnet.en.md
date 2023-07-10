@@ -311,6 +311,7 @@ spec:
 
 ## Other Advanced Settings
 
+- [Configure IPPool](./ippool.en.md)
 - [Manage QoS](./qos.en.md)
 - [Manage Multiple Interface](../advance/multi-nic.en.md)
 - [DHCP](../advance/dhcp.en.md)
