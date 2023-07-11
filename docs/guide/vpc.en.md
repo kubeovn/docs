@@ -366,16 +366,187 @@ spec:
       priority: 10
 ```
 
-## *Custom VPC Image
+## Custom vpc-dns
 
-The image used for VPC could be configured via `ovn-vpc-nat-config`  under `kube-system`:
+Due to the isolation between custom VPCs and default VPC networks, Pods in VPCs cannot use the default coredns service for domain name resolution. If you want to use coredns to resolve Service domain names within the custom VPC, you can use the `vpc-dns` resource provided by Kube-OVN.
+
+### Create an Additional Network
+```yaml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: ovn-nad
+  namespace: default
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "kube-ovn",
+      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
+      "provider": "ovn-nad.default.ovn"
+    }'
+```
+
+### Modify the Provider of the ovn-default Logical Switch
+
+Modify the provider of ovn-default to the provider `ovn-nad.default.ovn` configured above in nad：
 
 ```yaml
-kind: ConfigMap
-apiVersion: v1
+apiVersion: kubeovn.io/v1
+kind: Subnet
 metadata:
-  name: ovn-vpc-nat-config
+  name: ovn-default
+spec:
+  cidrBlock: 10.16.0.0/16
+  default: true
+  disableGatewayCheck: false
+  disableInterConnection: false
+  enableDHCP: false
+  enableIPv6RA: false
+  excludeIps:
+  - 10.16.0.1
+  gateway: 10.16.0.1
+  gatewayType: distributed
+  logicalGateway: false
+  natOutgoing: true
+  private: false
+  protocol: IPv4
+  provider: ovn-nad.default.ovn
+  vpc: ovn-cluster
+```
+
+### Modify the vpc-dns ConfigMap
+
+Create a ConfigMap in the kube-system namespace, configure the vpc-dns parameters to be used for the subsequent vpc-dns feature activation:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vpc-dns-config
   namespace: kube-system
 data:
-  image: docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}
+  coredns-vip: 10.96.0.3
+  enable-vpc-dns: true
+  nad-name: ovn-nad
+  nad-provider: ovn-nad.default.ovn
 ```
+
+-  `enable-vpc-dns`: (optional) `true` to enable the feature, `false` to disable the feature. Default `true`.
+-  `coredns-image`: (optional): DNS deployment image. Default is the cluster coredns deployment version.
+-  `coredns-template`: (optional): URL of the DNS deployment template. Default: `yamls/coredns-template.yaml` in the current version repository.
+-  `coredns-vip`: VIP providing LB service for coredns.
+-  `nad-name`: Name of the configured `network-attachment-definitions` resource.
+-  `nad-provider`: Name of the used provider.
+-  `k8s-service-host`: (optional) IP used by coredns to access the k8s apiserver service.
+-  `k8s-service-port`: (optional) Port used by coredns to access the k8s apiserver service.
+
+### Deploying VPC-DNS Dependent Resources
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+  name: system:vpc-dns
+rules:
+  - apiGroups:
+    - ""
+    resources:
+    - endpoints
+    - services
+    - pods
+    - namespaces
+    verbs:
+    - list
+    - watch
+  - apiGroups:
+    - discovery.k8s.io
+    resources:
+    - endpointslices
+    verbs:
+    - list
+    - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+  name: vpc-dns
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:vpc-dns
+subjects:
+- kind: ServiceAccount
+  name: vpc-dns
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vpc-dns
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vpc-dns-corefile
+  namespace: kube-system
+data:
+  Corefile: |
+    .:53 {
+        errors
+        health {
+          lameduck 5s
+        }
+        ready
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+          pods insecure
+          fallthrough in-addr.arpa ip6.arpa
+        }
+        prometheus :9153
+        forward . /etc/resolv.conf {
+          prefer_udp
+        }
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+```
+
+### Deploy vpc-dns
+
+```yaml
+kind: VpcDns
+apiVersion: kubeovn.io/v1
+metadata:
+  name: test-cjh1
+spec:
+  vpc: cjh-vpc-1
+  subnet: cjh-subnet-1
+```
+
+-  `vpc`: The VPC name used to deploy the DNS component. 
+-  `subnet`: The subnet name used to deploy the DNS component.
+
+View resource information:
+
+```bash
+[root@hci-dev-mst-1 kubeovn]# kubectl get vpc-dns
+NAME        ACTIVE   VPC         SUBNET   
+test-cjh1   false    cjh-vpc-1   cjh-subnet-1   
+test-cjh2   true     cjh-vpc-1   cjh-subnet-2 
+```
+
+- `ACTIVE`: if the custom vpc-dns is ready.
+
+### Restrictions
+
+-  Only one custom DNS component will be deployed in one VPC;
+-  When multiple VPC-DNS resources (i.e. different subnets in the same VPC) are configured in one VPC, only one VPC-DNS resource with status `true` will be active, while the others will be `false`;
+-  When the `true` VPC-DNS is deleted, another `false` VPC-DNS will be deployed.

@@ -368,7 +368,7 @@ Service 的 IP 地址是全局分配且不能重复。对于 VPC 的使用场景
 
 针对这类场景，Kube-OVN 提供了 `SwitchLBRule` 资源，用户可以自定义内部负载均衡的地址范围。
 
-一个 SwitchLBRule 例子如下：
+一个 `SwitchLBRule`` 例子如下：
 
 ```yaml
 apiVersion: kubeovn.io/v1
