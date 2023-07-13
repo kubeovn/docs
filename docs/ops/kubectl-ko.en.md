@@ -57,7 +57,7 @@ Available Subcommands:
   trace {namespace/podname} {target ip address} [target mac address] arp {request|reply}                     trace ARP request/reply
   trace {node//nodename} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]       trace ICMP/TCP/UDP
   trace {node//nodename} {target ip address} [target mac address] arp {request|reply}                        trace ARP request/reply
-  diagnose {all|node|subnet} [nodename|subnetName]    diagnose connectivity of all nodes or a specific node or specify subnet's ds pod
+  echo "  diagnose {all|node|subnet|IPPorts} [nodename|subnetName|{proto1}-{IP1}-{Port1},{proto2}-{IP2}-{Port2}]    diagnose connectivity of all nodes or a specific node or specify subnet's ds pod or IPPorts like 'tcp-172.18.0.2-53,udp-172.18.0.3-53'"
   tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]  deploy  kernel optimisation components to the system
   reload    restart all kube-ovn components
   log {kube-ovn|ovn|ovs|linux|all}    save log to ./kubectl-ko-log/
@@ -401,7 +401,7 @@ If the trace object is a virtual machine running  in Underlay network, additiona
 kubectl ko trace default/virt-handler-7lvml 8.8.8.8 82:7c:9f:83:8c:01 icmp
 ```
 
-### diagnose {all|node|subnet} [nodename|subnetName]
+### diagnose {all|node|subnet|IPPorts} [nodename|subnetName|{proto1}-{IP1}-{Port1},{proto2}-{IP2}-{Port2}]
 
 Diagnose the status of cluster network components and go to the corresponding node's `kube-ovn-pinger`
 to detect connectivity and network latency from the current node to other nodes and critical services.
@@ -658,6 +658,8 @@ I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
 
 If the target of diagnose is specified as subnet, the script will create a daemonset on the subnet, and `kube-ovn-pinger` will detect the connectivity and network delay of all pods in this daemonset, and automatically destroy the daemonset after the test.
 
+If the target of diagnose is specified as IPPorts, the script will let each `kube-ovn-pinger` pod detect whether the target protocol, IP, and Port are reachable.
+
 ### tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]
 
 This command performs performance tuning related operations, please refer to [Performance Tunning](../advance/performance-tuning.en.md).
@@ -762,56 +764,84 @@ The parameter image is used to specify the image used by the performance test po
 
 ```bash
 # kubectl ko perf
+============================== Prepareing Performance Test Resources ===============================
 pod/test-client created
 pod/test-host-client created
 pod/test-server created
 pod/test-host-server created
+service/test-server created
 pod/test-client condition met
 pod/test-host-client condition met
 pod/test-host-server condition met
 pod/test-server condition met
-Start doing pod network performance
-=================================== unicast performance test =============================================================
+====================================================================================================
+============================ Start Pod Network Unicast Performance Test ============================
 Size            TCP Latency     TCP Bandwidth   UDP Latency     UDP Lost Rate   UDP Bandwidth
-64              93.7 us         93.3 Mbits/sec  74.5 us         (0%)            8.28 Mbits/sec
-128             83 us           155 Mbits/sec   69.8 us         (0%)            16.5 Mbits/sec
-512             85 us           400 Mbits/sec   70.7 us         (0%)            62.7 Mbits/sec
-1k              83.5 us         622 Mbits/sec   71.1 us         (0%)            130 Mbits/sec
-4k              137 us          979 Mbits/sec   71.9 us         (0%)            508 Mbits/sec
-=========================================================================================================================
-Start doing host network performance
-=================================== unicast performance test =============================================================
+64              82.8 us         97.7 Mbits/sec  67.6 us         (0%)            8.42 Mbits/sec
+128             85.4 us         167 Mbits/sec   67.2 us         (0%)            17.2 Mbits/sec
+512             85.8 us         440 Mbits/sec   68.7 us         (0%)            68.4 Mbits/sec
+1k              85.1 us         567 Mbits/sec   68.7 us         (0%)            134 Mbits/sec
+4k              138 us          826 Mbits/sec   78.1 us         (1.4%)          503 Mbits/sec
+====================================================================================================
+=============================== Start Host Network Performance Test ================================
 Size            TCP Latency     TCP Bandwidth   UDP Latency     UDP Lost Rate   UDP Bandwidth
-64              51.1 us         114 Mbits/sec   40.5 us         (0%)            18.6 Mbits/sec
-128             50.7 us         207 Mbits/sec   38.5 us         (0%)            36.5 Mbits/sec
-512             50.5 us         579 Mbits/sec   38.5 us         (0%)            146 Mbits/sec
-1k              50.4 us         926 Mbits/sec   38.4 us         (0%)            295 Mbits/sec
-4k              74.4 us         1.96 Gbits/sec  39.2 us         (0%)            1.18 Gbits/sec
-=========================================================================================================================
-Start doing pod multicast network performance
-=================================== multicast performance test =========================================================
+64              49.7 us         120 Mbits/sec   37.9 us         (0%)            18.6 Mbits/sec
+128             49.7 us         200 Mbits/sec   38.1 us         (0%)            35.5 Mbits/sec
+512             51.9 us         588 Mbits/sec   38.9 us         (0%)            142 Mbits/sec
+1k              51.7 us         944 Mbits/sec   37.2 us         (0%)            279 Mbits/sec
+4k              74.9 us         1.66 Gbits/sec  39.9 us         (0%)            1.20 Gbits/sec
+====================================================================================================
+============================== Start Service Network Performance Test ==============================
+Size            TCP Latency     TCP Bandwidth   UDP Latency     UDP Lost Rate   UDP Bandwidth
+64              111 us          96.3 Mbits/sec  88.4 us         (0%)            7.59 Mbits/sec
+128             83.7 us         150 Mbits/sec   69.2 us         (0%)            16.9 Mbits/sec
+512             87.4 us         374 Mbits/sec   75.8 us         (0%)            60.9 Mbits/sec
+1k              88.2 us         521 Mbits/sec   73.1 us         (0%)            123 Mbits/sec
+4k              148 us          813 Mbits/sec   77.6 us         (0.0044%)       451 Mbits/sec
+====================================================================================================
+=========================== Start Pod Multicast Network Performance Test ===========================
 Size            UDP Latency     UDP Lost Rate   UDP Bandwidth
-64              0.015 ms        (0%)            5.73 Mbits/sec
-128             0.012 ms        (0%)            11.1 Mbits/sec
-512             0.018 ms        (0%)            44.1 Mbits/sec
-1k              0.022 ms        (0.058%)        85.0 Mbits/sec
-4k              0.017 ms        (1%)            130 Mbits/sec
-=========================================================================================================================
-Start doing leader recovery time test
+64              0.014 ms        (0.17%)         5.80 Mbits/sec
+128             0.012 ms        (0%)            11.4 Mbits/sec
+512             0.016 ms        (0%)            46.1 Mbits/sec
+1k              0.023 ms        (0.073%)        89.8 Mbits/sec
+4k              0.035 ms        (1.3%)          126 Mbits/sec
+====================================================================================================
+============================= Start Host Multicast Network Performance =============================
+Size            UDP Latency     UDP Lost Rate   UDP Bandwidth
+64              0.007 ms        (0%)            9.95 Mbits/sec
+128             0.005 ms        (0%)            21.8 Mbits/sec
+512             0.008 ms        (0%)            86.8 Mbits/sec
+1k              0.013 ms        (0.045%)        168 Mbits/sec
+4k              0.010 ms        (0.31%)         242 Mbits/sec
+====================================================================================================
+================================== Start Leader Recover Time Test ==================================
 Delete ovn central nb pod
-pod "ovn-central-7bb79c5c57-m82vv" deleted
+pod "ovn-central-5cb9c67d75-tlz9w" deleted
 Waiting for ovn central nb pod running
-================================  OVN nb recover takes 4.107957572 s ==================================
+=============================== OVN nb Recovery takes 3.305236803 s ================================
 Delete ovn central sb pod
-pod "ovn-central-7bb79c5c57-97474" deleted
+pod "ovn-central-5cb9c67d75-szx4c" deleted
 Waiting for ovn central sb pod running
-================================  OVN sb recover takes 3.713956419 s ==================================
+=============================== OVN sb Recovery takes 3.462698535 s ================================
 Delete ovn central northd pod
-pod "ovn-central-7bb79c5c57-59gh4" deleted
+pod "ovn-central-5cb9c67d75-zqmqv" deleted
 Waiting for ovn central northd pod running
-================================  OVN northd recover takes 3.701646071 s ==================================
+============================= OVN northd Recovery takes 2.691291403 s ==============================
+====================================================================================================
+================================= Remove Performance Test Resource =================================
+rm -f unicast-test-client.log
+rm -f unicast-test-host-client.log
+rm -f unicast-test-client.log
+kubectl ko nbctl lb-del test-server
+rm -f multicast-test-server.log
+kubectl exec ovs-ovn-gxdrf -n kube-system -- ip maddr del 01:00:5e:00:00:64 dev eth0
+kubectl exec ovs-ovn-h57bf -n kube-system -- ip maddr del 01:00:5e:00:00:64 dev eth0
+rm -f multicast-test-host-server.log
 pod "test-client" deleted
 pod "test-host-client" deleted
 pod "test-host-server" deleted
 pod "test-server" deleted
+service "test-server" deleted
+====================================================================================================
 ```
