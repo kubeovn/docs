@@ -97,6 +97,25 @@ spec:
 After running successfully, you can observe that the two Pod addresses belong to the same CIDR,
 but the two Pods cannot access each other because they are running on different tenant VPCs.
 
+### Custom VPC POD supports livenessProbe and readinessProbe
+
+Since the Pods under the custom VPC do not communicate with the network of the node, the probe packets sent by the kubelet cannot reach the Pods in the custom VPC. Kube-OVN uses TProxy to redirect the detection packets sent by kubelet to Pods in the custom VPC to achieve this function.
+
+The configuration method is as follows, add the parameter `--enable-tproxy=true` in Daemonset `kube-ovn-cni`:
+```yaml
+spec:
+  template:
+    spec:
+      containers:
+      - args:
+        - --enable-tproxy=true
+```
+
+Restrictions for this feature:
+
+1. When Pods under different VPCs have the same IP under the same node, the detection function fails.
+2. Currently, only `tcpSocket` and `httpGet` are supported.
+
 ## Create VPC NAT Gateway
 
 > Subnets under custom VPCs do not support distributed gateways and centralized gateways under default VPCs.
