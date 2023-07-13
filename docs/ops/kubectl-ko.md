@@ -655,7 +655,7 @@ I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
 
 如果 diagnose 的目标指定为 subnet 该脚本会在 subnet 上建立 daemonset，由 `kube-ovn-pinger` 去探测这个 daemonset 的所有 pod 的连通性和网络延时，测试完后自动销毁该 daemonset。
 
-如果 diagnose 的目标指定为 IPPorts 该脚本会让每个 `kube-ovn-pinger` pod 去探测目标协议，IP，Port 是否可达
+如果 diagnose 的目标指定为 IPPorts 该脚本会让每个 `kube-ovn-pinger` pod 去探测目标协议，IP，Port 是否可达。
 
 ### tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]
 

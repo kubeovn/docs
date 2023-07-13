@@ -658,7 +658,7 @@ I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
 
 If the target of diagnose is specified as subnet, the script will create a daemonset on the subnet, and `kube-ovn-pinger` will detect the connectivity and network delay of all pods in this daemonset, and automatically destroy the daemonset after the test.
 
-If the target of diagnose is specified as IPPorts, the script will let each `kube-ovn-pinger` pod detect whether the target protocol, IP, and Port are reachable
+If the target of diagnose is specified as IPPorts, the script will let each `kube-ovn-pinger` pod detect whether the target protocol, IP, and Port are reachable.
 
 ### tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]
 
