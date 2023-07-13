@@ -93,11 +93,12 @@ spec:
 
 运行成功后可观察两个 Pod 地址属于同一个 CIDR，但由于运行在不同的租户 VPC，两个 Pod 无法相互访问。
 
-### 自定义 VPC POD 支持 livenessProbe 和 readinessProbe
+### 自定义 VPC Pod 支持 livenessProbe 和 readinessProbe
 
 由于常规配置下自定义 VPC 下的 Pod 和节点的网络之间并不互通，所以 kubelet 发送的探测报文无法到达自定 VPC 内的 Pod。Kube-OVN 通过 TProxy 将 kubelet 发送的探测报文重定向到自定义 VPC 内的 Pod，从而实现这一功能。
 
 配置方法如下，在 Daemonset `kube-ovn-cni` 中增加参数 `--enable-tproxy=true`：
+
 ```yaml
 spec:
   template:
