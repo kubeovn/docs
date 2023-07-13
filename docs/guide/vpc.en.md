@@ -97,6 +97,26 @@ spec:
 After running successfully, you can observe that the two Pod addresses belong to the same CIDR,
 but the two Pods cannot access each other because they are running on different tenant VPCs.
 
+### Custom VPC Pod supports livenessProbe and readinessProbe
+
+Since the Pods under the custom VPC do not communicate with the network of the node, the probe packets sent by the kubelet cannot reach the Pods in the custom VPC. Kube-OVN uses TProxy to redirect the detection packets sent by kubelet to Pods in the custom VPC to achieve this function.
+
+The configuration method is as follows, add the parameter `--enable-tproxy=true` in Daemonset `kube-ovn-cni`:
+
+```yaml
+spec:
+  template:
+    spec:
+      containers:
+      - args:
+        - --enable-tproxy=true
+```
+
+Restrictions for this feature:
+
+1. When Pods under different VPCs have the same IP under the same node, the detection function fails.
+2. Currently, only `tcpSocket` and `httpGet` are supported.
+
 ## Create VPC NAT Gateway
 
 > Subnets under custom VPCs do not support distributed gateways and centralized gateways under default VPCs.
@@ -371,6 +391,7 @@ spec:
 Due to the isolation between custom VPCs and default VPC networks, Pods in VPCs cannot use the default coredns service for domain name resolution. If you want to use coredns to resolve Service domain names within the custom VPC, you can use the `vpc-dns` resource provided by Kube-OVN.
 
 ### Create an Additional Network
+
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
@@ -431,14 +452,14 @@ data:
   nad-provider: ovn-nad.default.ovn
 ```
 
--  `enable-vpc-dns`: (optional) `true` to enable the feature, `false` to disable the feature. Default `true`.
--  `coredns-image`: (optional): DNS deployment image. Default is the cluster coredns deployment version.
--  `coredns-template`: (optional): URL of the DNS deployment template. Default: `yamls/coredns-template.yaml` in the current version repository.
--  `coredns-vip`: VIP providing LB service for coredns.
--  `nad-name`: Name of the configured `network-attachment-definitions` resource.
--  `nad-provider`: Name of the used provider.
--  `k8s-service-host`: (optional) IP used by coredns to access the k8s apiserver service.
--  `k8s-service-port`: (optional) Port used by coredns to access the k8s apiserver service.
+- `enable-vpc-dns`: (optional) `true` to enable the feature, `false` to disable the feature. Default `true`.
+- `coredns-image`: (optional): DNS deployment image. Default is the cluster coredns deployment version.
+- `coredns-template`: (optional): URL of the DNS deployment template. Default: `yamls/coredns-template.yaml` in the current version repository.
+- `coredns-vip`: VIP providing LB service for coredns.
+- `nad-name`: Name of the configured `network-attachment-definitions` resource.
+- `nad-provider`: Name of the used provider.
+- `k8s-service-host`: (optional) IP used by coredns to access the k8s apiserver service.
+- `k8s-service-port`: (optional) Port used by coredns to access the k8s apiserver service.
 
 ### Deploying VPC-DNS Dependent Resources
 
@@ -531,8 +552,8 @@ spec:
   subnet: cjh-subnet-1
 ```
 
--  `vpc`: The VPC name used to deploy the DNS component. 
--  `subnet`: The subnet name used to deploy the DNS component.
+- `vpc`: The VPC name used to deploy the DNS component.
+- `subnet`: The subnet name used to deploy the DNS component.
 
 View resource information:
 
@@ -547,6 +568,6 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 
 ### Restrictions
 
--  Only one custom DNS component will be deployed in one VPC;
--  When multiple VPC-DNS resources (i.e. different subnets in the same VPC) are configured in one VPC, only one VPC-DNS resource with status `true` will be active, while the others will be `false`;
--  When the `true` VPC-DNS is deleted, another `false` VPC-DNS will be deployed.
+- Only one custom DNS component will be deployed in one VPC;
+- When multiple VPC-DNS resources (i.e. different subnets in the same VPC) are configured in one VPC, only one VPC-DNS resource with status `true` will be active, while the others will be `false`;
+- When the `true` VPC-DNS is deleted, another `false` VPC-DNS will be deployed.
