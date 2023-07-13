@@ -552,7 +552,7 @@ spec:
   subnet: cjh-subnet-1
 ```
 
-- `vpc`: The VPC name used to deploy the DNS component. 
+- `vpc`: The VPC name used to deploy the DNS component.
 - `subnet`: The subnet name used to deploy the DNS component.
 
 View resource information:
@@ -568,6 +568,6 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 
 ### Restrictions
 
--  Only one custom DNS component will be deployed in one VPC;
--  When multiple VPC-DNS resources (i.e. different subnets in the same VPC) are configured in one VPC, only one VPC-DNS resource with status `true` will be active, while the others will be `false`;
--  When the `true` VPC-DNS is deleted, another `false` VPC-DNS will be deployed.
+- Only one custom DNS component will be deployed in one VPC;
+- When multiple VPC-DNS resources (i.e. different subnets in the same VPC) are configured in one VPC, only one VPC-DNS resource with status `true` will be active, while the others will be `false`;
+- When the `true` VPC-DNS is deleted, another `false` VPC-DNS will be deployed.
