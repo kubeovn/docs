@@ -391,6 +391,7 @@ spec:
 Due to the isolation between custom VPCs and default VPC networks, Pods in VPCs cannot use the default coredns service for domain name resolution. If you want to use coredns to resolve Service domain names within the custom VPC, you can use the `vpc-dns` resource provided by Kube-OVN.
 
 ### Create an Additional Network
+
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
@@ -451,14 +452,14 @@ data:
   nad-provider: ovn-nad.default.ovn
 ```
 
--  `enable-vpc-dns`: (optional) `true` to enable the feature, `false` to disable the feature. Default `true`.
--  `coredns-image`: (optional): DNS deployment image. Default is the cluster coredns deployment version.
--  `coredns-template`: (optional): URL of the DNS deployment template. Default: `yamls/coredns-template.yaml` in the current version repository.
--  `coredns-vip`: VIP providing LB service for coredns.
--  `nad-name`: Name of the configured `network-attachment-definitions` resource.
--  `nad-provider`: Name of the used provider.
--  `k8s-service-host`: (optional) IP used by coredns to access the k8s apiserver service.
--  `k8s-service-port`: (optional) Port used by coredns to access the k8s apiserver service.
+- `enable-vpc-dns`: (optional) `true` to enable the feature, `false` to disable the feature. Default `true`.
+- `coredns-image`: (optional): DNS deployment image. Default is the cluster coredns deployment version.
+- `coredns-template`: (optional): URL of the DNS deployment template. Default: `yamls/coredns-template.yaml` in the current version repository.
+- `coredns-vip`: VIP providing LB service for coredns.
+- `nad-name`: Name of the configured `network-attachment-definitions` resource.
+- `nad-provider`: Name of the used provider.
+- `k8s-service-host`: (optional) IP used by coredns to access the k8s apiserver service.
+- `k8s-service-port`: (optional) Port used by coredns to access the k8s apiserver service.
 
 ### Deploying VPC-DNS Dependent Resources
 
@@ -551,8 +552,8 @@ spec:
   subnet: cjh-subnet-1
 ```
 
--  `vpc`: The VPC name used to deploy the DNS component. 
--  `subnet`: The subnet name used to deploy the DNS component.
+- `vpc`: The VPC name used to deploy the DNS component. 
+- `subnet`: The subnet name used to deploy the DNS component.
 
 View resource information:
 
