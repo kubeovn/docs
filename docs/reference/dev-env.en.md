@@ -35,6 +35,23 @@ To build an image to run in an ARM environment, run the following command:
 make release-arm
 ```
 
+## Building the Base Image
+
+If you need to change the operating system version, dependencies, OVS/OVN code, etc., you need to rebuild the base image.
+
+The Dockerfile used for the base image is `dist/images/Dockerfile.base`.
+
+Build instructions:
+
+```bash
+# build x86 base image
+make base-amd64
+
+# build arm base image
+make base-arm64
+```
+
+
 ## Run E2E
 
 Kube-OVN uses [KIND](https://kind.sigs.k8s.io/){: target="_blank" } to build local Kubernetes cluster, [j2cli](https://github.com/kolypto/j2cli){: target="_blank" } to render templates，

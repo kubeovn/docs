@@ -34,6 +34,22 @@ make release
 make release-arm
 ```
 
+## 构建 base 镜像
+
+如需要更改操作系统版本，依赖库，OVS/OVN 代码等，需要对 base 镜像进行重新构建。
+
+base 镜像使用的 Dockerfile 为 `dist/images/Dockerfile.base`。
+
+构建方法：
+
+```bash
+# build x86 base image
+make base-amd64
+
+# build arm base image
+make base-arm64
+```
+
 ## 运行 E2E
 
 Kube-OVN 使用 [KIND](https://kind.sigs.k8s.io/){: target="_blank" } 构建本地 Kubernetes 集群，[j2cli](https://github.com/kolypto/j2cli){: target="_blank" } 渲染模板，
