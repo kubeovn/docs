@@ -83,4 +83,4 @@ spec:
 
 针对 `StatefulSet` 和 `VM` 的特殊性，在他们的 Pod 销毁再拉起起后会重新使用之前设置的 VIP。
 
-VM 保留 VIP 需要确保 `kube-ovn-controller` 的 `keep-vm-ip` 参数为 `true`。请参考[Kubevirt VM 固定地址开启设置](../guide/setup-options.md#kubevirt-vm)
+VM 保留 VIP 需要确保 `kube-ovn-controller` 的 `keep-vm-ip` 参数为 `true`。请参考 [Kubevirt VM 固定地址开启设置](../guide/setup-options.md#kubevirt-vm)
