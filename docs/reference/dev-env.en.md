@@ -2,7 +2,7 @@
 
 ## Environmental Preparation
 
-Kube-OVN uses [Golang](https://golang.org/){: target="_blank" } 1.18 to develop and [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" }
+Kube-OVN uses [Golang](https://golang.org/){: target="_blank" } 1.20 to develop and [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" }
 to manage dependency, please check env `GO111MODULE="on"`。
 
 [gosec](https://github.com/securego/gosec){: target="_blank" } is used to scan for code security related issues
@@ -53,7 +53,7 @@ make base-arm64
 
 ## Run E2E
 
-Kube-OVN uses [KIND](https://kind.sigs.k8s.io/){: target="_blank" } to build local Kubernetes cluster, [j2cli](https://github.com/kolypto/j2cli){: target="_blank" } to render templates，
+Kube-OVN uses [KIND](https://kind.sigs.k8s.io/){: target="_blank" } to build local Kubernetes cluster, [j2cli](https://github.com/kolypto/j2cli){: target="_blank" } to render templates,
 and [Ginkgo](https://onsi.github.io/ginkgo/){: target="_blank" } to run test cases. Please refer to the relevant documentation for dependency installation.
 
 Run E2E locally:
