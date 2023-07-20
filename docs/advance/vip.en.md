@@ -58,3 +58,9 @@ static-vip01   10.16.0.121           00:00:00:F0:DB:26                         o
 ```
 
 It can be seen that the VIP has been assigned the expected IP address.
+
+## StatefulSet & Kubevirt VM keep VIP
+
+Specify for `StatefulSet` and `VM` resources, these Pods their owned will reuse the VIP when these Pods recreating.
+
+VM keep VIP must be enable the `keep-vm-ip` param in `kube-ovn-controller`. Refer [Kubevirt VM Fixed Address Settings](../guide/setup-options.en.md#kubevirt-vm)
