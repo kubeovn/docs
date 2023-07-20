@@ -51,7 +51,6 @@ make base-amd64
 make base-arm64
 ```
 
-
 ## Run E2E
 
 Kube-OVN uses [KIND](https://kind.sigs.k8s.io/){: target="_blank" } to build local Kubernetes cluster, [j2cli](https://github.com/kolypto/j2cli){: target="_blank" } to render templates，
