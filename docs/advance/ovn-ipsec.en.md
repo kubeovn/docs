@@ -4,7 +4,7 @@ This function is supported after v1.10.11 and v1.11.4, and the kernel version is
 
 ## start IPsec
 
-Copy the script from the kube-ovn source code [ipsec.sh](https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/ipsec.sh), execute the command as follows, the script will call ovs-pki to generate and distribute the certificate required for encryption:
+Copy the script from the Kube-OVN source code [ipsec.sh](https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/ipsec.sh), execute the command as follows, the script will call ovs-pki to generate and distribute the certificate required for encryption:
 
 ```bash
 bash ipsec.sh init

@@ -1,6 +1,6 @@
 # OVN Remote Port Mirroring
 
-This feature provides ability to mirror the traffic of the specified LSP and direction, and to send the mirrored traffic to a remote destination.
+This feature provides ability to mirror the traffic of the specified Pod and direction, and to send the mirrored traffic to a remote destination.
 
 > This feature requires Kube-OVN version not lower than v1.12.
 
