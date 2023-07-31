@@ -1,4 +1,4 @@
-# OVN EIP FIP SNAT 支持
+# OVN EIP FIP SNAT DNAT 支持
 
 ``` mermaid
 graph LR
@@ -18,19 +18,21 @@ pod-->vpc1-subnet-->vpc1-->fip-->lrp-->external-subnet-->local-node-external-nic
 
 Pod 基于 FIP 出公网的大致流程，最后可以基于本地节点的公网网卡出公网。
 
+该功能所支持的 CRD 在使用上将和 iptable nat gw 公网方案保持基本一致。
+
+- ovn eip: 用于公网 ip 占位，从 underlay provider network vlan subnet 中分配
+- ovn fip： 一对一 dnat snat，为 vpc 内的 ip 或者 vip 提供公网直接访问能力
+- ovn snat：整个子网或者单个 vpc 内 ip 可以基于 snat 访问公网
+- ovn dnat：基于 router lb 实现, 基于公网 ip + 端口 直接访问 vpc 内的 一组 endpoints
+
 ## 1. 部署
 
-目前允许所有（默认以及自定义）vpc 使用同一个 provider vlan subnet 资源，类似 neutron ovn 模式，同时兼容之前**默认 vpc 可以使用 enable_eip_snat**的场景。
+目前允许所有（默认以及自定义）vpc 使用同一个 provider vlan subnet 资源，同时兼容[默认 VPC EIP/SNAT](../guide/eip-snat.md)的场景。
 
-执行 install.sh 需要指定默认公网逻辑交换机。
-该配置项的设计和使用主要考虑了如下因素：
+类似 neutron ovn，服务启动配置中需要指定 provider network 相关的配置，下述的启动参数也是为了兼容 VPC EIP/SNAT 的实现。
 
-- 基于该配置项可以对接到 provider network，vlan，subnet 的资源。
-- 基于该配置项可以将默认 vpc enable_eip_snat 功能对接到已有的 vlan，subnet 资源，同时支持公网 ip 的 ipam。
-- 如果仅使用默认 vpc 的 enable_eip_snat 模式, 且仅使用旧的基于 pod annotaion 的 eip fip snat，那么这个配置无需配置。
-- 基于该配置可以不使用默认 vpc enable_eip_snat 流程，仅通过对应到 vlan，subnet 流程，可以兼容仅自定义 vpc 使用 eip snat 的使用场景。
-
-neutron ovn 模式也有一定的静态文件配置指定设计，目前来说，大致一致。
+部署阶段，根据实际情况，可能需要指定默认公网逻辑交换机。
+如果实际使用中没有 vlan（使用 vlan 0），那么下述启动参数无需配置。
 
 ```bash
 # 部署的时候你需要参考以上场景，根据实际情况，按需指定如下参数
@@ -43,6 +45,13 @@ neutron ovn 模式也有一定的静态文件配置指定设计，目前来说�
 
 ### 以上配置都和下面的公网网络配置 vlan id 和资源名保持一致，目前仅支持指定一个 underlay 公网作为默认外部公网。
 ```
+
+该配置项的设计和使用主要考虑了如下因素：
+
+- 基于该配置项可以对接到 provider network，vlan，subnet 的资源。
+- 基于该配置项可以将默认 vpc enable_eip_snat 功能对接到已有的 vlan，subnet 资源，同时支持公网 ip 的 ipam。
+- 如果仅使用默认 vpc 的 enable_eip_snat 模式, 且仅使用旧的基于 pod annotaion 的 eip fip snat，那么这个配置无需配置。
+- 基于该配置可以不使用默认 vpc enable_eip_snat 流程，仅通过对应到 vlan，subnet 流程，可以兼容仅自定义 vpc 使用 eip snat 的使用场景。
 
 ### 1.1 准备 underlay 公网网络
 
@@ -173,12 +182,11 @@ Route Table <main>:
 
 ## 2. ovn-eip
 
-该功能和 iptables-eip 设计和使用方式基本一致，ovn-eip 目前有四种 type
+该功能和 iptables-eip 设计和使用方式基本一致，ovn-eip 目前有三种 type
 
+- nat: 用于 ovn dnat，fip, snat, 这些 nat 类型会记录在 status 中
 - lrp: 用于 vpc 和公网相连的资源
-- fip: 用于 ovn nat dnat_and_snat 资源
-- snat: 用于 snat，支持一对一到 pod ip，以及对应到 subnet cidr
-- node-ext-gw: 用于 ovn 基于 bfd 的 ecmp 路由场景
+- node-ext-gw: 用于 ovn 基于 bfd 的 ecmp 静态路由场景
 
 ``` bash
 ---
