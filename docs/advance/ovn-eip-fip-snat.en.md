@@ -18,20 +18,20 @@ pod-->vpc1-subnet-->vpc1-->fip-->lrp-->external-subnet-->local-node-external-nic
 
 The pod access the public network based on the fip
 
+The CRD supported by this function is basically the same as the iptable nat gw public network solution.
+
+- ovn eip: occupies a public ip address and is allocated from the underlay provider network vlan subnet
+- ovn fip: one-to-one dnat snat, which provides direct public network access for ip addresses and vip in a vpc
+- ovn snat: a subnet cidr or a single vpc ip or vip can access public networks based on snat
+- ovn dnat: based router lb, which enables direct access to a group of endpoints in a vpc based on a public endpoint
+
 ## 1. Deployment
 
-Currently allows all vpcs to share the same provider vlan subnet resources, similar to neutron ovn mode. Also compatible with previous scenarios **default vpc enable_eip_snat**.
+Currently allows all vpcs to share the same provider vlan subnet resources, similar to neutron ovn mode.
+Compatible with previous scenarios [default VPC EIP/SNAT](../guide/eip-snat.en.md).
 
-Executing install.sh requires specifying the default public logical switch.
-
-The design and use of this configuration item takes into account the following factors：
-
-- Based on this configuration item can be docked to the provider network, vlan, subnet resources.
-- Based on this configuration item, the default vpc enable_eip_snat function can be docked to the existing vlan, subnet resources, while supporting the ipam
-- If only the default vpc's enable_eip_snat mode is used with the old pod annotaion based eip fip snat, then the following configuration is not required.
-- Based on this configuration you can not use the default vpc enable_eip_snat process, only by corresponding to vlan, subnet process, can be compatible with only custom vpc use eip snat usage scenarios.
-
-The neutron ovn mode also has a certain static file configuration designation that is, for now, generally consistent.
+During the deployment phase, you may need to specify a default public network logical switch based on actual conditions.
+If no vlan is in use (vlan 0 is used), the following startup parameters do not need to be configured.
 
 ```bash
 # When deploying you need to refer to the above scenario and specify the following parameters as needed according to the actual situation
@@ -45,6 +45,15 @@ The neutron ovn mode also has a certain static file configuration designation th
 # The above configuration is consistent with the following public network configuration vlan id and resource name, 
 # currently only support to specify one underlay public network as the default external public network.
 ```
+
+The design and use of this configuration item takes into account the following factors：
+
+- Based on this configuration item can be docked to the provider network, vlan, subnet resources.
+- Based on this configuration item, the default vpc enable_eip_snat function can be docked to the existing vlan, subnet resources, while supporting the ipam
+- If only the default vpc's enable_eip_snat mode is used with the old pod annotaion based eip fip snat, then the following configuration is not required.
+- Based on this configuration you can not use the default vpc enable_eip_snat process, only by corresponding to vlan, subnet process, can be compatible with only custom vpc use eip snat usage scenarios.
+
+The neutron ovn mode also has a certain static file configuration designation that is, for now, generally consistent.
 
 ### 1.1 Create the underlay public network
 
@@ -175,12 +184,11 @@ Route Table <main>:
 
 ## 2. ovn-eip
 
-This feature is basically the same as iptables-eip design and usage, ovn-eip currently has four types
+This function is designed and used in the same way as iptables-eip, ovn-eip currently has three types
 
-- lrp: Resources for vpc and public network connection
-- fip: For ovn nat dnat_and_snat resources
-- snat: For snat, supporting one-to-one to pod, and one-to-one throughout the subnet cidr
-- node-ext-gw: For ovn bfd-based ecmp routing scenarios
+- nat: indicates ovn dnat, fip, and snat. These nat types are recorded in status
+- lrp: indicates the resource used to connect a vpc to the public network
+- node-ext-gw: applies to ovn BFD-based ecmp static route scenario
 
 ``` bash
 ---
