@@ -50,7 +50,7 @@ Pod 基于 FIP 出公网的大致流程，最后可以基于本地节点的公�
 
 - 基于该配置项可以对接到 provider network，vlan，subnet 的资源。
 - 基于该配置项可以将默认 vpc enable_eip_snat 功能对接到已有的 vlan，subnet 资源，同时支持公网 ip 的 ipam。
-- 如果仅使用默认 vpc 的 enable_eip_snat 模式, 且仅使用旧的基于 pod annotaion 的 eip fip snat，那么这个配置无需配置。
+- 如果仅使用默认 vpc 的 enable_eip_snat 模式, 且仅使用旧的基于 pod annotaion 的 fip snat，那么这个配置无需配置。
 - 基于该配置可以不使用默认 vpc enable_eip_snat 流程，仅通过对应到 vlan，subnet 流程，可以兼容仅自定义 vpc 使用 eip snat 的使用场景。
 
 ### 1.1 准备 underlay 公网网络
@@ -185,8 +185,8 @@ Route Table <main>:
 该功能和 iptables-eip 设计和使用方式基本一致，ovn-eip 目前有三种 type
 
 - nat: 用于 ovn dnat，fip, snat, 这些 nat 类型会记录在 status 中
-- lrp: 用于 vpc 和公网相连的资源
-- node-ext-gw: 用于 ovn 基于 bfd 的 ecmp 静态路由场景
+- lrp: Resources connected to the public network from a vpc can be used by nat
+- lsp: 用于 ovn 基于 bfd 的 ecmp 静态路由场景，在网关节点上提供一个 ovs internal port 作为 ecmp 路由的下一跳
 
 ``` bash
 ---
@@ -196,7 +196,7 @@ metadata:
   name: eip-static
 spec:
   externalSubnet: external204
-  type: fip
+  type: nat
   
 # 动态分配一个 eip 资源，该资源预留用于 fip 场景
 ```
@@ -220,7 +220,7 @@ metadata:
   name: eip-static
 spec:
   externalSubnet: external204
-  type: fip
+  type: nat
 
 ---
 kind: OvnFip
@@ -296,7 +296,7 @@ metadata:
   name: eip-for-vip
 spec:
   externalSubnet: external204
-  type: fip
+  type: nat
 
 ---
 kind: OvnFip
@@ -369,7 +369,7 @@ metadata:
   name: snat-for-subnet-in-vpc
 spec:
   externalSubnet: external204
-  type: snat
+  type: nat
 
 ---
 kind: OvnSnatRule
@@ -394,7 +394,7 @@ metadata:
   name: snat-for-pod-vpc-ip
 spec:
   externalSubnet: external204
-  type: snat
+  type: nat
 
 ---
 kind: OvnSnatRule

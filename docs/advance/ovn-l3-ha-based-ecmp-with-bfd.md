@@ -15,7 +15,7 @@ external-subnet-->gw-node3-ovnext0--> node3-external-switch
 
 该功能的使用方式和[ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) 基本一致，一致的部分包括 install.sh 的部署部分，provider-network，vlan，subnet 的准备部分。
 
-至于不相同的部分，会在以下部分具体阐述，主要包括 node-ext-gw 类型的 ovn-eip 的创建，以及基于 vpc enable_bfd 自动维护 bfd 以及 ecmp 静态路由。
+至于不相同的部分，会在以下部分具体阐述，主要包括 lsp 类型的 ovn-eip 的创建，以及基于 vpc enable_bfd 自动维护 bfd 以及 ecmp 静态路由。
 
 ## 1. 部署
 
@@ -38,7 +38,7 @@ metadata:
   name: pc-node-1
 spec:
   externalSubnet: external204
-  type: node-ext-gw
+  type: lsp
 
 ---
 kind: OvnEip
@@ -47,7 +47,7 @@ metadata:
   name: pc-node-2
 spec:
   externalSubnet: external204
-  type: node-ext-gw
+  type: lsp
 
 ---
 kind: OvnEip
@@ -56,7 +56,7 @@ metadata:
   name: pc-node-3
 spec:
   externalSubnet: external204
-  type: node-ext-gw
+  type: lsp
 ```
 
 由于这个场景目前设计上是供 vpc ecmp 出公网使用，所以以上在没有 vpc 启用 bfd 的时候，即不存在带有 enable bfd 标签的 lrp 的 ovn eip 的时候，网关节点不会触发创建网关网卡，也无法成功启动对端 bfd 会话的监听。
