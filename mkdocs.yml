@@ -240,6 +240,6 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/r/kubeovn/kube-ovn
   variables:
-    version: v1.12.0
+    version: v1.13.0
     branch: master
 copyright: Copyright &copy; 2023 The Linux Foundation
