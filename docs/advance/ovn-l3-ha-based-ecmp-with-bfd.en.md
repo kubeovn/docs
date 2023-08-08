@@ -15,7 +15,7 @@ external-subnet-->gw-node3-ovnext0--> node3-external-switch
 
 This functions basically the same as [ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) .
 
-As for the different parts, which will be specified in the following sections, mainly including the creation of ovn-eip of node-ext-gw type and the automatic maintenance of bfd as well as ecmp static routes based on vpc enable_bfd.
+As for the different parts, which will be specified in the following sections, mainly including the creation of ovn-eip of lsp type and the automatic maintenance of bfd as well as ecmp static routes based on vpc enable_bfd.
 
 ## 1. Deployment
 
@@ -41,7 +41,7 @@ metadata:
   name: pc-node-1
 spec:
   externalSubnet: external204
-  type: node-ext-gw
+  type: lsp
 
 ---
 kind: OvnEip
@@ -50,7 +50,7 @@ metadata:
   name: pc-node-2
 spec:
   externalSubnet: external204
-  type: node-ext-gw
+  type: lsp
 
 ---
 kind: OvnEip
@@ -59,7 +59,7 @@ metadata:
   name: pc-node-3
 spec:
   externalSubnet: external204
-  type: node-ext-gw
+  type: lsp
 ```
 
 Since this scenario is currently designed for vpc ecmp out of the public network, the gateway node above will not trigger the creation of a gateway NIC when there is no vpc enabled bfd, i.e. when there is no ovn eip (lrp) with enable bfd labeled, and will not be able to successfully start listening to the bfd session on the other side.

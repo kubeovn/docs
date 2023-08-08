@@ -188,7 +188,7 @@ This function is designed and used in the same way as iptables-eip, ovn-eip curr
 
 - nat: indicates ovn dnat, fip, and snat. These nat types are recorded in status
 - lrp: indicates the resource used to connect a vpc to the public network
-- node-ext-gw: applies to ovn BFD-based ecmp static route scenario
+- lsp: In the ovn BFD-based ecmp static route scenario, an ovs internal port is provided on the gateway node as the next hop of the ecmp route
 
 ``` bash
 ---
@@ -198,9 +198,9 @@ metadata:
   name: eip-static
 spec:
   externalSubnet: external204
-  type: fip
+  type: nat
   
-# Dynamically allocate an eip resource that is reserved for fip scenarios
+# Dynamically allocate an eip resource that is reserved for fip dnat_and_snat scenarios
 ```
 
 ### 2.1 Create an fip for pod
@@ -222,7 +222,7 @@ metadata:
   name: eip-static
 spec:
   externalSubnet: external204
-  type: fip
+  type: nat
 
 ---
 kind: OvnFip
@@ -297,7 +297,7 @@ metadata:
   name: eip-for-vip
 spec:
   externalSubnet: external204
-  type: fip
+  type: nat
 
 ---
 kind: OvnFip
@@ -370,7 +370,7 @@ metadata:
   name: snat-for-subnet-in-vpc
 spec:
   externalSubnet: external204
-  type: snat
+  type: nat
 
 ---
 kind: OvnSnatRule
@@ -395,7 +395,7 @@ metadata:
   name: snat-for-pod-vpc-ip
 spec:
   externalSubnet: external204
-  type: snat
+  type: nat
 
 ---
 kind: OvnSnatRule
@@ -502,6 +502,7 @@ metadata:
   name: eip-static
 spec:
   externalSubnet: underlay
+  type: nat
 ---
 kind: OvnDnatRule
 apiVersion: kubeovn.io/v1
