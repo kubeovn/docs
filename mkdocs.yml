@@ -149,7 +149,7 @@ plugins:
           卸载: Uninstall
           安装和配置选项: Installation and Configuration Options
           固定地址: Fixed Addresses
-          IP 池使用: Configure IPPool
+          IP池使用: Configure IPPool
           自定义路由: Custom Routes
           子网使用: Config Subnet
           LoadBalancer 类型 Service: LoadBalancer Type Service
