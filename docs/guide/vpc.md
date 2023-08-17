@@ -227,7 +227,7 @@ spec:
 
 ### 创建 EIP
 
-EIP 为外部网络段的某个 IP 分配给 VPC 网关后可进行浮动 IP，SNAT 和 DNAT 操作。
+EIP 为外部网络段的某个 IP 分配给 VPC 网关后可进行 DNAT，SNAT 和浮动 IP 操作。
 
 随机分配一个地址给 EIP：
 
@@ -268,6 +268,8 @@ spec:
 
 ### 创建 DNAT 规则
 
+通过 DNAT 规则，外部可以通过一个 EIP 加端口的方式来访问 VPC 内的一个 IP 和端口。
+
 ```yaml
 kind: IptablesEIP
 apiVersion: kubeovn.io/v1
@@ -291,6 +293,8 @@ spec:
 
 ### 创建 SNAT 规则
 
+通过 SNAT 规则，VPC 内的 Pod 访问外部的地址时将会通过对应 EIP 进行 SNAT。
+
 ```yaml
 ---
 kind: IptablesEIP
@@ -310,6 +314,8 @@ spec:
 ```
 
 ### 创建浮动 IP
+
+通过浮动 IP 规则，VPC 内的一个 IP 会和 EIP 进行完全映射，外部可以通过这个 EIP 方位 VPC 内的 IP，VPC 内的这个 IP 访问外部地址时也会 SNAT 成这个 EIP。
 
 ```yaml
 ---

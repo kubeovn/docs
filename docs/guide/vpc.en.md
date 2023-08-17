@@ -272,6 +272,8 @@ spec:
 
 ### Create DNAT Rules
 
+Through the DNAT rules, external can access to an IP and port within a VPC through an EIP and port.
+
 ```yaml
 kind: IptablesEIP
 apiVersion: kubeovn.io/v1
@@ -295,6 +297,8 @@ spec:
 
 ### Create SNAT Rules
 
+Through SNAT rules, when a Pod in the VPC accesses an external address, it will go through the corresponding EIP for SNAT.
+
 ```yaml
 ---
 kind: IptablesEIP
@@ -314,6 +318,8 @@ spec:
 ```
 
 ### Create Floating IP
+
+Through floating IP rules, one IP in the VPC will be completely mapped to the EIP, and the external can access the IP in the VPC through this EIP. When the IP in the VPC accesses the external address, it will be SNAT to this EIP
 
 ```yaml
 ---
