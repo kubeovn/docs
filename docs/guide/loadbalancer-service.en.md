@@ -1,6 +1,6 @@
 # LoadBalancer Type Service
 
-Kube-OVN already supports the implementation of VPC and VPC gateway. For specific configration, please refer to [VPC 配置](vpc.en.md)。
+Kube-OVN already supports the implementation of VPC and VPC gateway. For specific configration, please refer to [VPC configuration](vpc.en.md)。
 
 Since the use of the VPC gateway is complicated, the implementation based on the VPC gateway has been simplified. It supports creating a `LoadBalancer` type of Service under the default VPC, and accessing the Service under the default VPC through the LoadBalancerIP.
 
@@ -8,13 +8,13 @@ The environment must meets the following conditions:
 
 1. Install `multus-cni` and `macvlan cni`。
 2. The support of LoadBalancer Service is a simplified implementation of the VPC gateway code. It still uses the image of `vpc-nat-gw` and relies on macvlan to provide multi-network card function support.
-3. Currently it only supports the `default VPC` configuration. For LoadBalancer support under custom VPC, please refer to the VPC document [VPC 配置](vpc.en.md).
+3. Currently it only supports the `default VPC` configuration. For LoadBalancer support under custom VPC, please refer to the VPC document [VPC configuration](vpc.en.md).
 
 ## Default VPC LoadBalancer Service configuration steps
 
-### 开启特性开关
+### Enable the lb-svc feature
 
-Modify the deployment `kube-ovn-controller` under the kube-system namespace, add the parameter `--enable-lb-svc=true` in `args`, and enable the function switch, which defaults to false.
+Modify the deployment `kube-ovn-controller` under the kube-system namespace, add the parameter `--enable-lb-svc=true` in `args`, and enable the feature (which defaults to false).
 
 ```yaml
 containers:
