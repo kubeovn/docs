@@ -14,7 +14,7 @@ nav:
   - 使用指南:
       - 安装和配置选项: 'guide/setup-options.md'
       - 固定地址: 'guide/static-ip-mac.md'
-      - IP池使用: 'guide/ippool.md'
+      - IP 池使用: 'guide/ippool.md'
       - 自定义路由: 'guide/custom-routes.md'
       - 子网使用: 'guide/subnet.md'
       - LoadBalancer 类型 Service: 'guide/loadbalancer-service.md'
@@ -149,7 +149,7 @@ plugins:
           卸载: Uninstall
           安装和配置选项: Installation and Configuration Options
           固定地址: Fixed Addresses
-          IP池使用: Configure IPPool
+          IP 池使用: Configure IPPool
           自定义路由: Custom Routes
           子网使用: Config Subnet
           LoadBalancer 类型 Service: LoadBalancer Type Service
