@@ -29,7 +29,7 @@ Field description:
 |    ips     | Specify IP ranges                      | Support three formats: <IP>, <CIDR> and <IP1>..<IP2>. Support IPv6. |
 | namespaces | Specifies the bound namespaces         | Optional                                                            |
 
-## 注意事项
+## Precautions
 
 1. To ensure compatibility with [Workload Universal IP Pool Fixed Address](./static-ip-mac.md#workload-ip-pool), the name of the IP pool cannot be an IP address;
 2. The `.spec.ips` of the IP pool can specify an IP address beyond the scope of the subnet, but the actual effective IP address is the intersection of `.spec.ips` and the CIDR of the subnet;
