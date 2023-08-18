@@ -30,7 +30,7 @@ spec:
       labels:
         app: ippool
       annotations:
-        ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17 // 双栈地址使用分号进行分隔 10.16.0.15,fd00:10:16::000E;10.16.0.16,fd00:10:16::0
+        ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17 // for dualstack ippool use semicolon to separate addresses 10.16.0.15,fd00:10:16::000E;10.16.0.16,fd00:10:16::0
     spec:
       containers:
         - name: ippool
