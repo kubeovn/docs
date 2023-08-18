@@ -1,4 +1,4 @@
-# document specification
+# Document Specification
 
 In order to ensure a consistent document style, please follow the following style guidelines when submitting documents.
 
@@ -64,7 +64,7 @@ wget 127.0.0.1
 </td></tr>
 </tbody></table>
 
-## code block
+## Code Block
 
 yaml code blocks need to be identified as yaml.
 
@@ -218,7 +218,7 @@ If you have any questions, please refer to [Kubernetes Documentation](http://kub
 </td></tr>
 </tbody></table>
 
-## Empty line
+## Empty Line
 
 Different logical blocks, such as title and text, text and code, text and number need to be separated by blank lines.
 
