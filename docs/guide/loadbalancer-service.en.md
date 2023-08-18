@@ -1,20 +1,20 @@
 # LoadBalancer Type Service
 
-Kube-OVN already supports the implementation of VPC and VPC gateway. For specific configration, please refer to [VPC configuration](vpc.en.md)。
+Kube-OVN supports the implementation of VPC and VPC gateway. For specific configurations, please refer to the [VPC configuration](vpc.en.md).
 
-Since the use of the VPC gateway is complicated, the implementation based on the VPC gateway has been simplified. It supports creating a `LoadBalancer` type of Service under the default VPC, and accessing the Service under the default VPC through the LoadBalancerIP.
+Due to the complexity of using VPC gateways, the implementation based on VPC gateways has been simplified. It supports creating LoadBalancer type Services in the default VPC, allowing access to Services in the default VPC through LoadBalancerIP.
 
-The environment must meets the following conditions:
+First, make sure the following conditions are met in the environment:
 
 1. Install `multus-cni` and `macvlan cni`。
-2. The support of LoadBalancer Service is a simplified implementation of the VPC gateway code. It still uses the image of `vpc-nat-gw` and relies on macvlan to provide multi-network card function support.
-3. Currently it only supports the `default VPC` configuration. For LoadBalancer support under custom VPC, please refer to the VPC document [VPC configuration](vpc.en.md).
+2. LoadBalancer Service support relies on simplified implementation of VPC gateway code, still utilizing the vpc-nat-gw image and depending on macvlan for multi-interface functionality support.
+3. Currently, it only supports configuration in the default VPC. Support for LoadBalancers in custom VPCs can be referred to in the [VPC configuration](vpc.en.md).
 
-## Default VPC LoadBalancer Service configuration steps
+## Steps to Configure Default VPC LoadBalancer Service
 
-### Enable the lb-svc feature
+### Enable Feature Flag
 
-Modify the deployment `kube-ovn-controller` under the kube-system namespace, add the parameter `--enable-lb-svc=true` in `args`, and enable the feature (which defaults to false).
+Modify the deployment `kube-ovn-controller` under the kube-system namespace and add the parameter `--enable-lb-svc=true` to the `args` section to enable the feature (by default it's set to false).
 
 ```yaml
 containers:
@@ -26,9 +26,9 @@ containers:
   - --enable-lb-svc=true                  // parameter is set to true
 ```
 
-### Create NetworkAttachmentDefinition CRD resource
+### Create NetworkAttachmentDefinition CRD Resource
 
-Create a `net-attach-def` resource by applying the following yaml:
+Refer to the following YAML and create the `net-attach-def` resource:
 
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
@@ -45,13 +45,13 @@ spec:
     }'
 ```
 
-By default, the physical network card `eth0` is used to implement the multi-network card function. If you need to use other physical network cards, you can specify the name of the physical network card to be used by modifying the value of `master`.
+By default, the physical NIC `eth0` is used to implement the multi-interface functionality. If another physical NIC is needed, modify the `master` value to specify the name of the desired physical NIC.
 
 ### Create Subnet
 
-The created Subnet is used to assign LoadBalancerIP to LoadBalancer Service, which should be accessible outside the cluster under normal circumstances. An Underlay Subnet can be configured for address assignment.
+The created Subnet is used to allocate LoadBalancerIP for the LoadBalancer Service, which should normally  be accessible from outside the cluster. An Underlay Subnet can be configured for address allocation.
 
-Create a new subnet by applying the following yaml:
+Refer to the following YAML to create a new subnet:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -67,13 +67,13 @@ spec:
   - 172.18.0.0..172.18.0.10
 ```
 
-The `provider` parameter in Subnet ends with `ovn` or `.ovn` as the suffix, indicating that the subnet is managed and used by Kube-OVN, and a `logical switch` record needs to be created accordingly.
+In the `provider` parameter of the Subnet, `ovn` or `.ovn` suffix is used to indicate that the subnet is managed by Kube-OVN and requires corresponding logical switch records to be created.
 
-`provider` does not end with `ovn` or does not end with `.ovn`, Kube-OVN only provides the IPAM function, records the IP address allocation, and does not perform business logic processing on the subnet.
+If `provider` is neither `ovn` nor ends with `.ovn`, Kube-OVN only provides the IPAM functionality to record IP address allocation without handling business logic for the subnet.
 
 ### Create LoadBalancer Service
 
-Create a LoadBalancer Service with reference to the following yaml:
+Refer to the following YAML to create a LoadBalancer Service:
 
 ```yaml
 apiVersion: v1
@@ -99,13 +99,14 @@ spec:
    type: LoadBalancer
 ```
 
-In yaml, the annotation `ovn.kubernetes.io/attachmentprovider` is required, and its value is composed of the Name.Namespace of the `net-attach-def` resource created in the first step. This annotation is used to look for `net-attach-def` resources when creating Pods.
+In the yaml, the annotation `ovn.kubernetes.io/attachmentprovider` is required, and its value is composed of the Name.Namespace of the `net-attach-def` resource created in the first step. This annotation is used to find the `net-attach-def` resources when creating Pods.
 
-The subnet used for multi-NIC address allocation can be specified through annotation. The annotation key format is `Name.Namespace.kubernetes.io/logical_switch` of the net-attach-def resource. This configuration is an `optional` option. If no LoadBalancerIP address is specified, an address will be dynamically allocated from this subnet to fill in the LoadBalancerIP field.
+The subnet used for multi-interface address allocation can be specified through an annotation. The annotation key format is `net-attach-def` resource's `Name.Namespace.kubernetes.io/logical_switch`. This configuration is `optional` and if LoadBalancerIP address is not specified, addresses will be dynamically allocated from this subnet and filled into the LoadBalancerIP field.
 
-If you need to statically configure the LoadBalancerIP address, you can configure the `spec.loadBalancerIP` field, and the address needs to be within the address range of the specified subnet.
+If a static LoadBalancerIP address is required, the `spec.loadBalancerIP` field can be configured. The address must be within the specified subnet's address range.
 
-After executing yaml to create the Service, under the same Namespace as the Service, you can see the Pod startup information:
+After creating the Service using the YAML, you can see the Pod startup information in the same namespace as the Service:
+
 
 ```bash
 # kubectl get pod
@@ -116,9 +117,9 @@ NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
 test-service LoadBalancer 10.109.201.193 172.18.0.18 80:30056/TCP 107m
 ```
 
-When the `service.spec.loadBalancerIP` parameter is specified, the parameter is finally assigned to the service external-ip field. If not specified, this parameter is randomly assigned a value.
+When specifying the `service.spec.loadBalancerIP` parameter, it will be assigned to the service's external IP field. If not specified, the parameter will be assigned a random value.
 
-View the yaml output of the test Pod, and there is address information allocated by multiple NICs:
+View the YAML output of the test Pod to see the assigned multi-interface addresses:
 
 ```bash
 # kubectl get pod -o yaml lb-svc-test-service-6869d98dd8-cjvll
@@ -218,29 +219,115 @@ status:
      - ip: 172.18.0.18
 ```
 
-## Test LoadBalancerIP access
+## Testing LoadBalancerIP access
 
-Referring to the following yaml, create a test Pod to serve as the Endpoints of the Service:
+Refer to the following YAML to create a test Pod that serves as the Endpoints for the Service:
 
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-   labels:
-     app: dynamic
-   name: dynamic
-   namespace: default
+  labels:
+    app: dynamic
+  name: dynamic
+  namespace: default
 spec:
-   replicas: 2
-   selector:
-     matchLabels:
-       app: dynamic
-   strategy:
-     rollingUpdate:
-       maxSurge: 25%
-       maxUnavailable: 25%
-     type: RollingUpdate
-   template:
-     metadata:
-       creationTimestamp: null
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dynamic
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: dynamic
+    spec:
+      containers:
+      - image: docker.io/library/nginx:alpine
+        imagePullPolicy: IfNotPresent
+        name: nginx
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+```
+
+Under normal circumstances, the provided subnet addresses should be accessible from outside the cluster. To verify, access the Service's `LoadBalancerIP:Port` from within the cluster and check if the access is successful.
+
+```bash
+# curl 172.18.0.11:80
+<html>
+<head>
+        <title>Hello World!</title>
+        <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+        <style>
+        body {
+                background-color: white;
+                text-align: center;
+                padding: 50px;
+                font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+        #logo {
+                margin-bottom: 40px;
+        }
+        </style>
+</head>
+<body>
+                <h1>Hello World!</h1>
+                                <h3>Links found</h3>
+        <h3>I am on  dynamic-7d8d7874f5-hsgc4</h3>
+        <h3>Cookie                  =</h3>
+                                        <b>KUBERNETES</b> listening in 443 available at tcp://10.96.0.1:443<br />
+                                                <h3>my name is hanhouchao!</h3>
+                        <h3> RequestURI='/'</h3>
+</body>
+</html>
+```
+
+Enter the Pod created by the Service and check the network information:
+
+```bash
+# ip a
+4: net1@if62: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+    link/ether ba:85:f7:02:9f:42 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 172.18.0.18/16 scope global net1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::b885:f7ff:fe02:9f42/64 scope link
+       valid_lft forever preferred_lft forever
+36: eth0@if37: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc noqueue state UP group default
+    link/ether 00:00:00:45:f4:29 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.16.0.2/16 brd 10.16.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::200:ff:fe45:f429/64 scope link
+       valid_lft forever preferred_lft forever
+
+# ip rule
+0: from all lookup local
+32764: from all iif eth0 lookup 100
+32765: from all iif net1 lookup 100
+32766: from all lookup main
+32767: from all lookup default
+
+# ip route show table 100
+default via 172.18.0.1 dev net1
+10.109.201.193 via 10.16.0.1 dev eth0
+172.18.0.0/16 dev net1 scope link
+
+# iptables -t nat -L -n -v
+Chain PREROUTING (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 DNAT       tcp  --  *      *       0.0.0.0/0            172.18.0.18          tcp dpt:80 to:10.109.201.193:80
+
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain POSTROUTING (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 MASQUERADE  all  --  *      *       0.0.0.0/0            10.109.201.193
 ```
