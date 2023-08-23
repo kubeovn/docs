@@ -382,9 +382,9 @@ spec:
   vpcSubnet: vpc1-subnet1 # eip corresponds to the entire network segment
 ```
 
-### 3.2 ovn-fip corresponds to a pod IP
+### 3.2 ovn-snat corresponds to a pod IP
 
-This feature is designed and used in much the same way as iptables-fip
+This feature is designed and used in much the same way as iptables-snat
 
 ```bash
 # cat 03-pod-snat.yaml
