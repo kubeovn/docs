@@ -36,7 +36,7 @@ Kube-OVN provides a one-click installation script to install version 1.10 of Kub
 </td></tr>
 </tbody></table>
 
-Example content should start with `:`, other sentences should end with `. ` End.
+Example content should start with `:`, other sentences should end with `.` End.
 
 <table>
 <thead><tr><th>Bad</th><th>Good</th></tr></thead>
