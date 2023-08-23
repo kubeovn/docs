@@ -107,7 +107,6 @@ If a static LoadBalancerIP address is required, the `spec.loadBalancerIP` field 
 
 After creating the Service using the YAML, you can see the Pod startup information in the same namespace as the Service:
 
-
 ```bash
 # kubectl get pod
 NAME READY STATUS RESTARTS AGE
