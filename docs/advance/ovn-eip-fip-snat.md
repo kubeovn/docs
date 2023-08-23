@@ -381,9 +381,9 @@ spec:
   vpcSubnet: vpc1-subnet1 # eip 对应整个网段
 ```
 
-### 3.2 ovn-fip 对应到一个 pod ip
+### 3.2 ovn-snat 对应到一个 pod ip
 
-该功能和 iptables-fip 设计和使用方式基本一致
+该功能和 iptables-snat 设计和使用方式基本一致
 
 ```bash
 # cat 03-pod-snat.yaml
