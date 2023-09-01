@@ -1,10 +1,10 @@
-# NAT Policy Rule Function
+# Default VPC NAT Policy Rule
 
-## NAT Policy Rule Function Purpose
+## Purpose
 
-In the Overlay subnet under the default VPC, when the `natOutgoing` switch is turned on, all Pods in the subnet need to do SNAT to access the external network to the IP of the current node, but in some scenarios we do not want all Pods in the subnet to access the external network by SNAT.
+In the Overlay Subnet under the default VPC, when the `natOutgoing` switch is turned on, all Pods in the subnet need to do SNAT to access the external network, but in some scenarios we do not want all Pods in the subnet to access the external network by SNAT.
 
-So the NAT Policy Rule is to provide an interface for users to decide which CIDRs or IPs in the subnet to access the external network for SNAT.
+So the NAT Policy Rule is to provide a way for users to decide which CIDRs or IPs in the subnet to access the external network need SNAT.
 
 ## How to use NAT Policy Rules
 
@@ -30,8 +30,7 @@ The above case shows that there are two NAT policy rules:
 
 Field description:
 
-Action: Indicates the action that will be executed for the message that meets the corresponding conditions of the "match". The action is divided into two types: `forward` and `nat`. SNAT.
-When natOutgoingPolicyRules is not configured, packets are still SNAT by default.
+`action`: The action that will be executed for packets that meets the corresponding conditions of the `match`. The action is divided into two types: `forward` and `nat`. When natOutgoingPolicyRules is not configured, packets are still SNAT by default.
 
-match: Indicates the matching segment of the message, the matching segment includes srcIPs and dstIPs, here indicates the source IP and destination IP of the message from the subnet to the external network. `match.srcIPs` and `match.dstIPs` support multiple cidr and ip, separated by commas.
-If several matches are repeated but the actions are different, the array position of natOutgoingPolicyRules shall prevail, and the lower the array index, the higher the priority.
+`match`: Indicates the matching segment of the message, the matching segment includes `srcIPs` and `dstIPs`, here indicates the source IP and destination IP of the message from the subnet to the external network. `match.srcIPs` and `match.dstIPs` support multiple cidr and ip, separated by commas.
+If multiple match rules overlap, the action that is matched first will be executed according to the order of the `natOutgoingPolicyRules` array.

@@ -67,7 +67,7 @@ nav:
       - OVN IPsec 支持: 'advance/ovn-ipsec.md'
       - OVN 流量镜像: 'advance/ovn-remote-port-mirroring.md'
       - 节点本地 DNS 缓存和 Kube-OVN 适配 : 'advance/node-local-dns.md'
-      - NAT 策略规则功能 : 'advance/nat-policy-rule.md'
+      - 默认 VPC NAT 策略规则: 'advance/nat-policy-rule.md'
   - 技术参考:
       - 总体架构: 'reference/architecture.md'
       - 功能成熟度: 'reference/feature-stage.md'
@@ -210,7 +210,7 @@ plugins:
           OVN IPsec 支持: OVN IPsec Support
           OVN 流量镜像: OVN Remote Port Mirroring
           节点本地 DNS 缓存和 Kube-OVN 适配 : Node Local DNS Cache and Kube-OVN Adaptation
-          NAT 策略规则功能 : NAT Policy Rule Function
+          默认 VPC NAT 策略规则: Default VPC NAT Policy Rule
           调整日志等级: Change Log Level
           使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: Use Sealos to Deploy Kubernetes and Kube-OVN
   - git-revision-date-localized:
