@@ -48,6 +48,8 @@ ip route add 10.166.0.0/16 via 192.168.2.10 dev eth0
 
 If the peer host and the container host are not in the same layer 2 network, you need to configure the corresponding rules on the router.
 
+*Note*: Specifying an IP for a single node may lead to single point of failure. To achieve fast failover, Keepalived can be used to set up a VIP for multiple nodes, and the next hop of the route can be directed to the VIP.
+
 In some virtualized environments, the virtual network identifies asymmetric traffic as illegal traffic and drops it.
 In this case, you need to adjust the `gatewayType` of the Subnet to `centralized` and set the next hop to the IP of the `gatewayNode` node during route setup.
 
