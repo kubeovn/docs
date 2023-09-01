@@ -299,6 +299,7 @@ spec:
 ## 其他高级设置
 
 - [IP 池使用](./ippool.md)
+- [默认 VPC NAT 策略规则](../advance/nat-policy-rule.md)
 - [QoS 设置](./qos.md)
 - [多网卡管理](../advance/multi-nic.md)
 - [DHCP 选项](../advance/dhcp.md)

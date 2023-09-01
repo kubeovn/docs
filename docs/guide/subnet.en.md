@@ -312,6 +312,7 @@ spec:
 ## Other Advanced Settings
 
 - [Configure IPPool](./ippool.en.md)
+- [Default VPC NAT Policy Rule](../advance/nat-policy-rule.en.md)
 - [Manage QoS](./qos.en.md)
 - [Manage Multiple Interface](../advance/multi-nic.en.md)
 - [DHCP](../advance/dhcp.en.md)

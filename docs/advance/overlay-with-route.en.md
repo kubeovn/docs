@@ -69,3 +69,5 @@ spec:
   gatewayNode: "node1"
   natOutgoing: false
 ```
+
+If you still want to perform NAT processing for some traffic, such as traffic accessing the Internet, please refer to the [Default VPC NAT Policy Rule](../advance/nat-policy-rule.md).
