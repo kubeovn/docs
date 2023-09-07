@@ -86,7 +86,7 @@ Using a fixed IP for Workload requires the following:
 
 ## StatefulSet Fixed Address
 
-StatefulSet supports fixed ip by default, and like other Workload, you can use `ovn.kubernetes.io/ip_pool` to specify the range of IP used by a Pod.
+StatefulSet supports fixed IP by default, and like other Workload, you can use `ovn.kubernetes.io/ip_pool` to specify the range of IP used by a Pod.
 
 Since StatefulSet is mostly used for stateful services,
 which have higher requirements for fixed addresses, Kube-OVN has made special enhancements:
