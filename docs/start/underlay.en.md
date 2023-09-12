@@ -110,7 +110,7 @@ spec:
 Other nodes will be added with the following tags:
 
 | Key                                               | Value | Description                                                 |
-| ------------------------------------------------- | ----- |-------------------------------------------------------------|
+| ------------------------------------------------- | ----- | ----------------------------------------------------------- |
 | net1.provider-network.ovn.kubernetes.io/ready     | true  | bridge work finished, ProviderNetwork is ready on this node |
 | net1.provider-network.ovn.kubernetes.io/interface | eth1  | The name of the bridged NIC in the node.                    |
 | net1.provider-network.ovn.kubernetes.io/mtu       | 1500  | MTU of bridged NIC in node                                  |
@@ -205,7 +205,7 @@ By default, the Underlay Subnet will communicate with the Overlay Subnet on the 
 
 ## Notice
 
-If there are IP addresses on the host nic, the OS you are using is Ubuntu, and the networking is configured with Netplan, it's recomanded to set NetworkManager as the renderer and to set static IP addresses for the nic (disable DHCP):
+If you have an IP address configured on the network card of the node you are using, and the operating system configures the network using Netplan (such as Ubuntu), it is recommended that you set the renderer of Netplan to NetworkManager and configure a static IP address for the node's network card (disable DHCP).
 
 ```yaml
 network:
@@ -218,21 +218,24 @@ network:
   version: 2
 ```
 
-If the host networking service is NetworkManager, Kube-OVN will remove the host nic from the managed devices (managed by NetworkManager is no) after creating ProviderNetwork:
-
-```shell
-root@ubuntu:~# nmcli device status
-DEVICE   TYPE      STATE      CONNECTION
-eth0     ethernet  unmanaged  netplan-eth0
-```
-
-If you want to change the host nic's IP/route configuration, you need to set the nic managed by NetworkManager manually:
+If you want to modify the IP or routing configuration of the network card, you need to execute the following commands after modifying the Netplan configuration:
 
 ```sh
+netplan generate
+
+nmcli connection reload netplan-eth0
 nmcli device set eth0 managed yes
 ```
 
-After setting managed to yes，Kube-OVN will transfer IP and routes on the nic to the OVS bridge, and remove the nic from the managed devices again.
+After executing the above commands, Kube-OVN will transfer the IP and routing from the network card to the OVS bridge.
+
+If your operating system manages the network using NetworkManager (such as CentOS), you need to execute the following command after modifying the network card configuration:
+
+```sh
+nmcli connection reload eth0
+nmcli device set eth0 managed yes
+nmcli -t -f GENERAL.STATE device show eth0 | grep -qw unmanaged || nmcli device reapply eth0
+```
 
 **Notice**：If the host nic's MAC is changed, Kube-OVN will not change the OVS bridge's MAC unless kube-ovn-cni is restarted.
 

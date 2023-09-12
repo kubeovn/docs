@@ -189,7 +189,7 @@ spec:
 
 ## 注意事项
 
-如果您使用的节点网卡上配置有 IP 地址，且操作系统是 Ubuntu 并通过 Netplan 配置网络，建议您将 Netplan 的 renderer 设置为 NetworkManager，并为节点网卡配置静态 IP 地址（关闭 DHCP）：
+如果您使用的节点网卡上配置有 IP 地址，且操作系统通过 Netplan 配置网络（如 Ubuntu），建议您将 Netplan 的 renderer 设置为 NetworkManager，并为节点网卡配置静态 IP 地址（关闭 DHCP）：
 
 ```yaml
 network:
@@ -202,21 +202,24 @@ network:
   version: 2
 ```
 
-若节点网络管理服务为 NetworkManager，在使用节点网卡创建 ProviderNetwork 后，Kube-OVN 会将网卡从 NetworkManager 管理列表中移除（managed 属性为 no）：
-
-```shell
-root@ubuntu:~# nmcli device status
-DEVICE   TYPE      STATE      CONNECTION
-eth0     ethernet  unmanaged  netplan-eth0
-```
-
-如果您要修改网卡的 IP 或路由配置，需要手动将网卡重新加入 NetworkManager 管理列表：
+如果您要修改网卡的 IP 或路由配置，需要在修改 netplan 配置后执行以下命令：
 
 ```sh
+netplan generate
+
+nmcli connection reload netplan-eth0
 nmcli device set eth0 managed yes
 ```
 
-执行以上命令后，Kube-OVN 会将网卡上的 IP 及路由重新转移至 OVS 网桥，并再次将网卡从 NetworkManager 管理列表中移除。
+执行以上命令后，Kube-OVN 会将网卡上的 IP 及路由重新转移至 OVS 网桥。
+
+如果您使用的操作系统通过 NetworkManager 管理网络（如 CentOS），在修改网卡配置后需要执行以下命令：
+
+```sh
+nmcli connection reload eth0
+nmcli device set eth0 managed yes
+nmcli -t -f GENERAL.STATE device show eth0 | grep -qw unmanaged || nmcli device reapply eth0
+```
 
 **注意**：节点网卡配置的动态修改仅支持 IP 和路由，不支持 MAC 地址的修改。
 
