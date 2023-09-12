@@ -189,7 +189,7 @@ For VM instances created by Kubevirt, `kube-ovn-controller` can assign and manag
 This allows VM instances address fixed during start-up, shutdown, upgrade, migration, and other operations throughout their lifecycle,
 making them more compatible with the actual virtualization user experience.
 
-This feature is enable by default after v1.10.6. To disable this feature, you need to change the following args in the `kube-ovn-controller` Deployment:
+This feature is enabled by default after v1.10.6. To disable this feature, you need to change the following args in the `kube-ovn-controller` Deployment:
 
 ```yaml
 args:
@@ -198,7 +198,7 @@ args:
 
 ## CNI Settings
 
-KBy default, Kube-OVN installs the CNI binary in the `/opt/cni/bin` directory
+By default, Kube-OVN installs the CNI binary in the `/opt/cni/bin` directory
 and the CNI configuration file `01-kube-ovn.conflist` in the `/etc/cni/net.d` directory.
 If you need to change the installation location and the priority of the CNI configuration file,
 you can modify the following parameters of the installation script.
