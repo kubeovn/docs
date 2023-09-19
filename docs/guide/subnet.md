@@ -296,6 +296,19 @@ spec:
   disableGatewayCheck: true
 ```
 
+## Multicast-Snoop 配置
+
+默认情况下 subnet 下的 Pod 如果发送组播报文，OVN 的默认行为是会广播组播报文到子网下所有的 Pod。如果开启subnet 的 multicast snoop 开关，OVN 会根据 `South Database` 中的组播表 `Multicast_Group` 来进行转发，而不在进行广播。
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: sample1
+spec:
+  enableMulticastSnoop: true
+```
+
 ## 其他高级设置
 
 - [IP 池使用](./ippool.md)

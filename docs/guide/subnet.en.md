@@ -309,6 +309,19 @@ spec:
   disableGatewayCheck: true
 ```
 
+## Multicast-Snoop Setting
+
+By default, if a Pod in a subnet sends a multicast packet, OVN's default behavior is to broadcast the multicast packet to all Pods in the subnet. If turned on the subnet's multicast snoop switch, OVN will forward based on the multicast table `Multicast_Group` in the `South Database` instead of broadcasting.
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: sample1
+spec:
+  enableMulticastSnoop: true
+```
+
 ## Other Advanced Settings
 
 - [Configure IPPool](./ippool.en.md)
