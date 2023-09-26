@@ -46,7 +46,7 @@ The following points need to be noted when using annotation.
 ## Workload IP Pool
 
 Kube-OVN supports setting fixed IPs for Workloads (Deployment/StatefulSet/DaemonSet/Job/CronJob) via annotation `ovn.kubernetes.io/ip_pool`.
-`kube-ovn-controllerr` will automatically select the IP specified in `ovn.kubernetes.io/ip_pool` and perform conflict detection.
+`kube-ovn-controller` will automatically select the IP specified in `ovn.kubernetes.io/ip_pool` and perform conflict detection.
 
 The Annotation of the IP Pool needs to be added to the `annotation` field in the `template`.
 In addition to Kubernetes built-in workload types, other user-defined workloads can also be assigned fixed addresses using the same approach.

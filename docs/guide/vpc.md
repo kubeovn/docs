@@ -315,7 +315,7 @@ spec:
 
 ### 创建浮动 IP
 
-通过浮动 IP 规则，VPC 内的一个 IP 会和 EIP 进行完全映射，外部可以通过这个 EIP 方位 VPC 内的 IP，VPC 内的这个 IP 访问外部地址时也会 SNAT 成这个 EIP。
+通过浮动 IP 规则，VPC 内的一个 IP 会和 EIP 进行完全映射，外部可以通过这个 EIP 访问 VPC 内的 IP，VPC 内的这个 IP 访问外部地址时也会 SNAT 成这个 EIP。
 
 ```yaml
 ---
