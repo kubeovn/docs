@@ -14,7 +14,7 @@ metadata:
         "gw": "10.16.0.254"
       }, {
         "gw": "10.16.0.254"
-      }]'
+      }]
 spec:
   containers:
   - name: nginx
@@ -48,7 +48,7 @@ spec:
             "gw": "10.16.0.254"
           }, {
             "gw": "10.16.0.254"
-          }]'
+          }]
     spec:
       containers:
       - name: nginx

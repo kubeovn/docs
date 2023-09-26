@@ -36,7 +36,7 @@ spec:
 ## Workload 通用 IP Pool 固定地址
 
 Kube-OVN 支持通过 annotation `ovn.kubernetes.io/ip_pool` 给 Workload（Deployment/StatefulSet/DaemonSet/Job/CronJob）设置固定 IP。
-`kube-ovn-controllerr` 会自动选择 `ovn.kubernetes.io/ip_pool` 中指定的 IP 并进行冲突检测。
+`kube-ovn-controller` 会自动选择 `ovn.kubernetes.io/ip_pool` 中指定的 IP 并进行冲突检测。
 
 IP Pool 的 Annotation 需要加在 `template` 内的 `annotation` 字段，除了 Kubernetes 内置的 Workload 类型，
 其他用户自定义的 Workload 也可以使用同样的方式进行固定地址分配。
