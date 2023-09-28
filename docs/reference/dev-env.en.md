@@ -9,7 +9,7 @@ to manage dependency, please check env `GO111MODULE="on"`。
 and requires to be installed in the development environment:
 
 ```bash
-go get github.com/securego/gosec/v2/cmd/gosec
+go install github.com/securego/gosec/v2/cmd/gosec@latest
 ```
 
 To reduce the size of the final generated image, Kube-OVN uses some of the Docker buildx experimental features,
