@@ -8,7 +8,7 @@ Kube-OVN 使用 [Go](https://golang.org/){: target="_blank" } 1.20 开发并使�
 [gosec](https://github.com/securego/gosec){: target="_blank" } 被用来扫描代码安全相关问题，需要在开发环境安装：
 
 ```bash
-go get github.com/securego/gosec/v2/cmd/gosec
+go install github.com/securego/gosec/v2/cmd/gosec@latest
 ```
 
 为了降低最终生成镜像大小，Kube-OVN 使用了部分 Docker buildx 试验特性，请更新 Docker 至最新版本
