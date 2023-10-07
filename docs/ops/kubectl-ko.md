@@ -53,10 +53,11 @@ Available Subcommands:
   dpctl {nodeName} [ovs-dpctl options ...]   invoke ovs-dpctl on the specified node
   appctl {nodeName} [ovs-appctl options ...]   invoke ovs-appctl on the specified node
   tcpdump {namespace/podname} [tcpdump options ...]     capture pod traffic
-  trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]    trace ICMP/TCP/UDP
-  trace {namespace/podname} {target ip address} [target mac address] arp {request|reply}                     trace ARP request/reply
-  trace {node//nodename} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]       trace ICMP/TCP/UDP
-  trace {node//nodename} {target ip address} [target mac address] arp {request|reply}                        trace ARP request/reply
+  {trace|ovn-trace} ...    trace ovn microflow of specific packet"
+    {trace|ovn-trace} {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]    trace ICMP/TCP/UDP
+    {trace|ovn-trace} {namespace/podname} {target ip address} [target mac address] arp {request|reply}                     trace ARP request/reply
+    {trace|ovn-trace} {node//nodename} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]       trace ICMP/TCP/UDP
+    {trace|ovn-trace} {node//nodename} {target ip address} [target mac address] arp {request|reply}                        trace ARP request/reply
   echo "  diagnose {all|node|subnet|IPPorts} [nodename|subnetName|{proto1}-{IP1}-{Port1},{proto2}-{IP2}-{Port2}]    diagnose connectivity of all nodes or a specific node or specify subnet's ds pod or IPPorts like 'tcp-172.18.0.2-53,udp-172.18.0.3-53'"
   tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]  deploy  kernel optimisation components to the system
   reload    restart all kube-ovn components
