@@ -103,34 +103,6 @@ spec:
     }'
 ```
 
-## 修改 ovn-default 子网的 provider
-
-修改 ovn-default 的 provider，为上面 nad 配置的 provider `ovn-nad.default.ovn`
-
-```yaml
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: ovn-default
-spec:
-  cidrBlock: 10.16.0.0/16
-  default: true
-  disableGatewayCheck: false
-  disableInterConnection: false
-  enableDHCP: false
-  enableIPv6RA: false
-  excludeIps:
-  - 10.16.0.1
-  gateway: 10.16.0.1
-  gatewayType: distributed
-  logicalGateway: false
-  natOutgoing: true
-  private: false
-  protocol: IPv4
-  provider: ovn-nad.default.ovn # 只需修改该字段
-  vpc: ovn-cluster
-```
-
 ## 配置 vpc-dns 的 Configmap
 
 在 kube-system 命名空间下创建 configmap，配置 vpc-dns 使用参数，用于后面启动 vpc-dns 功能：
@@ -169,10 +141,12 @@ metadata:
 spec:
   vpc: cjh-vpc-1
   subnet: cjh-subnet-1
+  replicas: 2
 ```
 
 * `vpc` ： 用于部署 dns 组件的 vpc 名称。
 * `subnet`：用于部署 dns 组件的子名称。
+* `replicas`: vpc dns deployment replicas
 
 查看部署资源的信息：
 
@@ -185,7 +159,8 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 
 `ACTIVE` : `true` 部署了自定义 dns 组件，`false` 无部署。
 
-* 限制：一个 VPC 下只会部署一个自定义 dns 组件;
+限制：一个 VPC 下只会部署一个自定义 dns 组件;
+
 * 当一个 VPC 下配置多个 vpc-dns 资源（即同一个 VPC 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `fasle`;
 * 当 `true` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。
 
