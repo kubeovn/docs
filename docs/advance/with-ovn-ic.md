@@ -245,7 +245,7 @@ kubectl -n kube-system delete cm ovn-ic-config
 删除 `ts` 逻辑交换机：
 
 ```bash
-kubectl-ko nbctl ls-del ts
+kubectl ko nbctl ls-del ts
 ```
 
 在对端集群重复同样的步骤。
@@ -257,4 +257,34 @@ kubectl-ko nbctl ls-del ts
 
 ```bash
 ovn-appctl -t ovn-controller inc-engine/recompute
+```
+
+## 清理集群互联
+
+删除所有集群的 `ovn-ic-config` Configmap：
+
+```bash
+kubectl -n kube-system delete cm ovn-ic-config
+```
+
+删除所有集群的 `ts` 逻辑交换机：
+
+```bash
+kubectl ko nbctl ls-del ts
+```
+
+删除集群互联控制器，如果是高可用 OVN-IC 数据库部署，需要都清理掉。
+
+如果控制器是 `docker` 部署执行命令：
+
+```bash
+docker stop ovn-ic-db 
+docker rm ovn-ic-db
+```
+
+如果控制器是 `containerd` 部署执行命令：
+
+```bash
+ctr -n k8s.io task kill ovn-ic-db
+ctr -n k8s.io containers rm ovn-ic-db
 ```
