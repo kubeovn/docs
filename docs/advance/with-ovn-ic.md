@@ -245,7 +245,7 @@ kubectl -n kube-system delete cm ovn-ic-config
 删除 `ts` 逻辑交换机：
 
 ```bash
-kubectl-ko nbctl ls-del ts
+kubectl ko nbctl ls-del ts
 ```
 
 在对端集群重复同样的步骤。
@@ -270,7 +270,7 @@ kubectl -n kube-system delete cm ovn-ic-config
 删除所有集群的 `ts` 逻辑交换机：
 
 ```bash
-kubectl-ko nbctl ls-del ts
+kubectl ko nbctl ls-del ts
 ```
 
 删除集群互联控制器，如果是高可用 OVN-IC 数据库部署，需要都清理掉。
