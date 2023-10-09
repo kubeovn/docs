@@ -254,7 +254,37 @@ kubectl -n kube-system delete cm ovn-ic-config
 Delete `ts` logical switch:
 
 ```bash
-kubectl-ko nbctl ls-del ts
+kubectl ko nbctl ls-del ts
 ```
 
 Repeat the same steps at the peer cluster.
+
+## Clean OVN-IC
+
+Delete the `ovn-ic-config` Configmap for all clusters:
+
+```bash
+kubectl -n kube-system delete cm ovn-ic-config
+```
+
+Delete all clusters' `ts` logical switches:
+
+```bash
+kubectl ko nbctl ls-del ts
+```
+
+Delete the cluster interconnect controller. If it is a high-availability OVN-IC database deployment, all need to be cleaned up.
+
+If the controller is `docker` deploy execute command:
+
+```bash
+docker stop ovn-ic-db 
+docker rm ovn-ic-db
+```
+
+If the controller is `containerd` deploy the command:
+
+```bash
+ctr -n k8s.io task kill ovn-ic-db
+ctr -n k8s.io containers rm ovn-ic-db
+```
