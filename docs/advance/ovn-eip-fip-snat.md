@@ -27,7 +27,7 @@ Pod 基于 FIP 出公网的大致流程，最后可以基于本地节点的公�
 
 ## 1. 部署
 
-目前允许所有（默认以及自定义）vpc 使用同一个默认 provider vlan subnet 资源，同时自定义vpc支持使用额外 provider vlan subnet 资源连接多个公网网卡，兼容[默认 VPC EIP/SNAT](../guide/eip-snat.md)的场景。
+目前允许所有（默认以及自定义） vpc 使用同一个默认 provider vlan subnet 资源，同时自定义 vpc 支持扩展 provider vlan subnet 从而实现使用多个公网，兼容[默认 VPC EIP/SNAT](../guide/eip-snat.md)的场景。
 
 类似 neutron ovn，服务启动配置中需要指定 provider network 相关的配置，下述的启动参数也是为了兼容 VPC EIP/SNAT 的实现。
 
@@ -111,7 +111,7 @@ data:
 
 ### 1.3 自定义 vpc 启用默认 eip snat fip 功能
 
-自定义 vpc 不再使用 ConfigMap 启用 eip_snat，而是采用 label 的方式
+集群一般需要多个网关 node 来实现高可用，配置如下：
 
 ```bash
 # 首先通过添加标签指定 external-gw-nodes
@@ -183,11 +183,11 @@ Route Table <main>:
 # 目前该路由已自动维护
 ```
 
-### 1.4 自定义 vpc 启用多公网网卡功能
+### 1.4 使用额外的公网网络
 
 #### 1.4.1 准备额外 underlay 公网网络
 
-多公网网卡功能在启动默认 eip snat fip 功能后才会启用，若只有 1 个公网网卡，请使用默认 eip snat fip 功能
+额外的公网网络功能在启动默认 eip snat fip 功能后才会启用，若只有 1 个公网网卡，请使用默认 eip snat fip 功能
 
 ```yaml
 # 准备 provider-network， vlan， subnet
@@ -230,7 +230,7 @@ metadata:
 spec:
   namespaces:
   - vpc1
-  staticRoutes:         # 配置路由规则 
+  staticRoutes:         # 配置路由规则：vpc下的某个子网需要基于哪一个额外的公网网络的路由需要手动添加，以下示例仅供参考，用户需根据自己的实际情况进行配置
   - cidr: 192.168.0.1/28
     nextHopIP: 10.10.204.254
     policy: policySrc
@@ -289,7 +289,7 @@ spec:
 # 动态分配一个 eip 资源，该资源预留用于 fip 场景
 ```
 
-当配置了额外公网网络时，可以通过externalSubnet指定需要使用的公网网络，在上述配置中，可选external204和extra两个公网网络
+当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
 
 ### 2.1 ovn-fip 为 pod 绑定一个 fip
 
@@ -467,7 +467,7 @@ spec:
   vpcSubnet: vpc1-subnet1 # eip 对应整个网段
 ```
 
-当配置了额外公网网络时，可以通过externalSubnet指定需要使用的公网网络，在上述配置中，可选external204和extra两个公网网络
+当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
 
 ### 3.2 ovn-snat 对应到一个 pod ip
 
@@ -495,7 +495,7 @@ spec:
 
 ```
 
-当配置了额外公网网络时，可以通过externalSubnet指定需要使用的公网网络，在上述配置中，可选external204和extra两个公网网络
+当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
 
 以上资源创建后，可以看到 snat 公网功能依赖的如下资源。
 
@@ -604,7 +604,7 @@ spec:
   externalPort: "22"
 ```
 
-当配置了额外公网网络时，可以通过externalSubnet指定需要使用的公网网络，在上述配置中，可选external204和extra两个公网网络
+当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
 
 OvnDnatRule 的配置与 IptablesDnatRule 类似
 
