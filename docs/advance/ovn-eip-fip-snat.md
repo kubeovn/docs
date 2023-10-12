@@ -220,7 +220,7 @@ spec:
   - 10.10.204.1..10.10.204.100
 ```
 
-#### 1.4.1 自定义 vpc 配置
+#### 1.4.2 自定义 vpc 配置
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -549,9 +549,6 @@ PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
 
 [root@pc-node-1 03-cust-vpc]# k exec -it -n vpc1            vpc-1-busybox02   bash
 kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
-[root@vpc-1-busybox02 /]#
-[root@vpc-1-busybox02 /]#
-[root@vpc-1-busybox02 /]#
 [root@vpc-1-busybox02 /]# ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
