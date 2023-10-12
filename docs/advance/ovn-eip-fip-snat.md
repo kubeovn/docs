@@ -604,7 +604,7 @@ spec:
   externalPort: "22"
 ```
 
-当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
+当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络（目前扩展额外公网网络时，dnat 功能暂不支持）
 
 OvnDnatRule 的配置与 IptablesDnatRule 类似
 
