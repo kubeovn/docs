@@ -27,7 +27,7 @@ Pod 基于 FIP 出公网的大致流程，最后可以基于本地节点的公�
 
 ## 1. 部署
 
-目前允许所有（默认以及自定义）vpc 使用同一个 provider vlan subnet 资源，同时兼容[默认 VPC EIP/SNAT](../guide/eip-snat.md)的场景。
+目前允许所有（默认以及自定义）vpc 使用同一个默认 provider vlan subnet 资源，同时自定义vpc支持使用额外 provider vlan subnet 资源连接多个公网网卡，兼容[默认 VPC EIP/SNAT](../guide/eip-snat.md)的场景。
 
 类似 neutron ovn，服务启动配置中需要指定 provider network 相关的配置，下述的启动参数也是为了兼容 VPC EIP/SNAT 的实现。
 
@@ -109,7 +109,14 @@ data:
 如果指定了，则相当于指定 ip 创建 lrp 类型的 ovn-eip。
 当然也可以提前手动创建 lrp 类型的 ovn eip。
 
-### 1.3 自定义 vpc 启用 eip snat fip 功能
+### 1.3 自定义 vpc 启用默认 eip snat fip 功能
+
+自定义 vpc 不再使用 ConfigMap 启用 eip_snat，而是采用 label 的方式
+
+```bash
+# 首先通过添加标签指定 external-gw-nodes
+kubectl label nodes pc-node-1 pc-node-2 pc-node-3 ovn.kubernetes.io/external-gw=true
+```
 
 ``` bash
 # cat 00-ns.yml
@@ -166,10 +173,6 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
         mac: "00:00:00:EF:05:C7"
         networks: ["10.5.204.105/24"]
         gateway chassis: [7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd]
-    nat 21d853b0-f7b4-40bd-9a53-31d2e2745739
-        external ip: "10.5.204.115"
-        logical ip: "192.168.0.0/24"
-        type: "snat"
 ```
 
 ``` bash
@@ -178,6 +181,91 @@ IPv4 Routes
 Route Table <main>:
                 0.0.0.0/0              10.5.204.254 dst-ip
 # 目前该路由已自动维护
+```
+
+### 1.4 自定义 vpc 启用多公网网卡功能
+
+#### 1.4.1 准备额外 underlay 公网网络
+
+多公网网卡功能在启动默认 eip snat fip 功能后才会启用，若只有 1 个公网网卡，请使用默认 eip snat fip 功能
+
+```yaml
+# 准备 provider-network， vlan， subnet
+# cat 01-extra-provider-network.yaml
+apiVersion: kubeovn.io/v1
+kind: ProviderNetwork
+metadata:
+  name: extra
+spec:
+  defaultInterface: vlan
+# cat 02-extra-vlan.yaml
+apiVersion: kubeovn.io/v1
+kind: Vlan
+metadata:
+  name: vlan0
+spec:
+  id: 0
+  provider: extra
+# cat 03-extra-vlan-subnet.yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: extra
+spec:
+  protocol: IPv4
+  cidrBlock: 10.10.204.0/24
+  gateway: 10.10.204.254
+  vlan: vlan0
+  excludeIps:
+  - 10.10.204.1..10.10.204.100
+```
+
+#### 1.4.1 自定义 vpc 配置
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Vpc
+metadata:
+  name: vpc1
+spec:
+  namespaces:
+  - vpc1
+  staticRoutes:         # 配置路由规则 
+  - cidr: 192.168.0.1/28
+    nextHopIP: 10.10.204.254
+    policy: policySrc
+  enableExternal: true  # 开启enableExternal后vpc会自动连接名为external的ls
+  addExternalSubnets:	# 配置addExternalSubnets支持连接多个额外的公网网络
+  - extra
+```
+
+以上模板应用后，应该可以看到如下资源存在
+
+```bash
+# k ko nbctl show vpc1
+router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
+    port vpc1-vpc1-subnet1
+        mac: "00:00:00:ED:8E:C7"
+        networks: ["192.168.0.1/24"]
+    port vpc1-external204
+        mac: "00:00:00:EF:05:C7"
+        networks: ["10.5.204.105/24"]
+        gateway chassis: [7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd]
+    port vpc1-extra
+        mac: "00:00:00:EF:6A:C7"
+        networks: ["10.10.204.105/24"]
+        gateway chassis: [7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd]
+```
+
+```bash
+# k ko nbctl lr-route-list vpc1
+IPv4 Routes
+Route Table <main>:
+				192.168.0.1/28         10.10.204.254 src-ip
+                0.0.0.0/0              10.5.204.254  dst-ip
+# 目前会为默认公网网络配置默认路由
+# 额外公网网络需要在vpc手动配置路由，上述实例中源IP地址为192.168.0.1/28会转发至额外公网网络
+# 用户可根据情况手动配置路由规则
 ```
 
 ## 2. ovn-eip
@@ -200,6 +288,8 @@ spec:
   
 # 动态分配一个 eip 资源，该资源预留用于 fip 场景
 ```
+
+当配置了额外公网网络时，可以通过externalSubnet指定需要使用的公网网络，在上述配置中，可选external204和extra两个公网网络
 
 ### 2.1 ovn-fip 为 pod 绑定一个 fip
 
@@ -235,7 +325,6 @@ spec:
 ``` bash
 # k get ofip
 NAME          VPC    V4EIP          V4IP          READY   IPTYPE   IPNAME
-eip-for-vip   vpc1   10.5.204.106   192.168.0.3   true    vip      test-fip-vip
 eip-static    vpc1   10.5.204.101   192.168.0.2   true             vpc-1-busybox01.vpc1
 # k get ofip eip-static
 NAME         VPC    V4EIP          V4IP          READY   IPTYPE   IPNAME
@@ -250,7 +339,6 @@ PING 10.5.204.101 (10.5.204.101) 56(84) bytes of data.
 --- 10.5.204.101 ping statistics ---
 4 packets transmitted, 3 received, 25% packet loss, time 3049ms
 rtt min/avg/max/mdev = 0.368/0.734/1.210/0.352 ms
-[root@pc-node-1 03-cust-vpc]#
 
 # 可以看到在 node ping 默认 vpc 下的 pod 的公网 ip 是能通的
 ```
@@ -326,8 +414,6 @@ PING 10.5.204.106 (10.5.204.106) 56(84) bytes of data.
 # pod 内部的 ip 使用方式大致就是如下这种情况
 
 [root@pc-node-1 fip-vip]# k -n vpc1 exec -it vpc-1-busybox03 -- bash
-[root@vpc-1-busybox03 /]#
-[root@vpc-1-busybox03 /]#
 [root@vpc-1-busybox03 /]# ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -381,6 +467,8 @@ spec:
   vpcSubnet: vpc1-subnet1 # eip 对应整个网段
 ```
 
+当配置了额外公网网络时，可以通过externalSubnet指定需要使用的公网网络，在上述配置中，可选external204和extra两个公网网络
+
 ### 3.2 ovn-snat 对应到一个 pod ip
 
 该功能和 iptables-snat 设计和使用方式基本一致
@@ -406,6 +494,8 @@ spec:
   ipName: vpc-1-busybox02.vpc1 # eip 对应单个 pod ip
 
 ```
+
+当配置了额外公网网络时，可以通过externalSubnet指定需要使用的公网网络，在上述配置中，可选external204和extra两个公网网络
 
 以上资源创建后，可以看到 snat 公网功能依赖的如下资源。
 
@@ -437,10 +527,8 @@ vpc1            vpc-1-busybox03                                 1/1     Running 
 vpc1            vpc-1-busybox04                                 1/1     Running   0                17h     192.168.0.6   pc-node-3   <none>           <none>
 vpc1            vpc-1-busybox05                                 1/1     Running   0                17h     192.168.0.7   pc-node-1   <none>           <none>
 
-# k exec -it -n vpc1            vpc-1-busybox04   bash
+# k exec -it -n vpc1 vpc-1-busybox04 bash
 kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
-[root@vpc-1-busybox04 /]#
-[root@vpc-1-busybox04 /]#
 [root@vpc-1-busybox04 /]# ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -500,7 +588,9 @@ apiVersion: kubeovn.io/v1
 metadata:
   name: eip-static
 spec:
-  externalSubnet: underlay
+  externalSubnet: external204
+  type: nat
+  
 ---
 kind: OvnDnatRule
 apiVersion: kubeovn.io/v1
@@ -513,6 +603,8 @@ spec:
   internalPort: "22"
   externalPort: "22"
 ```
+
+当配置了额外公网网络时，可以通过externalSubnet指定需要使用的公网网络，在上述配置中，可选external204和extra两个公网网络
 
 OvnDnatRule 的配置与 IptablesDnatRule 类似
 
