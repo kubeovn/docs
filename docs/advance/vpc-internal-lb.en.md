@@ -77,3 +77,199 @@ To address the above issues, Kube OVN introduced the `SwitchLBRule` CRD in 1.11,
 - `endpoints`：load balancing backend IP list.
   
   > **attention：**If both `selector` and `endpoints` are configured, the `selector` configuration will be automatically ignored.
+
+
+## Health Check
+
+`OVN` supports health checks for load balancer endpoints, for IPv4 load balancers only.
+When health checks are enabled, the load balancer uses only healthy endpoints.
+
+[[Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)
+
+Add a health check to `SwitchLBRule` based on the health check of the `ovn` load balancer.While creating the `SwitchLBRule`, obtain a reusable `vip` from the corresponding `VPC` and `subnet` as the detection endpoint and associate the corresponding `IP_Port_Mappings` and `Load_Balancer_Health_Check` to the corresponding load balancer.
+
+> - The detection endpoint `vip` will be automatically determined whether it exists in the corresponding `subnet` with the same name of the `subnet`. If it does not exist, it will be automatically created and deleted after all associated `SwitchLBRule` are deleted.
+> - Currently, only `SwitchLBRule` automatically generated through `Selector` are supported.
+
+
+### Create `SwitchLBRule`
+
+```bash
+root@server:~# kubectl get po -o wide -n vulpecula
+NAME                     READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS GATES
+nginx-78d9578975-f4qn4   1/1     Running   3          4d16h   10.16.0.4   worker   <none>           <none>
+nginx-78d9578975-t8tm5   1/1     Running   3          4d16h   10.16.0.6   worker   <none>           <none>
+# create slr
+root@server:~# cat << END > slr.yaml
+apiVersion: kubeovn.io/v1
+kind: SwitchLBRule
+metadata:
+  name:  nginx
+  namespace:  vulpecula
+spec:
+  vip: 1.1.1.1
+  sessionAffinity: ClientIP
+  namespace: default
+  selector:
+    - app:nginx
+  ports:
+  - name: dns
+    port: 8888
+    targetPort: 80
+    protocol: TCP
+END
+root@server:~# kubectl apply -f slr.yaml
+root@server:~# kubectl get slr
+NAME              VIP       PORT(S)    SERVICE                       AGE
+vulpecula-nginx   1.1.1.1   8888/TCP   default/slr-vulpecula-nginx   3d21h
+```
+
+The `vip` with the same name of the `subnet` has been created.
+
+```bash
+# vip for check
+root@server:~# kubectl get vip
+NAME          NS    V4IP        MAC                 V6IP    PMAC   SUBNET        READY   TYPE
+vulpecula-subnet    10.16.0.2   00:00:00:39:95:C1   <nil>          vulpecula-subnet   true   
+```
+
+Query the `Load_Balancer_Health_Check` and `Service_Monitor` by commands.
+
+```bash
+root@server:~# kubectl ko nbctl list Load_Balancer
+_uuid               : 3cbb6d43-44aa-4028-962f-30d2dba9f0b8
+external_ids        : {}
+health_check        : [5bee3f12-6b54-411c-9cc8-c9def8f67356]
+ip_port_mappings    : {"10.16.0.4"="nginx-78d9578975-f4qn4.default:10.16.0.2", "10.16.0.6"="nginx-78d9578975-t8tm5.default:10.16.0.2"}
+name                : cluster-tcp-session-loadbalancer
+options             : {affinity_timeout="10800"}
+protocol            : tcp
+selection_fields    : [ip_src]
+vips                : {"1.1.1.1:8888"="10.16.0.4:80,10.16.0.6:80"}
+
+root@server:~# kubectl ko nbctl list Load_Balancer_Health_Check
+_uuid               : 5bee3f12-6b54-411c-9cc8-c9def8f67356
+external_ids        : {switch_lb_subnet=vulpecula-subnet}
+options             : {failure_count="3", interval="5", success_count="3", timeout="20"}
+vip                 : "1.1.1.1:8888"
+
+root@server:~# kubectl ko sbctl list Service_Monitor
+_uuid               : 1bddc541-cc49-44ea-9935-a4208f627a91
+external_ids        : {}
+ip                  : "10.16.0.4"
+logical_port        : nginx-78d9578975-f4qn4.default
+options             : {failure_count="3", interval="5", success_count="3", timeout="20"}
+port                : 80
+protocol            : tcp
+src_ip              : "10.16.0.2"
+src_mac             : "c6:d4:b8:08:54:e7"
+status              : online
+
+_uuid               : 84dd24c5-e1b4-4e97-9daa-13687ed59785
+external_ids        : {}
+ip                  : "10.16.0.6"
+logical_port        : nginx-78d9578975-t8tm5.default
+options             : {failure_count="3", interval="5", success_count="3", timeout="20"}
+port                : 80
+protocol            : tcp
+src_ip              : "10.16.0.2"
+src_mac             : "c6:d4:b8:08:54:e7"
+status              : online
+```
+
+At this point, the service response can be successfully obtained through load balancer `vip`.
+
+```bash
+root@server:~# kubectl exec -it -n vulpecula nginx-78d9578975-t8tm5 -- curl 1.1.1.1:8888
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+
+### Update load balance service endpoints
+
+Update the service endpoints of the load balancer by deleting the `pod`.
+```bash
+kubectl delete po nginx-78d9578975-f4qn4
+kubectl get po -o wide -n vulpecula
+NAME                     READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS GATES
+nginx-78d9578975-lxmvh   1/1     Running   0          31s     10.16.0.8   worker   <none>           <none>
+nginx-78d9578975-t8tm5   1/1     Running   3          4d16h   10.16.0.6   worker   <none>           <none>
+```
+
+Query the `Load_Balancer_Health_Check` and `Service_Monitor` by commands, the results have undergone corresponding changes.
+
+```bash
+root@server:~# kubectl ko nbctl list Load_Balancer
+_uuid               : 3cbb6d43-44aa-4028-962f-30d2dba9f0b8
+external_ids        : {}
+health_check        : [5bee3f12-6b54-411c-9cc8-c9def8f67356]
+ip_port_mappings    : {"10.16.0.4"="nginx-78d9578975-f4qn4.default:10.16.0.2", "10.16.0.6"="nginx-78d9578975-t8tm5.default:10.16.0.2", "10.16.0.8"="nginx-78d9578975-lxmvh.default:10.16.0.2"}
+name                : cluster-tcp-session-loadbalancer
+options             : {affinity_timeout="10800"}
+protocol            : tcp
+selection_fields    : [ip_src]
+vips                : {"1.1.1.1:8888"="10.16.0.6:80,10.16.0.8:80"}
+
+root@server:~# kubectl ko nbctl list Load_Balancer_Health_Check
+_uuid               : 5bee3f12-6b54-411c-9cc8-c9def8f67356
+external_ids        : {switch_lb_subnet=vulpecula-subnet}
+options             : {failure_count="3", interval="5", success_count="3", timeout="20"}
+vip                 : "1.1.1.1:8888"
+
+root@server:~# kubectl ko sbctl list Service_Monitor
+_uuid               : 84dd24c5-e1b4-4e97-9daa-13687ed59785
+external_ids        : {}
+ip                  : "10.16.0.6"
+logical_port        : nginx-78d9578975-t8tm5.default
+options             : {failure_count="3", interval="5", success_count="3", timeout="20"}
+port                : 80
+protocol            : tcp
+src_ip              : "10.16.0.2"
+src_mac             : "c6:d4:b8:08:54:e7"
+status              : online
+
+_uuid               : 5917b7b7-a999-49f2-a42d-da81f1eeb28f
+external_ids        : {}
+ip                  : "10.16.0.8"
+logical_port        : nginx-78d9578975-lxmvh.default
+options             : {failure_count="3", interval="5", success_count="3", timeout="20"}
+port                : 80
+protocol            : tcp
+src_ip              : "10.16.0.2"
+src_mac             : "c6:d4:b8:08:54:e7"
+status              : online
+```
+
+Delete `SwitchLBRule` and confirm the resource status, `Load_Balancer_Health_Check` adn `Service_Monitor` has been deleted, and the corresponding `vip` has also been deleted.
+
+```bash
+root@server:~# kubectl delete -f slr.yaml 
+switchlbrule.kubeovn.io "vulpecula-nginx" deleted
+root@server:~# kubectl get vip
+No resources found
+root@server:~# kubectl ko sbctl list Service_Monitor
+root@server:~# 
+root@server:~# kubectl ko nbctl list Load_Balancer_Health_Check
+root@server:~# 
+```
