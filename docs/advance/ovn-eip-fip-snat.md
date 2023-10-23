@@ -1,22 +1,30 @@
 # OVN EIP FIP SNAT DNAT 支持
 
 ``` mermaid
+
 graph LR
 
+pod-->subnet-->vpc-->lrp--bind-->gw-chassis-->snat-->lsp-->external-subnet
+lrp-.-peer-.-lsp
 
-pod-->vpc1-subnet-->vpc1-->snat-->lrp-->external-subnet-->gw-node-external-nic
 ```
 
 Pod 基于 SNAT 出公网的大致流程，最后是经过网关节点的公网网卡。
+Pod 基于 Fip 使用集中式网关，路径也类似。
 
 ``` mermaid
+
 graph LR
 
 
-pod-->vpc1-subnet-->vpc1-->fip-->lrp-->external-subnet-->local-node-external-nic
+pod-->subnet-->vpc-->lrp--bind-->local-chassis-->snat-->lsp-->external-subnet
+
+
+lrp-.-peer-.-lsp
+
 ```
 
-Pod 基于 FIP 出公网的大致流程，最后可以基于本地节点的公网网卡出公网。
+Pod 基于分布式网关 FIP (dnat_and_snat) 出公网的大致流程，最后可以基于本地节点的公网网卡出公网。
 
 该功能所支持的 CRD 在使用上将和 iptable nat gw 公网方案保持基本一致。
 
@@ -58,13 +66,16 @@ Pod 基于 FIP 出公网的大致流程，最后可以基于本地节点的公�
 ``` bash
 # 准备 provider-network， vlan， subnet
 # cat 01-provider-network.yaml
+
 apiVersion: kubeovn.io/v1
 kind: ProviderNetwork
 metadata:
   name: external204
 spec:
   defaultInterface: vlan
+
 # cat 02-vlan.yaml
+
 apiVersion: kubeovn.io/v1
 kind: Vlan
 metadata:
@@ -72,7 +83,9 @@ metadata:
 spec:
   id: 204
   provider: external204
+
 # cat 03-vlan-subnet.yaml
+
 apiVersion: kubeovn.io/v1
 kind: Subnet
 metadata:
@@ -90,7 +103,8 @@ spec:
 
 ``` bash
 # 启用默认 vpc 和上述 underlay 公网 provider subnet 互联
-cat 00-centralized-external-gw-no-ip.yaml
+# cat 00-centralized-external-gw-no-ip.yaml
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -104,21 +118,23 @@ data:
   external-gw-addr: "10.5.204.254/24" # underlay 物理网关的 ip
 ```
 
-目前该功能已支持可以不指定 lrp ip 和 mac，已支持自动获取，创建 lrp 类型的 ovn eip 资源。
+目前该功能已支持可以不指定 logical router port (lrp) ip 和 mac，已支持从 underlay 公网中自动分配，创建 lrp 类型的 ovn eip 资源。
 
-如果指定了，则相当于指定 ip 创建 lrp 类型的 ovn-eip。
+如果指定了，则相当于以指定 ip 的方式创建了一个 lrp 类型的 ovn-eip。
 当然也可以提前手动创建 lrp 类型的 ovn eip。
 
 ### 1.3 自定义 vpc 启用 eip snat fip 功能
 
 ``` bash
 # cat 00-ns.yml
+
 apiVersion: v1
 kind: Namespace
 metadata:
   name: vpc1
   
 # cat 01-vpc-ecmp-enable-external-bfd.yml
+
 kind: Vpc
 apiVersion: kubeovn.io/v1
 metadata:
@@ -130,6 +146,7 @@ spec:
 # vpc 启用 enableExternal 会自动创建 lrp 关联到上述指定的公网
 
 # cat 02-subnet.yml
+
 apiVersion: kubeovn.io/v1
 kind: Subnet
 metadata:
@@ -158,6 +175,7 @@ spec:
 
 ```bash
 # k ko nbctl show vpc1
+
 router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
     port vpc1-vpc1-subnet1
         mac: "00:00:00:ED:8E:C7"
@@ -174,6 +192,7 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 
 ``` bash
 # k ko nbctl lr-route-list vpc1
+
 IPv4 Routes
 Route Table <main>:
                 0.0.0.0/0              10.5.204.254 dst-ip
@@ -184,8 +203,8 @@ Route Table <main>:
 
 该功能和 iptables-eip 设计和使用方式基本一致，ovn-eip 目前有三种 type
 
-- nat: 用于 ovn dnat，fip, snat, 这些 nat 类型会记录在 status 中
-- lrp: Resources connected to the public network from a vpc can be used by nat
+- nat: 是指 ovn dnat，fip, snat 这三种 nat 资源类型
+- lrp: 软路由基于该端口和 underlay 公网互联，该 lrp 端口的 ip 可以被其他 dnat snat 复用
 - lsp: 用于 ovn 基于 bfd 的 ecmp 静态路由场景，在网关节点上提供一个 ovs internal port 作为 ecmp 路由的下一跳
 
 ``` bash
@@ -230,6 +249,19 @@ metadata:
 spec:
   ovnEip: eip-static
   ipName: vpc-1-busybox01.vpc1  # 注意这里是 ip crd 的名字，具有唯一性
+
+--
+# 或者通过传统指定 vpc 以及 内网 ip 的方式
+
+kind: OvnFip
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-static
+spec:
+  ovnEip: eip-static
+  vpc: vpc1
+  v4Ip: 192.168.0.2
+
 ```
 
 ``` bash
@@ -281,6 +313,7 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 ``` bash
 # 先创建 vip，eip，再将 eip 绑定到 vip
 # cat vip.yaml
+
 apiVersion: kubeovn.io/v1
 kind: Vip
 metadata:
@@ -289,6 +322,7 @@ spec:
   subnet: vpc1-subnet1
 
 # cat 04-fip.yaml
+
 ---
 kind: OvnEip
 apiVersion: kubeovn.io/v1
@@ -307,6 +341,20 @@ spec:
   ovnEip: eip-for-vip
   ipType: vip         # 默认情况下 fip 是面向 pod ip 的，这里需要标注指定对接到 vip 资源
   ipName: test-fip-vip
+
+---
+# 或者通过传统指定 vpc 以及 内网 ip 的方式
+
+kind: OvnFip
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-for-vip
+spec:
+  ovnEip: eip-for-vip
+  ipType: vip         # 默认情况下 fip 是面向 pod ip 的，这里需要标注指定对接到 vip 资源
+  vpc: vpc1
+  v4Ip: 192.168.0.3
+
 ```
 
 ``` bash
@@ -362,6 +410,7 @@ tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 byt
 
 ```bash
 # cat 03-subnet-snat.yaml
+
 ---
 kind: OvnEip
 apiVersion: kubeovn.io/v1
@@ -379,6 +428,19 @@ metadata:
 spec:
   ovnEip: snat-for-subnet-in-vpc
   vpcSubnet: vpc1-subnet1 # eip 对应整个网段
+
+---
+# 或者通过传统指定 vpc 以及 内网 subnet cidr 的方式
+
+kind: OvnSnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: snat-for-subnet-in-vpc
+spec:
+  ovnEip: snat-for-subnet-in-vpc
+  vpc: vpc1
+  v4IpCidr: 192.168.0.0/24 # 该字段可以是 cidr 也可以是 ip
+
 ```
 
 ### 3.2 ovn-snat 对应到一个 pod ip
@@ -387,6 +449,7 @@ spec:
 
 ```bash
 # cat 03-pod-snat.yaml
+
 ---
 kind: OvnEip
 apiVersion: kubeovn.io/v1
@@ -404,6 +467,18 @@ metadata:
 spec:
   ovnEip: snat-for-pod-vpc-ip
   ipName: vpc-1-busybox02.vpc1 # eip 对应单个 pod ip
+
+---
+# 或者通过传统指定 vpc 以及 内网 ip 的方式
+
+kind: OvnSnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: snat-for-subnet-in-vpc
+spec:
+  ovnEip: snat-for-subnet-in-vpc
+  vpc: vpc1
+  v4IpCidr: 192.168.0.4
 
 ```
 
@@ -495,12 +570,14 @@ rtt min/avg/max/mdev = 22.126/22.518/22.741/0.278 ms
 ### 4.1 ovn-dnat 为 pod 绑定一个 dnat
 
 ```yaml
+
 kind: OvnEip
 apiVersion: kubeovn.io/v1
 metadata:
   name: eip-static
 spec:
   externalSubnet: underlay
+
 ---
 kind: OvnDnatRule
 apiVersion: kubeovn.io/v1
@@ -512,6 +589,23 @@ spec:
   protocol: tcp
   internalPort: "22"
   externalPort: "22"
+
+
+---
+# 或者通过传统指定 vpc 以及 内网 ip 的方式
+
+kind: OvnDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-dnat
+spec:
+  ovnEip: eip-dnat
+  protocol: tcp
+  internalPort: "22"
+  externalPort: "22"
+  vpc: vpc1
+  v4Ip: 192.168.0.3
+
 ```
 
 OvnDnatRule 的配置与 IptablesDnatRule 类似
@@ -530,6 +624,7 @@ eip-dnat               eip-dnat               tcp        10.5.49.4    192.168.0.
 ### 4.2 ovn-dnat 为 vip 绑定一个 dnat
 
 ```yaml
+
 kind: OvnDnatRule
 apiVersion: kubeovn.io/v1
 metadata:
@@ -541,6 +636,24 @@ spec:
   protocol: tcp
   internalPort: "22"
   externalPort: "22"
+
+---
+# 或者通过传统指定 vpc 以及 内网 ip 的方式
+
+kind: OvnDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-dnat
+spec:
+  ipType: vip  # 默认情况下 dnat 是面向 pod ip 的，这里需要标注指定对接到 vip 资源
+  ovnEip: eip-dnat
+  ipName: test-dnat-vip
+  protocol: tcp
+  internalPort: "22"
+  externalPort: "22"
+  vpc: vpc1
+  v4Ip: 192.168.0.4
+
 ```
 
 OvnDnatRule 的配置与 IptablesDnatRule 类似
@@ -557,4 +670,5 @@ eip-dnat   10.5.49.4          00:00:00:4D:CE:49   dnat   true
 # kubectl get odnat eip-dnat 
 NAME       EIP        PROTOCOL   V4EIP       V4IP          INTERNALPORT   EXTERNALPORT   IPNAME          READY
 eip-dnat   eip-dnat   tcp        10.5.49.4   192.168.0.4   22             22             test-dnat-vip   true
+
 ```

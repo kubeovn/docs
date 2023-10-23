@@ -1,22 +1,31 @@
 # Support OVN EIP,FIP and SNAT
 
 ``` mermaid
+
 graph LR
 
+pod-->subnet-->vpc-->lrp--bind-->gw-chassis-->snat-->lsp-->external-subnet
+lrp-.-peer-.-lsp
 
-pod-->vpc1-subnet-->vpc1-->snat-->lrp-->external-subnet-->gw-node-external-nic
 ```
 
 The pod access the public network based on the snat
 
+Pod uses a centralized gateway based on Fip, and the path is similar.
+
 ``` mermaid
+
 graph LR
 
 
-pod-->vpc1-subnet-->vpc1-->fip-->lrp-->external-subnet-->local-node-external-nic
+pod-->subnet-->vpc-->lrp--bind-->local-chassis-->snat-->lsp-->external-subnet
+
+
+lrp-.-peer-.-lsp
+
 ```
 
-The pod access the public network based on the fip
+Pod is based on the general flow of distributed gateway FIP (dnat_and_snat) to exit the public network. Finally, POD can exit the public network based on the public network NIC of the local node.
 
 The CRD supported by this function is basically the same as the iptable nat gw public network solution.
 
@@ -60,6 +69,7 @@ The neutron ovn mode also has a certain static file configuration designation th
 ``` bash
 # provider-network， vlan， subnet
 # cat 01-provider-network.yaml
+
 apiVersion: kubeovn.io/v1
 kind: ProviderNetwork
 metadata:
@@ -68,6 +78,7 @@ spec:
   defaultInterface: vlan
 
 # cat 02-vlan.yaml
+
 apiVersion: kubeovn.io/v1
 kind: Vlan
 metadata:
@@ -77,6 +88,7 @@ spec:
   provider: external204
 
 # cat 03-vlan-subnet.yaml
+
 apiVersion: kubeovn.io/v1
 kind: Subnet
 metadata:
@@ -88,12 +100,15 @@ spec:
   vlan: vlan204
   excludeIps:
   - 10.5.204.1..10.5.204.100
+
 ```
 
 ### 1.2 Default vpc enable eip_snat
 
 ``` bash
+
 # Enable the default vpc and the above underlay public provider subnet interconnection
+
 cat 00-centralized-external-gw-no-ip.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -106,6 +121,7 @@ data:
   type: "centralized"  
   external-gw-nic: "vlan"
   external-gw-addr: "10.5.204.254/24"
+
 ```
 
 This feature currently supports the ability to create lrp type ovn eip resources without specifying the lrp ip and mac, which is already supported for automatic acquisition.
@@ -116,12 +132,14 @@ Of course, you can also manually create the lrp type ovn eip in advance.
 
 ``` bash
 # cat 00-ns.yml
+
 apiVersion: v1
 kind: Namespace
 metadata:
   name: vpc1
   
 # cat 01-vpc-ecmp-enable-external-bfd.yml
+
 kind: Vpc
 apiVersion: kubeovn.io/v1
 metadata:
@@ -160,6 +178,7 @@ After the above template is applied, you should see the following resources exis
 
 ```bash
 # k ko nbctl show vpc1
+
 router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
     port vpc1-vpc1-subnet1
         mac: "00:00:00:ED:8E:C7"
@@ -176,6 +195,7 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 
 ``` bash
 # k ko nbctl lr-route-list vpc1
+
 IPv4 Routes
 Route Table <main>:
                 0.0.0.0/0              10.5.204.254 dst-ip
@@ -186,11 +206,12 @@ Route Table <main>:
 
 This function is designed and used in the same way as iptables-eip, ovn-eip currently has three types
 
-- nat: indicates ovn dnat, fip, and snat. These nat types are recorded in status
+- nat: indicates ovn dnat, fip, and snat.
 - lrp: indicates the resource used to connect a vpc to the public network
 - lsp: In the ovn BFD-based ecmp static route scenario, an ovs internal port is provided on the gateway node as the next hop of the ecmp route
 
 ``` bash
+
 ---
 kind: OvnEip
 apiVersion: kubeovn.io/v1
@@ -232,6 +253,19 @@ metadata:
 spec:
   ovnEip: eip-static
   ipName: vpc-1-busybox01.vpc1  # the name of the ip crd, which is unique
+
+--
+# Alternatively, you can specify a vpc or Intranet ip address
+
+kind: OvnFip
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-static
+spec:
+  ovnEip: eip-static
+  vpc: vpc1
+  v4Ip: 192.168.0.2
+
 ```
 
 ``` bash
@@ -255,9 +289,11 @@ rtt min/avg/max/mdev = 0.368/0.734/1.210/0.352 ms
 [root@pc-node-1 03-cust-vpc]#
 
 # pod <--> node ping is working
+
 ```
 
 ``` bash
+
 # The key resources that this public ip can pass include the following ovn nb resources
 
 # k ko nbctl show vpc1
@@ -280,8 +316,10 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 In order to facilitate the use of some vip scenarios, such as inside kubevirt VM, keepalived use vip, kube-vip use vip, etc. the vip need public network access.
 
 ``` bash
+
 # First create vip, eip, then bind eip to vip
 # cat vip.yaml
+
 apiVersion: kubeovn.io/v1
 kind: Vip
 metadata:
@@ -290,6 +328,7 @@ spec:
   subnet: vpc1-subnet1
 
 # cat 04-fip.yaml
+
 ---
 kind: OvnEip
 apiVersion: kubeovn.io/v1
@@ -308,6 +347,20 @@ spec:
   ovnEip: eip-for-vip
   ipType: vip         # By default fip is for pod ip, here you need to specify the docking to vip resources
   ipName: test-fip-vip
+
+---
+# Alternatively, you can specify a vpc or Intranet ip address
+
+kind: OvnFip
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-for-vip
+spec:
+  ovnEip: eip-for-vip
+  ipType: vip         # By default fip is for pod ip, here you need to specify the docking to vip resources
+  vpc: vpc1
+  v4Ip: 192.168.0.3
+
 ```
 
 ``` bash
@@ -362,7 +415,9 @@ tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 byt
 This feature is designed and used in much the same way as iptables-snat
 
 ```bash
+
 # cat 03-subnet-snat.yaml
+
 ---
 kind: OvnEip
 apiVersion: kubeovn.io/v1
@@ -380,6 +435,19 @@ metadata:
 spec:
   ovnEip: snat-for-subnet-in-vpc
   vpcSubnet: vpc1-subnet1 # eip corresponds to the entire network segment
+
+---
+# Alternatively, you can specify a vpc and subnet cidr on an Intranet
+
+kind: OvnSnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: snat-for-subnet-in-vpc
+spec:
+  ovnEip: snat-for-subnet-in-vpc
+  vpc: vpc1
+  v4IpCidr: 192.168.0.0/24 # vpc subnet cidr or ip address
+
 ```
 
 ### 3.2 ovn-snat corresponds to a pod IP
@@ -405,6 +473,18 @@ metadata:
 spec:
   ovnEip: snat-for-pod-vpc-ip
   ipName: vpc-1-busybox02.vpc1 # eip corresponds to a single pod ip
+
+---
+# Alternatively, you can specify a vpc or Intranet ip address
+
+kind: OvnSnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: snat-for-subnet-in-vpc
+spec:
+  ovnEip: snat-for-subnet-in-vpc
+  vpc: vpc1
+  v4IpCidr: 192.168.0.4
 
 ```
 
@@ -496,6 +576,7 @@ rtt min/avg/max/mdev = 22.126/22.518/22.741/0.278 ms
 ### 4.1 ovn-dnat binds a DNAT to a pod
 
 ```yaml
+
 kind: OvnEip
 apiVersion: kubeovn.io/v1
 metadata:
@@ -514,6 +595,22 @@ spec:
   protocol: tcp
   internalPort: "22"
   externalPort: "22"
+
+---
+# Alternatively, you can specify a vpc or Intranet ip address
+
+kind: OvnDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-dnat
+spec:
+  ovnEip: eip-dnat
+  protocol: tcp
+  internalPort: "22"
+  externalPort: "22"
+  vpc: vpc1
+  v4Ip: 192.168.0.3
+
 ```
 
 The configuration of OvnDnatRule is similar to that of IptablesDnatRule.
@@ -532,6 +629,7 @@ eip-dnat               eip-dnat               tcp        10.5.49.4    192.168.0.
 ### 4.2 ovn-dnat binds a DNAT to a VIP
 
 ```yaml
+
 kind: OvnDnatRule
 apiVersion: kubeovn.io/v1
 metadata:
@@ -543,6 +641,25 @@ spec:
   protocol: tcp
   internalPort: "22"
   externalPort: "22"
+
+
+---
+# Alternatively, you can specify a vpc or Intranet ip address
+
+kind: OvnDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-dnat
+spec:
+  ipType: vip  # By default, Dnat is oriented towards pod IPs. Here, it is necessary to specify that it is connected to VIP resources
+  ovnEip: eip-dnat
+  ipName: test-dnat-vip
+  protocol: tcp
+  internalPort: "22"
+  externalPort: "22"
+  vpc: vpc1
+  v4Ip: 192.168.0.4
+
 ```
 
 The configuration of OvnDnatRule is similar to that of IptablesDnatRule.
@@ -559,4 +676,5 @@ eip-dnat   10.5.49.4          00:00:00:4D:CE:49   dnat   true
 # kubectl get odnat eip-dnat 
 NAME       EIP        PROTOCOL   V4EIP       V4IP          INTERNALPORT   EXTERNALPORT   IPNAME          READY
 eip-dnat   eip-dnat   tcp        10.5.49.4   192.168.0.4   22             22             test-dnat-vip   true
+
 ```
