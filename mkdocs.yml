@@ -53,7 +53,7 @@ nav:
       - DHCP 设置: 'advance/dhcp.md'
       - VPC 互联: 'advance/vpc-peering.md'
       - 自定义 VPC 内部负载均衡: 'advance/vpc-internal-lb.md'
-      - 自定义 VPC DNS: 'advance/vpc-dns.md'
+      - 自定义 VPC 内部 DNS: 'advance/vpc-internal-dns.md'
       - 外部网关设置: 'advance/external-gateway.md'
       - VIP 预留设置: 'advance/vip.md'
       - Mellanox 网卡 Offload 支持: 'advance/offload-mellanox.md'
@@ -204,7 +204,7 @@ plugins:
           Iptables 规则: Iptables Rules
           kube-ovn-pinger 参数描述: kube-ovn-pinger args description
           自定义 VPC 内部负载均衡: VPC Internal Load Balancer
-          自定义 VPC DNS: VPC DNS
+          自定义 VPC 内部 DNS: VPC Internal DNS
           Kube-OVN 接口规范: Kube-OVN API Reference
           SecurityGroup 使用: SecurityGroup Usage
           OVN IPsec 支持: OVN IPsec Support

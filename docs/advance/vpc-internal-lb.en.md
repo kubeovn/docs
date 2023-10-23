@@ -37,12 +37,10 @@ spec:
   ```
 
 - usage of `selector`, `sessionAffinity`, and `port` is the same as Kubernetes Service.
-
 - `vip`：customize load balancing IP address.
-
 - `namespace`：namespace of the `pod` selected by `selector`.
 
-    Kube OVN will determine the VPC of the selected `pod` based on the `SwitchLBRule` definition and set the corresponding L2 LB.
+Kube OVN will determine the VPC of the selected `pod` based on the `SwitchLBRule` definition and set the corresponding L2 LB.
 
 ## Manually Defined Load Balancing Rules by `Endpoints`
 
@@ -70,15 +68,13 @@ spec:
     protocol: TCP
 ```
 
-- usage of `sessionAffinity`, and `port` is the same as Kubernetes Service.
+usage of `sessionAffinity`, and `port` is the same as Kubernetes Service.
 
 - `vip`：customize load balancing IP address.
-
 - `namespace`：namespace of the `pod` selected by `selector`.
-
 - `endpoints`：load balancing backend IP list.
   
-> **attention：**If both `selector` and `endpoints` are configured, the `selector` configuration will be automatically ignored.
+If both `selector` and `endpoints` are configured, the `selector` configuration will be automatically ignored.
 
 ## Health Check
 
@@ -121,6 +117,7 @@ spec:
     targetPort: 80
     protocol: TCP
 END
+
 root@server:~# kubectl apply -f slr.yaml
 root@server:~# kubectl get slr
 NAME              VIP       PORT(S)    SERVICE                       AGE
@@ -183,6 +180,7 @@ protocol            : tcp
 src_ip              : "10.16.0.2"
 src_mac             : "c6:d4:b8:08:54:e7"
 status              : online
+
 ```
 
 At this point, the service response can be successfully obtained through load balancer `vip`.
@@ -193,22 +191,6 @@ root@server:~# kubectl exec -it -n vulpecula nginx-78d9578975-t8tm5 -- curl 1.1.
 <html>
 <head>
 <title>Welcome to nginx!</title>
-<style>
-html { color-scheme: light dark; }
-body { width: 35em; margin: 0 auto;
-font-family: Tahoma, Verdana, Arial, sans-serif; }
-</style>
-</head>
-<body>
-<h1>Welcome to nginx!</h1>
-<p>If you see this page, the nginx web server is successfully installed and
-working. Further configuration is required.</p>
-
-<p>For online documentation and support please refer to
-<a href="http://nginx.org/">nginx.org</a>.<br/>
-Commercial support is available at
-<a href="http://nginx.com/">nginx.com</a>.</p>
-
 <p><em>Thank you for using nginx.</em></p>
 </body>
 </html>
@@ -225,6 +207,7 @@ kubectl get po -o wide -n vulpecula
 NAME                     READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS GATES
 nginx-78d9578975-lxmvh   1/1     Running   0          31s     10.16.0.8   worker   <none>           <none>
 nginx-78d9578975-t8tm5   1/1     Running   3          4d16h   10.16.0.6   worker   <none>           <none>
+
 ```
 
 Query the `Load_Balancer_Health_Check` and `Service_Monitor` by commands, the results have undergone corresponding changes.
@@ -270,6 +253,7 @@ protocol            : tcp
 src_ip              : "10.16.0.2"
 src_mac             : "c6:d4:b8:08:54:e7"
 status              : online
+
 ```
 
 Delete `SwitchLBRule` and confirm the resource status, `Load_Balancer_Health_Check` adn `Service_Monitor` has been deleted, and the corresponding `vip` has also been deleted.

@@ -414,7 +414,7 @@
 | conditions | []VpcDnsCondition | VpcDns 状态变化信息，具体字段参考文档开头 Condition 定义 |
 | active | Bool | VpcDns 是否正在使用 |
 
-VpcDns 的详细使用文档，可以参考 [自定义 VPC DNS](../advance/vpc-dns.md)。
+VpcDns 的详细使用文档，可以参考 [自定义 VPC 内部 DNS](../advance/vpc-internal-dns.md)。
 
 ### SwitchLBRule
 

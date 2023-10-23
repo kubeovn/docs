@@ -1,4 +1,4 @@
-# Custom VPC DNS
+# Custom VPC Internal DNS
 
 Due to the isolation of the user-defined VPC and the default VPC network, the coredns deployed in the default VPC cannot be accessed from within the custom VPC. If you wish to use the intra-cluster domain name resolution capability provided by Kubernetes within your custom VPC, you can refer to this document and utilize the vpc-dns CRD to do so.
 
