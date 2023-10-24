@@ -232,6 +232,7 @@ kind: Subnet
 metadata:
   name: acl
 spec:
+  allowSameSubnetTraffic: false
   acls:
     - action: drop
       direction: to-lport
@@ -243,6 +244,8 @@ spec:
       priority: 1002
   cidrBlock: 10.10.0.0/24
 ```
+
+某些场景下用户希望配置了ACL规则的子网内部网络通信不受影响，可以通过配置`allowSameSubnetTraffic: true`来实现。
 
 ## 子网隔离设置
 
