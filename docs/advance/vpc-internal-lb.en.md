@@ -78,7 +78,6 @@ To address the above issues, Kube OVN introduced the `SwitchLBRule` CRD in 1.11,
   
   > **attention：**If both `selector` and `endpoints` are configured, the `selector` configuration will be automatically ignored.
 
-
 ## Health Check
 
 `OVN` supports health checks for load balancer endpoints, for IPv4 load balancers only.
@@ -90,7 +89,6 @@ Add a health check to `SwitchLBRule` based on the health check of the `ovn` load
 
 > - The detection endpoint `vip` will be automatically determined whether it exists in the corresponding `subnet` with the same name of the `subnet`. If it does not exist, it will be automatically created and deleted after all associated `SwitchLBRule` are deleted.
 > - Currently, only `SwitchLBRule` automatically generated through `Selector` are supported.
-
 
 ### Create `SwitchLBRule`
 
@@ -209,6 +207,7 @@ Commercial support is available at
 ### Update load balance service endpoints
 
 Update the service endpoints of the load balancer by deleting the `pod`.
+
 ```bash
 kubectl delete po nginx-78d9578975-f4qn4
 kubectl get po -o wide -n vulpecula

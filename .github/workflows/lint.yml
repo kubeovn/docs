@@ -1,18 +1,11 @@
 name: markdown-lint
 on:
-  pull_request_target:
-
-permissions:
-  contents: read
-  pull-requests: write
+  pull_request:
   
 jobs:
   markdown-lint:
     name: lint
     runs-on: ubuntu-22.04
-    continue-on-error: true
-    permissions:
-      pull-requests: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -23,9 +16,4 @@ jobs:
           npm install -g markdownlint-rule-search-replace@1.0.9 
           pwd
           markdownlint "**/*.md" --disable MD013 MD033 MD045 MD024 MD041 -r markdownlint-rule-search-replace
-          markdownlint -V
-      - uses: mshick/add-pr-comment@v2
-        if: failure()
-        with:
-          message: |
-            Please fix the lint errors and update the PR.     
+          markdownlint -V  
