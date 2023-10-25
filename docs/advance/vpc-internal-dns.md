@@ -1,4 +1,4 @@
-# 自定义 VPC DNS
+# 自定义 VPC 内部 DNS
 
 由于用户自定义 VPC 和 默认 VPC 网络相互隔离，自定 VPC 内无法访问到部署在默认 VPC 内的 coredns。
 如果用户希望在自定义 VPC 内使用 Kubernetes 提供的集群内域名解析能力，可以参考本文档，利用 `vpc-dns` CRD 来实现。
