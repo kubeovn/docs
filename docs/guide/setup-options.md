@@ -58,7 +58,7 @@ args:
 IFACE=eth1
 ```
 
-该选项支持以逗号所分隔正则表达式,例如`ens[a-z0-9]*,eth[a-z0-9]*`。
+该选项支持以逗号所分隔正则表达式,例如 `ens[a-z0-9]*,eth[a-z0-9]*`。
 
 安装后也可通过修改 `kube-ovn-cni` DaemonSet 的参数进行调整：
 
