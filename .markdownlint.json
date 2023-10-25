@@ -21,6 +21,20 @@
                 "searchPattern": "/([a-zA-Z0-9])([\\u4e00-\\u9fa5]+)/g",
                 "replace": "$1 $2",
                 "skipCode": false
+            },
+            {
+                "name": "No space between Chinese and English/Number",
+                "message": "No space between Chinese and English/Number.",
+                "searchPattern": "/([\\u4e00-\\u9fa5])(`[a-zA-Z0-9])/g",
+                "replace": "$1 $2",
+                "skipCode": false
+            },
+            {
+                "name": "No space between Chinese and English/Number",
+                "message": "No space between Chinese and English/Number.",
+                "searchPattern": "/([a-zA-Z0-9]`)([\\u4e00-\\u9fa5]+)/g",
+                "replace": "$1 $2",
+                "skipCode": false
             }
         ]
     }

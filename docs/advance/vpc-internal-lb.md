@@ -76,4 +76,4 @@ Kubernetes 提供的 Service 可以用作集群内的负载均衡， 但是在�
 
 - `endpoints`：负载均衡后端 IP 列表。
   
-  > **注：**如果同时配置了 `selector` 和 `endpoints`,会自动忽略`selector`配置。
+  > **注：**如果同时配置了 `selector` 和 `endpoints`,会自动忽略 `selector` 配置。

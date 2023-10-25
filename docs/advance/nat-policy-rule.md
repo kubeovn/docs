@@ -8,7 +8,7 @@
 
 ## 使用方法
 
-在 `subnet.Spec` 中开启 `natOutgoing`开关， 并且添加字段 `natOutgoingPolicyRules` 如下：
+在 `subnet.Spec` 中开启 `natOutgoing` 开关， 并且添加字段 `natOutgoingPolicyRules` 如下：
 
 ```yaml
 spec:

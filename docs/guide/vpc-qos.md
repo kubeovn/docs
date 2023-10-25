@@ -41,11 +41,11 @@ spec:
   qosPolicy: qos-eip-example
 ```
 
-`.spec.qosPolicy`的值支持创建时传入，也支持创建后修改。
+`.spec.qosPolicy` 的值支持创建时传入，也支持创建后修改。
 
 ## 查看已启用 QoS 的 EIP
 
-通过`label`查看已经设置对应 qos 的 eip：
+通过 `label` 查看已经设置对应 qos 的 eip：
 
 ```bash
 # kubectl get eip  -l ovn.kubernetes.io/qos=qos-eip-example
@@ -99,7 +99,7 @@ spec:
     - "kubernetes.io/os: linux"
 ```
 
-`.spec.qosPolicy`的值支持创建传入，也支持后续修改。
+`.spec.qosPolicy` 的值支持创建传入，也支持后续修改。
 
 ## net1 网卡特定流量 QoS
 
@@ -153,7 +153,7 @@ spec:
 
 ## 查看已启用 QoS 的 NATGW
 
-通过`label`查看已经设置对应 qos 的 eip：
+通过 `label` 查看已经设置对应 qos 的 eip：
 
 ```bash
 # kubectl get vpc-nat-gw  -l ovn.kubernetes.io/qos=qos-natgw-example
