@@ -64,3 +64,18 @@ This log indicates that the in-kernel OVS version is too low to support the corr
 
 1. Upgrade the kernel module or compile the OVS kernel module manually.
 2. If you are using an Overlay network you can change the `kube-ovn-controller` args, setting `--enable-lb=false` to disable the OVN LB to use kube-proxy for service forwarding.
+
+## Frequent leader selection occurs in ovn-central
+
+### Behavior
+
+Starting from the v1.11.x version, in a cluster with 1w Pod or more, if OVN NB or SB frequently elects the master, the possible reason is that Kube-OVN periodically performs the ovsdb-server/compact action, which affects the master selection logic.
+
+### Solution
+
+You can configure the environment variables for ovn-central as follows and turn off compact:
+
+```yaml
+- name: ENABLE_COMPACT
+  value: "false"
+```
