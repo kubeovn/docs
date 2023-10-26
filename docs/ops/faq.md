@@ -70,7 +70,7 @@ openvswitch: netlink: Flow actions may not be safe on all matching packets.
 
 ### 现象
 
-从 v1.11.x 版本开始，1w Pod以上的集群，如果 OVN NB 或者 SB 出现频繁选主的情况，可能原因是 Kube-OVN 周期进行了 ovsdb-server/compact 动作，影响到选主逻辑。
+从 v1.11.x 版本开始，1w Pod 以上的集群，如果 OVN NB 或者 SB 出现频繁选主的情况，可能原因是 Kube-OVN 周期进行了 ovsdb-server/compact 动作，影响到选主逻辑。
 
 ### 解决方法
 
