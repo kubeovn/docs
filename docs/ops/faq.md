@@ -65,3 +65,18 @@ openvswitch: netlink: Flow actions may not be safe on all matching packets.
 1. 升级内核模块或手动编译 OVS 内核模块。
 2. 若只使用 Overlay 网络可以更改 `kube-ovn-controller` 启动参数设置 `--enable-lb=false`
 关闭 OVN LB 使用 kube-proxy 进行 Service 转发。
+
+## ovn-central 出现频繁选主
+
+### 现象
+
+从 v1.11.x 版本开始，1w Pod 以上的集群，如果 OVN NB 或者 SB 出现频繁选主的情况，可能原因是 Kube-OVN 周期进行了 ovsdb-server/compact 动作，影响到选主逻辑。
+
+### 解决方法
+
+可以给 ovn-central 配置环境变量如下，关闭 compact：
+
+```yaml
+- name: ENABLE_COMPACT
+  value: "false"
+```
