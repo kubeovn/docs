@@ -105,8 +105,8 @@ spec:
 
 VIP 同样支持固定地址和随机地址的分配，分配方式如上文所述。
 
-- `namespace`: 需显式地指定命名空间，VIP 仅允许相同命名空间的资源开启 AAP 功能。
-- `selector`: AAP 的 Pod 的节点选择器，格式和 Kubernetes 中的 NodeSelector 格式相同。
+- `namespace`: AAP 场景下，VIP 需显式地指定命名空间，VIP 仅允许相同命名空间的资源开启 AAP 功能。
+- `selector`: AAP 场景下，用于选择 VIP 所附属的 Pod 的节点选择器，格式和 Kubernetes 中的 NodeSelector 格式相同。
 
 创建成功后查询该 VIP 对应的 Port：
 
@@ -122,6 +122,8 @@ switch e32e1d3b-c539-45f4-ab19-be4e33a061f6 (ovn-default)
 可以使用 annotation 指定 VIP 开启 AAP 功能，labels 需要满足 VIP 中节点选择器的条件。
 
 Pod 支持指定多个 VIP，配置格式为：ovn.kubernetes.io/aaps: vip-aap,vip-aap2,vip-aap3
+
+AAP 功能支持[多网卡场景](./multi-nic.md)，若 Pod 配置了多网卡，AAP 会对 Pod 中和 VIP 同一 subnet 的对应 Port 进行配置
 
 ```yaml
 apiVersion: v1

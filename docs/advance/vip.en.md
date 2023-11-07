@@ -105,8 +105,8 @@ spec:
 
 VIP also supports the allocation of fixed addresses and random addresses, and the allocation method is as described above.
 
-- `namespace`: The namespace needs to be specified explicitly. VIP only allows resources in the same namespace to enable the AAP function.
-- `selector`: The node selector of AAP's Pod has the same format as the NodeSelector in Kubernetes.
+- `namespace`: In the AAP scenario, VIP needs to explicitly specify the namespace. VIP only allows resources in the same namespace to enable the AAP function.
+- `selector`: In the AAP scenario, the node selector used to select the Pod attached to the vip has the same format as the NodeSelector in Kubernetes.
 
 Query the Port corresponding to the VIP after creation:
 
@@ -122,6 +122,8 @@ switch e32e1d3b-c539-45f4-ab19-be4e33a061f6 (ovn-default)
 You can use annotation to specify a VIP to enable the AAP function, and labels need to meet the conditions of the node selector in the VIP.
 
 Pod supports specifying multiple VIPs, with a configuration format of: ovn.kubernetes.io/aaps: vip-aap,vip-aap2,vip-aap3
+
+The AAP function supports [multiple interfaces] (./multi-nic.en.md). If the Pod is configured with multiple interfaces, AAP will configure the corresponding Port in the same subnet of the Pod and the VIP.
 
 ```yaml
 apiVersion: v1
