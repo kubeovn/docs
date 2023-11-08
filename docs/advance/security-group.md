@@ -16,14 +16,14 @@ spec:
     policy: allow
     priority: 1
     protocol: all
-    remoteAddress: 10.16.0.13/16
+    remoteAddress: 10.16.0.13 # 10.16.0.0/16 配置网段
     remoteType: address
   ingressRules:
   - ipVersion: ipv4
     policy: deny
     priority: 1
     protocol: icmp
-    remoteAddress: 10.16.0.14/16
+    remoteAddress: 10.16.0.14
     remoteType: address
 ```
 
@@ -122,26 +122,26 @@ spec:
     policy: allow
     priority: 2
     protocol: all
-    remoteAddress: 10.16.0.13/16
+    remoteAddress: 10.16.0.13
     remoteType: address
   - ipVersion: ipv4
     policy: allow
     priority: 1
     protocol: all
-    remoteAddress: 10.16.0.1/16
+    remoteAddress: 10.16.0.1
     remoteType: address
   ingressRules:
   - ipVersion: ipv4
     policy: deny
     priority: 2
     protocol: icmp
-    remoteAddress: 10.16.0.14/16
+    remoteAddress: 10.16.0.14
     remoteType: address
   - ipVersion: ipv4
     policy: allow
     priority: 1
     protocol: icmp
-    remoteAddress: 10.16.0.1/16
+    remoteAddress: 10.16.0.1
     remoteType: address
 ```
 
