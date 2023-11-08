@@ -35,7 +35,7 @@ Pod 基于分布式网关 FIP (dnat_and_snat) 出公网的大致流程，最后�
 
 ## 1. 部署
 
-目前允许所有（默认以及自定义）vpc 使用同一个 provider vlan subnet 资源，同时兼容[默认 VPC EIP/SNAT](../guide/eip-snat.md)的场景。
+目前允许所有（默认以及自定义） vpc 使用同一个默认 provider vlan subnet 资源，同时自定义 vpc 支持扩展 provider vlan subnet 从而实现使用多个公网，兼容[默认 VPC EIP/SNAT](../guide/eip-snat.md)的场景。
 
 类似 neutron ovn，服务启动配置中需要指定 provider network 相关的配置，下述的启动参数也是为了兼容 VPC EIP/SNAT 的实现。
 
@@ -125,6 +125,13 @@ data:
 
 ### 1.3 自定义 vpc 启用 eip snat fip 功能
 
+集群一般需要多个网关 node 来实现高可用，配置如下：
+
+```bash
+# 首先通过添加标签指定 external-gw-nodes
+kubectl label nodes pc-node-1 pc-node-2 pc-node-3 ovn.kubernetes.io/external-gw=true
+```
+
 ``` bash
 # cat 00-ns.yml
 
@@ -199,6 +206,91 @@ Route Table <main>:
 # 目前该路由已自动维护
 ```
 
+### 1.4 使用额外的公网网络
+
+#### 1.4.1 准备额外 underlay 公网网络
+
+额外的公网网络功能在启动默认 eip snat fip 功能后才会启用，若只有 1 个公网网卡，请使用默认 eip snat fip 功能
+
+```yaml
+# 准备 provider-network， vlan， subnet
+# cat 01-extra-provider-network.yaml
+apiVersion: kubeovn.io/v1
+kind: ProviderNetwork
+metadata:
+  name: extra
+spec:
+  defaultInterface: vlan
+# cat 02-extra-vlan.yaml
+apiVersion: kubeovn.io/v1
+kind: Vlan
+metadata:
+  name: vlan0
+spec:
+  id: 0
+  provider: extra
+# cat 03-extra-vlan-subnet.yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: extra
+spec:
+  protocol: IPv4
+  cidrBlock: 10.10.204.0/24
+  gateway: 10.10.204.254
+  vlan: vlan0
+  excludeIps:
+  - 10.10.204.1..10.10.204.100
+```
+
+#### 1.4.2 自定义 vpc 配置
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Vpc
+metadata:
+  name: vpc1
+spec:
+  namespaces:
+  - vpc1
+  staticRoutes:         # 配置路由规则：vpc下的某个子网需要基于哪一个额外的公网网络的路由需要手动添加，以下示例仅供参考，用户需根据自己的实际情况进行配置
+  - cidr: 192.168.0.1/28
+    nextHopIP: 10.10.204.254
+    policy: policySrc
+  enableExternal: true  # 开启enableExternal后vpc会自动连接名为external的ls
+  addExternalSubnets:	# 配置addExternalSubnets支持连接多个额外的公网网络
+  - extra
+```
+
+以上模板应用后，应该可以看到如下资源存在
+
+```bash
+# k ko nbctl show vpc1
+router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
+    port vpc1-vpc1-subnet1
+        mac: "00:00:00:ED:8E:C7"
+        networks: ["192.168.0.1/24"]
+    port vpc1-external204
+        mac: "00:00:00:EF:05:C7"
+        networks: ["10.5.204.105/24"]
+        gateway chassis: [7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd]
+    port vpc1-extra
+        mac: "00:00:00:EF:6A:C7"
+        networks: ["10.10.204.105/24"]
+        gateway chassis: [7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd]
+```
+
+```bash
+# k ko nbctl lr-route-list vpc1
+IPv4 Routes
+Route Table <main>:
+				192.168.0.1/28         10.10.204.254 src-ip
+                0.0.0.0/0              10.5.204.254  dst-ip
+# 目前会为默认公网网络配置默认路由
+# 额外公网网络需要在vpc手动配置路由，上述实例中源IP地址为192.168.0.1/28会转发至额外公网网络
+# 用户可根据情况手动配置路由规则
+```
+
 ## 2. ovn-eip
 
 该功能和 iptables-eip 设计和使用方式基本一致，ovn-eip 目前有三种 type
@@ -219,6 +311,8 @@ spec:
   
 # 动态分配一个 eip 资源，该资源预留用于 fip 场景
 ```
+
+当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
 
 ### 2.1 ovn-fip 为 pod 绑定一个 fip
 
@@ -443,6 +537,8 @@ spec:
 
 ```
 
+当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
+
 ### 3.2 ovn-snat 对应到一个 pod ip
 
 该功能和 iptables-snat 设计和使用方式基本一致
@@ -481,6 +577,8 @@ spec:
   v4IpCidr: 192.168.0.4
 
 ```
+
+当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络。
 
 以上资源创建后，可以看到 snat 公网功能依赖的如下资源。
 
@@ -607,6 +705,8 @@ spec:
   v4Ip: 192.168.0.3
 
 ```
+
+当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
 
 OvnDnatRule 的配置与 IptablesDnatRule 类似
 

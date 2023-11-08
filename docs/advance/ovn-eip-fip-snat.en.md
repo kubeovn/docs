@@ -36,8 +36,7 @@ The CRD supported by this function is basically the same as the iptable nat gw p
 
 ## 1. Deployment
 
-Currently allows all vpcs to share the same provider vlan subnet resources, similar to neutron ovn mode.
-Compatible with previous scenarios [default VPC EIP/SNAT](../guide/eip-snat.en.md).
+Currently allows all vpcs to share the same default provider vlan subnet resources, custom vpcs support extending provider vlan subnet to enable the use of multiple public networks. similar to neutron ovn mode. Compatible with previous scenarios [default VPC EIP/SNAT](../guide/eip-snat.en.md).
 
 During the deployment phase, you may need to specify a default public network logical switch based on actual conditions.
 If no vlan is in use (vlan 0 is used), the following startup parameters do not need to be configured.
@@ -130,6 +129,13 @@ Of course, you can also manually create the lrp type ovn eip in advance.
 
 ### 1.3 Custom vpc enable eip snat fip function
 
+Clusters generally require multiple gateway nodes to achieve high availability. The configuration is as follows:
+
+```bash
+# First specify external-gw-nodes by adding label
+kubectl label nodes pc-node-1 pc-node-2 pc-node-3 ovn.kubernetes.io/external-gw=true
+```
+
 ``` bash
 # cat 00-ns.yml
 
@@ -202,6 +208,91 @@ Route Table <main>:
 # The route currently supports automatic maintenance
 ```
 
+### 1.4 Use additional public network
+
+#### 1.4.1 Create additional underlay public network
+
+Additional public network functions will be enabled after the default eip snat fip function is enabled. If there is only 1 public network card, please use the default eip snat fip function.
+
+```yaml
+# provider-network, vlan, subnet
+# cat 01-extra-provider-network.yaml
+apiVersion: kubeovn.io/v1
+kind: ProviderNetwork
+metadata:
+  name: extra
+spec:
+  defaultInterface: vlan
+# cat 02-extra-vlan.yaml
+apiVersion: kubeovn.io/v1
+kind: Vlan
+metadata:
+  name: vlan0
+spec:
+  id: 0
+  provider: extra
+# cat 03-extra-vlan-subnet.yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: extra
+spec:
+  protocol: IPv4
+  cidrBlock: 10.10.204.0/24
+  gateway: 10.10.204.254
+  vlan: vlan0
+  excludeIps:
+  - 10.10.204.1..10.10.204.100
+```
+
+#### 1.4.2 Custom vpc configuration
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Vpc
+metadata:
+  name: vpc1
+spec:
+  namespaces:
+  - vpc1
+  staticRoutes:         # configure routing rules: Which additional public network routes a subnet under the vpc needs to be based on needs to be added manually. The following example is for reference only. Users need to configure it according to their actual situation.
+  - cidr: 192.168.0.1/28
+    nextHopIP: 10.10.204.254
+    policy: policySrc
+  enableExternal: true  # vpc enableExternal will automatically create an lrp association to the public network specified above
+  addExternalSubnets:	# configure addExternalSubnets to support connecting multiple additional public networks
+  - extra
+```
+
+After the above template is applied, you should see the following resources exist
+
+```yaml
+# k ko nbctl show vpc1
+router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
+    port vpc1-vpc1-subnet1
+        mac: "00:00:00:ED:8E:C7"
+        networks: ["192.168.0.1/24"]
+    port vpc1-external204
+        mac: "00:00:00:EF:05:C7"
+        networks: ["10.5.204.105/24"]
+        gateway chassis: [7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd]
+    port vpc1-extra
+        mac: "00:00:00:EF:6A:C7"
+        networks: ["10.10.204.105/24"]
+        gateway chassis: [7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd]
+```
+
+```bash
+# k ko nbctl lr-route-list vpc1
+IPv4 Routes
+Route Table <main>:
+				192.168.0.1/28         10.10.204.254 src-ip
+                0.0.0.0/0              10.5.204.254  dst-ip
+# The route currently supports automatic maintenance
+# Additional public networks require manual routing configuration in the vpc. In the above example, the source IP address is 192.168.0.1/28 and will be forwarded to the additional public network.
+# Users can manually configure routing rules according to the situation
+```
+
 ## 2. ovn-eip
 
 This function is designed and used in the same way as iptables-eip, ovn-eip currently has three types
@@ -223,6 +314,8 @@ spec:
   
 # Dynamically allocate an eip resource that is reserved for fip dnat_and_snat scenarios
 ```
+
+When an additional public network is configured, you can specify the public network that needs to be expanded through externalSubnet. In the above configuration, external204 and extra are optional.
 
 ### 2.1 Create an fip for pod
 
@@ -450,6 +543,8 @@ spec:
 
 ```
 
+When an additional public network is configured, you can specify the public network that needs to be expanded through externalSubnet. In the above configuration, external204 and extra are optional.
+
 ### 3.2 ovn-snat corresponds to a pod IP
 
 This feature is designed and used in much the same way as iptables-snat
@@ -487,6 +582,8 @@ spec:
   v4IpCidr: 192.168.0.4
 
 ```
+
+When an additional public network is configured, you can specify the public network that needs to be expanded through externalSubnet. In the above configuration, external204 and extra are optional.
 
 After the above resources are created, you can see the following resources that the snat public network feature depends on.
 
@@ -612,6 +709,8 @@ spec:
   v4Ip: 192.168.0.3
 
 ```
+
+When an additional public network is configured, you can specify the public network that needs to be expanded through externalSubnet. In the above configuration, external204 and extra are optional.
 
 The configuration of OvnDnatRule is similar to that of IptablesDnatRule.
 
