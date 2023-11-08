@@ -260,7 +260,7 @@ spec:
     nextHopIP: 10.10.204.254
     policy: policySrc
   enableExternal: true  # vpc enableExternal will automatically create an lrp association to the public network specified above
-  addExternalSubnets:	# configure addExternalSubnets to support connecting multiple additional public networks
+  addExternalSubnets: # configure addExternalSubnets to support connecting multiple additional public networks
   - extra
 ```
 
@@ -286,7 +286,7 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 # k ko nbctl lr-route-list vpc1
 IPv4 Routes
 Route Table <main>:
-				192.168.0.1/28         10.10.204.254 src-ip
+    192.168.0.1/28         10.10.204.254 src-ip
                 0.0.0.0/0              10.5.204.254  dst-ip
 # The route currently supports automatic maintenance
 # Additional public networks require manual routing configuration in the vpc. In the above example, the source IP address is 192.168.0.1/28 and will be forwarded to the additional public network.
