@@ -250,6 +250,34 @@ kubectl ko nbctl ls-del ts
 
 在对端集群重复同样的步骤。
 
+## 集群互联支持网关 ECMP 和高可用功能
+
+如果 `gw-nodes` 的节点之间用 `;` 隔开表示：跨集群的流量在网关 `az1-gw1`，`az1-gw2`，`az1-gw3` 路径实现 ECMP，配置如下：
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovn-ic-config
+  namespace: kube-system
+data:
+  ...
+  gw-nodes: "az1-gw1;az1-gw2;az1-gw3"
+```
+
+如果 `gw-nodes` 的节点之间用 `,` 隔开表示：跨集群的流量在网关 `az1-gw1`，`az1-gw2`，`az1-gw3` 路径实现高可用，配置如下：
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovn-ic-config
+  namespace: kube-system
+data:
+  ...
+  gw-nodes: "az1-gw1,az1-gw2,az1-gw3"
+```
+
 ## 修改 az-name
 
 可以直接通过 `kubectl edit` 的方式对 `ovn-ic-config` 这个 configmap 中的 `az-name` 字段进行修改。

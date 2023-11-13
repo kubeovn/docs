@@ -240,6 +240,34 @@ data:
   auto-route: "true"
 ```
 
+## Cluster interconnection supports gateway ECMP and high availability functions
+
+If the nodes of `gw-nodes` are separated by `;`, it means: cross-cluster traffic implements ECMP on the gateway `az1-gw1`, `az1-gw2`, `az1-gw3` paths, and the configuration is as follows:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovn-ic-config
+  namespace: kube-system
+data:
+  ...
+  gw-nodes: "az1-gw1;az1-gw2;az1-gw3"
+```
+
+If the nodes of `gw-nodes` are separated by `,`, it means: cross-cluster traffic is highly available through the gateway `az1-gw1`, `az1-gw2`, `az1-gw3` paths. The configuration is as follows:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovn-ic-config
+  namespace: kube-system
+data:
+  ...
+  gw-nodes: "az1-gw1,az1-gw2,az1-gw3"
+```
+
 ## Manual Reset
 
 In some cases, the entire interconnection configuration needs to be cleaned up due to configuration errors,
