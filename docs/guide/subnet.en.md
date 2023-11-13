@@ -322,6 +322,19 @@ spec:
   enableMulticastSnoop: true
 ```
 
+## Subnet MTU Setting
+
+Configure the MTU of the Pod under Subnet. After configuration, you need to restart the Pod under Subnet to take effect.
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: sample1
+spec:
+  mtu: 1300
+```
+
 ## Other Advanced Settings
 
 - [Configure IPPool](./ippool.en.md)
