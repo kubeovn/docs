@@ -312,6 +312,19 @@ spec:
   enableMulticastSnoop: true
 ```
 
+## Subnet MTU 配置
+
+配置 Subnet 下 Pod 的 MTU，配置后需要重启 Subnet 下的 Pod 才生效
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: sample1
+spec:
+  mtu: 1300
+```
+
 ## 其他高级设置
 
 - [IP 池使用](./ippool.md)
