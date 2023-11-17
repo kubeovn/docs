@@ -223,7 +223,7 @@ spec:
 
 ```
 
-## StatefulSet 和 Kubevirt VM 保留 VIP
+### 3.1 StatefulSet 和 Kubevirt VM 保留 VIP
 
 针对 `StatefulSet` 和 `VM` 的特殊性，在他们的 Pod 销毁再拉起起后会重新使用之前设置的 VIP。
 

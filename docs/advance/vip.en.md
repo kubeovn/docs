@@ -219,7 +219,7 @@ spec:
 
 ```
 
-## StatefulSet and Kubevirt VM retain VIP
+### 3.1 StatefulSet and Kubevirt VM retain VIP
 
 Due to the particularity of 'StatefulSet' and 'VM', after their Pod is destroyed and pulled up, it will re-use the previously set VIP.
 
