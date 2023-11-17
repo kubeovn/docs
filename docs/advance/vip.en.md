@@ -1,17 +1,26 @@
-# VIP Reservation
+# VIP reserved IP
 
-In some scenarios we want to dynamically reserve part of the IP but not assign it to Pods but to other infrastructure e.g:
+VIP Virtual IP addresses are reserved for IP addresses. The reason for the design of VIP is that the IP and POD of kube-ovn are directly related in naming, so the function of reserving IP can not be realized directly based on IP. At the beginning of the design, VIP refers to the function of Openstack neutron Allowed-Address-Pairs（AAP）, which can be used for Openstack octavia load balancer projects. It can also be used to provide in-machine application (POD) IP, as seen in the aliyun terway project. In addition, because neutron has the function of reserving IP, VIP has been extended to a certain extent, so that VIP can be directly used to reserve IP for POD, but this design will lead to the function of VIP and IP become blurred, which is not an elegant way to achieve, so it is not recommended to use in production. In addition, since the Switch LB of OVN can provide a function of using the internal IP address of the subnet as the front-end VIP of the LB, the scenario of using the OVN Switch LB Rule in the subnet for the VIP is extended.
+In short, there are only three use cases for VIP design at present:
 
-- Kubernetes nested Kubernetes scenarios where the upper Kubernetes uses the Underlay network take up the available addresses of the underlying Subnet.
-- LB or other network infrastructure requires the use of an IP within a Subnet.
+- Allowed-Address-Pairs VIP
+- Switch LB rule VIP
+- Pod uses VIP to fix IP
 
-In addition, VIP can also reserve IP for Allowed-Address-Pairs to support scenarios where a single network card is configured with multiple IPs, e.g:
+## 1. Allowed-Address-Pairs VIP
 
-- Keepalived can help achieve fast failover and flexible load balancing architecture by configuring additional IP address pairs.
+In this scenario, we want to dynamically reserve a part of the IP but not allocate it to Pods but to other infrastructure enables, such as:
 
-## Create Random Address VIP
+- Kubernetes nesting scenarios In which the upper-layer Kubernetes uses the Underlay network, the underlying Subnet addresses are used.
+- LB or other network infrastructure needs to use an IP within a Subnet, but does not have a separate Pod.
 
-If you just want to set aside a number of IPs and have no requirement for the IP addresses themselves, you can use the following yaml to create them:
+In addition, VIP can reserve IP for Allowed-Address-Pairs to support the scenario in which a single NIC is configured with multiple IP addresses, for example:
+
+- Keepalived can help with fast failover and flexible load balancing architecture by configuring additional IP address pairs
+
+### 1.1 Automatically assign addresses to VIP
+
+If you just want to reserve a number of IP addresses without requiring the IP address itself, you can use the following yaml to create:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -21,12 +30,13 @@ metadata:
 spec:
   subnet: ovn-default
   type: ""
+
 ```
 
-- `subnet`: reserve the IP from this Subnet.
-- `type`: Currently, two types are supported. If the value is empty, it indicates that it is only used for occupying ip addresses of ipam. `switch_lb_vip` The front-end vip address and back-end ip address of the switch lb must be on the same subnet.
+- `subnet`: The IP address is reserved from the Subnet.
+- `type`: Currently, two types of ip addresses are supported. If the value is empty, it indicates that the ip address is used only for ipam ip addresses. switch_lb_vip indicates that the IP address is used only for switch lb.
 
-Query the VIP after creation.
+Query the VIP after it is created:
 
 ```bash
 # kubectl get vip
@@ -34,11 +44,11 @@ NAME             V4IP         PV4IP   MAC                 PMAC   V6IP   PV6IP   
 vip-dynamic-01   10.16.0.12           00:00:00:F0:DB:25                         ovn-default   true
 ```
 
-It can be seen that the VIP is assigned the IP address `10.16.0.12`, which can later be used by other network infrastructures.
+It can be seen that the VIP is assigned an IP address of '10.16.0.12', which can be used by other network infrastructures later.
 
-## Create a fixed address VIP
+### 1.2 Use fixed address VIP
 
-The IP address of the reserved VIP can be fixed using the following yaml:
+If there is a need for the reserved VIP IP address, the following yaml can be used for fixed allocation:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -47,49 +57,30 @@ metadata:
   name: static-vip01
 spec:
   subnet: ovn-default 
-  V4ip: "10.16.0.121"
+  v4ip: "10.16.0.121"
 ```
 
-- `subnet`: reserve the IP from this Subnet.
-- `V4ip`: A fixed-assigned IP address that should within the CIDR range of `subnet`.
+- `subnet`: The IP address is reserved from the Subnet.
+- `v4ip`: Fixed assigned IP address, which must be within the CIDR range of 'subnet'.
 
-Query the VIP after creation:
+Query the VIP after it is created:
 
 ```bash
 # kubectl get vip
 NAME             V4IP         PV4IP   MAC                 PMAC   V6IP   PV6IP   SUBNET        READY
 static-vip01   10.16.0.121           00:00:00:F0:DB:26                         ovn-default   true
+
 ```
 
-It can be seen that the VIP has been assigned the expected IP address.
+### 1.3 Pod Uses VIP to enable AAP
 
-## Pod uses VIP to bind IP
+Pod can use annotation to specify VIP to enable AAP function. labels must meet the condition of node selector in VIP.
 
-> This feature is supported starting from v1.12.
+Pod annotation supports specifying multiple VIPs. The configuration format is：ovn.kubernetes.io/aaps: vip-aap,vip-aap2,vip-aap3
 
-You can use annotation to assign a VIP to a Pod:
+AAP support [multi nic](./multi-nic.en.md)，If a Pod is configured with multiple nics, AAP will configure the Port corresponding to the same subnet of the Pod and VIP.
 
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: static-ip
-  annotations:
-    ovn.kubernetes.io/vip: vip-dynamic-01 # Specify vip
-  namespace: default
-spec:
-  containers:
-    - name: static-ip
-      image: docker.io/library/nginx:alpine
-```
-
-## StatefulSet & Kubevirt VM keep VIP
-
-Specify for `StatefulSet` and `VM` resources, these Pods their owned will reuse the VIP when these Pods recreating.
-
-VM keep VIP must be enable the `keep-vm-ip` param in `kube-ovn-controller`. Refer [Kubevirt VM Fixed Address Settings](../guide/setup-options.en.md#kubevirt-vm)
-
-## Create VIP to support AAP
+#### 1.3.1 Create VIP support AAP
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -103,27 +94,19 @@ spec:
     - "app: aap1"
 ```
 
-VIP also supports the allocation of fixed addresses and random addresses, and the allocation method is as described above.
+VIP also supports the assignment of fixed and random addresses, as described above.
 
-- `namespace`: In the AAP scenario, VIP needs to explicitly specify the namespace. VIP only allows resources in the same namespace to enable the AAP function.
-- `selector`: In the AAP scenario, the node selector used to select the Pod attached to the vip has the same format as the NodeSelector in Kubernetes.
+- `namespace`: In AAP scenarios, a VIP needs to specify a namespace explicitly. Only resources in the same namespace can enable the AAP function.
+- `selector`: In the AAP scenario, the node selector used to select the Pod attached to the VIP has the same format as the NodeSelector format in Kubernetes.
 
-Query the Port corresponding to the VIP after creation:
+Query the Port corresponding to the VIP：
 
-```yaml
+```bash
 # kubectl ko nbctl show ovn-default
 switch e32e1d3b-c539-45f4-ab19-be4e33a061f6 (ovn-default)
     port aap-vip
         type: virtual
 ```
-
-## Pod uses VIP to enable AAP
-
-You can use annotation to specify a VIP to enable the AAP function, and labels need to meet the conditions of the node selector in the VIP.
-
-Pod supports specifying multiple VIPs, with a configuration format of: ovn.kubernetes.io/aaps: vip-aap,vip-aap2,vip-aap3
-
-The AAP function supports [multiple interfaces] (./multi-nic.en.md). If the Pod is configured with multiple interfaces, AAP will configure the corresponding Port in the same subnet of the Pod and the VIP.
 
 ```yaml
 apiVersion: v1
@@ -145,7 +128,7 @@ spec:
             - NET_ADMIN
 ```
 
-Query the configuration corresponding to the AAP after creation:
+Query the configuration of the AAP after the AAP is created：
 
 ```bash
 # kubectl ko nbctl list logical_switch_port aap-vip
@@ -168,9 +151,9 @@ type                : virtual
 up                  : false
 ```
 
-Virtual ip is configured as an IP reserved for VIP, while virtual parents are configured as the port corresponding to the pod that enables AAP function.
+virtual-ip is set to the IP address reserved for the VIP, and virtual-parents is set to the Port of the Pod whose AAP function is enabled.
 
-Query the configuration corresponding to the Pod after creation:
+Query the configuration of the Pod after the POD is created:
 
 ```bash
 # kubectl exec -it busybox -- ip addr add 10.16.0.100/16 dev eth0
@@ -185,4 +168,59 @@ Query the configuration corresponding to the Pod after creation:
        valid_lft forever preferred_lft forever
 ```
 
-In addition to the IP automatically assigned during Pod creation, the VIP IP has also been successfully bound, and other Pods within the current subnet can communicate with these two IPs.
+In addition to the IP assigned automatically when the Pod is created, the IP of the VIP is also successfully bound, and other Pods in the current subnet can communicate with these two IP addresses.
+
+## 2. [Switch LB rule](../advance/vpc-internal-lb.en.md#kubevirt-vm) vip
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Vip
+metadata:
+  name: slr-01
+spec:
+  subnet: ovn-default
+  type: switch_lb_vip
+
+```
+
+- `subnet`: The IP address is reserved from the Subnet.
+- `type`: Currently, two types of ip addresses are supported. If the value is empty, it indicates that the ip address is used only for ipam ip addresses. switch_lb_vip indicates that the IP address is used only for switch lb.
+
+## 3. POD Use VIP to reserve IP address
+
+It is not recommended to use this function in production because the distinction between this function and IP function is not clear.
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Vip
+metadata:
+  name: pod-use-vip
+spec:
+  subnet: ovn-default
+  type: ""
+```
+
+> This feature has been supported since v1.12.
+
+You can use annotations to assign a VIP to a Pod, then the pod will use the vip's ip address：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: static-ip
+  annotations:
+    ovn.kubernetes.io/vip: pod-use-vip # use vip name
+  namespace: default
+spec:
+  containers:
+    - name: static-ip
+      image: docker.io/library/nginx:alpine
+
+```
+
+## StatefulSet and Kubevirt VM retain VIP
+
+Due to the particularity of 'StatefulSet' and 'VM', after their Pod is destroyed and pulled up, it will re-use the previously set VIP.
+
+VM retention VIP needs to ensure that 'kube-ovn-controller' 'keep-vm-ip' parameter is' true '. Please refer to [Kubevirt VM enable keep its ip](../guide/setup-options.en.md#kubevirt-vm)

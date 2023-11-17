@@ -1,7 +1,7 @@
 # VIP 预留 IP
 
 VIP 即虚拟 IP， 用于预留 IP 资源。之所以设计 VIP 是因为 kube-ovn 的 IP 和 POD 在命名上直接关联，所以无法基于 IP 实现直接实现预留 IP 的功能。
-VIP 设计之初参考了 Openstack neutron Allowed-Address-Pairs 的功能，可以用于 Openstack octavia 负载均衡器项目。 也可以用于提供虚拟机内部的应用（POD）IP，这点可以参考 aliyun terway 项目。
+VIP 设计之初参考了 Openstack neutron Allowed-Address-Pairs（AAP） 的功能，可以用于 Openstack octavia 负载均衡器项目。 也可以用于提供虚拟机内部的应用（POD）IP，这点可以参考 aliyun terway 项目。
 另外，由于 neutron 有预留 IP 的功能，所以对 VIP 进行了一定扩展，使得 VIP 可以直接用于为 POD 预留 IP，但由于这种设计会导致 VIP 和 IP 的功能变得模糊，在实现上并不是一个优雅的方式，所以不推荐在生产使用。
 而且， 由于 OVN 的 Switch LB 可以提供一种以子网内部 IP 为 LB 前端 VIP 的功能，所以又对 VIP 在子网内使用 OVN Switch LB Rule 场景进行了扩展。
 总之，目前 VIP 在设计上只有三种使用场景：
@@ -21,7 +21,7 @@ VIP 设计之初参考了 Openstack neutron Allowed-Address-Pairs 的功能，�
 
 - Keepalived 通过配置额外的 IP 地址对，可以帮助实现快速故障切换和灵活的负载均衡架构
 
-### 1.1 创建随机地址 VIP
+### 1.1 自动分配地址 VIP
 
 如果只是为了预留若干 IP 而对 IP 地址本身没有要求可以使用下面的 yaml 进行创建：
 
@@ -49,7 +49,7 @@ vip-dynamic-01   10.16.0.12           00:00:00:F0:DB:25                         
 
 可见该 VIP 被分配了 `10.16.0.12` 的 IP 地址，该地址可以之后供其他网络基础设施使用。
 
-### 1.2 创建固定地址 VIP
+### 1.2 使用固定地址 VIP
 
 如对预留的 VIP 的 IP 地址有需求可使用下面的 yaml 进行固定分配：
 
@@ -78,9 +78,9 @@ static-vip01   10.16.0.121           00:00:00:F0:DB:26                         o
 
 ### 1.3 Pod 使用 VIP 开启 AAP
 
-可以使用 annotation 指定 VIP 开启 AAP 功能，labels 需要满足 VIP 中节点选择器的条件。
+Pod 可以使用 annotation 指定 VIP 开启 AAP 功能，labels 需要满足 VIP 中节点选择器的条件。
 
-Pod 支持指定多个 VIP，配置格式为：ovn.kubernetes.io/aaps: vip-aap,vip-aap2,vip-aap3
+Pod annotation 支持指定多个 VIP，配置格式为：ovn.kubernetes.io/aaps: vip-aap,vip-aap2,vip-aap3
 
 AAP 功能支持[多网卡场景](./multi-nic.md)，若 Pod 配置了多网卡，AAP 会对 Pod 中和 VIP 同一 subnet 的对应 Port 进行配置
 
@@ -190,7 +190,9 @@ spec:
 - `subnet`: 将从该 Subnet 中预留 IP。
 - `type`: 目前支持两种类型，为空表示仅用于 ipam ip 占位，`switch_lb_vip` 表示该 vip 仅用于 switch lb 前端 vip 和后端 ip 需处于同一子网。
 
-## 3. POD 预留 VIP
+## 3. Pod 使用 VIP 来固定 IP
+
+> 该功能从 v1.12 开始支持。
 
 由于该功能和 IP 功能界限不清晰，不推荐在生产使用
 
@@ -203,10 +205,6 @@ spec:
   subnet: ovn-default
   type: ""
 ```
-
-## Pod 使用 VIP 来固定 IP
-
-> 该功能从 v1.12 开始支持。
 
 可以使用 annotation 将某个 VIP 分配给一个 Pod：
 
