@@ -315,7 +315,9 @@ spec:
 # Dynamically allocate an eip resource that is reserved for fip dnat_and_snat scenarios
 ```
 
-When an additional public network is configured, you can specify the public network that needs to be expanded through externalSubnet. In the above configuration, external204 and extra are optional.
+The externalSubnet field does not need to be configured. If not configured, the default public network will be used. In the above configuration, the default public network is external204.
+
+If you want to use an additional public network, you need to explicitly specify the public network to be extended through externalSubnet. In the above configuration, the extended public network is extra.
 
 ### 2.1 Create an fip for pod
 
@@ -543,7 +545,7 @@ spec:
 
 ```
 
-When an additional public network is configured, you can specify the public network that needs to be expanded through externalSubnet. In the above configuration, external204 and extra are optional.
+If you want to use an additional public network, you need to explicitly specify the public network to be extended through externalSubnet. In the above configuration, the extended public network is extra.
 
 ### 3.2 ovn-snat corresponds to a pod IP
 
@@ -583,7 +585,7 @@ spec:
 
 ```
 
-When an additional public network is configured, you can specify the public network that needs to be expanded through externalSubnet. In the above configuration, external204 and extra are optional.
+If you want to use an additional public network, you need to explicitly specify the public network to be extended through externalSubnet. In the above configuration, the extended public network is extra.
 
 After the above resources are created, you can see the following resources that the snat public network feature depends on.
 
@@ -710,7 +712,7 @@ spec:
 
 ```
 
-When an additional public network is configured, you can specify the public network that needs to be expanded through externalSubnet. In the above configuration, external204 and extra are optional.
+If you want to use an additional public network, you need to explicitly specify the public network to be extended through externalSubnet. In the above configuration, the extended public network is extra.
 
 The configuration of OvnDnatRule is similar to that of IptablesDnatRule.
 
