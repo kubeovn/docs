@@ -312,7 +312,9 @@ spec:
 # 动态分配一个 eip 资源，该资源预留用于 fip 场景
 ```
 
-当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
+externalSubnet 字段可不进行配置，若未配置则会使用默认公网网络，在上述配置中默认公网网络为 external204。
+
+若要使用额外公网网络，则需要通过 externalSubnet 显式指定需要扩展使用的公网网络，在上述配置中扩展公网网络为 extra。
 
 ### 2.1 ovn-fip 为 pod 绑定一个 fip
 
@@ -537,7 +539,7 @@ spec:
 
 ```
 
-当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
+若要使用额外公网网络，则需要通过 externalSubnet 显式指定需要扩展使用的公网网络，在上述配置中扩展公网网络为 extra。
 
 ### 3.2 ovn-snat 对应到一个 pod ip
 
@@ -578,7 +580,7 @@ spec:
 
 ```
 
-当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络。
+若要使用额外公网网络，则需要通过 externalSubnet 显式指定需要扩展使用的公网网络，在上述配置中扩展公网网络为 extra。
 
 以上资源创建后，可以看到 snat 公网功能依赖的如下资源。
 
@@ -706,7 +708,7 @@ spec:
 
 ```
 
-当配置了额外公网网络时，可以通过 externalSubnet 指定需要扩展使用的公网网络，在上述配置中，可选 external204 和 extra 两个公网网络
+若要使用额外公网网络，则需要通过 externalSubnet 显式指定需要扩展使用的公网网络，在上述配置中扩展公网网络为 extra。
 
 OvnDnatRule 的配置与 IptablesDnatRule 类似
 
