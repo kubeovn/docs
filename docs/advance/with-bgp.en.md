@@ -72,3 +72,4 @@ kubectl annotate subnet ovn-default ovn.kubernetes.io/bgp-
 - `graceful-restart`: Whether to enable BGP Graceful Restart.
 - `graceful-restart-time`: BGP Graceful restart time refer to RFC4724 3.
 - `graceful-restart-deferral-time`: BGP Graceful restart deferral time refer to RFC4724 4.1.
+- `passivemode`: The Speaker runs in Passive mode and does not actively connect to the peer.
