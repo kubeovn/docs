@@ -1,8 +1,8 @@
 # Encrypt inter-node communication using IPsec
 
-This function is supported after v1.10.11 and v1.11.4, and the kernel version is at least 3.10.0 or above.
+This function is supported after v1.10.11 and v1.11.4, the kernel version is at least 3.10.0 or above, and UDP ports 500 and 4500 are available.
 
-## start IPsec
+## Start IPsec
 
 Copy the script from the Kube-OVN source code [ipsec.sh](https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/ipsec.sh), execute the command as follows, the script will call ovs-pki to generate and distribute the certificate required for encryption:
 

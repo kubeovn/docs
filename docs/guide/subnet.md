@@ -60,6 +60,8 @@ join 子网的 CIDR 请参考[修改 Join 子网](../ops/change-join-subnet.md)
 
 ### 查看 Join 子网
 
+> 注意：集中式子网下的 Pod 无法通过 `hostport`, 以及设置了 `externalTrafficPolicy: Local` 的 NodePort 类型 Service 进行访问，
+
 该子网默认名为 `join` 一般无需对该子网 CIDR 外的其他网络配置进行修改。
 
 ```bash

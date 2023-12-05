@@ -194,6 +194,8 @@ spec:
 
 ### Centralized Gateway
 
+> Note: Pods under a centralized subnet cannot be accessed through `hostport` or a NodePort type Service with `externalTrafficPolicy: Local`.
+
 ![](../static/centralized-gateway.png)
 
 If you want traffic within the Subnet to access the external network using a fixed IP for security operations such as auditing and whitelisting,

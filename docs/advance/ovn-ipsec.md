@@ -1,6 +1,6 @@
 # 使用 IPsec 加密节点间通信
 
-该功能从 v1.10.11 和 v1.11.4 后开始支持，kernel 版本至少是 3.10.0 以上。
+该功能从 v1.10.11 和 v1.11.4 后开始支持，kernel 版本至少是 3.10.0 以上，同时需要保证主机 UDP 500 和 4500 端口可用。
 
 ## 启动 IPsec
 
@@ -13,7 +13,7 @@ bash ipsec.sh init
 执行完毕后，节点之间会协商一段时间建立 IPsec 隧道，经验值是十几秒到一分钟之间，可以通过如下命令来查看 IPsec 状态：
 
 ```bash
-# sh ipsec.sh status
+# bash ipsec.sh status
  Pod {ovs-ovn-d7hdt} ipsec status...
 Interface name: ovn-a4718e-0 v1 (CONFIGURED)
   Tunnel Type:    geneve
