@@ -1,5 +1,8 @@
 # OVN EIP FIP SNAT DNAT 支持
 
+注意：由于存在 api 变动，无法在 `1.12` 分支继续演进该 OVN EIP FIP DNAT 功能，如有需要，请参考 1.12 之后的分支 或者 master 分支。
+由于 master 分支演进较快，目前专门提供了一个 `1.12-mc` 分支，用于保证稳定性。
+
 ``` mermaid
 graph LR
 
