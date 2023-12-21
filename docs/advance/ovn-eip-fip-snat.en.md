@@ -1,5 +1,8 @@
 # Support OVN EIP,FIP and SNAT
 
+Note: Due to api changes, the OVN EIP FIP DNAT function cannot be continued in the '1.12' branch, if necessary, please refer to the branch after 1.12 or the master branch.
+Due to the evolution of the master branch quickly, now provides a special `1.12-mc` branch, used to guarantee stability.
+
 ``` mermaid
 graph LR
 
