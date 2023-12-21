@@ -552,16 +552,20 @@ SwitchLBRule 的详细配置信息，可以参考 [自定义 VPC 内部负载均
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
 | externalSubnet | String | OvnEip 所在的子网名称 |
-| v4ip | String | OvnEip IP 地址 |
+| v4Ip | String | OvnEip IPv4 地址 |
+| v6Ip | String | OvnEip IPv6 地址 |
 | macAddress | String | OvnEip Mac 地址 |
-| type | String | OvnEip 使用类型，取值有 `fip`、`snat` 或者 `lrp` |
+| type | String | OvnEip 使用类型，取值有 `lrp`、`lsp` 或者 `nat` |
 
 #### OvnEipStatus
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
 | conditions | []OvnEipCondition | 默认 Vpc OvnEip 状态变化信息，具体字段参考文档开头 Condition 定义 |
-| v4ip | String | OvnEip 使用的 v4 IP 地址 |
+| type | String | OvnEip 使用类型, 可以是 `lrp`, `lsp` or `nat` |
+| nat | String | dnat snat fip |
+| v4Ip | String | OvnEip 使用的 v4 IP 地址 |
+| v6Ip | String | OvnEip 使用的 v6 IP 地址 |
 | macAddress | String | OvnEip 使用的 Mac 地址 |
 
 ### OvnFip
@@ -579,7 +583,10 @@ SwitchLBRule 的详细配置信息，可以参考 [自定义 VPC 内部负载均
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
 | ovnEip | String | OvnFip 绑定的 OvnEip 名称 |
+| ipType | String | vip 或者 ip crd ("" 表示 ip crd) |
 | ipName | String | OvnFip 绑定 Pod 对应的 IP crd 名称 |
+| vpc | String | Pod 所在的 VPC 的名字 |
+| V4Ip | String |IP 或者 VIP 的 IPv4 地址 |
 
 #### OvnFipStatus
 
@@ -588,7 +595,6 @@ SwitchLBRule 的详细配置信息，可以参考 [自定义 VPC 内部负载均
 | ready | Bool | OvnFip 是否配置完成 |
 | v4Eip | String | OvnFip 绑定的 OvnEip 名称 |
 | v4Ip | String | OvnFip 当前使用的 OvnEip 地址 |
-| macAddress | String | OvnFip 配置的 Mac 地址 |
 | vpc | String | OvnFip 所在的 Vpc 名称 |
 | conditions | []OvnFipCondition | OvnFip 状态变化信息，具体字段参考文档开头 Condition 定义 |
 
@@ -608,7 +614,9 @@ SwitchLBRule 的详细配置信息，可以参考 [自定义 VPC 内部负载均
 | --- | --- | --- |
 | ovnEip | String | OvnSnatRule 绑定的 OvnEip 名称 |
 | vpcSubnet | String | OvnSnatRule 配置的子网名称 |
+| vpc | String | Pod 所在的 VPC |
 | ipName | String | OvnSnatRule 绑定 Pod 对应的 IP crd 名称 |
+| v4IpCidr | String | vpc subnet 的 IPv4 cidr  |
 
 #### OvnSnatRuleStatus
 
