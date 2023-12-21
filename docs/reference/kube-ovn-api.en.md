@@ -552,16 +552,20 @@ For detailed configuration information of SwitchLBRule, you can refer to [Custom
 | Property Name | Type | Description |
 | --- | --- | --- |
 | externalSubnet | String | OvnEip's subnet name |
-| v4ip | String | OvnEip IP address |
+| v4Ip | String | OvnEip IPv4 address |
+| v6Ip | String | OvnEip IPv6 address |
 | macAddress | String | OvnEip Mac address |
-| type | String | OvnEip use type, the value can be `fip`, `snat` or `lrp` |
+| type | String | OvnEip use type, the value can be `lrp`, `lsp` or `nat` |
 
 #### OvnEipStatus
 
 | Property Name | Type | Description |
 | --- | --- | --- |
 | conditions | []OvnEipCondition | OvnEip status change information, refer to the beginning of the documentation for the definition of Condition |
-| v4ip | String | The IPv4 ip address used by ovnEip |
+| type | String | OvnEip use type, the value can be `lrp`, `lsp` or `nat` |
+| nat | String | dnat snat fip |
+| v4Ip | String | The IPv4 ip address used by ovnEip |
+| v6Ip | String | The IPv4 ip address used by ovnEip |
 | macAddress | String | Mac address used by ovnEip |
 
 ### OvnFip
@@ -579,7 +583,10 @@ For detailed configuration information of SwitchLBRule, you can refer to [Custom
 | Property Name | Type | Description |
 | --- | --- | --- |
 | ovnEip | String | Name of the bound ovnEip |
+| ipType | String | vip crd or ip crd ("" means ip crd) |
 | ipName | String | The IP crd name corresponding to the bound Pod |
+| vpc | String | The vpc crd name corresponding to the bound Pod |
+| V4Ip | String | The IPv4 ip addresss corresponding to vip or the bound Pod |
 
 #### OvnFipStatus
 
@@ -588,7 +595,6 @@ For detailed configuration information of SwitchLBRule, you can refer to [Custom
 | ready | Bool | OvnFip is ready or not |
 | v4Eip | String | Name of the ovnEip to which ovnFip is bound |
 | v4Ip | String | The ovnEip address currently in use |
-| macAddress | String | OvnFip's configured mac address |
 | vpc | String | The name of the vpc where ovnFip is located |
 | conditions | []OvnFipCondition | OvnFip status change information, refer to the beginning of the document for the definition of Condition |
 
@@ -607,8 +613,10 @@ For detailed configuration information of SwitchLBRule, you can refer to [Custom
 | Property Name | Type | Description |
 | --- | --- | --- |
 | ovnEip | String | Name of the ovnEip to which ovnSnatRule is bound |
-| vpcSubnet | String | The name of the subnet configured by ovnSnatRule |
+| vpcSubnet | String | The name of the subnet of the vpc configured by ovnSnatRule |
+| vpc | String | The vpc crd name corresponding to the ovnSnatRule bound Pod |
 | ipName | String | The IP crd name corresponding to the ovnSnatRule bound Pod |
+| v4IpCidr | String | The IPv4 cidr of the vpc subnet |
 
 #### OvnSnatRuleStatus
 
