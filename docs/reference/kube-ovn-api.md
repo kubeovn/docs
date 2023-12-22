@@ -516,12 +516,14 @@ SwitchLBRule 的详细配置信息，可以参考 [自定义 VPC 内部负载均
 | --- | --- | --- |
 | namespace | String | Vip 所在命名空间 |
 | subnet | String | Vip 所属子网 |
+| type | String | Vip 使用类型，取值为 `switch_lb_vip` 或空 |
 | v4ip | String | Vip v4 IP 地址 |
 | v6ip | String | Vip v6 IP 地址 |
 | macAddress | String | Vip mac 地址 |
 | parentV4ip | String | 目前没有使用 |
 | parentV6ip | String | 目前没有使用 |
 | parentMac | String | 目前没有使用 |
+| selector | []String | 标准 Kubernetes Selector 匹配信息 |
 | attachSubnets | []String | 该字段废弃，不再使用 |
 
 #### VipStatus

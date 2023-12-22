@@ -516,12 +516,14 @@ For detailed configuration information of SwitchLBRule, you can refer to [Custom
 | --- | --- | --- |
 | namespace | String | Vip's namespace |
 | subnet | String | Vip's subnet |
+| type | String | The type of Vip, either `switch_lb_vip`, or empty |
 | v4ip | String | Vip IPv4 ip address |
 | v6ip | String | Vip IPv6 ip address |
 | macAddress | String | Vip mac address |
 | parentV4ip | String | Not currently in use |
 | parentV6ip | String | Not currently in use |
 | parentMac | String | Not currently in use |
+| selector | []String | Standard Kubernetes selector match information |
 | attachSubnets | []String | This field is deprecated and no longer used |
 
 #### VipStatus
