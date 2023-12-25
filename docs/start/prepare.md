@@ -19,8 +19,8 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，其运行需要依赖 Kuber
 
 ## 环境配置
 
-- Kernel 启动需要开启 ipv6, 如果 kernel 启动参数包含 `ipv6.disable=1` 需要将其设置为 0。
-- `kube-proxy` 正常工作，Kube-OVN 可以通过 SVC IP 访问到 `kube-apiserver`。
+- Kernel 启动需要开启 IPv6, 如果 kernel 启动参数包含 `ipv6.disable=1` 需要将其设置为 0。
+- `kube-proxy` 正常工作，Kube-OVN 可以通过 Service ClusterIP 访问到 `kube-apiserver`。
 - 确认 kubelet 配置参数开启了 CNI，并且配置在标准路径下, kubelet 启动时应包含如下参数 `--network-plugin=cni --cni-bin-dir=/opt/cni/bin --cni-conf-dir=/etc/cni/net.d`。
 - 确认未安装其他网络插件，或者其他网络插件已经被清除，检查 `/etc/cni/net.d/` 路径下无其他网络插件配置文件。如果之前安装过其他网络插件，建议删除后重启机器清理残留网络资源。
 
