@@ -65,4 +65,4 @@ spec:
   natOutgoing: false
 ```
 
-如果对于部分流量（如访问外网的流量）仍然希望进行 nat 处理，请参考[默认 VPC NAT 策略规则](../advance/nat-policy-rule.en.md)。
+如果对于部分流量（如访问外网的流量）仍然希望进行 nat 处理，请参考[默认 VPC NAT 策略规则](../advance/nat-policy-rule.md)。
