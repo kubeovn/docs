@@ -453,7 +453,7 @@ metadata:
   namespace: kube-system
 data:
   coredns-vip: 10.96.0.3
-  enable-vpc-dns: true
+  enable-vpc-dns: "true"
   nad-name: ovn-nad
   nad-provider: ovn-nad.default.ovn
 ```
