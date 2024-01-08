@@ -53,7 +53,7 @@ nav:
       - DHCP 设置: 'advance/dhcp.md'
       - VPC 互联: 'advance/vpc-peering.md'
       - 自定义 VPC 内部负载均衡: 'advance/vpc-internal-lb.md'
-      - 自定义 VPC DNS: 'advance/vpc-dns.md'
+      - 自定义 VPC 内部 DNS: 'advance/vpc-dns.md'
       - 外部网关设置: 'advance/external-gateway.md'
       - VIP 预留设置: 'advance/vip.md'
       - Mellanox 网卡 Offload 支持: 'advance/offload-mellanox.md'
@@ -109,8 +109,8 @@ markdown_extensions:
   - fenced_code
   - attr_list
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.snippets:
       auto_append: ["overrides/contact.md"]
       check_paths: true
@@ -128,93 +128,92 @@ plugins:
       separator: '[\s\u200b\-]'
   - mike: {}
   - i18n:
-      default_language: zh
       languages:
-        en:
+        - locale: en
           name: English
           site_name: Kube-OVN Document
-        zh:
+          nav_translations:
+            主页: OVERVIEW
+            快速入门: GETTING STARTED
+            使用指南: USER GUIDE
+            运维指南: OPERATIONS
+            高级功能: ADVANCED USAGE
+            技术参考: REFERENCE
+            联系方式: CONTACT US
+            准备工作: Prerequisites
+            一键安装: One-Click Installation
+            Underlay 网络安装: Underlay Installation
+            卸载: Uninstall
+            安装和配置选项: Installation and Configuration Options
+            固定地址: Fixed Addresses
+            IP 池使用: Configure IPPool
+            自定义路由: Custom Routes
+            子网使用: Config Subnet
+            LoadBalancer 类型 Service: LoadBalancer Type Service
+            VPC 使用: Config VPC
+            VPC QoS 配置: VPC QoS
+            容器网络 QoS 配置: Manage QoS
+            配置监控和面板: Monitor and Dashboard
+            双栈使用: DualStack
+            EIP 和 SNAT 配置: EIP and SNAT
+            OVN EIP FIP SNAT 支持: Support OVN EIP,FIP and SNAT
+            OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持: Support OVN SNAT L3 HA Based ECMP and BFD Static Route
+            流量镜像: Traffic Mirror
+            NetworkPolicy 日志: NetworkPolicy Logging
+            Webhook 使用: Webhook
+            Kubectl 插件使用: Kubectl Plugin
+            删除工作节点: Deleting Work Node
+            更换 ovn-central 节点: Replace ovn-central Node
+            OVN 数据库备份和恢复: OVN DB Backup and Recovery
+            修改子网 CIDR: Change Subnet CIDR
+            修改 Join 子网 CIDR: Change Join Subnet CIDR
+            卸载 Calico 安装 Kube-OVN: Install Kube-OVN From Calico
+            其他常见问题: FAQ
+            多网卡管理: Manage Multiple Interface
+            性能调优: Performance Tuning
+            手动编译 FastPath 模块: Compile FastPath Module
+            使用 eBPF 加速节点内 TCP 通信: Accelerate TCP Communication in Node with eBPF
+            使用 OVN-IC 进行多集群互联: Cluster Inter-Connection with OVN-IC
+            使用 Submariner 进行多集群互联: Cluster Inter-Connection with Submariner
+            BGP 支持: BGP Support
+            Cilium 集成: Integration with Cilium
+            Cilium NetworkPolicy 支持: Cilium NetworkPolicy Support
+            Cilium 网络流量观测: Cilium Network Traffic Observation
+            DHCP 设置: DHCP
+            VPC 互联: VPC Peering
+            外部网关设置: External Gateway
+            VIP 预留设置: VIP Reservation
+            Mellanox 网卡 Offload 支持: Offload with Mellanox
+            芯启源网卡 Offload 支持: Offload with Corigine
+            Windows 支持: Windows Support
+            DPDK 支持: DPDK Support
+            OpenStack 集成: Integration with OpenStack
+            总体架构: Architecture
+            Underlay 流量拓扑: Underlay Traffic Topology
+            开发环境构建: Development Setup
+            对上游 OVS/OVN 修改: OVS/OVN Customization
+            隧道协议说明: Tunnel Protocol Selection
+            Kube-OVN 监控指标: Metrics
+            Overlay 下路由方式网络打通: Interconnection with Routes in Overlay Mode
+            文档规范: Document Convention
+            功能成熟度: Feature Stage
+            配置原生 Prometheus: Config Native Prometheus
+            Iptables 规则: Iptables Rules
+            kube-ovn-pinger 参数描述: kube-ovn-pinger args description
+            自定义 VPC 内部负载均衡: VPC Internal Load Balancer
+            自定义 VPC 内部 DNS: VPC Internal DNS
+            Kube-OVN 接口规范: Kube-OVN API Reference
+            SecurityGroup 使用: SecurityGroup Usage
+            OVN IPsec 支持: OVN IPsec Support
+            OVN 流量镜像: OVN Remote Port Mirroring
+            节点本地 DNS 缓存和 Kube-OVN 适配 : Node Local DNS Cache and Kube-OVN Adaptation
+            默认 VPC NAT 策略规则: Default VPC NAT Policy Rule
+            调整日志等级: Change Log Level
+            使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: Use Sealos to Deploy Kubernetes and Kube-OVN
+        - locale: zh
+          default: true
           name: 简体中文
           site_name: Kube-OVN 文档
-      nav_translations:
-        en:
-          主页: OVERVIEW
-          快速入门: GETTING STARTED
-          使用指南: USER GUIDE
-          运维指南: OPERATIONS
-          高级功能: ADVANCED USAGE
-          技术参考: REFERENCE
-          联系方式: CONTACT US
-          准备工作: Prerequisites
-          一键安装: One-Click Installation
-          Underlay 网络安装: Underlay Installation
-          卸载: Uninstall
-          安装和配置选项: Installation and Configuration Options
-          固定地址: Fixed Addresses
-          IP 池使用: Configure IPPool
-          自定义路由: Custom Routes
-          子网使用: Config Subnet
-          LoadBalancer 类型 Service: LoadBalancer Type Service
-          VPC 使用: Config VPC
-          VPC QoS 配置: VPC QoS
-          容器网络 QoS 配置: Manage QoS
-          配置监控和面板: Monitor and Dashboard
-          双栈使用: DualStack
-          EIP 和 SNAT 配置: EIP and SNAT
-          OVN EIP FIP SNAT 支持: Support OVN EIP,FIP and SNAT
-          OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持: Support OVN SNAT L3 HA Based ECMP and BFD Static Route
-          流量镜像: Traffic Mirror
-          NetworkPolicy 日志: NetworkPolicy Logging
-          Webhook 使用: Webhook
-          Kubectl 插件使用: Kubectl Plugin
-          删除工作节点: Deleting Work Node
-          更换 ovn-central 节点: Replace ovn-central Node
-          OVN 数据库备份和恢复: OVN DB Backup and Recovery
-          修改子网 CIDR: Change Subnet CIDR
-          修改 Join 子网 CIDR: Change Join Subnet CIDR
-          卸载 Calico 安装 Kube-OVN: Install Kube-OVN From Calico
-          其他常见问题: FAQ
-          多网卡管理: Manage Multiple Interface
-          性能调优: Performance Tuning
-          手动编译 FastPath 模块: Compile FastPath Module
-          使用 eBPF 加速节点内 TCP 通信: Accelerate TCP Communication in Node with eBPF
-          使用 OVN-IC 进行多集群互联: Cluster Inter-Connection with OVN-IC
-          使用 Submariner 进行多集群互联: Cluster Inter-Connection with Submariner
-          BGP 支持: BGP Support
-          Cilium 集成: Integration with Cilium
-          Cilium NetworkPolicy 支持: Cilium NetworkPolicy Support
-          Cilium 网络流量观测: Cilium Network Traffic Observation
-          DHCP 设置: DHCP
-          VPC 互联: VPC Peering
-          外部网关设置: External Gateway
-          VIP 预留设置: VIP Reservation
-          Mellanox 网卡 Offload 支持: Offload with Mellanox
-          芯启源网卡 Offload 支持: Offload with Corigine
-          Windows 支持: Windows Support
-          DPDK 支持: DPDK Support
-          OpenStack 集成: Integration with OpenStack
-          总体架构: Architecture
-          Underlay 流量拓扑: Underlay Traffic Topology
-          开发环境构建: Development Setup
-          对上游 OVS/OVN 修改: OVS/OVN Customization
-          隧道协议说明: Tunnel Protocol Selection
-          Kube-OVN 监控指标: Metrics
-          Overlay 下路由方式网络打通: Interconnection with Routes in Overlay Mode
-          文档规范: Document Convention
-          功能成熟度: Feature Stage
-          配置原生 Prometheus: Config Native Prometheus
-          Iptables 规则: Iptables Rules
-          kube-ovn-pinger 参数描述: kube-ovn-pinger args description
-          自定义 VPC 内部负载均衡: VPC Internal Load Balancer
-          自定义 VPC DNS: VPC DNS
-          Kube-OVN 接口规范: Kube-OVN API Reference
-          SecurityGroup 使用: SecurityGroup Usage
-          OVN IPsec 支持: OVN IPsec Support
-          OVN 流量镜像: OVN Remote Port Mirroring
-          节点本地 DNS 缓存和 Kube-OVN 适配 : Node Local DNS Cache and Kube-OVN Adaptation
-          默认 VPC NAT 策略规则: Default VPC NAT Policy Rule
-          调整日志等级: Change Log Level
-          使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: Use Sealos to Deploy Kubernetes and Kube-OVN
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
