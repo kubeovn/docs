@@ -104,6 +104,9 @@ theme:
       - navigation.tabs
       - navigation.tabs.sticky
       - navigation.top
+      - search.highlight
+      - search.share
+      - search.suggest
 markdown_extensions:
   - footnotes
   - fenced_code
@@ -245,4 +248,4 @@ extra:
   variables:
     version: v1.12.4
     branch: release-1.12
-copyright: Copyright &copy; 2023 The Linux Foundation
+copyright: Copyright &copy; 2024 The Linux Foundation
