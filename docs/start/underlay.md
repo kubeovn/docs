@@ -122,7 +122,7 @@ spec:
   provider: net1
 ```
 
-- `id`: 为 VLAN ID/Tag，Kube-OVN 会对对该 Vlan 下的流量增加 Vlan 标签，为 0 时不增加任何标签。
+- `id`: 为 VLAN ID/Tag，Kube-OVN 会对对该 Vlan 下的流量增加 Vlan 标签，为 0 时不增加任何标签，vlan 标签作用在一个 localnet 端口。
 - `provider`: 为需要使用的 ProviderNetwork 资源的名称。多个 VLAN 可以引用同一个 ProviderNetwork。
 
 ### 创建 Subnet

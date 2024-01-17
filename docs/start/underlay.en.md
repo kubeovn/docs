@@ -133,7 +133,7 @@ spec:
   provider: net1
 ```
 
-- `id`: VLAN ID/Tag，Kube-OVN will add this Vlan tag to traffic, if set 0, no tag is added.
+- `id`: VLAN ID/Tag，Kube-OVN will add this Vlan tag to traffic, if set 0, no tag is added. the vlan tag applies to a localnet port.
 - `provider`: The name of ProviderNetwork. Multiple VLAN can use a same ProviderNetwork.
 
 ### Create Subnet

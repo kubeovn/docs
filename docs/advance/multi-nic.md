@@ -7,6 +7,16 @@ Kube-OVN 可以为其他 CNI 网络插件，例如 macvlan、vlan、host-device 
 
 ## 工作原理
 
+多网卡管理：
+
+下面是由 [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) 提供的连接到 pod 的网络接口示意图。图中显示 pod 有三个接口：eth0、net0 和 net1。
+eth0 连接 kubernetes 集群网络，用于连接 kubernetes 服务器（如 kubernetes api-server、kubelet 等）。
+net0 和 net1 是附加网络接口，通过使用其他 CNI 插件（如 vlan/vxlan/ptp）连接其他网络。
+
+![multu-cni-multi-nic](../static/multus-pod-image.svg)
+
+IPAM：
+
 通过使用 [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni), 我们可以给一个 Pod 添加多块不同网络的网卡。
 然而我们仍然缺乏对集群范围内不同网络的 IP 地址进行管理的能力。在 Kube-OVN 中，我们已经能够通过 Subnet 和 IP 的 CRD 来进行 IP 的高级管理，
 例如子网管理，IP 预留，随机分配，固定分配等。现在我们对子网进行扩展，来接入其他不同的网络插件，使得其他网络插件也可以使用 Kube-OVN 的 IPAM 功能。
