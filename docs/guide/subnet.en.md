@@ -8,7 +8,7 @@ Unlike other CNI implementations where each node is bound to a subnet,
 in Kube-OVN the Subnet is a global level virtual network configuration,
 and the addresses of one Subnet can be distributed on any node.
 
-Note: Different subnets in the same VPC and those that need to communicate with each other must avoid IP address overlap.
+Note: Different subnets under the same VPC cannot contain the same IP, and different subnets connected to each other based on VPC peering or VPN cannot contain the same IP.
 
 ![](../static/default-vpc-topology.png)
 
