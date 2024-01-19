@@ -255,10 +255,6 @@ metadata:
 spec:
   namespaces:
   - vpc1
-  staticRoutes:         # configure routing rules: Which additional public network routes a subnet under the vpc needs to be based on needs to be added manually. The following example is for reference only. Users need to configure it according to their actual situation.
-  - cidr: 192.168.0.1/28
-    nextHopIP: 10.10.204.254
-    policy: policySrc
   enableExternal: true  # vpc enableExternal will automatically create an lrp association to the public network specified above
   addExternalSubnets: # configure addExternalSubnets to support connecting multiple additional public networks
   - extra
@@ -280,17 +276,6 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
         mac: "00:00:00:EF:6A:C7"
         networks: ["10.10.204.105/24"]
         gateway chassis: [7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd]
-```
-
-```bash
-# k ko nbctl lr-route-list vpc1
-IPv4 Routes
-Route Table <main>:
-    192.168.0.1/28         10.10.204.254 src-ip
-                0.0.0.0/0              10.5.204.254  dst-ip
-# The route currently supports automatic maintenance
-# Additional public networks require manual routing configuration in the vpc. In the above example, the source IP address is 192.168.0.1/28 and will be forwarded to the additional public network.
-# Users can manually configure routing rules according to the situation
 ```
 
 ## 2. ovn-eip

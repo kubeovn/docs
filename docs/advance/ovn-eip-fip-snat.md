@@ -253,10 +253,6 @@ metadata:
 spec:
   namespaces:
   - vpc1
-  staticRoutes:         # 配置路由规则：vpc 下的某个子网需要基于哪一个额外的公网网络的路由需要手动添加，以下示例仅供参考，用户需根据自己的实际情况进行配置
-  - cidr: 192.168.0.1/28
-    nextHopIP: 10.10.204.254
-    policy: policySrc
   enableExternal: true  # 开启 enableExternal 后 vpc 会自动连接名为 external 的 ls
   addExternalSubnets: # 配置 addExternalSubnets 支持连接多个额外的公网网络
   - extra
@@ -278,17 +274,6 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
         mac: "00:00:00:EF:6A:C7"
         networks: ["10.10.204.105/24"]
         gateway chassis: [7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd]
-```
-
-```bash
-# k ko nbctl lr-route-list vpc1
-IPv4 Routes
-Route Table <main>:
-    192.168.0.1/28         10.10.204.254 src-ip
-                0.0.0.0/0              10.5.204.254  dst-ip
-# 目前会为默认公网网络配置默认路由
-# 额外公网网络需要在 vpc 手动配置路由，上述实例中源 IP 地址为 192.168.0.1/28 会转发至额外公网网络
-# 用户可根据情况手动配置路由规则
 ```
 
 ## 2. ovn-eip
