@@ -7,6 +7,14 @@ Kube-OVN also supports address management when multiple NICs are all of Kube-OVN
 
 ## Working Principle
 
+Multi-nic management:
+
+Here's an illustration of the network interfaces attached to a pod, as provisioned by [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni). The diagram shows the pod with three interfaces: eth0, net0 and net1. eth0 connects kubernetes cluster network to connect with kubernetes server/services (e.g. kubernetes api-server, kubelet and so on). net0 and net1 are additional network attachments and connect to other networks by using other CNI plugins (e.g. vlan/vxlan/ptp).
+
+![multu-cni-multi-nic](../static/multus-pod-image.svg)
+
+IPAM：
+
 By using [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni), we can add multiple NICs of different networks to a Pod.
 However, we still lack the ability to manage the IP addresses of different networks within a cluster.
 In Kube-OVN, we have been able to perform advanced IP management such as subnet management, IP reservation, random assignment, fixed assignment, etc. through CRD of Subnet and IP.
