@@ -5,6 +5,8 @@ Namespace 下的 Pod 会自动从所属的子网中获取 IP 并共享子网的�
 
 和其他 CNI 的每个节点绑定一个子网的实现不同，在 Kube-OVN 中子网为一个全局的虚拟网络配置，同一个子网的地址可以分布在任意一个节点上。
 
+注意：同一 VPC 下的不同子网不能包含同样的 IP，以及基于 VPC peering 或者 VPN 互相打通的不同子网不能包含同样的 IP。
+
 ![网络拓扑](../static/default-vpc-topology.png)
 
 Overlay 和 Underlay 的子网在使用和配置上存在一些差异，本文档将会介绍不同类型子网的一些共同配置和差异化功能。
