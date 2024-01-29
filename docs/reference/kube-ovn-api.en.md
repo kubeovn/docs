@@ -39,7 +39,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | gateway | String | The gateway address of the subnet, the default value is the first available address under the CIDRBlock of the subnet |
 | excludeIps | []String | The range of addresses under this subnet that will not be automatically assigned |
 | provider | String | Default value is `ovn`. In the case of multiple NICs, the value is `<name>.<namespace>` of the NetworkAttachmentDefinition, Kube-OVN will use this information to find the corresponding subnet resource |
-gatewayType | String | The gateway type in overlay mode, either `distributed` or `centralized` |
+| gatewayType | String | The gateway type in overlay mode, either `distributed` or `centralized` |
 | gatewayNode | String | The gateway node when the gateway mode is centralized, node names can be comma-separated |
 | natOutgoing | Bool | Whether the outgoing traffic is NAT |
 | externalEgressGateway | String | The address of the external gateway. This parameter and the natOutgoing parameter cannot be set at the same time |
@@ -112,7 +112,7 @@ gatewayType | String | The gateway type in overlay mode, either `distributed` or
 | ipAddress | String | IP address, in `v4IP,v6IP` format for dual-stack cases |
 | v4IPAddress | String | IPv4 IP address |
 | v6IPAddress | String | IPv6 IP address |
-| attachIPs | []String | Other IP addresses attached to this primary IP (field is deprecated)
+| attachIPs | []String | Other IP addresses attached to this primary IP (field is deprecated) |
 | macAddress | String | The Mac address of the bound pod |
 | attachMacs | []String | Other Mac addresses attached to this primary IP (field deprecated) |
 | containerID | String | The Container ID corresponding to the bound pod |
