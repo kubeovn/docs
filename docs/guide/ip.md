@@ -182,6 +182,6 @@ pod-static-01   1/1     Running   0          30s   10.16.0.3   kube-ovn-worker  
 
 ## 二、删除
 
-GC kube-ovn-controller  流程不会清理独立的 IP 资源。如果需要清理 IP 以及它的 LSP，请直接删除 IP CR 资源。
+kube-ovn-controller GC 流程不会清理独立的 IP 资源。如果需要清理 IP 以及它的 LSP，请直接删除 IP CR 资源。
 
 IP 的删除流程会基于 IP 属性中的 podName 和 namespace 以及 subnet provider 格式化出 ipam key，LSP 名，释放 IPAM 占位，删除 LSP，以及清理 IP 本身的 Finalizer。

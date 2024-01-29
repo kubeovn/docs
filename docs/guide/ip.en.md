@@ -106,7 +106,7 @@ spec:
 
 ```
 
-### 1.2 指定地址预留 IP
+### 1.2 Specifies the reserved IP address
 
 If there is a need for the IP address of the reserved IP, the following yaml can be used for fixed allocation:
 
@@ -163,7 +163,7 @@ spec:
 - `v4IpAddress`: Specify an IPv4 address that is within the CIDR range of the subnet.
 - `v6IpAddress`: Specify an IPv6 address that is within the CIDR range of the subnet.
 
-### [Pod 使用预留 IP](../guide/ip.md)
+### [Pod use reserved IP](../guide/ip.en.md)
 
 > Note: The Pod(VMS) name and namespace must be the same as the reserved IP address, otherwise the Pod(VMS) cannot use the IP address.
 
