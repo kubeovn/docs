@@ -156,6 +156,23 @@ NAME                     READY   STATUS    RESTARTS   AGE   IP           NODE   
 nginx-74d5899f46-n8wtg   1/1     Running   0          10s   10.66.0.11   node1   <none>           <none>
 ```
 
+### Workload Subnet Binding
+
+By default, Pods will be assigned IP addresses from the subnet belonging to the Namespace. If a specific subnet needs to be specified for a Workload, it can be achieved by setting the Pod's annotation `ovn.kubernetes.io/logical_switch`:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: another-subnet
+  annotations:
+    ovn.kubernetes.io/logical_switch: subnet1
+spec:
+  containers:
+  - name: another-subnet
+    image: docker.io/library/nginx:alpine
+```
+
 ## Overlay Subnet Gateway Settings
 
 > This feature only works for Overlay mode Subnets, Underlay type Subnets need to use the underlying physical gateway to access the external network.
