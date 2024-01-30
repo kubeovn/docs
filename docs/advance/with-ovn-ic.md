@@ -17,18 +17,101 @@ Kube-OVN 使用隧道对跨集群流量进行封装，两个集群之间只要�
 
 ## 部署单节点 OVN-IC 数据库
 
+### 单节点部署方案 1
+
+优先推荐方案 1，Kube-OVN v1.11.16 之后支持。
+
+该方法不区别 "单节点" 或者 "多节点高可用" 部署，控制器会以 Deployment 的形式部署在 master 节点上，集群 master 节点为 1，即单节点部署，节点为多个，即多节点高可用部署。
+
+先获取脚本 `install-ovn-ic.sh`，使用下面命令：
+
+```bash
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install-ic-server.sh
+```
+
+执行命令安装，其中 `TS_NUM` 表示集群互联的 ECMP Path 数量：
+
+```bash
+sed 's/VERSION=.*/VERSION={{ variables.version }}/' dist/images/install-ic-server.sh | TS_NUM=3 bash
+```
+
+执行成功输出如下：
+
+```bash
+deployment.apps/ovn-ic-server created
+Waiting for deployment spec update to be observed...
+Waiting for deployment "ovn-ic-server" rollout to finish: 0 out of 3 new replicas have been updated...
+Waiting for deployment "ovn-ic-server" rollout to finish: 0 of 3 updated replicas are available...
+Waiting for deployment "ovn-ic-server" rollout to finish: 1 of 3 updated replicas are available...
+Waiting for deployment "ovn-ic-server" rollout to finish: 2 of 3 updated replicas are available...
+deployment "ovn-ic-server" successfully rolled out
+OVN IC Server installed Successfully
+```
+
+通过`kubectl ko icsbctl show`命令可以查看当前互联控制器的状态，命令如下：
+
+```bash
+kubectl ko icsbctl show
+availability-zone az0
+    gateway 059b5c54-c540-4d77-b009-02d65f181a02
+        hostname: kube-ovn-worker
+        type: geneve
+            ip: 172.18.0.3
+        port ts-az0
+            transit switch: ts
+            address: ["00:00:00:B4:8E:BE 169.254.100.97/24"]
+    gateway 74ee4b9a-ba48-4a07-861e-1a8e4b9f905f
+        hostname: kube-ovn-worker2
+        type: geneve
+            ip: 172.18.0.2
+        port ts1-az0
+            transit switch: ts1
+            address: ["00:00:00:19:2E:F7 169.254.101.90/24"]
+    gateway 7e2428b6-344c-4dd5-a0d5-972c1ccec581
+        hostname: kube-ovn-control-plane
+        type: geneve
+            ip: 172.18.0.4
+        port ts2-az0
+            transit switch: ts2
+            address: ["00:00:00:EA:32:BA 169.254.102.103/24"]
+availability-zone az1
+    gateway 034da7cb-3826-4318-81ce-6a877a9bf285
+        hostname: kube-ovn1-worker
+        type: geneve
+            ip: 172.18.0.6
+        port ts-az1
+            transit switch: ts
+            address: ["00:00:00:25:3A:B9 169.254.100.51/24"]
+    gateway 2531a683-283e-4fb8-a619-bdbcb33539b8
+        hostname: kube-ovn1-worker2
+        type: geneve
+            ip: 172.18.0.5
+        port ts1-az1
+            transit switch: ts1
+            address: ["00:00:00:52:87:F4 169.254.101.118/24"]
+    gateway b0efb0be-e5a7-4323-ad4b-317637a757c4
+        hostname: kube-ovn1-control-plane
+        type: geneve
+            ip: 172.18.0.8
+        port ts2-az1
+            transit switch: ts2
+            address: ["00:00:00:F6:93:1A 169.254.102.17/24"]
+``` 
+
+### 单节点部署方案 2
+
 在每个集群 `kube-ovn-controller` 可通过 IP 访问的机器上部署 `OVN-IC` 数据库，该节点将保存各个集群同步上来的网络配置信息。
 
 部署 `docker` 的环境可以使用下面的命令启动 `OVN-IC` 数据库：
 
 ```bash
-docker run --name=ovn-ic-db -d --network=host --privileged  -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
+docker run --name=ovn-ic-db -d --env "ENABLE_OVN_LEADER_CHECK="false"" --network=host --privileged  -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
 ```
 
 对于部署 `containerd` 取代 `docker` 的环境可以使用下面的命令：
 
 ```bash
-ctr -n k8s.io run -d --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
+ctr -n k8s.io run -d --env "ENABLE_OVN_LEADER_CHECK="false"" --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
 ```
 
 ## 自动路由设置
@@ -177,6 +260,14 @@ kubectl ko nbctl lr-route-add ovn-cluster 10.16.0.0/24 169.254.100.79
 
 ## 高可用 OVN-IC 数据库部署
 
+### 高可用部署方案 1
+
+优先推荐方案 1，Kube-OVN v1.11.16 之后支持。
+
+方法同[单节点部署方案 1](#单节点部署方案-1)
+
+### 高可用部署方案 2
+
 `OVN-IC` 数据库之间可以通过 Raft 协议组成一个高可用集群，该部署模式需要至少 3 个节点。
 
 首先在第一个节点上启动 `OVN-IC` 数据库的 leader。
@@ -184,13 +275,13 @@ kubectl ko nbctl lr-route-add ovn-cluster 10.16.0.0/24 169.254.100.79
 部署 `docker` 环境的用户可以使用下面的命令：
 
 ```bash
-docker run --name=ovn-ic-db -d --network=host --privileged -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn -e LOCAL_IP="192.168.65.3"  -e NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"   kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
+docker run --name=ovn-ic-db -d --env "ENABLE_OVN_LEADER_CHECK="false"" --network=host --privileged -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn -e LOCAL_IP="192.168.65.3"  -e NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"   kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
 ```
 
 如果是部署 `containerd` 的用户可以使用下面的命令：
 
 ```bash
-ctr -n k8s.io run -d --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw"  --env="NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"" --env="LOCAL_IP="192.168.65.3"" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
+ctr -n k8s.io run -d --env "ENABLE_OVN_LEADER_CHECK="false"" --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw"  --env="NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"" --env="LOCAL_IP="192.168.65.3"" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
 ```
 
 - `LOCAL_IP`： 当前容器所在节点 IP 地址。
