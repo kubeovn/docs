@@ -20,18 +20,101 @@ as long as there is a set of IP reachable machines.
 
 ## Deploy a single-node OVN-IC DB
 
+### Single node deployment solution 1
+
+Solution 1 is recommended first, supported after Kube-OVN v1.11.16.
+
+This method does not distinguish between "single node" or "multi-node high availability" deployment. The controller will be deployed on the master node in the form of Deployment. The cluster master node is 1, which is a single node deployment, and the number of master nodes is multiple, that is, multi-node. Highly available deployment.
+
+First get the script `install-ovn-ic.sh` and use the following command:
+
+```bash
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install-ic-server.sh
+```
+
+Execute the command installation, where `TS_NUM` represents the number of ECMP Paths connected to the cluster:
+
+```bash
+sed 's/VERSION=.*/VERSION={{ variables.version }}/' dist/images/install-ic-server.sh | TS_NUM=3 bash
+```
+
+The output of successful execution is as follows:
+
+```bash
+deployment.apps/ovn-ic-server created
+Waiting for deployment spec update to be observed...
+Waiting for deployment "ovn-ic-server" rollout to finish: 0 out of 3 new replicas have been updated...
+Waiting for deployment "ovn-ic-server" rollout to finish: 0 of 3 updated replicas are available...
+Waiting for deployment "ovn-ic-server" rollout to finish: 1 of 3 updated replicas are available...
+Waiting for deployment "ovn-ic-server" rollout to finish: 2 of 3 updated replicas are available...
+deployment "ovn-ic-server" successfully rolled out
+OVN IC Server installed Successfully
+```
+
+You can view the status of the current interconnected controller through the `kubectl ko icsbctl show` command. The command is as follows:
+
+```bash
+kubectl ko icsbctl show
+availability-zone az0
+    gateway 059b5c54-c540-4d77-b009-02d65f181a02
+        hostname: kube-ovn-worker
+        type: geneve
+            ip: 172.18.0.3
+        port ts-az0
+            transit switch: ts
+            address: ["00:00:00:B4:8E:BE 169.254.100.97/24"]
+    gateway 74ee4b9a-ba48-4a07-861e-1a8e4b9f905f
+        hostname: kube-ovn-worker2
+        type: geneve
+            ip: 172.18.0.2
+        port ts1-az0
+            transit switch: ts1
+            address: ["00:00:00:19:2E:F7 169.254.101.90/24"]
+    gateway 7e2428b6-344c-4dd5-a0d5-972c1ccec581
+        hostname: kube-ovn-control-plane
+        type: geneve
+            ip: 172.18.0.4
+        port ts2-az0
+            transit switch: ts2
+            address: ["00:00:00:EA:32:BA 169.254.102.103/24"]
+availability-zone az1
+    gateway 034da7cb-3826-4318-81ce-6a877a9bf285
+        hostname: kube-ovn1-worker
+        type: geneve
+            ip: 172.18.0.6
+        port ts-az1
+            transit switch: ts
+            address: ["00:00:00:25:3A:B9 169.254.100.51/24"]
+    gateway 2531a683-283e-4fb8-a619-bdbcb33539b8
+        hostname: kube-ovn1-worker2
+        type: geneve
+            ip: 172.18.0.5
+        port ts1-az1
+            transit switch: ts1
+            address: ["00:00:00:52:87:F4 169.254.101.118/24"]
+    gateway b0efb0be-e5a7-4323-ad4b-317637a757c4
+        hostname: kube-ovn1-control-plane
+        type: geneve
+            ip: 172.18.0.8
+        port ts2-az1
+            transit switch: ts2
+            address: ["00:00:00:F6:93:1A 169.254.102.17/24"]
+```
+
+### Single node deployment solution 2
+
 Deploy the `OVN-IC` DB on a machine accessible by `kube-ovn-controller`, This DB will hold the network configuration information synchronized up from each cluster.
 
 An environment deploying `docker` can start the `OVN-IC` DB with the following command.
 
 ```bash
-docker run --name=ovn-ic-db -d --network=host --privileged -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
+docker run --name=ovn-ic-db -d --env "ENABLE_OVN_LEADER_CHECK="false"" --network=host --privileged  -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
 ```
 
 For deploying a `containerd` environment instead of `docker` you can use the following command:
 
 ```bash
-ctr -n k8s.io run -d --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
+ctr -n k8s.io run -d --env "ENABLE_OVN_LEADER_CHECK="false"" --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
 ```
 
 ## Automatic Routing Mode
@@ -185,6 +268,14 @@ kubectl ko nbctl lr-route-add ovn-cluster 10.16.0.0/24 169.254.100.79
 
 ## Highly Available OVN-IC DB Installation
 
+### High availability deployment solution 1
+
+Solution 1 is recommended first, supported after Kube-OVN v1.11.16.
+
+The method is the same as [Single node deployment solution 1](#single-node-deployment-solution-1)
+
+### High availability deployment solution 2
+
 A highly available cluster can be formed between `OVN-IC` DB via the Raft protocol, which requires a minimum of 3 nodes for this deployment model.
 
 First start the leader of the `OVN-IC` DB on the first node.
@@ -192,13 +283,13 @@ First start the leader of the `OVN-IC` DB on the first node.
 Users deploying a `docker` environment can use the following command:
 
 ```bash
-docker run --name=ovn-ic-db -d --network=host --privileged -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn -e LOCAL_IP="192.168.65.3"  -e NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"   kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
+docker run --name=ovn-ic-db -d --env "ENABLE_OVN_LEADER_CHECK="false"" --network=host --privileged -v /etc/ovn/:/etc/ovn -v /var/run/ovn:/var/run/ovn -v /var/log/ovn:/var/log/ovn -e LOCAL_IP="192.168.65.3"  -e NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"   kubeovn/kube-ovn:{{ variables.version }} bash start-ic-db.sh
 ```
 
 If you are  using `containerd` you can use the following command:
 
 ```bash
-ctr -n k8s.io run -d --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw"  --env="NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"" --env="LOCAL_IP="192.168.65.3"" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
+ctr -n k8s.io run -d --env "ENABLE_OVN_LEADER_CHECK="false"" --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw"  --env="NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"" --env="LOCAL_IP="192.168.65.3"" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
 ```
 
 - `LOCAL_IP`： The IP address of the node where the current container is located.
@@ -239,6 +330,18 @@ data:
   gw-nodes: "az1-gw"
   auto-route: "true"
 ```
+
+## Support cluster interconnection ECMP
+
+The premise controller is deployed according to [Single Node Deployment Solution 1](#single-node-deployment-solution-1)
+
+This solution supports cluster interconnection ECMP by default. The default ECMP path is 3. It also supports modifying the number of ECMP paths. Use the command:
+
+```bash
+kubectl edit deployment ovn-ic-server -n kube-system
+```
+
+Just modify the value of the environment variable 'TS_NUM'. `TS_NUM` represents the number of ECMP Paths accessed between the two clusters.
 
 ## Manual Reset
 
@@ -287,4 +390,17 @@ If the controller is `containerd` deploy the command:
 ```bash
 ctr -n k8s.io task kill ovn-ic-db
 ctr -n k8s.io containers rm ovn-ic-db
+```
+
+If the controller is deployed using deployment `ovn-ic-server`:
+
+```bash
+kubectl delete deployment ovn-ic-server -n kube-system
+```
+
+Then clean up the interconnection-related DB on each master node. The command is as follows:
+
+```bash
+rm -f /etc/origin/ovn/ovn_ic_nb_db.db
+rm -f /etc/origin/ovn/ovn_ic_sb_db.db
 ```
