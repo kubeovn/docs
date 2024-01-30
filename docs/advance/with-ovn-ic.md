@@ -323,6 +323,18 @@ data:
   auto-route: "true"
 ```
 
+## 支持集群互联 ECMP
+
+前提控制器是按该方案部署[部署方案](#单节点部署方案-1)
+
+该方案默认支持集群互联 ECMP，ECMP path 默认为 3，同时也支持修改 ECMP path 条数，使用命令:
+
+```bash
+kubectl edit deployment ovn-ic-server -n kube-system
+```
+
+修改环境变量 'TS_NUM' 数值即可，`TS_NUM` 表示两个集群之间访问的 ECMP Path 条数。
+
 ## 手动重置
 
 在一些情况下，由于配置错误需要对整个互联配置进行清理，可以参考下面的步骤清理环境。

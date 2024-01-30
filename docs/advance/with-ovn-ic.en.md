@@ -331,6 +331,18 @@ data:
   auto-route: "true"
 ```
 
+## Support cluster interconnection ECMP
+
+The premise controller is deployed according to this plan [deployment solution](#single-node-deployment-solution-1)
+
+This solution supports cluster interconnection ECMP by default. The default ECMP path is 3. It also supports modifying the number of ECMP paths. Use the command:
+
+```bash
+kubectl edit deployment ovn-ic-server -n kube-system
+```
+
+Just modify the value of the environment variable 'TS_NUM'. `TS_NUM` represents the number of ECMP Paths accessed between the two clusters.
+
 ## Manual Reset
 
 In some cases, the entire interconnection configuration needs to be cleaned up due to configuration errors,
