@@ -333,7 +333,7 @@ data:
 
 ## Support cluster interconnection ECMP
 
-The premise controller is deployed [according to this deployment solution](#single-node-deployment-solution-1)
+The premise controller is deployed according to [Single Node Deployment Solution 1](#single-node-deployment-solution-1)
 
 This solution supports cluster interconnection ECMP by default. The default ECMP path is 3. It also supports modifying the number of ECMP paths. Use the command:
 
@@ -396,4 +396,11 @@ If the controller is deployed using deployment `ovn-ic-server`:
 
 ```bash
 kubectl delete deployment ovn-ic-server -n kube-system
+```
+
+Then clean up the interconnection-related DB on each master node. The command is as follows:
+
+```bash
+rm -f /etc/origin/ovn/ovn_ic_nb_db.db
+rm -f /etc/origin/ovn/ovn_ic_sb_db.db
 ```

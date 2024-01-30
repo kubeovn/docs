@@ -325,7 +325,7 @@ data:
 
 ## 支持集群互联 ECMP
 
-前提控制器是[按该方案部署](#单节点部署方案-1)
+前提控制器是按照[单节点部署方案 1](#单节点部署方案-1)部署
 
 该方案默认支持集群互联 ECMP，ECMP path 默认为 3，同时也支持修改 ECMP path 条数，使用命令:
 
@@ -396,4 +396,11 @@ ctr -n k8s.io containers rm ovn-ic-db
 
 ```bash
 kubectl delete deployment ovn-ic-server -n kube-system
+```
+
+然后在每个 master 节点上清理互联相关的 DB，命令如下：
+
+```bash
+rm -f /etc/origin/ovn/ovn_ic_nb_db.db
+rm -f /etc/origin/ovn/ovn_ic_sb_db.db
 ```
