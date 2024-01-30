@@ -24,7 +24,7 @@ as long as there is a set of IP reachable machines.
 
 Solution 1 is recommended first, supported after Kube-OVN v1.11.16.
 
-This method does not distinguish between "single node" or "multi-node high availability" deployment. The controller will be deployed on the master node in the form of Deployment. The cluster master node is 1, that is, single-node deployment, and the number of nodes is multiple, that is, multi-node high availability. Available deployments.
+This method does not distinguish between "single node" or "multi-node high availability" deployment. The controller will be deployed on the master node in the form of Deployment. The cluster master node is 1, which is a single node deployment, and the number of master nodes is multiple, that is, multi-node. Highly available deployment.
 
 First get the script `install-ovn-ic.sh` and use the following command:
 
@@ -378,4 +378,10 @@ If the controller is `containerd` deploy the command:
 ```bash
 ctr -n k8s.io task kill ovn-ic-db
 ctr -n k8s.io containers rm ovn-ic-db
+```
+
+If the controller is deployed using deployment `ovn-ic-server`:
+
+```bash
+kubectl delete deployment ovn-ic-server -n kube-system
 ```
