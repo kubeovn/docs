@@ -53,7 +53,6 @@ OVN IC Server installed Successfully
 
 You can view the status of the current interconnected controller through the `kubectl ko icsbctl show` command. The command is as follows:
 
-
 ```bash
 kubectl ko icsbctl show
 availability-zone az0
@@ -100,7 +99,7 @@ availability-zone az1
         port ts2-az1
             transit switch: ts2
             address: ["00:00:00:F6:93:1A 169.254.102.17/24"]
-``` 
+```
 
 ### Single node deployment solution 2
 
@@ -273,8 +272,7 @@ kubectl ko nbctl lr-route-add ovn-cluster 10.16.0.0/24 169.254.100.79
 
 Solution 1 is recommended first, supported after Kube-OVN v1.11.16.
 
-The method is the same as [Single node deployment solution 1](#Single-node-deployment-solution-1)
-
+The method is the same as [Single node deployment solution 1](#single-node-deployment-solution-1)
 
 ### High availability deployment solution 2
 

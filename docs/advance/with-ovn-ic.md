@@ -48,7 +48,7 @@ deployment "ovn-ic-server" successfully rolled out
 OVN IC Server installed Successfully
 ```
 
-通过`kubectl ko icsbctl show`命令可以查看当前互联控制器的状态，命令如下：
+通过 `kubectl ko icsbctl show` 命令可以查看当前互联控制器的状态，命令如下：
 
 ```bash
 kubectl ko icsbctl show
@@ -96,7 +96,7 @@ availability-zone az1
         port ts2-az1
             transit switch: ts2
             address: ["00:00:00:F6:93:1A 169.254.102.17/24"]
-``` 
+```
 
 ### 单节点部署方案 2
 
