@@ -152,6 +152,23 @@ NAME                     READY   STATUS    RESTARTS   AGE   IP           NODE   
 nginx-74d5899f46-n8wtg   1/1     Running   0          10s   10.66.0.11   node1   <none>           <none>
 ```
 
+### Workload 绑定子网
+
+默认情况下 Pod 会从 Namespace 所属的子网内分配 IP 地址，如果 Namespace 下某个 Workload 需要特殊指定一个子网，可以通过设置 Pod 的 Annotation `ovn.kubernetes.io/logical_switch` 来实现：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: another-subnet
+  annotations:
+    ovn.kubernetes.io/logical_switch: subnet1
+spec:
+  containers:
+  - name: another-subnet
+    image: docker.io/library/nginx:alpine
+```
+
 ## Overlay 子网网关配置
 
 > 该功能只对 Overlay 模式子网生效，Underlay 类型子网访问外部网络需要借助底层物理网关。
