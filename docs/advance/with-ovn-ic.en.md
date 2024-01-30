@@ -333,7 +333,7 @@ data:
 
 ## Support cluster interconnection ECMP
 
-The premise controller is deployed according to this plan [deployment solution](#single-node-deployment-solution-1)
+The premise controller is deployed [according to this deployment solution](#single-node-deployment-solution-1)
 
 This solution supports cluster interconnection ECMP by default. The default ECMP path is 3. It also supports modifying the number of ECMP paths. Use the command:
 
