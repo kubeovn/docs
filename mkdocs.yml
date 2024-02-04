@@ -1,6 +1,7 @@
 site_name: Kube-OVN 文档
 site_author: Kube-OVN Team
 repo_name: kubeovn/kube-ovn
+site_url: https://kubeovn.github.io/docs/
 repo_url: https://github.com/kubeovn/kube-ovn/
 edit_uri: ../docs/edit/master/docs/
 nav:
