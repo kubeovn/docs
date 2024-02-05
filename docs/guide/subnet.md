@@ -169,6 +169,8 @@ spec:
     image: docker.io/library/nginx:alpine
 ```
 
+如果需要给 Workload 类型资源如 Deployment，StatefulSet 绑定子网，需要将 `ovn.kubernetes.io/logical_switch` Annotation 设置在 `spec.template.metadata.annotations`。
+
 ## Overlay 子网网关配置
 
 > 该功能只对 Overlay 模式子网生效，Underlay 类型子网访问外部网络需要借助底层物理网关。
