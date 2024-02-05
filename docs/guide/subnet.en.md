@@ -171,6 +171,8 @@ spec:
     image: docker.io/library/nginx:alpine
 ```
 
+If you need to bind a subnet to a Workload type resource such as Deployment or StatefulSet, you need to set the `ovn.kubernetes.io/logical_switch` Annotation in `spec.template.metadata.annotations`.
+
 ## Overlay Subnet Gateway Settings
 
 > This feature only works for Overlay mode Subnets, Underlay type Subnets need to use the underlying physical gateway to access the external network.
