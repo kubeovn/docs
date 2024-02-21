@@ -108,6 +108,7 @@ theme:
       - search.highlight
       - search.share
       - search.suggest
+      - content.code.copy
 markdown_extensions:
   - footnotes
   - fenced_code
