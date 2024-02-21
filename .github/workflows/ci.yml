@@ -15,7 +15,10 @@ jobs:
         with:
           python-version: '3.10'
       - run: pip install -r docs/requirements.txt
-      - run: |
+      - name: build
+        env:
+          MKDOCS_GIT_COMMITTERS_APIKEY: ${{ secrets.GIT_COMMITER_TOKEM }}
+        run: |
           git config --global user.name "ci-bot"
           git config --global user.email "ci-bot@example.com"
           git fetch origin gh-pages
