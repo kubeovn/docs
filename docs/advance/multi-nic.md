@@ -303,7 +303,7 @@ spec:
 
 ##### 创建一个多网络的 Pod
 
-对于地址随机分配的 Pod，只需要添加如下 annotation `k8s.v1.cni.cncf.io/networks`,取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`：
+对于地址随机分配的 Pod，只需要添加如下 annotation `k8s.v1.cni.cncf.io/networks`, 取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`：
 
 ```yaml
 apiVersion: v1
