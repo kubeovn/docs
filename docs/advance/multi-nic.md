@@ -195,7 +195,7 @@ spec:
 
 ##### 创建主网卡为 macvlan 的 Pod
 
-对于使用 macvlan 作为主网卡的 Pod，只需要添加如下 annotation `v1.multus-cni.io/default-network`,取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`：
+对于使用 macvlan 作为主网卡的 Pod，只需要添加如下 annotation `v1.multus-cni.io/default-network`, 取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`：
 
 ```yaml
 apiVersion: v1
