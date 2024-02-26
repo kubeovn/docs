@@ -47,6 +47,11 @@ net1 网络的网络定义来自于 multus-cni 中的 NetworkAttachmentDefinitio
 
 这里我们使用 macvlan 作为容器网络的第二个网络，并将其 ipam 设置为 `kube-ovn`：
 
+```shell
+# 加载 macvlan 模块
+sudo modprobe macvlan
+```
+
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
@@ -70,37 +75,11 @@ spec:
 - `spec.config.ipam.type`: 需要为 `kube-ovn` 来调用 kube-ovn 的插件来获取地址信息。
 - `server_socket`: Kube-OVN 通信使用的 socket 文件。 默认位置为 `/run/openvswitch/kube-ovn-daemon.sock`。
 - `provider`: 当前 NetworkAttachmentDefinition 的 `<name>.<namespace>` , Kube-OVN 将会使用这些信息找到对应的 Subnet 资源。
+- `master`: 宿主机的物理网卡
 
-### 附属网卡为 Kube-OVN 类型网卡
+#### 创建一个 Kube-OVN Subnet
 
-此时多块网卡均为 Kube-OVN 类型网卡。
-
-#### 创建 NetworkAttachmentDefinition
-
-将 `provider` 的后缀设置为 `ovn`：
-
-```yaml
-apiVersion: "k8s.cni.cncf.io/v1"
-kind: NetworkAttachmentDefinition
-metadata:
-  name: attachnet
-  namespace: default
-spec:
-  config: '{
-      "cniVersion": "0.3.0",
-      "type": "kube-ovn",
-      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
-      "provider": "attachnet.default.ovn"
-    }'
-```
-
-- `spec.config.type`: 设置为 `kube-ovn` 来触发 CNI 插件使用 Kube-OVN 子网。
-- `server_socket`: Kube-OVN 通信使用的 socket 文件。 默认位置为 `/run/openvswitch/kube-ovn-daemon.sock`。
-- `provider`: 当前 NetworkAttachmentDefinition 的 `<name>.<namespace>.ovn` , Kube-OVN 将会使用这些信息找到对应的 Subnet 资源，注意后缀需要设置为 ovn。
-
-### 创建一个 Kube-OVN Subnet
-
-创建一个 Kube-OVN Subnet,设置对应的 `cidrBlock` 和 `exclude_ips`, `provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>`,
+创建一个 Kube-OVN Subnet,设置对应的 `cidrBlock` 和 `exclude_ips`，`provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>`，
 例如用 macvlan 提供附加网卡，创建 Subnet 如下：
 
 ```yaml
@@ -119,24 +98,7 @@ spec:
 
 `gateway`, `private`, `nat` 只对 `provider` 类型为 ovn 的网络生效，不适用于 attachment network。
 
-如果以 Kube-OVN 作为附加网卡，则 `provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>.ovn`，并要以 `ovn` 作为后缀结束。
-用 Kube-OVN 提供附加网卡，创建 Subnet 示例如下：
-
-```yaml
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: attachnet
-spec:
-  protocol: IPv4
-  provider: attachnet.default.ovn
-  cidrBlock: 172.17.0.0/16
-  gateway: 172.17.0.1
-  excludeIps:
-  - 172.17.0.0..172.17.0.10
-```
-
-### 创建一个多网络的 Pod
+##### 创建一个多网络的 Pod
 
 对于地址随机分配的 Pod，只需要添加如下 annotation `k8s.v1.cni.cncf.io/networks`,取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`：
 
@@ -153,10 +115,9 @@ spec:
   - name: samplepod
     command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
     image: docker.io/library/alpine:edge
-
 ```
 
-### 创建固定 IP 的 Pod
+##### 创建固定 IP 的 Pod
 
 对于固定 IP 的 Pod，添加 `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/ip_address` annotation：
 
@@ -178,7 +139,7 @@ spec:
     image: docker.io/library/nginx:alpine
 ```
 
-### 创建使用固定 IP 的工作负载
+##### 创建使用固定 IP 的工作负载
 
 对于使用 ippool 的工作负载, 添加 `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/ip_pool` annotations:
 
@@ -208,3 +169,196 @@ spec:
       - name: static-workload
         image: docker.io/library/nginx:alpine
 ```
+
+##### 创建默认路由为 macvlan 的 Pod
+
+对于使用 macvlan 作为附属网卡的 Pod，若希望将附属网卡作为 Pod 默认路由，只需要添加如下 annotation，`default-route` 为网关地址：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: samplepod-route
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[{
+      "name": "macvlan",
+      "namespace": "default",
+      "default-route": ["172.17.0.1"]
+    }]'
+spec:
+  containers:
+  - name: samplepod-route
+    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/library/alpine:edge
+```
+
+##### 创建主网卡为 macvlan 的 Pod
+
+对于使用 macvlan 作为主网卡的 Pod，只需要添加如下 annotation `v1.multus-cni.io/default-network`,取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: samplepod-macvlan
+  namespace: default
+  annotations:
+    v1.multus-cni.io/default-network: default/macvlan
+spec:
+  containers:
+  - name: samplepod-macvlan
+    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/library/alpine:edge
+```
+
+#### 创建一个 Kube-OVN Subnet（Provider ovn）
+
+创建一个 Kube-OVN Subnet，设置对应的 `cidrBlock` 和 `exclude_ips`, `provider` 为 ovn，创建 Subnet 如下：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: macvlan
+spec:
+  protocol: IPv4
+  provider: ovn
+  cidrBlock: 172.17.0.0/16
+  gateway: 172.17.0.1
+  excludeIps:
+  - 172.17.0.0..172.17.0.10
+```
+
+##### 创建一个多网络的 Pod
+
+对于需要从 `provider` 类型为 ovn 的 subnet 中获取 IP 的 Pod，需将 annotation `k8s.v1.cni.cncf.io/networks` 和 `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/logical_switch` 结合使用：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: samplepod
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/networks: default/macvlan
+    macvlan.default.kubernetes.io/logical_switch: macvlan
+spec:
+  containers:
+  - name: samplepod
+    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/library/alpine:edge
+```
+
+- `k8s.v1.cni.cncf.io/networks`: 取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`
+- `macvlan.default.kubernetes.io/logical_switch`: 取值为子网名
+
+> 注意: 通过`<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/logical_switch` 指定子网的优先级高于通过 provider 指定子网，基于 ovn 类型的 subnet 提供 ipam 同样支持创建固定 IP 的 Pod、创建使用固定 IP 的工作负载、创建默认路由为 macvlan 的 Pod，但不支持创建主网卡为 macvlan 的 Pod。
+
+### 附属网卡为 Kube-OVN 类型网卡
+
+此时多块网卡均为 Kube-OVN 类型网卡。
+
+#### 创建 NetworkAttachmentDefinition
+
+将 `provider` 的后缀设置为 `ovn`：
+
+```yaml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: attachnet
+  namespace: default
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "kube-ovn",
+      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
+      "provider": "attachnet.default.ovn"
+    }'
+```
+
+- `spec.config.type`: 设置为 `kube-ovn` 来触发 CNI 插件使用 Kube-OVN 子网。
+- `server_socket`: Kube-OVN 通信使用的 socket 文件。 默认位置为 `/run/openvswitch/kube-ovn-daemon.sock`。
+- `provider`: 当前 NetworkAttachmentDefinition 的 `<name>.<namespace>.ovn` , Kube-OVN 将会使用这些信息找到对应的 Subnet 资源，注意后缀需要设置为 ovn。
+
+#### 创建一个 Kube-OVN Subnet
+
+如果以 Kube-OVN 作为附加网卡，则 `provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>.ovn`，并要以 `ovn` 作为后缀结束。
+用 Kube-OVN 提供附加网卡，创建 Subnet 示例如下：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: attachnet
+spec:
+  protocol: IPv4
+  provider: attachnet.default.ovn
+  cidrBlock: 172.17.0.0/16
+  gateway: 172.17.0.1
+  excludeIps:
+  - 172.17.0.0..172.17.0.10
+```
+
+##### 创建一个多网络的 Pod
+
+对于地址随机分配的 Pod，只需要添加如下 annotation `k8s.v1.cni.cncf.io/networks`,取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: samplepod
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/networks: default/attachnet
+spec:
+  containers:
+  - name: samplepod
+    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/library/alpine:edge
+```
+
+#### 创建一个 Kube-OVN Subnet（Provider ovn）
+
+创建一个 Kube-OVN Subnet，设置对应的 `cidrBlock` 和 `exclude_ips`, `provider` 为 ovn，创建 Subnet 如下：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: attachnet
+spec:
+  protocol: IPv4
+  provider: ovn
+  cidrBlock: 172.17.0.0/16
+  gateway: 172.17.0.1
+  excludeIps:
+  - 172.17.0.0..172.17.0.10
+```
+
+##### 创建一个多网络的 Pod
+
+对于需要从 `provider` 类型为 ovn 的 subnet 中获取 IP 的 Pod，需将 annotation `k8s.v1.cni.cncf.io/networks` 和 `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/logical_switch` 结合使用：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: samplepod
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/networks: default/attachnet
+    attachnet.default.ovn.kubernetes.io/logical_switch: attachnet
+spec:
+  containers:
+  - name: samplepod
+    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/library/alpine:edge
+```
+
+- `k8s.v1.cni.cncf.io/networks`: 取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`
+- `macvlan.default.kubernetes.io/logical_switch`: 取值为子网名
+
+> 注意: 通过`<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/logical_switch` 指定子网的优先级高于通过 provider 指定子网，对于附属网卡为 Kube-OVN 类型的 Pod，支持创建固定 IP 的 Pod、创建使用固定 IP 的工作负载、创建默认路由为 macvlan 的 Pod，同时也支持创建主网卡为 Kube-OVN 类型的 Pod，配置方式可参考上一节。
