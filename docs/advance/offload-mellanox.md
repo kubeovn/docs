@@ -11,7 +11,7 @@ eSwitch 上执行。该技术可以在无需对 OVS 控制平面进行修改的�
 - Mellanox CX5/CX6/CX7/BlueField 等支持 ASAP² 的硬件网卡。
 - CentOS 8 Stream 或上游 Linux 5.7 以上内核支持。
 - 由于当前网卡不支持 `dp_hash` 和 `hash` 操作卸载，需关闭 OVN LB 功能。
-- 为了支持卸载模式，网卡不能做 bond。
+- 为了配置卸载模式，网卡不能绑定 bond。
 
 ## 配置 SR-IOV 和 Device Plugin
 
@@ -19,76 +19,169 @@ Mellanox 网卡支持两种配置 offload 的方式，一种手动配置网卡 S
 
 ### 手动配置 SR-IOV 和 Device Plugin
 
-查询网卡的设备 ID，下面的例子中为 `42:00.0`：
+#### 配置 SR-IOV
+
+查询网卡的设备 ID，下面的例子中为 `84:00.0` 和 `84.00.1`：
 
 ```bash
 # lspci -nn | grep ConnectX-5
-42:00.0 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5] [15b3:1017]
+84:00.0 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5] [15b3:1017]
+84:00.1 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5] [15b3:1017]
 ```
 
 根据设备 ID 找到对应网卡：
 
 ```bash
-# ls -l /sys/class/net/ | grep 42:00.0
-lrwxrwxrwx. 1 root root 0 Jul 22 23:16 p4p1 -> ../../devices/pci0000:40/0000:40:02.0/0000:42:00.0/net/p4p1
+# ls -l /sys/class/net/ | grep 84:00.0
+lrwxrwxrwx 1 root root 0 Feb 4 16:16 enp132s0f0np0 -> ../../devices/pci0000:80/0000:80:08.0/0000:84:00.0/net/enp132s0f0np0
+# ls -l /sys/class/net/ | grep 84:00.1
+lrwxrwxrwx 1 root root 0 Feb 4 16:16 enp132s0f1np1 -> ../../devices/pci0000:80/0000:80:08.0/0000:84:00.1/net/enp132s0f1np1
 ```
+
+检查网卡是否绑定 bond：
+
+> 本示例中网卡 enp132s0f0np0 和 enp132s0f1np1 绑定 bond1
+
+```shell
+# ip link show enp132s0f0np0 | grep bond
+160: enp132s0f0np0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master bond1 state UP mode DEFAULT group default qlen 1000
+# ip link show enp132s0f1np1 | grep bond
+169: enp132s0f1np1: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master bond1 state UP mode DEFAULT group default qlen 1000
+```
+
+移除 bond 和现有的 VF：
+
+```shell
+ifenslave -d bond1 enp132s0f0np0
+ifenslave -d bond1 enp132s0f1np1
+echo 0 > /sys/class/net/enp132s0f0np0/device/sriov_numvfs
+echo 0 > /sys/class/net/enp132s0f1np1/device/sriov_numvfs
+ip link set enp132s0f0np0 down
+ip link set enp132s0f1np1 down
+```
+
+配置规则下发模式：
+
+> OVS 内核支持两种规则插入硬件的模式：SMFS 和 DMFS
+
+- SMFS (software-managed flow steering)：默认模式，规则由软件（驱动程序）直接插入硬件。这种模式对规则插入进行了优化。
+- DMFS (device-managed flow steering)：规则插入是通过固件命令完成的。该模式针对系统中少量规则的吞吐量进行了优化。
+
+可在支持该模式的内核中通过 sysfs 或 devlink API 进行配置：
+
+```bash
+# 通过 sysfs 进行配置
+echo <smfs|dmfs> > /sys/class/net/enp132s0f0np0/compat/devlink/steering_mode
+echo <smfs|dmfs> > /sys/class/net/enp132s0f1np1/compat/devlink/steering_mode
+# 通过 devlink 进行配置
+devlink dev param set pci/84:00.0 name flow_steering_mode value smfs cmode runtime
+devlink dev param set pci/84:00.1 name flow_steering_mode value smfs cmode runtime
+```
+
+> 注意：若不了解应该选择哪个模式，则可使用默认模式，无需进行配置。
 
 检查可用 VF 数量：
 
 ```bash
-# cat /sys/class/net/p4p1/device/sriov_totalvfs
-8
+# cat /sys/class/net/enp132s0f0np0/device/sriov_totalvfs
+127
+# cat /sys/class/net/enp132s1f0np1/device/sriov_totalvfs
+127
 ```
 
 创建 VF，总数不要超过上面查询出的数量：
 
 ```bash
-# echo '4' > /sys/class/net/p4p1/device/sriov_numvfs
-# ip link show p4p1
-10: p4p1: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN mode DEFAULT group default qlen 1000
-    link/ether b8:59:9f:c1:ec:12 brd ff:ff:ff:ff:ff:ff
-    vf 0 MAC 00:00:00:00:00:00, spoof checking off, link-state auto, trust off, query_rss off
-    vf 1 MAC 00:00:00:00:00:00, spoof checking off, link-state auto, trust off, query_rss off
-    vf 2 MAC 00:00:00:00:00:00, spoof checking off, link-state auto, trust off, query_rss off
-    vf 3 MAC 00:00:00:00:00:00, spoof checking off, link-state auto, trust off, query_rss off
-# ip link set p4p1 up
+# echo '4' > /sys/class/net/enp132s0f0np0/device/sriov_numvfs
+# echo '4' > /sys/class/net/enp132s1f0np1/device/sriov_numvfs
+# ip link show enp132s0f0np0
+160: enp132s0f0np0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN mode DEFAULT group default qlen 1000
+    link/ether 08:c0:eb:74:c3:4a brd ff:ff:ff:ff:ff:ff
+    vf 0 link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff, spoof checking off, link-state disable, trust off, query_rss off
+    vf 1 link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff, spoof checking off, link-state disable, trust off, query_rss off
+    vf 2 link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff, spoof checking off, link-state disable, trust off, query_rss off
+    vf 3 link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff, spoof checking off, link-state disable, trust off, query_rss off
+# ip link show enp132s0f1np1
+169: enp132s0f1np1: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN mode DEFAULT group default qlen 1000
+    link/ether 08:c0:eb:74:c3:4b brd ff:ff:ff:ff:ff:ff
+    vf 0 link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff, spoof checking off, link-state disable, trust off, query_rss off
+    vf 1 link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff, spoof checking off, link-state disable, trust off, query_rss off
+    vf 2 link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff, spoof checking off, link-state disable, trust off, query_rss off
+    vf 3 link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff, spoof checking off, link-state disable, trust off, query_rss off
+# ip link set enp132s0f0np0 up
+# ip link set enp132s0f1np1 up
 ```
 
 找到上述 VF 对应的设备 ID：
 
 ```bash
-# lspci -nn | grep ConnectX-5
-42:00.0 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5] [15b3:1017]
-42:00.1 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5] [15b3:1017]
-42:00.2 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
-42:00.3 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
-42:00.4 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
-42:00.5 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+# lspci -nn | grep ConnectX-5 | grep Virtual
+84:00.2 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+84:00.3 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+84:00.4 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+84:00.5 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+84:00.6 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+84:00.7 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+84:01.0 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
+84:01.1 Ethernet controller [0200]: Mellanox Technologies MT27800 Family [ConnectX-5 Virtual Function] [15b3:1018]
 ```
 
 将 VF 从驱动中解绑：
 
 ```bash
-echo 0000:42:00.2 > /sys/bus/pci/drivers/mlx5_core/unbind
-echo 0000:42:00.3 > /sys/bus/pci/drivers/mlx5_core/unbind
-echo 0000:42:00.4 > /sys/bus/pci/drivers/mlx5_core/unbind
-echo 0000:42:00.5 > /sys/bus/pci/drivers/mlx5_core/unbind
+echo 0000:84:00.2 > /sys/bus/pci/drivers/mlx5_core/unbind
+echo 0000:84:00.3 > /sys/bus/pci/drivers/mlx5_core/unbind
+echo 0000:84:00.4 > /sys/bus/pci/drivers/mlx5_core/unbind
+echo 0000:84:00.5 > /sys/bus/pci/drivers/mlx5_core/unbind
+echo 0000:84:00.6 > /sys/bus/pci/drivers/mlx5_core/unbind
+echo 0000:84:00.7 > /sys/bus/pci/drivers/mlx5_core/unbind
+echo 0000:84:01.0 > /sys/bus/pci/drivers/mlx5_core/unbind
+echo 0000:84:01.1 > /sys/bus/pci/drivers/mlx5_core/unbind
 ```
 
 开启 eSwitch 模式，并设置硬件卸载：
 
 ```bash
-devlink dev eswitch set pci/0000:42:00.0 mode switchdev
-ethtool -K enp66s0f0 hw-tc-offload on
+devlink dev eswitch set pci/0000:84:00.0 mode switchdev
+devlink dev eswitch set pci/0000:84:00.1 mode switchdev
+ethtool -K enp132s0f0np0 hw-tc-offload on
+ethtool -K enp132s0f1np1 hw-tc-offload on
 ```
+
+SR-IOV VF 链路聚合配置：
+
+SR-IOV VF LAG 允许网卡的 PF 获取 OVS 试图卸载到绑定网络设备的规则，并将其卸载到硬件 e-switch 上。支持的 bond 模式如下：
+
+- Active-backup
+- XOR
+- LACP
+
+> SR-IOV VF LAG 可将 LAG 功能完全卸载给硬件。bond 会创建一个单一的 bond PF 端口。当使用硬件卸载时，两个端口的数据包可转发到任何一个 VF。来自 VF 的流量可根据 bond 状态转发到两个端口。这意味着，在主备模式下，只有一个 PF 处于运行状态，来自任何 VF 的流量都会通过该 PF。在 XOR 或 LACP 模式下，如果两个 PF 都正常运行，则来自任何 VF 的流量都会在这两个 PF 之间分配。
+
+本示例中将采用 LACP 的模式，配置方式如下：
+
+```shell
+modprobe bonding mode=802.3ad
+ip link set enp132s0f0np0 master bond1
+ip link set enp132s0f1np1 master bond1
+ip link set enp132s0f0np0 up
+ip link set enp132s0f1np1 up
+ip link set bond1 up
+```
+
+> 注意：若不需要绑定 bond，请忽略上述操作。
 
 重新绑定驱动，完成 VF 设置：
 
 ```bash
-echo 0000:42:00.2 > /sys/bus/pci/drivers/mlx5_core/bind
-echo 0000:42:00.3 > /sys/bus/pci/drivers/mlx5_core/bind
-echo 0000:42:00.4 > /sys/bus/pci/drivers/mlx5_core/bind
-echo 0000:42:00.5 > /sys/bus/pci/drivers/mlx5_core/bind
+echo 0000:84:00.2 > /sys/bus/pci/drivers/mlx5_core/bind
+echo 0000:84:00.3 > /sys/bus/pci/drivers/mlx5_core/bind
+echo 0000:84:00.4 > /sys/bus/pci/drivers/mlx5_core/bind
+echo 0000:84:00.5 > /sys/bus/pci/drivers/mlx5_core/bind
+echo 0000:84:00.6 > /sys/bus/pci/drivers/mlx5_core/bind
+echo 0000:84:00.7 > /sys/bus/pci/drivers/mlx5_core/bind
+echo 0000:84:01.0 > /sys/bus/pci/drivers/mlx5_core/bind
+echo 0000:84:01.1 > /sys/bus/pci/drivers/mlx5_core/bind
 ```
 
 `NetworkManager` 的一些行为可能会导致驱动异常，如果卸载出现问题建议关闭 `NetworkManager` 再进行尝试：
@@ -97,6 +190,8 @@ echo 0000:42:00.5 > /sys/bus/pci/drivers/mlx5_core/bind
 systemctl stop NetworkManager
 systemctl disable NetworkManager
 ```
+
+#### 配置 Device Plugin
 
 由于每个机器的 VF 数量优先，每个使用加速的 Pod 会占用 VF 资源，我们需要使用 SR-IOV Device Plugin 管理相应资源，使得调度器知道如何根据
 资源进行调度。
@@ -125,10 +220,19 @@ data:
     }
 ```
 
+SR-IOV Device Plugin 会根据关联的 ConfigMap 中指定的配置创建设备插件端点，ConfigMap 的 name 为 sriovdp-config。
+
+- `selectors`: VF 选择器
+  - `vendors`: 目标设备供应商十六进制代码字符串
+  - `devices`: 目标设备的设备十六进制代码字符串
+  - `drivers`: 以字符串形式显示的目标设备驱动程序名称
+
+`selectors` 还支持基于 `pciAddresses`、`acpiIndexes` 等参数进行 VF 的选择，更多详细配置请参考[SR-IOV ConfigMap 配置](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin/tree/v3.6.2?tab=readme-ov-file#configurations)
+
 参考 [SR-IOV 文档](https://github.com/intel/sriov-network-device-plugin)进行部署:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/intel/sriov-network-device-plugin/master/deployments/k8s-v1.16/sriovdp-daemonset.yaml
+kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-device-plugin/v3.6.2/deployments/sriovdp-daemonset.yaml
 ```
 
 检查 SR-IOV 资源是否已经注册到 Kubernetes Node 中：
@@ -136,8 +240,8 @@ kubectl apply -f https://raw.githubusercontent.com/intel/sriov-network-device-pl
 ```bash
 kubectl describe node kube-ovn-01  | grep mellanox
 
-mellanox.com/cx5_sriov_switchdev:  4
-mellanox.com/cx5_sriov_switchdev:  4
+mellanox.com/cx5_sriov_switchdev:  8
+mellanox.com/cx5_sriov_switchdev:  8
 mellanox.com/cx5_sriov_switchdev  0           0
 ```
 
@@ -335,8 +439,10 @@ SR-IOV Device Plugin 调度时获得的设备 ID 需要通过 Multus-CNI 传递�
 参考 [Multus-CNI 文档](https://github.com/k8snetworkplumbingwg/multus-cni)进行部署：
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml
+kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v4.0.2/deployments/multus-daemonset-thick.yml
 ```
+
+> 注意：multus 提供了 Thin 和 Thick 版本的插件，若要支持 SR-IOV 则需要安装 Thick 版本。
 
 创建 `NetworkAttachmentDefinition`：
 
@@ -344,7 +450,7 @@ kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-c
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
-  name: default
+  name: sriov
   namespace: default
   annotations:
     k8s.v1.cni.cncf.io/resourceName: mellanox.com/cx5_sriov_switchdev
@@ -356,7 +462,7 @@ spec:
         {
             "type":"kube-ovn",
             "server_socket":"/run/openvswitch/kube-ovn-daemon.sock",
-            "provider": "default.default.ovn"
+            "provider": "sriov.default.ovn"
         },
         {
             "type":"portmap",
@@ -370,12 +476,14 @@ spec:
 
 - `provider`: 格式为当前 `NetworkAttachmentDefinition` 的 {name}.{namespace}.ovn。
 
-## Kube-OVN 中开启卸载模式
+## Overlay 卸载
+
+### Kube-OVN 中开启卸载模式
 
 下载安装脚本：
 
 ```bash
-wget https://raw.githubusercontent.com/alauda/kube-ovn/{{ variables.branch }}/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
 ```
 
 修改相关参数，`IFACE` 需要为物理网卡名，该网卡需要有可路由 IP：
@@ -384,7 +492,8 @@ wget https://raw.githubusercontent.com/alauda/kube-ovn/{{ variables.branch }}/di
 ENABLE_MIRROR=${ENABLE_MIRROR:-false}
 HW_OFFLOAD=${HW_OFFLOAD:-true}
 ENABLE_LB=${ENABLE_LB:-false}
-IFACE="ensp01"
+IFACE="bond1"
+# 以手动配置 SR-IOV 和 Device Plugin 中的网卡为例，若绑定 bond，则将 IFACE 设置为 bond1，若未绑定 bond，则可将 IFACE 设置为 enp132s0f0np0 或 enp132s0f1np1
 ```
 
 安装 Kube-OVN：
@@ -393,7 +502,7 @@ IFACE="ensp01"
 bash install.sh
 ```
 
-## 创建使用 VF 网卡的 Pod
+### 创建使用 VF 网卡的 Pod
 
 可以使用如下 yaml 格式创建使用 VF 进行网络卸载加速的 Pod:
 
@@ -401,12 +510,13 @@ bash install.sh
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx
+  name: nginx-overlay
   annotations:
-    v1.multus-cni.io/default-network: default/default
+    v1.multus-cni.io/default-network: default/sriov
+    sriov.default.ovn.kubernetes.io/logical_switch: ovn-default
 spec:
   containers:
-  - name: nginx
+  - name: nginx-overlay
     image: docker.io/library/nginx:alpine
     resources:
       requests:
@@ -416,6 +526,114 @@ spec:
 ```
 
 - `v1.multus-cni.io/default-network`: 为上一步骤中 `NetworkAttachmentDefinition` 的 {namespace}/{name}。
+- `sriov.default.ovn.kubernetes.io/logical_switch`: 指定 Pod 所属的 Subnet，若希望 Pod 所属的子网为默认子网，则该行注解可省略。
+
+## Underlay 卸载
+
+### Kube-OVN 中开启卸载模式
+
+下载安装脚本：
+
+```bash
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
+```
+
+修改相关参数，`IFACE` 需要为物理网卡名，该网卡需要有可路由 IP：
+
+```bash
+ENABLE_MIRROR=${ENABLE_MIRROR:-false}
+HW_OFFLOAD=${HW_OFFLOAD:-true}
+ENABLE_LB=${ENABLE_LB:-false}
+IFACE=""
+# 若需要 Underlay 卸载，IFACE 需设置为其它非 PF 的网卡。（IFACE 为空时会默认使用 K8s 集群通信的网卡，注意这张网卡不能是 PF 的网卡）
+```
+
+安装 Kube-OVN：
+
+```bash
+bash install.sh
+```
+
+### 创建使用 VF 网卡的 Pod
+
+可以使用如下 yaml 格式创建使用 VF 进行网络卸载加速的 Pod:
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: ProviderNetwork
+metadata:
+  name: underlay-offload
+spec:
+  defaultInterface: bond1
+
+---
+apiVersion: kubeovn.io/v1
+kind: Vlan
+metadata:
+  name: vlan0
+spec:
+  id: 0
+  provider: underlay-offload
+
+---
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: vlan0
+spec:
+  protocol: IPv4
+  provider: ovn
+  cidrBlock: 10.10.204.0/24
+  gateway: 10.10.204.254
+  vlan: vlan0
+  excludeIps:
+  - 10.10.204.1..10.10.204.100
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-underlay
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[{
+      "name": "sriov",
+      "namespace": "default",
+      "default-route": ["10.10.204.254"]
+    }]'
+    sriov.default.ovn.kubernetes.io/logical_switch: vlan0
+spec:
+  containers:
+  - name: nginx-underlay
+    image: docker.io/library/nginx:alpine
+    resources:
+      requests:
+        mellanox.com/cx5_sriov_switchdev: '1'
+      limits:
+        mellanox.com/cx5_sriov_switchdev: '1'
+```
+
+- `v1.multus-cni.io/default-network`: 为上一步骤中 `NetworkAttachmentDefinition` 的 {namespace}/{name}。
+
+> 注意：上述示例中通过 multus 创建了使用 VF 作为副网卡的 Pod，同时将 VF 作为 Pod 的默认路由。还可以将 VF 作为 Pod 的主网卡，更多 multus 配置详见[多网卡管理](./multi-nic.md)。
+
+需要注意的是仍可以使用如下 yaml 格式创建不使用 VF 进行网络卸载加速的 Pod:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-underlay-noVF
+  annotations:
+    ovn.kubernetes.io/logical_switch: vlan0
+spec:
+  containers:
+  - name: nginx-underlay-noVF
+    image: docker.io/library/nginx:alpine
+```
+
+上述示例会创建一个不使用 VF 进行网络卸载加速的 Pod，其流表仍会被下发至 ovs-kernel 中而不会下发到 e-switch 中。
+
+## 卸载验证
 
 可通过在 Pod 运行节点的 `ovs-ovn` 容器中运行下面的命令观察卸载是否成功：
 
