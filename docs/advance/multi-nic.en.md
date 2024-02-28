@@ -71,34 +71,7 @@ spec:
 - `server_socket`: The socket file used for communication to Kube-OVN. The default location is `/run/openvswitch/kube-ovn-daemon.sock`.
 - `provider`: The current NetworkAttachmentDefinition's `<name>. <namespace>` , Kube-OVN will use this information to find the corresponding Subnet resource.
 
-### The attached NIC is a Kube-OVN type NIC
-
-At this point, the multiple NICs are all Kube-OVN type NICs.
-
-#### Create NetworkAttachmentDefinition
-
-Set the `provider` suffix to `ovn`:
-
-```yaml
-apiVersion: "k8s.cni.cncf.io/v1"
-kind: NetworkAttachmentDefinition
-metadata:
-  name: attachnet
-  namespace: default
-spec:
-  config: '{
-      "cniVersion": "0.3.0",
-      "type": "kube-ovn",
-      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
-      "provider": "attachnet.default.ovn"
-    }'
-```
-
-- `spec.config.ipam.type`: Need to be set to `kube-ovn` to call the kube-ovn plugin to get the address information.
-- `server_socket`: The socket file used for communication to Kube-OVN. The default location is `/run/openvswitch/kube-ovn-daemon.sock`.
-- `provider`: The current NetworkAttachmentDefinition's `<name>. <namespace>` , Kube-OVN will use this information to find the corresponding Subnet resource. It should have the suffix `ovn` here.
-
-### Create a Kube-OVN Subnet
+#### Create a Kube-OVN Subnet
 
 Create a Kube-OVN Subnet, set the corresponding `cidrBlock` and `exclude_ips`, the `provider` should be set to the `<name>. <namespace>` of corresponding NetworkAttachmentDefinition.
 For example, to provide additional NICs with macvlan, create a Subnet as follows:
@@ -119,25 +92,7 @@ spec:
 
 `gateway`, `private`, `nat` are only valid for networks with `provider` type ovn, not for attachment networks.
 
-If you are using Kube-OVN as an attached NIC, `provider` should be set to the `<name>. <namespace>.ovn` of the corresponding NetworkAttachmentDefinition, and should end with `ovn` as a suffix.
-
-An example of creating a Subnet with an additional NIC provided by Kube-OVN is as follows:
-
-```yaml
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: attachnet
-spec:
-  protocol: IPv4
-  provider: attachnet.default.ovn
-  cidrBlock: 172.17.0.0/16
-  gateway: 172.17.0.1
-  excludeIps:
-  - 172.17.0.0..172.17.0.10
-```
-
-### Create a Pod with Multiple NIC
+##### Create a Pod with Multiple NIC
 
 For Pods with randomly assigned addresses,
 simply add the following annotation `k8s.v1.cni.cncf.io/networks`, taking the value `<namespace>/<name>` of the corresponding NetworkAttachmentDefinition.：
@@ -155,10 +110,9 @@ spec:
   - name: samplepod
     command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
     image: docker.io/library/alpine:edge
-
 ```
 
-### Create Pod with a Fixed IP
+##### Create Pod with a Fixed IP
 
 For Pods with fixed IPs, add `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/ip_address` annotation：
 
@@ -180,7 +134,7 @@ spec:
     image: docker.io/library/nginx:alpine
 ```
 
-### Create Workloads with Fixed IPs
+##### Create Workloads with Fixed IPs
 
 For workloads that use ippool, add `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/ip_pool` annotations:
 
@@ -210,3 +164,198 @@ spec:
       - name: static-workload
         image: docker.io/library/nginx:alpine
 ```
+
+##### Create a Pod using macvlan as default route
+
+For Pods that use macvlan as an accessory network card, if you want to use the accessory network card as the default route of the Pod, you only need to add the following annotation, `default-route` is the gateway address:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: samplepod-route
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[{
+      "name": "macvlan",
+      "namespace": "default",
+      "default-route": ["172.17.0.1"]
+    }]'
+spec:
+  containers:
+  - name: samplepod-route
+    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/library/alpine:edge
+```
+
+##### Create a Pod using macvlan as the main nic
+
+For Pods that use macvlan as the main network card, you only need to add the following annotation `v1.multus-cni.io/default-network`, whose value is `<namespace>/<name>` of the corresponding NetworkAttachmentDefinition:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: samplepod-macvlan
+  namespace: default
+  annotations:
+    v1.multus-cni.io/default-network: default/macvlan
+spec:
+  containers:
+  - name: samplepod-macvlan
+    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/library/alpine:edge
+```
+
+#### Create a Kube-OVN Subnet (Provider ovn)
+
+Create a Kube-OVN Subnet, set the corresponding `cidrBlock` and `exclude_ips`, `provider` is ovn, and create the Subnet as follows:
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: macvlan
+spec:
+  protocol: IPv4
+  provider: ovn
+  cidrBlock: 172.17.0.0/16
+  gateway: 172.17.0.1
+  excludeIps:
+  - 172.17.0.0..172.17.0.10
+```
+
+##### Create a Pod with Multiple NIC
+
+For Pods that need to obtain IP from the subnet with `provider` type ovn, you need to combine the annotation `k8s.v1.cni.cncf.io/networks` and `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/logical_switch` use:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: samplepod
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/networks: default/macvlan
+    macvlan.default.kubernetes.io/logical_switch: macvlan
+spec:
+  containers:
+  - name: samplepod
+    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/library/alpine:edge
+```
+
+- `k8s.v1.cni.cncf.io/networks`: The value is `<namespace>/<name>` of the corresponding NetworkAttachmentDefinition
+- `macvlan.default.kubernetes.io/logical_switch`: The value is the subnet name
+
+> Note: Specifying a subnet through `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/logical_switch` has a higher priority than specifying a subnet through provider. Subnets based on ovn type provide ipam and also support the creation of fixed IP Pods and the creation of fixed IP pods. IP workload, create a Pod with the default route as macvlan, but creating a Pod with the main network card as macvlan is not supported.
+
+### The attached NIC is a Kube-OVN type NIC
+
+At this point, the multiple NICs are all Kube-OVN type NICs.
+
+#### Create NetworkAttachmentDefinition
+
+Set the `provider` suffix to `ovn`:
+
+```yaml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: attachnet
+  namespace: default
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "kube-ovn",
+      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
+      "provider": "attachnet.default.ovn"
+    }'
+```
+
+- `spec.config.ipam.type`: Need to be set to `kube-ovn` to call the kube-ovn plugin to get the address information.
+- `server_socket`: The socket file used for communication to Kube-OVN. The default location is `/run/openvswitch/kube-ovn-daemon.sock`.
+- `provider`: The current NetworkAttachmentDefinition's `<name>. <namespace>` , Kube-OVN will use this information to find the corresponding Subnet resource. It should have the suffix `ovn` here.
+
+#### Create a Kube-OVN Subnet
+
+If you are using Kube-OVN as an attached NIC, `provider` should be set to the `<name>. <namespace>.ovn` of the corresponding NetworkAttachmentDefinition, and should end with `ovn` as a suffix.
+
+An example of creating a Subnet with an additional NIC provided by Kube-OVN is as follows:
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: attachnet
+spec:
+  protocol: IPv4
+  provider: attachnet.default.ovn
+  cidrBlock: 172.17.0.0/16
+  gateway: 172.17.0.1
+  excludeIps:
+  - 172.17.0.0..172.17.0.10
+```
+
+##### Create a Pod with Multiple NIC
+
+For Pods with randomly assigned addresses,
+simply add the following annotation `k8s.v1.cni.cncf.io/networks`, taking the value `<namespace>/<name>` of the corresponding NetworkAttachmentDefinition.：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: samplepod
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/networks: default/attachnet
+spec:
+  containers:
+  - name: samplepod
+    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/library/alpine:edge
+```
+
+#### Create a Kube-OVN Subnet (Provider ovn)
+
+Create a Kube-OVN Subnet, set the corresponding `cidrBlock` and `exclude_ips`, `provider` is ovn, and create the Subnet as follows:
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: attachnet
+spec:
+  protocol: IPv4
+  provider: ovn
+  cidrBlock: 172.17.0.0/16
+  gateway: 172.17.0.1
+  excludeIps:
+  - 172.17.0.0..172.17.0.10
+```
+
+##### Create a Pod with Multiple NIC
+
+For Pods that need to obtain IP from the subnet whose `provider` type is ovn, the annotation `k8s.v1.cni.cncf.io/networks` and `<networkAttachmentName>.<networkAttachmentNamespace>.ovn.kubernetes.io/logical_switch` need to be used in conjunction with:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: samplepod
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/networks: default/attachnet
+    attachnet.default.ovn.kubernetes.io/logical_switch: attachnet
+spec:
+  containers:
+  - name: samplepod
+    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/library/alpine:edge
+```
+
+- `k8s.v1.cni.cncf.io/networks`: The value is `<namespace>/<name>` of the corresponding NetworkAttachmentDefinition
+- `attachnet.default.ovn.kubernetes.io/logical_switch`: The value is the subnet name
+
+>Note: Specifying a subnet through `<networkAttachmentName>.<networkAttachmentNamespace>.ovn.kubernetes.io/logical_switch` has a higher priority than specifying a subnet through provider. For Pods with Kube-OVN attached network cards, the creation of fixed IPs is supported. Pod, create a workload using a fixed IP, create a Pod with the default route as macvlan, and also support the creation of a Pod with the main network card as Kube-OVN type. For the configuration method, please refer to the previous section.

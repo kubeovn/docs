@@ -340,7 +340,7 @@ spec:
 
 ##### 创建一个多网络的 Pod
 
-对于需要从 `provider` 类型为 ovn 的 subnet 中获取 IP 的 Pod，需将 annotation `k8s.v1.cni.cncf.io/networks` 和 `<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/logical_switch` 结合使用：
+对于需要从 `provider` 类型为 ovn 的 subnet 中获取 IP 的 Pod，需将 annotation `k8s.v1.cni.cncf.io/networks` 和 `<networkAttachmentName>.<networkAttachmentNamespace>.ovn.kubernetes.io/logical_switch` 结合使用：
 
 ```yaml
 apiVersion: v1
@@ -359,6 +359,6 @@ spec:
 ```
 
 - `k8s.v1.cni.cncf.io/networks`: 取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`
-- `macvlan.default.kubernetes.io/logical_switch`: 取值为子网名
+- `attachnet.default.ovn.kubernetes.io/logical_switch`: 取值为子网名
 
 > 注意: 通过`<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/logical_switch` 指定子网的优先级高于通过 provider 指定子网，对于附属网卡为 Kube-OVN 类型的 Pod，支持创建固定 IP 的 Pod、创建使用固定 IP 的工作负载、创建默认路由为 macvlan 的 Pod，同时也支持创建主网卡为 Kube-OVN 类型的 Pod，配置方式可参考上一节。
