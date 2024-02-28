@@ -47,6 +47,11 @@ Please refer [One-Click Installation](../start/one-step-install.md) and [Multus 
 
 Here we use macvlan as the second network of the container network and set its ipam to `kube-ovn`:
 
+```shell
+# load macvlan module
+sudo modprobe macvlan
+```
+
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
@@ -70,6 +75,7 @@ spec:
 - `spec.config.ipam.type`: Need to be set to `kube-ovn` to call the kube-ovn plugin to get the address information.
 - `server_socket`: The socket file used for communication to Kube-OVN. The default location is `/run/openvswitch/kube-ovn-daemon.sock`.
 - `provider`: The current NetworkAttachmentDefinition's `<name>. <namespace>` , Kube-OVN will use this information to find the corresponding Subnet resource.
+- `master`: the host’s physical network card
 
 #### Create a Kube-OVN Subnet
 
