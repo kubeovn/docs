@@ -12,11 +12,18 @@ as long as there is a set of IP reachable machines.
 
 ## Prerequisites
 
-1. The subnet CIDRs within OpenStack and Kubernetes cannot overlap with each other in auto-interconnect mode.
+1. Clusters configured in versions after 1.11.16 have the cluster interconnection switch turned off by default. You need to mark the following in the configuration script `install.sh`:
+
+    ````bash
+    ENABLE_IC=true
+    ````
+
+After opening the switch and deploying the cluster, the component deployment ovn-ic-controller will appear.
+2. The subnet CIDRs within OpenStack and Kubernetes cannot overlap with each other in auto-interconnect mode.
    If there is overlap, you need to refer to the subsequent manual interconnection process, which can only connect non-overlapping Subnets.
-2. A set of machines needs to exist that can be accessed by each cluster over the network and used to deploy controllers that interconnect across clusters.
-3. Each cluster needs to have a set of machines that can access each other across clusters via IP as the gateway nodes.
-4. This solution only connects to the Kubernetes default VPCs.
+3. A set of machines needs to exist that can be accessed by each cluster over the network and used to deploy controllers that interconnect across clusters.
+4. Each cluster needs to have a set of machines that can access each other across clusters via IP as the gateway nodes.
+5. This solution only connects to the Kubernetes default VPCs.
 
 ## Deploy a single-node OVN-IC DB
 
