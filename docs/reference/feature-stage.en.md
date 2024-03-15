@@ -77,4 +77,4 @@ This list records the feature stages from the 1.8 release.
 | Load Balancer Type Service in Default VPC        | false   | Alpha | 1.11  |       |
 | Load Balance in Custom VPC                       | false   | Alpha | 1.11  |       |
 | DNS in Custom VPC                                | false   | Alpha | 1.11  |       |
-| Underlay and Overlay Interconnection             | false   | Alpha | 1.11  |       |
+| Underlay and Overlay Interconnection             | false   | Beta  | 1.12  |       |

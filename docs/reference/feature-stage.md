@@ -76,4 +76,4 @@
 | [VM 固定 IP](../guide/static-ip-mac.md) | false | Beta  | 1.9       |           |
 | [默认 VPC Load Balancer 类型 Service](../guide/loadbalancer-service.md) | false | Alpha | 1.11      |           |
 | [自定义 VPC 内部 DNS](../advance/vpc-internal-dns.md) | false | Alpha | 1.11      |           |
-| [Underlay 和 Overlay 互通](../start/underlay.md) | false | Alpha | 1.11      |           |
+| [Underlay 和 Overlay 互通](../start/underlay.md) | false | Beta | 1.12      |           |
