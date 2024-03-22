@@ -248,7 +248,7 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/r/kubeovn/kube-ovn
   variables:
-    version: v1.12.8
+    version: v1.12.9
     branch: release-1.12
 copyright: 
    <p>The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, 
