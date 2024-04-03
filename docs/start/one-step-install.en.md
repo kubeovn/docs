@@ -119,5 +119,5 @@ REVISION: 1
 TEST SUITE: None
 
 # Highly Available Cluster Installation
-$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=${Node0IP},${Node1IP},${Node2IP}, --set replicaCount=3
+$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=${Node0IP}\,${Node1IP}\,${Node2IP}
 ```
