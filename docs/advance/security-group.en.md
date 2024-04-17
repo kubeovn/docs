@@ -31,6 +31,11 @@ The specific meaning of each field of the SecurityGroup can be found in the [Kub
 
 Pods bind security-groups by adding annotations, two annotations are used.
 
+- port_security: source address verification. If this function is enabled, only packets with ip addresses assigned by kube-ovn ipam can be exported from the pod network adapter. After this function is disabled, any ip address can be exported
+- security_groups: indicates a security group that contains a series of ACL rules
+
+> These two annotations are responsible for functions that are independent of each other.
+
 ```yaml
     ovn.kubernetes.io/port_security: "true"
     ovn.kubernetes.io/security_groups: sg-example
