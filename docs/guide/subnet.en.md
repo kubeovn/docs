@@ -319,7 +319,7 @@ spec:
 
 By default `kube-ovn-cni` will request the gateway using ICMP or ARP protocol after starting the
 Pod and wait for the return to verify that the network is working properly.
-Some Underlay environment gateways cannot respond to ARP requests, or scenarios that do not require external connectivity, the checking can be disabled .
+Some Underlay environment gateways cannot respond to ICMP requests, or scenarios that do not require external connectivity, the checking can be disabled .
 
 ```yaml
 apiVersion: kubeovn.io/v1
