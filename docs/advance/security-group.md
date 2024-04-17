@@ -31,6 +31,11 @@ spec:
 
 Pod 通过添加 annotation 来绑定安全组，使用的 annotation 有两个：
 
+- port_security: 源地址校验，如果开启，只有 kube-ovn ipam 分配到的 ip 源地址的包可以从 pod 网卡出去，关闭后, 任意 ip 都可以。
+- security_groups： 安全组列表，包含一系列 ACL 规则。
+
+> 这两个 annotation 负责的功能是互相独立的。
+
 ```yaml
     ovn.kubernetes.io/port_security: "true"
     ovn.kubernetes.io/security_groups: sg-example
