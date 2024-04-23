@@ -14,21 +14,21 @@ nav:
       - 卸载: 'start/uninstall.md'
   - 使用指南:
       - 安装和配置选项: 'guide/setup-options.md'
+      - 子网使用: 'guide/subnet.md'
+      - 双栈使用: 'guide/dual-stack.md'
       - 固定地址: 'guide/static-ip-mac.md'
       - IP 池使用: 'guide/ippool.md'
       - 自定义路由: 'guide/custom-routes.md'
-      - 子网使用: 'guide/subnet.md'
-      - LoadBalancer 类型 Service: 'guide/loadbalancer-service.md'
+      - EIP 和 SNAT 配置: 'guide/eip-snat.md'
       - VPC 使用: 'guide/vpc.md'
       - VPC QoS 配置: 'guide/vpc-qos.md'
       - 容器网络 QoS 配置: 'guide/qos.md'
-      - 配置监控和面板: 'guide/prometheus-grafana.md'
-      - 配置原生 Prometheus: 'guide/prometheus.md'
-      - 双栈使用: 'guide/dual-stack.md'
-      - EIP 和 SNAT 配置: 'guide/eip-snat.md'
+      - Webhook 使用: 'guide/webhook.md'
       - 流量镜像: 'guide/mirror.md'
       - NetworkPolicy 日志: 'guide/networkpolicy-log.md'
-      - Webhook 使用: 'guide/webhook.md'
+      - LoadBalancer 类型 Service: 'guide/loadbalancer-service.md'
+      - 配置监控和面板: 'guide/prometheus-grafana.md'
+      - 配置原生 Prometheus: 'guide/prometheus.md'
   - 运维指南:
       - Kubectl 插件使用: 'ops/kubectl-ko.md'
       - 删除工作节点: 'ops/delete-worker-node.md'
@@ -54,7 +54,7 @@ nav:
       - DHCP 设置: 'advance/dhcp.md'
       - VPC 互联: 'advance/vpc-peering.md'
       - 自定义 VPC 内部负载均衡: 'advance/vpc-internal-lb.md'
-      - 自定义 VPC 内部 DNS: 'advance/vpc-internal-dns.md'
+      - 自定义 VPC 内部 DNS: 'advance/vpc-dns.md'
       - 外部网关设置: 'advance/external-gateway.md'
       - VIP 预留设置: 'advance/vip.md'
       - Mellanox 网卡 Offload 支持: 'advance/offload-mellanox.md'
@@ -248,8 +248,8 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/r/kubeovn/kube-ovn
   variables:
-    version: v1.13.0
-    branch: master
+    version: v1.12.12
+    branch: release-1.12
 copyright: 
    <p>The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, 
          please see our <a href="https://www.linuxfoundation.org/legal/trademark-usage">Trademark Usage page</a>.
