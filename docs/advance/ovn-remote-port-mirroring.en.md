@@ -162,7 +162,7 @@ tcpdump: listening on mirror1, link-type EN10MB (Ethernet), snapshot length 2621
 05:13:30.565140 00:00:00:a3:f5:e2 > 00:00:00:89:d5:cc, ethertype IPv4 (0x0800), length 201: (tos 0x0, ttl 64, id 57371, offset 0, flags [DF], proto UDP (17), length 187)
     10.16.0.4.53 > 10.16.0.6.45214: 61875 NXDomain*- 0/1/1 (159)
 05:13:30.566023 00:00:00:a3:f5:e2 > 00:00:00:55:e4:4e, ethertype IPv4 (0x0800), length 80: (tos 0x0, ttl 64, id 45937, offset 0, flags [DF], proto UDP (17), length 66)
-    10.16.0.4.44116 > 172.18.0.1.53: 16025+ [1au] AAAA? alauda.cn. (38)
+    10.16.0.4.44116 > 172.18.0.1.53: 16025+ [1au] AAAA? kube-ovn.io. (38)
 ```
 
 ## Notice

@@ -238,7 +238,7 @@ extra:
     default: stable
   social:
     - icon: fontawesome/brands/weixin
-      link: https://ma.alauda.cn/p/0f39a
+      link: https://jinshuju.net/f/lyrEow
     - icon: fontawesome/brands/slack
       link: https://communityinviter.com/apps/kube-ovn/kube-ovn/
     - icon: fontawesome/brands/twitter
