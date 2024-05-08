@@ -27,7 +27,7 @@ kubectl apply -f nodelocaldns.yaml
 
 ### Kube-OVN 相应 DNS 配置
 
-部署好 Kubernetes 的 Nodelocal DNScache 组件后， Kube-OVN 需要做出下面修改：
+部署好 Kubernetes 的 Nodelocal DNScache 组件后，Kube-OVN 需要做出下面修改：
 
 #### Underlay Subnet 开启 U2O 开关
 
@@ -47,7 +47,7 @@ kubectl edit deployment kube-ovn-controller -n kube-system
 
 ## 验证节点本地 DNS 缓存功能
 
-以上配置完成后可以找到 Pod 验证如下，可以看到 Pod 的 DNS 服务器是指向本地 169.254.20.10 ，并成功解析域名：
+以上配置完成后可以找到 Pod 验证如下，可以看到 Pod 的 DNS 服务器是指向本地 169.254.20.10，并成功解析域名：
 
 ```bash
 # kubectl exec -it pod1 -- nslookup github.com
@@ -59,7 +59,7 @@ Name:   github.com
 Address: 20.205.243.166
 ```
 
-也可以在节点抓包验证如下，可以看到 DNS 查询报文通过 ovn0 网卡到达本地的 DNS 服务，DNS 响应报文原路返回:
+也可以在节点抓包验证如下，可以看到 DNS 查询报文通过 ovn0 网卡到达本地的 DNS 服务，DNS 响应报文原路返回：
 
 ```bash
 # tcpdump -i any port 53
