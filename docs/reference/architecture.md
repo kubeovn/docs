@@ -20,7 +20,7 @@ Kube-OVN 的组件可以大致分为三类：
 
 ### 上游 OVN/OVS 组件
 
-该类型组件来自 OVN/OVS 社区，并针对 Kube-OVN 的使用场景做了特定修改。 OVN/OVS 本身是一套成熟的管理虚机和容器的 SDN 系统，我们强烈建议
+该类型组件来自 OVN/OVS 社区，并针对 Kube-OVN 的使用场景做了特定修改。OVN/OVS 本身是一套成熟的管理虚机和容器的 SDN 系统，我们强烈建议
 对 Kube-OVN 实现感兴趣的用户先去读一下 [ovn-architecture(7)](https://www.mankier.com/7/ovn-architecture){: target="_blank" } 来了解什么是 OVN 以及
 如何和它进行集成。Kube-OVN 使用 OVN 的北向接口创建和调整虚拟网络，并将其中的网络概念映射到 Kubernetes 之内。
 
@@ -30,8 +30,8 @@ Kube-OVN 的组件可以大致分为三类：
 
 `ovn-central` Deployment 运行 OVN 的管理平面组件，包括 `ovn-nb`, `ovn-sb`, 和 `ovn-northd`。
 
-* `ovn-nb`： 保存虚拟网络配置，并提供 API 进行虚拟网络管理。`kube-ovn-controller` 将会主要和 `ovn-nb` 进行交互配置虚拟网络。
-* `ovn-sb`： 保存从 `ovn-nb` 的逻辑网络生成的逻辑流表，以及各个节点的实际物理网络状态。
+* `ovn-nb`：保存虚拟网络配置，并提供 API 进行虚拟网络管理。`kube-ovn-controller` 将会主要和 `ovn-nb` 进行交互配置虚拟网络。
+* `ovn-sb`：保存从 `ovn-nb` 的逻辑网络生成的逻辑流表，以及各个节点的实际物理网络状态。
 * `ovn-northd`：将 `ovn-nb` 的虚拟网络翻译成 `ovn-sb` 中的逻辑流表。
 
 多个 `ovn-central` 实例会通过 Raft 协议同步数据保证高可用。

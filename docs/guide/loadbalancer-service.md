@@ -28,7 +28,7 @@ containers:
 
 ### 创建 NetworkAttachmentDefinition CRD 资源
 
-参考以下 yaml，创建 `net-attach-def` 资源:
+参考以下 yaml，创建 `net-attach-def`资源：:
 
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
@@ -220,7 +220,7 @@ status:
 
 ## 测试 LoadBalancerIP 访问
 
-参考以下 yaml, 创建测试 Pod，作为 Service 的 Endpoints 提供服务:
+参考以下 yaml, 创建测试 Pod，作为 Service 的 Endpoints 提供服务：
 
 ```yaml
 apiVersion: apps/v1
