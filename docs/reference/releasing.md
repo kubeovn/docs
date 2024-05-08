@@ -5,6 +5,7 @@ Kube-OVN 目前主要发布 Minor 版本和 Patch 版本。Minor 版本中会有
 ## 维护策略
 
 Kube-OVN 目前会持续维护主干分支和最近两个发版分支，例如 `master`, `release-1.12`，`release-1.11`。其中最新发版分支（例如 `release-1.12`）会进行较为频繁的迭代和发版，所有 Bug 修复，安全漏洞和依赖升级都会尽可能 backport 到最新发版分支。
+
 前一个发版分支（例如 `release-1.11`）会 backport 较为重大的 Bug 修复以及影响面较大的安全漏洞修复。
 
 ## 发版周期
