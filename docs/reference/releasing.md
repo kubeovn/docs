@@ -1,4 +1,4 @@
-# 版本发布
+# 版本管理
 
 Kube-OVN 目前主要发布 Minor 版本和 Patch 版本。Minor 版本中会有新功能的增加，OVN/OVS 大版本升级，内部架构调整，API 变化。Patch 版本主要进行 Bug 修复，安全漏洞修复，依赖升级，同时兼容之前的 API。
 
