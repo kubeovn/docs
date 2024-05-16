@@ -54,9 +54,10 @@ make base-arm64
 ## Run E2E
 
 Kube-OVN uses:
-- [KIND](https://kind.sigs.k8s.io/){: target="_blank" } to build local Kubernetes cluster：`go install sigs.k8s.io/kind@latest `
--  [jinjanator](https://github.com/kpfleming/jinjanator){: target="_blank" } to render templates: `pip install jinjanator `
-- [Ginkgo](https://onsi.github.io/ginkgo/){: target="_blank" } to run test cases：`go install github.com/onsi/ginkgo/v2/ginkgo; go get github.com/onsi/gomega/... `
+
+- [KIND](https://kind.sigs.k8s.io/) to build local Kubernetes cluster：` go install sigs.k8s.io/kind@latest `
+- [jinjanator](https://github.com/kpfleming/jinjanator) to render templates: ` pip install jinjanator `
+- [Ginkgo](https://onsi.github.io/ginkgo/) to run test cases：` go install github.com/onsi/ginkgo/v2/ginkgo; go get github.com/onsi/gomega/... `
 
 > Please refer to the relevant documentation for dependency installation.
 
