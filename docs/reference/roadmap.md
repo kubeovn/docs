@@ -6,19 +6,19 @@ This document defines high level goals for Kube-OVN project. We welcome communit
 
 Kube-OVN currently supports two network modes, Overlay and Underlay. We hope to improve the stability, performance, and compatibility with the ecosystem of these two network modes in Kubernetes.
 
--  Improved Datapath network performance
--  Keeping up with the latest network API features in the community
--  Enhanced network monitoring and visualization capabilities
--  Addition of automated test cases for various scenarios
+- Improved Datapath network performance
+- Keeping up with the latest network API features in the community
+- Enhanced network monitoring and visualization capabilities
+- Addition of automated test cases for various scenarios
 
 ## VPC Network
 
 VPC network is a key feature of Kube-OVN, many functions have been used in production environment, and we hope to increase the maturity of these functions and improve the user experiences.
 
--  Standardize multiple gateway solutions and provide the best egress practice
--  Provide more VPC internal basic network capabilities and solutions, such as DNS, DHCP, LoadBalancer, etc.
--  Simplify VPC operation complexity and provide a more comprehensive CLI
--  Supplement automated test cases for various scenarios
+- Standardize multiple gateway solutions and provide the best egress practice
+- Provide more VPC internal basic network capabilities and solutions, such as DNS, DHCP, LoadBalancer, etc.
+- Simplify VPC operation complexity and provide a more comprehensive CLI
+- Supplement automated test cases for various scenarios
 
 ## User Experience
 
