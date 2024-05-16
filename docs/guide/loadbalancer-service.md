@@ -28,7 +28,7 @@ containers:
 
 ### 创建 NetworkAttachmentDefinition CRD 资源
 
-参考以下 yaml，创建 `net-attach-def`资源：:
+参考以下 yaml，创建 `net-attach-def` 资源：
 
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
