@@ -52,8 +52,12 @@ make base-arm64
 
 ## 运行 E2E
 
-Kube-OVN 使用 [KIND](https://kind.sigs.k8s.io/){: target="_blank" } 构建本地 Kubernetes 集群，[j2cli](https://github.com/kolypto/j2cli){: target="_blank" } 渲染模板，
-[Ginkgo](https://onsi.github.io/ginkgo/){: target="_blank" } 来运行测试代码。请参考相关文档进行依赖安装。
+Kube-OVN 使用:
+- [KIND](https://kind.sigs.k8s.io/){: target="_blank" } 构建本地 Kubernetes 集群：`go install sigs.k8s.io/kind@latest `
+- [jinjanator](https://github.com/kpfleming/jinjanator){: target="_blank" } 渲染模板: `pip install jinjanator `
+- [Ginkgo](https://onsi.github.io/ginkgo/){: target="_blank" } 来运行测试代码：`go install github.com/onsi/ginkgo/v2/ginkgo; go get github.com/onsi/gomega/... `
+
+> 详情请参考相关文档进行依赖安装。
 
 本地执行 E2E 测试：
 
