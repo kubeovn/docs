@@ -125,7 +125,16 @@ data:
     }
 ```
 
-参考 [SR-IOV 文档](https://github.com/intel/sriov-network-device-plugin)进行部署:
+SR-IOV Device Plugin 会根据关联的 ConfigMap 中指定的配置创建设备插件端点，ConfigMap 的 name 为 sriovdp-config。
+
+- `selectors`: VF 选择器
+  - `vendors`: 目标设备供应商十六进制代码字符串
+  - `devices`: 目标设备的设备十六进制代码字符串
+  - `drivers`: 以字符串形式显示的目标设备驱动程序名称
+
+`selectors` 还支持基于 `pciAddresses`、`acpiIndexes` 等参数进行 VF 的选择，更多详细配置请参考[SR-IOV ConfigMap 配置](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin/tree/v3.6.2?tab=readme-ov-file#configurations)
+
+参考 [SR-IOV 文档](https://github.com/intel/sriov-network-device-plugin)进行部署：
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/intel/sriov-network-device-plugin/master/deployments/k8s-v1.16/sriovdp-daemonset.yaml
@@ -143,7 +152,7 @@ mellanox.com/cx5_sriov_switchdev  0           0
 
 ### 使用 sriov-network-operator 配置 SR-IOV 和 Device Plugin
 
-安装 [node-feature-discovery](https://github.com/kubernetes-sigs/node-feature-discovery) 自动检测硬件的功能和系统配置:
+安装 [node-feature-discovery](https://github.com/kubernetes-sigs/node-feature-discovery)自动检测硬件的功能和系统配置：
 
 ```bash
 kubectl apply -k https://github.com/kubernetes-sigs/node-feature-discovery/deployment/overlays/default?ref=v0.11.3

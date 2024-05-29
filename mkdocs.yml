@@ -59,6 +59,7 @@ nav:
       - VIP 预留设置: 'advance/vip.md'
       - Mellanox 网卡 Offload 支持: 'advance/offload-mellanox.md'
       - 芯启源网卡 Offload 支持: 'advance/offload-corigine.md'
+      - 云脉芯联网卡 Offload 支持: 'advance/offload-yunsilicon.md'
       - Windows 支持: 'advance/windows.md'
       - DPDK 支持: 'advance/dpdk.md'
       - OpenStack 集成: 'advance/with-openstack.md'
@@ -192,6 +193,7 @@ plugins:
             VIP 预留设置: VIP Reservation
             Mellanox 网卡 Offload 支持: Offload with Mellanox
             芯启源网卡 Offload 支持: Offload with Corigine
+            云脉芯联网卡 Offload 支持: Offload with Yunsilicon
             Windows 支持: Windows Support
             DPDK 支持: DPDK Support
             OpenStack 集成: Integration with OpenStack
