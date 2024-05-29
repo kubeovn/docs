@@ -229,7 +229,7 @@ SR-IOV Device Plugin 会根据关联的 ConfigMap 中指定的配置创建设备
 
 `selectors` 还支持基于 `pciAddresses`、`acpiIndexes` 等参数进行 VF 的选择，更多详细配置请参考[SR-IOV ConfigMap 配置](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin/tree/v3.6.2?tab=readme-ov-file#configurations)
 
-参考 [SR-IOV 文档](https://github.com/intel/sriov-network-device-plugin)进行部署:
+参考 [SR-IOV 文档](https://github.com/intel/sriov-network-device-plugin)进行部署：
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-device-plugin/v3.6.2/deployments/sriovdp-daemonset.yaml
@@ -247,7 +247,7 @@ mellanox.com/cx5_sriov_switchdev  0           0
 
 ### 使用 sriov-network-operator 配置 SR-IOV 和 Device Plugin
 
-安装 [node-feature-discovery](https://github.com/kubernetes-sigs/node-feature-discovery) 自动检测硬件的功能和系统配置:
+安装 [node-feature-discovery](https://github.com/kubernetes-sigs/node-feature-discovery)自动检测硬件的功能和系统配置：
 
 ```bash
 kubectl apply -k https://github.com/kubernetes-sigs/node-feature-discovery/deployment/overlays/default?ref=v0.11.3
