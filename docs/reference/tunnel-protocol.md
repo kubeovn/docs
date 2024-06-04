@@ -2,12 +2,13 @@
 
 Kube-OVN 使用 OVN/OVS 作为数据平面实现，目前支持 `Geneve`，`Vxlan` 和 `STT` 三种隧道封装协议。
 这三种协议在功能，性能和易用性上存在着区别，本文档将介绍三种协议在使用中的差异，用户可根据自己的情况进行选择。
+这三个协议在 OVN 设计上的区别可以参考 [OVN Architecture Design Decision](https://www.man7.org/linux/man-pages/man7/ovn-architecture.7.html#DESIGN_DECISIONS)。
 
 ## Geneve
 
 `Geneve` 协议为 Kube-OVN 部署时选择的默认隧道协议，也是 OVN 默认推荐的隧道协议。该协议在内核中得到了广泛的支持，
 并可以利用现代网卡的通用 Offload 能力进行加速。由于 `Geneve` 有着可变长的头部，可以使用 24bit 空间来标志不同的
-datapath 用户可以创建更多数量的虚拟网络。
+datapath 用户可以创建更多数量的虚拟网络，单个 datapath 下支持 32768 个端口。
 
 如果使用 Mellanox 或芯启源的智能网卡 OVS 卸载，`Geneve` 需要较高版本的内核支持，需要选择 5.4 以上的上游内核，
 或 backport 了该功能的其他兼容内核。
@@ -17,7 +18,7 @@ CPU 资源。
 
 ## Vxlan
 
-`Vxlan` 为上游 OVN 近期支持的协议，该协议在内核中得到了广泛的支持， 并可以利用现代网卡的通用 Offload 能力进行加速。
+`Vxlan`为上游 OVN 近期支持的协议，该协议在内核中得到了广泛的支持，并可以利用现代网卡的通用 Offload 能力进行加速。。
 由于该协议头部长度有限，并且 OVN 需要使用额外的空间进行编排，datapath 的数量存在限制，最多只能创建 4096 个 datapath，
 每个 datapath 下最多 4096 个端口。同时由于空间有限，基于 `inport` 的 ACL 没有进行支持。
 

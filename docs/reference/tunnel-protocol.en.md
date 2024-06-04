@@ -3,12 +3,13 @@
 Kube-OVN uses OVN/OVS as the data plane implementation and currently supports `Geneve`, `Vxlan` and `STT` tunnel encapsulation protocols.
 These three protocols differ in terms of functionality, performance and ease of use.
 This document will describe the differences in the use of the three protocols so that users can choose according to their situation.
+[OVN Architecture Design Decision](https://www.man7.org/linux/man-pages/man7/ovn-architecture.7.html#DESIGN_DECISIONS) can be referenced for the differences in design among these three protocols in OVN.
 
 ## Geneve
 
 The `Geneve` protocol is the default tunneling protocol selected during Kube-OVN deployment and is also the default recommended tunneling protocol for OVN.
 This protocol is widely supported in the kernel and can be accelerated using the generic offload capability of modern NICs.
-Since `Geneve` has a variable header, it is possible to use 24bit space to mark different datapaths users can create a larger number of virtual networks.
+Since `Geneve` has a variable header, it is possible to use 24bit space to mark different datapaths users can create a larger number of virtual networks and a single datapath can support 32767 ports.
 
 If you are using Mellanox or Corigine SmartNIC OVS offload, `Geneve` requires a higher kernel version.
 Upstream kernel of 5.4 or higher, or other compatible kernels that backports this feature.
