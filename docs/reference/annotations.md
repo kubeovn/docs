@@ -65,7 +65,6 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | --------------------- | ----------------- | ----------------------------- |
 | ovn.kubernetes.io/bgp | `true` or `false` | 是否对外通过 BGP 发布子网地址 |
 
-
 ## Service Annotation
 
 | Key                             | Value                     | Description                               |

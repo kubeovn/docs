@@ -15,7 +15,7 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/cidr                 | String                          | Subnet CIDR that the Pod primary interface belongs to                                                       |
 | ovn.kubernetes.io/gateway              | String                          | Subnet Gateway address that the Pod primary interface belongs to                                               |
 | ovn.kubernetes.io/ip_pool              | IP list, separated by comma     | Pod primary interface will choose address from this list, used for workload fix address                      |
-| ovn.kubernetes.io/bgp                  | `true` or `false`               | Enable Pod address BGP advertisement址                                          |
+| ovn.kubernetes.io/bgp                  | `true` or `false`               | Enable Pod address BGP advertisement 址                                          |
 | ovn.kubernetes.io/snat                 | String                          | SNAT address for accessing external address                                                 |
 | ovn.kubernetes.io/eip                  | String                          | EIP address that Pod accesses external clusters and is accessed from external.                               |
 | ovn.kubernetes.io/vip                  | String                          | VIP allocated to Pod primary interface           |
@@ -63,7 +63,6 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | Key                   | Value             | Description                             |
 | --------------------- | ----------------- | --------------------------------------- |
 | ovn.kubernetes.io/bgp | `true` or `false` | Enable Subnet address BGP advertisement |
-
 
 ## Service Annotation
 
