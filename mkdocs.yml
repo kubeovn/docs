@@ -83,7 +83,7 @@ nav:
       - 隧道协议说明: 'reference/tunnel-protocol.md'
       - Kube-OVN 监控指标: 'reference/metrics.md'
       - Kube-OVN 接口规范: 'reference/kube-ovn-api.md'
-      - Annotation 使用说明: 'reference/annotation.md'
+      - Annotation 使用说明: 'reference/annotations.md'
       - 文档规范: 'reference/document-convention.md'
   - 联系方式: 'contact.md'
 theme:
