@@ -135,5 +135,6 @@ Pod can use annotation below to config `linux-netem` type QoS： `ovn.kubernetes
 > yum install -y kernel-modules-extra && modprobe sch_netem
 
 - `ovn.kubernetes.io/latency`: Set the Pod traffic delay to an integer value in ms.
-- `ovn.kubernetes.io/limit`： Set the maximum number of packets that the `qdisc` queue can hold, and takes an integer value, such as 1000.
-- `ovn.kubernetes.io/loss`： Set packet loss probability, the value is float type, for example, the value is 20, then it is set 20% packet loss probability.
+- `ovn.kubernetes.io/jitter`: Set the Pod traffic jitter to an integer value in ms.
+- `ovn.kubernetes.io/limit`: Set the maximum number of packets that the `qdisc` queue can hold, and takes an integer value, such as 1000.
+- `ovn.kubernetes.io/loss`: Set packet loss probability, the value is float type, for example, the value is 20, then it is set 20% packet loss probability.
