@@ -136,5 +136,6 @@ Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS： `ovn.kubern
 `ovn.kubernetes.io/loss`。
 
 - `ovn.kubernetes.io/latency`：设置 Pod 流量延迟，取值为整数，单位为 ms。
+- `ovn.kubernetes.io/jitter`：设置 Pod 流量延迟抖动，取值为整数，单位为 ms。
 - `ovn.kubernetes.io/limit`： 为 `qdisc` 队列可容纳的最大数据包数，取值为整形数值，例如 1000。
 - `ovn.kubernetes.io/loss`： 为设置的报文丢包概率，取值为 float 类型，例如取值为 20，则为设置 20% 的丢包概率。

@@ -14,12 +14,11 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/ip_address           | String                    | Pod 主网卡所分配到的 IP 地址，创建 Pod 时可通过该 Annotation 设置固定 IP 地址   |
 | ovn.kubernetes.io/cidr                 | String                    | Pod 主网卡所属子网的 CIDR                                                       |
 | ovn.kubernetes.io/gateway              | String                    | Pod 主网卡所属子网的 Gateway 地址                                               |
-| ovn.kubernetes.io/ip_pool              | IP 列表，逗号间隔         | Pod 主网卡地址将从列表中选择，适用于 Workload 固定 IP 场景                      |
+| ovn.kubernetes.io/ip_pool              | IP 列表，逗号间隔            | Pod 主网卡地址将从列表中选择，适用于 Workload 固定 IP 场景                      |
 | ovn.kubernetes.io/bgp                  | `true` or `false`         | 是否对外通过 BGP 发布 Pod 地址                                                  |
 | ovn.kubernetes.io/snat                 | String                    | Pod 访问集群外使用的 SNAT 地址                                                  |
 | ovn.kubernetes.io/eip                  | String                    | Pod 访问集群外部和被集群外部访问所使用的 EIP 地址                               |
 | ovn.kubernetes.io/vip                  | String                    | Pod 主网卡使用的预留 VIP，可通过该 Annotation 使用预先创建的 VIP 资源           |
-| ovn.kubernetes.io/aaps                 | VIP 列表，逗号分隔        | Pod 主网卡可放行的 IP 地址，通常和 VIP 联合使用                                 |
 | ovn.kubernetes.io/virtualmachine       | String                    | Pod 主网卡所属的 VirtualMachineInstance                                         |
 | ovn.kubernetes.io/logical_router       | String                    | Pod 主网卡所属的 VPC                                                            |
 | ovn.kubernetes.io/layer2_forward       | `true` or `false`         | Pod 主网卡在 OVN LSP 中是否增加 `unknown` 地址                                  |
@@ -28,7 +27,7 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/vlan_id              | Int                       | Pod 主网卡所属 Subnet 的 Vlan ID                                                |
 | ovn.kubernetes.io/ingress_rate         | Int                       | Pod 主网卡流入方向限速，单位为 Mbits/s                                          |
 | ovn.kubernetes.io/egress_rate          | Int                       | Pod 主网卡流出方向限速，单位为 Mbits/s                                          |
-| ovn.kubernetes.io/security_groups      | String 列表，使用逗号分隔 | Pod 主网卡所属的 Security Group                                                 |
+| ovn.kubernetes.io/security_groups      | String 列表，使用逗号分隔    | Pod 主网卡所属的 Security Group                                                 |
 | ovn.kubernetes.io/allow_live_migration | `true` or `false`         | Pod 主网卡是否允许 live migration，用于 kubevirt 场景                           |
 | ovn.kubernetes.io/default_route        | `true` or `false`         | 是否将主网卡设置为默认路由网卡                                                  |
 | ovn.kubernetes.io/provider_network     | String                    | Pod 主网卡所属的 ProviderNetwork                                                |
@@ -36,8 +35,8 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/logical_switch       | String                    | Pod 主网卡所属 Subnet                                                           |
 | ovn.kubernetes.io/latency              | Int                       | Pod 主网卡注入的延迟，单位为 ms                                                 |
 | ovn.kubernetes.io/limit                | Int                       | Pod 主网卡 qdisc 队列可容纳的最大数据包数                                       |
-| ovn.kubernetes.io/loss                 | float                     | Pod 主网卡报文丢包概率                                                          |
-| ovn.kubernetes.io/jitter               |                           |                                                                                 |
+| ovn.kubernetes.io/loss                 | Float                     | Pod 主网卡报文丢包概率                                                          |
+| ovn.kubernetes.io/jitter               | Int                       | Pod 主网卡注入抖动延迟，单位为 ms                                             |
 
 ## Node Annotation
 
@@ -74,8 +73,6 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/bgp           | `true` or `false`         | 是否对外通过 BGP 发布 Service 地址        |
 | ovn.kubernetes.io/switch_lb_vip | String                    | Service 在 Kube-OVN 中额外分配的 VIP 地址 |
 | ovn.kubernetes.io/vpc           | String                    | Service 所属的 VPC                        |
-| ovn.kubernetes.io/exclude_ips   | excludeIPs 列表，分号分割 |                                           |
-
 
 ## Networkpolicy Annotation
 
