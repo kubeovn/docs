@@ -54,6 +54,7 @@ bash install.sh
 ```
 
 ### Setting Up SR-IOV
+
 1. Find the device id of metaScale device, below is `b3:00.0`
 
 ```shell
@@ -116,6 +117,7 @@ systemctl disable NetworkManager
 ### Install SR-IOV Device Plugin
 
 1. Create a ConfigMap that defines SR-IOV resource pool configuration
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -149,6 +151,7 @@ data:
 ```
 
 ### Install Multus-CNI
+
 1. Follow [Multus-CNI](https://github.com/k8snetworkplumbingwg/multus-cni) to deploy Multus-CNI
 
 ```bash

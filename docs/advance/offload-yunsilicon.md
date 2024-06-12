@@ -107,7 +107,7 @@ devlink dev eswitch set pci/0000:b3:00.0 mode switchdev
 ### 安装 SR-IOV Device Plugin
 
 1. 创建 SR-IOV 资源 ConfigMap：
-   
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -140,6 +140,7 @@ data:
 ```
 
 ### 安装 Multus-CNI
+
 1. 参考 [Multus-CNI](https://github.com/k8snetworkplumbingwg/multus-cni) 来部署 Multus-CNI
 
 ```bash
@@ -195,11 +196,12 @@ spec:
         limits:
           yunsilicon.com/xsc_sriov: '1'
 ```
+
 ### Offload 验证
 
 可通过在 Pod 运行节点的 `ovs-ovn` 容器中运行下面的命令观察卸载是否成功：
 
-```bash 
+```bash
 ovs-appctl dpctl/dump-flows type=offloaded
 flow-dump from pmd on cpu core: 9
 ct_state(-new+est-rel+rpl+trk),ct_mark(0/0x3),recirc_id(0x2d277),in_port(15),packet_type(ns=0,id=0),eth(src=00:00:00:9d:fb:1a,dst=00:00:00:ce:cf:b9),eth_type(0x0800),ipv4(dst=10.16.0.14,frag=no), packets:6, bytes:588, used:7.276s, actions:ct(zone=4,nat),recirc(0x2d278)
