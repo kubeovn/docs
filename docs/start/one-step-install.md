@@ -60,15 +60,6 @@ kube-ovn-control-plane   NotReady   control-plane   20h   v1.26.0   172.18.0.3  
 kube-ovn-worker          NotReady   <none>          20h   v1.26.0   172.18.0.2    <none>        Ubuntu 22.04.1 LTS   5.10.104-linuxkit   containerd://1.6.9
 ```
 
-### 去掉集群 master 节点污点
-
-```bash
-$ kubectl taint node kube-ovn-control-plane node-role.kubernetes.io/control-plane:NoSchedule-
-node/kube-ovn-control-plane untainted
-```
-
-如果确定不需要在 master 节点调度业务 Pod，这一步可以跳过。
-
 ### 给节点添加 label
 
 ```bash
