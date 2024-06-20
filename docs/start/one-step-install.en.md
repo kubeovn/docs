@@ -61,15 +61,6 @@ kube-ovn-control-plane   NotReady   control-plane   20h   v1.26.0   172.18.0.3  
 kube-ovn-worker          NotReady   <none>          20h   v1.26.0   172.18.0.2    <none>        Ubuntu 22.04.1 LTS   5.10.104-linuxkit   containerd://1.6.9
 ```
 
-### Remove cluster master node taint
-
-```bash
-$ kubectl taint node kube-ovn-control-plane node-role.kubernetes.io/control-plane:NoSchedule-
-node/kube-ovn-control-plane untainted
-```
-
-This step can be skipped if you are sure that you do not need to schedule the pod at the master node.
-
 ### Add label to node
 
 ```bash
