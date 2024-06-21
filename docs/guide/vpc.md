@@ -157,7 +157,7 @@ spec:
 ```
 
 - 该 Subnet 用来管理可用的外部地址，网段内的地址将会通过 Macvlan 分配给 VPC 网关，请和网络管理沟通给出可用的物理段 IP。
-- VPC 网关使用 Macvlan 做物理网络配置，`NetworkAttachmentDefinition` 的 `master` 需为对应物理网路网卡的网卡名。
+- VPC 网关使用 Macvlan 做物理网络配置，`NetworkAttachmentDefinition` 的 `master` 需为对应物理网络网卡的网卡名。
 - `name` 外部网络名称。
 
 在 Macvlan 模式下，附属网卡会将数据包直接通过该节点网卡对外发送，L2/L3 层面的转发能力需要依赖底层网络设备。
@@ -167,7 +167,7 @@ spec:
 2. 对于 VMware 的 vSwitch 网络，需要将 `MAC Address Changes`, `Forged Transmits` 和 `Promiscuous Mode Operation` 设置为 `allow`。
 3. 对于 Hyper-V 虚拟化，需要开启虚拟机网卡高级功能中的 `MAC Address Spoofing`。
 4. 公有云，例如 AWS、GCE、阿里云等由于不支持用户自定义 Mac 无法支持 Macvlan 模式网络。
-5. 由于 Macvlan 本身的限制，Macvlan 子接口无法访问父接口地址。
+5. 由于 Macvlan 本身的限制，Macvlan 子接口无法访问父接口地址，也就意味着无法在 VpcNATGateway Pod 所在的宿主机上通过网络访问该 Pod。
 6. 如果物理网卡对应交换机接口为 Trunk 模式，需要在该网卡上创建子接口再提供给 Macvlan 使用。
 
 ### 开启 VPC 网关功能
