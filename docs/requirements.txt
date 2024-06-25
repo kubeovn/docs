@@ -1,5 +1,5 @@
 jieba==0.42.1
-jinja2==3.1.2
+jinja2==3.1.4
 mike==2.0.0
 mkdocs-git-revision-date-localized-plugin==1.2.2
 mkdocs-markdownextradata-plugin==0.2.5
