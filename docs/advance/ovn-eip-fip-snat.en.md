@@ -21,7 +21,7 @@ pod-->vpc1-subnet-->vpc1-->fip-->lrp-->external-subnet-->local-node-external-nic
 
 The pod access the public network based on the fip
 
-The CRD supported by this function is basically the same as the iptable nat gw public network solution.
+The CRD supported by this function is basically the same as the iptables nat gw public network solution.
 
 - ovn eip: occupies a public ip address and is allocated from the underlay provider network vlan subnet
 - ovn fip: one-to-one dnat snat, which provides direct public network access for ip addresses and vip in a vpc
@@ -53,7 +53,7 @@ The design and use of this configuration item takes into account the following f
 
 - Based on this configuration item can be docked to the provider network, vlan, subnet resources.
 - Based on this configuration item, the default vpc enable_eip_snat function can be docked to the existing vlan, subnet resources, while supporting the ipam
-- If only the default vpc's enable_eip_snat mode is used with the old pod annotaion based eip fip snat, then the following configuration is not required.
+- If only the default vpc's enable_eip_snat mode is used with the old pod annotation based eip fip snat, then the following configuration is not required.
 - Based on this configuration you can not use the default vpc enable_eip_snat process, only by corresponding to vlan, subnet process, can be compatible with only custom vpc use eip snat usage scenarios.
 
 The neutron ovn mode also has a certain static file configuration designation that is, for now, generally consistent.
@@ -162,7 +162,7 @@ spec:
 After the above template is applied, you should see the following resources exist
 
 ```bash
-# k ko nbctl show vpc1
+# kubectl ko nbctl show vpc1
 router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
     port vpc1-vpc1-subnet1
         mac: "00:00:00:ED:8E:C7"
@@ -178,7 +178,7 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 ```
 
 ``` bash
-# k ko nbctl lr-route-list vpc1
+# kubectl ko nbctl lr-route-list vpc1
 IPv4 Routes
 Route Table <main>:
                 0.0.0.0/0              10.5.204.254 dst-ip
@@ -209,11 +209,11 @@ spec:
 ### 2.1 Create an fip for pod
 
 ``` bash
-# k get po -o wide -n vpc1 vpc-1-busybox01
+# kubectl get po -o wide -n vpc1 vpc-1-busybox01
 NAME              READY   STATUS    RESTARTS   AGE     IP            NODE
 vpc-1-busybox01   1/1     Running   0          3d15h   192.168.0.2   pc-node-2
 
-# k get ip vpc-1-busybox01.vpc1
+# kubectl get ip vpc-1-busybox01.vpc1
 NAME                   V4IP          V6IP   MAC                 NODE        SUBNET
 vpc-1-busybox01.vpc1   192.168.0.2          00:00:00:0A:DD:27   pc-node-2   vpc1-subnet1
 
@@ -238,11 +238,11 @@ spec:
 ```
 
 ``` bash
-# k get ofip
+# kubectl get ofip
 NAME          VPC    V4EIP          V4IP          READY   IPTYPE   IPNAME
 eip-for-vip   vpc1   10.5.204.106   192.168.0.3   true    vip      test-fip-vip
 eip-static    vpc1   10.5.204.101   192.168.0.2   true             vpc-1-busybox01.vpc1
-# k get ofip eip-static
+# kubectl get ofip eip-static
 NAME         VPC    V4EIP          V4IP          READY   IPTYPE   IPNAME
 eip-static   vpc1   10.5.204.101   192.168.0.2   true             vpc-1-busybox01.vpc1
 
@@ -263,7 +263,7 @@ rtt min/avg/max/mdev = 0.368/0.734/1.210/0.352 ms
 ``` bash
 # The key resources that this public ip can pass include the following ovn nb resources
 
-# k ko nbctl show vpc1
+# kubectl ko nbctl show vpc1
 router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
     port vpc1-vpc1-subnet1
         mac: "00:00:00:ED:8E:C7"
@@ -314,7 +314,7 @@ spec:
 ```
 
 ``` bash
-# k get ofip
+# kubectl get ofip
 NAME          VPC    V4EIP          V4IP          READY   IPTYPE   IPNAME
 eip-for-vip   vpc1   10.5.204.106   192.168.0.3   true    vip      test-fip-vip
 
@@ -328,7 +328,7 @@ PING 10.5.204.106 (10.5.204.106) 56(84) bytes of data.
 
 # The way ip is used inside the pod is roughly as follows
 
-[root@pc-node-1 fip-vip]# k -n vpc1 exec -it vpc-1-busybox03 -- bash
+[root@pc-node-1 fip-vip]# kubectl -n vpc1 exec -it vpc-1-busybox03 -- bash
 [root@vpc-1-busybox03 /]#
 [root@vpc-1-busybox03 /]#
 [root@vpc-1-busybox03 /]# ip a
@@ -434,14 +434,14 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 ```
 
 ``` bash
-[root@pc-node-1 03-cust-vpc]# k get po -A -o wide  | grep busy
+[root@pc-node-1 03-cust-vpc]# kubectl get po -A -o wide  | grep busy
 vpc1            vpc-1-busybox01                                 1/1     Running   0                3d15h   192.168.0.2   pc-node-2   <none>           <none>
 vpc1            vpc-1-busybox02                                 1/1     Running   0                17h     192.168.0.4   pc-node-1   <none>           <none>
 vpc1            vpc-1-busybox03                                 1/1     Running   0                17h     192.168.0.5   pc-node-1   <none>           <none>
 vpc1            vpc-1-busybox04                                 1/1     Running   0                17h     192.168.0.6   pc-node-3   <none>           <none>
 vpc1            vpc-1-busybox05                                 1/1     Running   0                17h     192.168.0.7   pc-node-1   <none>           <none>
 
-# k exec -it -n vpc1            vpc-1-busybox04   bash
+# kubectl exec -it -n vpc1            vpc-1-busybox04   bash
 kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
 [root@vpc-1-busybox04 /]#
 [root@vpc-1-busybox04 /]#
@@ -463,7 +463,7 @@ PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
 64 bytes from 223.5.5.5: icmp_seq=1 ttl=114 time=22.2 ms
 64 bytes from 223.5.5.5: icmp_seq=2 ttl=114 time=21.8 ms
 
-[root@pc-node-1 03-cust-vpc]# k exec -it -n vpc1            vpc-1-busybox02   bash
+[root@pc-node-1 03-cust-vpc]# kubectl exec -it -n vpc1            vpc-1-busybox02   bash
 kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
 [root@vpc-1-busybox02 /]#
 [root@vpc-1-busybox02 /]#
@@ -502,7 +502,7 @@ rtt min/avg/max/mdev = 22.126/22.518/22.741/0.278 ms
 kind: OvnEip
 apiVersion: kubeovn.io/v1
 metadata:
-  name: eip-static
+  name: eip-dnat
 spec:
   externalSubnet: underlay
   type: nat

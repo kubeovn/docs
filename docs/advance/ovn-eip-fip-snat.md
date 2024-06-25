@@ -21,7 +21,7 @@ pod-->vpc1-subnet-->vpc1-->fip-->lrp-->external-subnet-->local-node-external-nic
 
 Pod 基于 FIP 出公网的大致流程，最后可以基于本地节点的公网网卡出公网。
 
-该功能所支持的 CRD 在使用上将和 iptable nat gw 公网方案保持基本一致。
+该功能所支持的 CRD 在使用上将和 iptables nat gw 公网方案保持基本一致。
 
 - ovn eip: 用于公网 ip 占位，从 underlay provider network vlan subnet 中分配
 - ovn fip： 一对一 dnat snat，为 vpc 内的 ip 或者 vip 提供公网直接访问能力
@@ -53,7 +53,7 @@ Pod 基于 FIP 出公网的大致流程，最后可以基于本地节点的公�
 
 - 基于该配置项可以对接到 provider network，vlan，subnet 的资源。
 - 基于该配置项可以将默认 vpc enable_eip_snat 功能对接到已有的 vlan，subnet 资源，同时支持公网 ip 的 ipam。
-- 如果仅使用默认 vpc 的 enable_eip_snat 模式, 且仅使用旧的基于 pod annotaion 的 fip snat，那么这个配置无需配置。
+- 如果仅使用默认 vpc 的 enable_eip_snat 模式, 且仅使用旧的基于 pod annotation 的 fip snat，那么这个配置无需配置。
 - 基于该配置可以不使用默认 vpc enable_eip_snat 流程，仅通过对应到 vlan，subnet 流程，可以兼容仅自定义 vpc 使用 eip snat 的使用场景。
 
 ### 1.1 准备 underlay 公网网络
@@ -160,7 +160,7 @@ spec:
 以上模板应用后，应该可以看到如下资源存在
 
 ```bash
-# k ko nbctl show vpc1
+# kubectl ko nbctl show vpc1
 router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
     port vpc1-vpc1-subnet1
         mac: "00:00:00:ED:8E:C7"
@@ -176,7 +176,7 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 ```
 
 ``` bash
-# k ko nbctl lr-route-list vpc1
+# kubectl ko nbctl lr-route-list vpc1
 IPv4 Routes
 Route Table <main>:
                 0.0.0.0/0              10.5.204.254 dst-ip
@@ -207,11 +207,11 @@ spec:
 ### 2.1 ovn-fip 为 pod 绑定一个 fip
 
 ``` bash
-# k get po -o wide -n vpc1 vpc-1-busybox01
+# kubectl get po -o wide -n vpc1 vpc-1-busybox01
 NAME              READY   STATUS    RESTARTS   AGE     IP            NODE
 vpc-1-busybox01   1/1     Running   0          3d15h   192.168.0.2   pc-node-2
 
-# k get ip vpc-1-busybox01.vpc1
+# kubectl get ip vpc-1-busybox01.vpc1
 NAME                   V4IP          V6IP   MAC                 NODE        SUBNET
 vpc-1-busybox01.vpc1   192.168.0.2          00:00:00:0A:DD:27   pc-node-2   vpc1-subnet1
 
@@ -236,11 +236,11 @@ spec:
 ```
 
 ``` bash
-# k get ofip
+# kubectl get ofip
 NAME          VPC    V4EIP          V4IP          READY   IPTYPE   IPNAME
 eip-for-vip   vpc1   10.5.204.106   192.168.0.3   true    vip      test-fip-vip
 eip-static    vpc1   10.5.204.101   192.168.0.2   true             vpc-1-busybox01.vpc1
-# k get ofip eip-static
+# kubectl get ofip eip-static
 NAME         VPC    V4EIP          V4IP          READY   IPTYPE   IPNAME
 eip-static   vpc1   10.5.204.101   192.168.0.2   true             vpc-1-busybox01.vpc1
 
@@ -260,7 +260,7 @@ rtt min/avg/max/mdev = 0.368/0.734/1.210/0.352 ms
 
 ``` bash
 # 该公网 ip 能通的关键资源主要包括以下部分
-# k ko nbctl show vpc1
+# kubectl ko nbctl show vpc1
 router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
     port vpc1-vpc1-subnet1
         mac: "00:00:00:ED:8E:C7"
@@ -313,7 +313,7 @@ spec:
 ```
 
 ``` bash
-# k get ofip
+# kubectl get ofip
 NAME          VPC    V4EIP          V4IP          READY   IPTYPE   IPNAME
 eip-for-vip   vpc1   10.5.204.106   192.168.0.3   true    vip      test-fip-vip
 
@@ -328,7 +328,7 @@ PING 10.5.204.106 (10.5.204.106) 56(84) bytes of data.
 
 # pod 内部的 ip 使用方式大致就是如下这种情况
 
-[root@pc-node-1 fip-vip]# k -n vpc1 exec -it vpc-1-busybox03 -- bash
+[root@pc-node-1 fip-vip]# kubectl -n vpc1 exec -it vpc-1-busybox03 -- bash
 [root@vpc-1-busybox03 /]#
 [root@vpc-1-busybox03 /]#
 [root@vpc-1-busybox03 /]# ip a
@@ -433,14 +433,14 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 ```
 
 ``` bash
-[root@pc-node-1 03-cust-vpc]# k get po -A -o wide  | grep busy
+[root@pc-node-1 03-cust-vpc]# kubectl get po -A -o wide  | grep busy
 vpc1            vpc-1-busybox01                                 1/1     Running   0                3d15h   192.168.0.2   pc-node-2   <none>           <none>
 vpc1            vpc-1-busybox02                                 1/1     Running   0                17h     192.168.0.4   pc-node-1   <none>           <none>
 vpc1            vpc-1-busybox03                                 1/1     Running   0                17h     192.168.0.5   pc-node-1   <none>           <none>
 vpc1            vpc-1-busybox04                                 1/1     Running   0                17h     192.168.0.6   pc-node-3   <none>           <none>
 vpc1            vpc-1-busybox05                                 1/1     Running   0                17h     192.168.0.7   pc-node-1   <none>           <none>
 
-# k exec -it -n vpc1            vpc-1-busybox04   bash
+# kubectl exec -it -n vpc1            vpc-1-busybox04   bash
 kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
 [root@vpc-1-busybox04 /]#
 [root@vpc-1-busybox04 /]#
@@ -462,7 +462,7 @@ PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
 64 bytes from 223.5.5.5: icmp_seq=1 ttl=114 time=22.2 ms
 64 bytes from 223.5.5.5: icmp_seq=2 ttl=114 time=21.8 ms
 
-[root@pc-node-1 03-cust-vpc]# k exec -it -n vpc1            vpc-1-busybox02   bash
+[root@pc-node-1 03-cust-vpc]# kubectl exec -it -n vpc1            vpc-1-busybox02   bash
 kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
 [root@vpc-1-busybox02 /]#
 [root@vpc-1-busybox02 /]#
@@ -501,7 +501,7 @@ rtt min/avg/max/mdev = 22.126/22.518/22.741/0.278 ms
 kind: OvnEip
 apiVersion: kubeovn.io/v1
 metadata:
-  name: eip-static
+  name: eip-dnat
 spec:
   externalSubnet: underlay
 ---
