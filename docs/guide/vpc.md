@@ -69,8 +69,6 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  annotations:
-    ovn.kubernetes.io/logical_switch: net1
   namespace: ns1
   name: vpc1-pod
 spec:
@@ -81,8 +79,6 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  annotations:
-    ovn.kubernetes.io/logical_switch: net2
   namespace: ns2
   name: vpc2-pod
 spec:
@@ -97,7 +93,7 @@ spec:
 
 由于常规配置下自定义 VPC 下的 Pod 和节点的网络之间并不互通，所以 kubelet 发送的探测报文无法到达自定 VPC 内的 Pod。Kube-OVN 通过 TProxy 将 kubelet 发送的探测报文重定向到自定义 VPC 内的 Pod，从而实现这一功能。
 
-配置方法如下，在 Daemonset `kube-ovn-cni` 中增加参数 `--enable-tproxy=true`：
+配置方法如下，在 DaemonSet `kube-ovn-cni` 中增加参数 `--enable-tproxy=true`：
 
 ```yaml
 spec:
@@ -156,7 +152,7 @@ spec:
     }'
 ```
 
-- 该 Subnet 用来管理可用的外部地址，网段内的地址将会通过 Macvlan 分配给 VPC 网关，请和网络管理沟通给出可用的物理段 IP。
+- 该 Subnet 用来管理可用的外部地址，网段内的地址将会通过 Macvlan 分配给 VPC 网关，请和网络管理员沟通给出可用的物理段 IP。
 - VPC 网关使用 Macvlan 做物理网络配置，`NetworkAttachmentDefinition` 的 `master` 需为对应物理网络网卡的网卡名。
 - `name` 外部网络名称。
 
@@ -216,7 +212,7 @@ spec:
 
 - `vpc`：该 VpcNatGateway 所属的 VPC。
 - `subnet`：为 VPC 内某个 Subnet 名，VPC 网关 Pod 会在该子网下用 `lanIp` 来连接租户网络。
-- `lanIp`：`subnet` 内某个未被使用的 IP，VPC 网关 Pod 最终会使用该 Pod。当 VPC 配置路由需要指向当前 VpcNatGateway 时 `nextHopIP` 需要设置为这个 `lanIp`。
+- `lanIp`：`subnet` 内某个未被使用的 IP，VPC 网关 Pod 最终会使用该 IP。当 VPC 配置路由需要指向当前 VpcNatGateway 时 `nextHopIP` 需要设置为这个 `lanIp`。
 - `selector`：VpcNatGateway Pod 的节点选择器，格式和 Kubernetes 中的 NodeSelector 格式相同。
 - `externalSubnets`： VPC 网关使用的外部网络，如果不配置则默认使用 `ovn-vpc-external-network`，当前版本只支持配置一个外部网络。
 
