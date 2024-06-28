@@ -72,8 +72,6 @@ Create Pods under two separate Namespaces:
 apiVersion: v1
 kind: Pod
 metadata:
-  annotations:
-    ovn.kubernetes.io/logical_switch: net1
   namespace: ns1
   name: vpc1-pod
 spec:
@@ -84,8 +82,6 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  annotations:
-    ovn.kubernetes.io/logical_switch: net2
   namespace: ns2
   name: vpc2-pod
 spec:
@@ -101,7 +97,7 @@ but the two Pods cannot access each other because they are running on different 
 
 Since the Pods under the custom VPC do not communicate with the network of the node, the probe packets sent by the kubelet cannot reach the Pods in the custom VPC. Kube-OVN uses TProxy to redirect the detection packets sent by kubelet to Pods in the custom VPC to achieve this function.
 
-The configuration method is as follows, add the parameter `--enable-tproxy=true` in Daemonset `kube-ovn-cni`:
+The configuration method is as follows, add the parameter `--enable-tproxy=true` in DaemonSet `kube-ovn-cni`:
 
 ```yaml
 spec:
@@ -159,7 +155,7 @@ spec:
     }'
 ```
 
-- This Subnet is used to manage the available external addresses and the address will be allocated to VPC NAT Gateway through Macvlan, so please communicate with your network management to give you the available physical segment IPs.
+- This Subnet is used to manage the available external addresses and the address will be allocated to VPC NAT Gateway through Macvlan, so please communicate with your network administrator to give you the available physical segment IPs.
 - The VPC gateway uses Macvlan for physical network configuration, and `master` of `NetworkAttachmentDefinition` should be the NIC name of the corresponding physical network NIC.
 - `name`: External network name.
 
@@ -220,7 +216,7 @@ spec:
 
 - `vpc`: The VPC to which this VpcNatGateway belongs.
 - `subnet`: A Subnet within the VPC, the VPC Gateway Pod will use `lanIp` to connect to the tenant network under that subnet.
-- `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use for the Pod. When configuring routing for a VPC, the  `nextHopIP` needs to be set to the `lanIp` of the current VpcNatGateway.
+- `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use. When configuring routing for a VPC, the  `nextHopIP` needs to be set to the `lanIp` of the current VpcNatGateway.
 - `selector`: The node selector for VpcNatGateway Pod has the same format as NodeSelector in Kubernetes.
 - `externalSubnets`: External network used by the VPC gateway, if not configured, `ovn-vpc-external-network` is used by default, and only one external network is supported in the current version.
 
