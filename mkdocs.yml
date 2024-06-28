@@ -113,6 +113,8 @@ theme:
       - search.share
       - search.suggest
       - content.code.copy
+      - content.action.edit
+      - content.action.view
 markdown_extensions:
   - footnotes
   - fenced_code
