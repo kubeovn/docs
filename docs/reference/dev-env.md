@@ -88,7 +88,6 @@ make ovn-vpc-nat-gw-conformance-e2e
 
 ```bash
 make kind-init
-make kind-install
 make kind-install-vpc-nat-gw
 make iptables-vpc-nat-gw-conformance-e2e
 ```
@@ -97,7 +96,6 @@ make iptables-vpc-nat-gw-conformance-e2e
 
 ```bash
 make kind-init
-make kind-install
 make kind-install-lb-svc
 make kube-ovn-lb-svc-conformance-e2e
 ```

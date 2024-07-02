@@ -90,7 +90,6 @@ To run the iptables vpc nat gw eip, fip, snat, dnat E2E test, run the following 
 ```bash
 make kind-init
 make kind-install
-make kind-install-vpc-nat-gw
 make iptables-vpc-nat-gw-conformance-e2e
 ```
 
@@ -99,7 +98,6 @@ To run the loadbalancer service E2E test, run the following commands:
 ```bash
 make kind-init
 make kind-install
-make kind-install-lb-svc
 make kube-ovn-lb-svc-conformance-e2e
 ```
 
