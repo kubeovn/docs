@@ -94,15 +94,15 @@ them. In other words, traffic will only enter from the node hosting the Pod mark
 or from the node hosting a Pod with an IP belonging to a Subnet marked as needing BGP advertisement.
 This makes the network path shorter as external traffic arrives directly to the physical host of the Pod.
 
-NOTE: You'll probably need to run `kube-ovn-speaker` on every node for the **Local** policy to work.
+NOTE: You'll probably need to run `kube-ovn-speaker` on every node for the`Local` policy to work.
 If a Pod you're trying to announce lands on a node with no speaker on it, its IP will simply not be announced.
 
-The default policy used is **Cluster**. Policies can be overriden for each Pod/Subnet using the `ovn.kubernetes.io/bgp` annotation:
+The default policy used is `Cluster`. Policies can be overridden for each Pod/Subnet using the `ovn.kubernetes.io/bgp` annotation:
 
-- `ovn.kubernetes.io/bgp=cluster` or the default `ovn.kubernetes.io/bgp=yes` will use policy **Cluster**
-- `ovn.kubernetes.io/bgp=local` will use policy **Local**
+- `ovn.kubernetes.io/bgp=cluster` or the default `ovn.kubernetes.io/bgp=yes` will use policy `Cluster`
+- `ovn.kubernetes.io/bgp=local` will use policy `Local`
 
-NOTE: Announcement of Services of type `ClusterIP` doesn't support any policy other than **Cluster** as routing to the actual pod
+NOTE: Announcement of Services of type `ClusterIP` doesn't support any policy other than `Cluster` as routing to the actual pod
 is handled by a daemon such as `kube-proxy`. The annotation for Services only supports value `yes` and not `cluster`.
 
 ## BGP Advanced Options
