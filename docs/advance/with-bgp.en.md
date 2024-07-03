@@ -82,8 +82,9 @@ kubectl annotate service sample ovn.kubernetes.io/bgp-
 ```
 
 ## Announcement policies
- 
+
 There are 2 policies used by `kube-ovn-speaker` to announce the routes:
+
 - **Cluster**: this policy makes the Pod IPs/Subnet CIDRs be announced from every speaker, whether there's Pods
 that have that specific IP or that are part of the Subnet CIDR on that node. In other words, traffic may enter from
 any node hosting a speaker, and then be internally routed in the cluster to the actual Pod. In this configuration
@@ -97,6 +98,7 @@ NOTE: You'll probably need to run `kube-ovn-speaker` on every node for the **Loc
 If a Pod you're trying to announce lands on a node with no speaker on it, its IP will simply not be announced.
 
 The default policy used is **Cluster**. Policies can be overriden for each Pod/Subnet using the `ovn.kubernetes.io/bgp` annotation:
+
 - `ovn.kubernetes.io/bgp=cluster` or the default `ovn.kubernetes.io/bgp=yes` will use policy **Cluster**
 - `ovn.kubernetes.io/bgp=local` will use policy **Local**
 
