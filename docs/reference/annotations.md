@@ -15,7 +15,7 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/cidr                 | String                    | Pod 主网卡所属子网的 CIDR                                                       |
 | ovn.kubernetes.io/gateway              | String                    | Pod 主网卡所属子网的 Gateway 地址                                               |
 | ovn.kubernetes.io/ip_pool              | IP 列表，逗号间隔            | Pod 主网卡地址将从列表中选择，适用于 Workload 固定 IP 场景                      |
-| ovn.kubernetes.io/bgp                  | `true` or `false`         | 是否对外通过 BGP 发布 Pod 地址                                                  |
+| ovn.kubernetes.io/bgp                  | `true`, `cluster`, `local`         | 是否对外通过 BGP 发布 Pod 地址                                                  |
 | ovn.kubernetes.io/snat                 | String                    | Pod 访问集群外使用的 SNAT 地址                                                  |
 | ovn.kubernetes.io/eip                  | String                    | Pod 访问集群外部和被集群外部访问所使用的 EIP 地址                               |
 | ovn.kubernetes.io/vip                  | String                    | Pod 主网卡使用的预留 VIP，可通过该 Annotation 使用预先创建的 VIP 资源           |
@@ -63,7 +63,7 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 
 | Key                   | Value             | Description                   |
 | --------------------- | ----------------- | ----------------------------- |
-| ovn.kubernetes.io/bgp | `true` or `false` | 是否对外通过 BGP 发布子网地址 |
+| ovn.kubernetes.io/bgp | `true`, `cluster`, `local` | 是否对外通过 BGP 发布子网地址 |
 
 ## Service Annotation
 
