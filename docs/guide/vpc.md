@@ -89,26 +89,6 @@ spec:
 
 运行成功后可观察两个 Pod 地址属于同一个 CIDR，但由于运行在不同的租户 VPC，两个 Pod 无法相互访问。
 
-### 自定义 VPC Pod 支持 livenessProbe 和 readinessProbe
-
-由于常规配置下自定义 VPC 下的 Pod 和节点的网络之间并不互通，所以 kubelet 发送的探测报文无法到达自定 VPC 内的 Pod。Kube-OVN 通过 TProxy 将 kubelet 发送的探测报文重定向到自定义 VPC 内的 Pod，从而实现这一功能。
-
-配置方法如下，在 DaemonSet `kube-ovn-cni` 中增加参数 `--enable-tproxy=true`：
-
-```yaml
-spec:
-  template:
-    spec:
-      containers:
-      - args:
-        - --enable-tproxy=true
-```
-
-该功能限制条件：
-
-1. 当同一个节点下出现不同 VPC 下的 Pod 具有相同的 IP，探测功能失效。
-2. 目前暂时只支持 `tcpSocket` 和 `httpGet` 两种探测方式。
-
 ## 创建 VPC 网关
 
 > 自定义 VPC 下的子网不支持默认 VPC 下的分布式网关和集中式网关。
@@ -166,33 +146,7 @@ spec:
 5. 由于 Macvlan 本身的限制，Macvlan 子接口无法访问父接口地址，也就意味着无法在 VpcNATGateway Pod 所在的宿主机上通过网络访问该 Pod。
 6. 如果物理网卡对应交换机接口为 Trunk 模式，需要在该网卡上创建子接口再提供给 Macvlan 使用。
 
-### 开启 VPC 网关功能
-
-VPC 网关功能需要通过 `kube-system` 下的 `ovn-vpc-nat-gw-config` 开启：
-
-```yaml
----
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: ovn-vpc-nat-config
-  namespace: kube-system
-data:
-  image: 'docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}' 
----
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: ovn-vpc-nat-gw-config
-  namespace: kube-system
-data:
-  enable-vpc-nat-gw: 'true'
-```
-
-- `image`: 网关 Pod 所使用的镜像。
-- `enable-vpc-nat-gw`： 控制是否启用 VPC 网关功能。
-
-### 创建 VPC 网关并配置默认路由
+### 创建 VPC 网关并配置 EIP
 
 ```yaml
 kind: VpcNatGateway
@@ -289,7 +243,7 @@ spec:
 
 ### 创建 SNAT 规则
 
-通过 SNAT 规则，VPC 内的 Pod 访问外部的地址时将会通过对应 EIP 进行 SNAT。
+通过 SNAT 规则配合自定义路由规则，VPC 内的 Pod 访问外部的地址时将会通过对应 EIP 进行 SNAT。
 
 ```yaml
 ---
@@ -309,9 +263,11 @@ spec:
   internalCIDR: 10.0.1.0/24
 ```
 
+自定义路由规则请参考[自定义路由](#_3)。
+
 ### 创建浮动 IP
 
-通过浮动 IP 规则，VPC 内的一个 IP 会和 EIP 进行完全映射，外部可以通过这个 EIP 访问 VPC 内的 IP，VPC 内的这个 IP 访问外部地址时也会 SNAT 成这个 EIP。
+通过浮动 IP 规则配合自定义路由规则，VPC 内的一个 IP 会和 EIP 进行完全映射，外部可以通过这个 EIP 访问 VPC 内的 IP，VPC 内的这个 IP 访问外部地址时也会 SNAT 成这个 EIP。
 
 ```yaml
 ---
@@ -331,6 +287,25 @@ spec:
   eip: eipf01
   internalIp: 10.0.1.5
 ```
+
+自定义路由规则请参考[自定义路由](#_3)。
+
+### 更改网关镜像
+
+VPC 网关所使用的镜像可以通过 `kube-system` Namespace 下的 `ovn-vpc-nat-config` ConfigMap 进行调整：
+
+```yaml
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ovn-vpc-nat-config
+  namespace: kube-system
+data:
+  image: 'docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}'
+```
+
+- `image`: 网关 Pod 所使用的镜像。
 
 ## 自定义路由
 
@@ -426,8 +401,8 @@ vpc-dns-test-cjh2   10.96.0.3   53/UDP,53/TCP,9153/TCP   kube-system/slr-vpc-dns
 
 ## 自定义 vpc-dns
 
-由于自定义 VPC 和默认 VPC 网络相互隔离，VPC 内 Pod 无法使用默认的 coredns 服务进行域名解析。
-如果希望在自定义 VPC 内使用 coredns 解析集群内 Service 域名，可以通过 Kube-OVN 提供的 vpc-dns 资源来实现。
+由于自定义 VPC 和默认 VPC 网络相互隔离，VPC 内 Pod 无法使用默认的 CoreDNS 服务进行域名解析。
+如果希望在自定义 VPC 内使用 CoreDNS 解析集群内 Service 域名，可以通过 Kube-OVN 提供的 vpc-dns 资源来实现。
 
 ### 创建附加网卡
 
@@ -492,13 +467,13 @@ data:
 ```
 
 - `enable-vpc-dns`：（可缺省）`true` 启用功能，`false` 关闭功能。默认 `true`。
-- `coredns-image`：（可省略）：dns 部署镜像。默认为集群 coredns 部署版本。
+- `coredns-image`：（可省略）：dns 部署镜像。默认为集群 CoreDNS 部署版本。
 - `coredns-template`：（可省略）：dns 部署模板所在的 URL。默认：当前版本仓库里的 `yamls/coredns-template.yaml`。
-- `coredns-vip`：为 coredns 提供 lb 服务的 vip。
+- `coredns-vip`：为 CoreDNS 提供 lb 服务的 vip。
 - `nad-name`：配置的 `network-attachment-definitions` 资源名称。
 - `nad-provider`：使用的 provider 名称。
-- `k8s-service-host`：（可缺省） 用于 coredns 访问 k8s apiserver 服务的 ip。
-- `k8s-service-port`：（可缺省）用于 coredns 访问 k8s apiserver 服务的 port。
+- `k8s-service-host`：（可缺省） 用于 CoreDNS 访问 k8s apiserver 服务的 ip。
+- `k8s-service-port`：（可缺省）用于 CoreDNS 访问 k8s apiserver 服务的 port。
 
 ### 部署 vpc-dns 依赖资源
 
@@ -608,5 +583,5 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 ### 限制
 
 - 一个 vpc 下只会部署一个自定义 dns 组件;
-- 当一个 vpc 下配置多个 vpc-dns 资源（即同一个 vpc 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `fasle`;
+- 当一个 vpc 下配置多个 vpc-dns 资源（即同一个 vpc 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `false`;
 - 当 `true` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。

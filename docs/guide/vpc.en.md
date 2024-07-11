@@ -170,32 +170,6 @@ Vlan and security policy in the underlying network device in advance.
 5. Due to the limitations of Macvlan itself, a Macvlan sub-interface cannot access the address of the parent interface, which means that it is not possible to access the Pod through the network on the host machine where the VpcNATGateway Pod is located.
 6. If the physical network card corresponds to a switch interface in Trunk mode, a sub-interface needs to be created on the network card and provided to Macvlan for use.
 
-### Enabling the VPC Gateway
-
-VPC gateway functionality needs to be enabled via `ovn-vpc-nat-gw-config` under `kube-system`:
-
-```yaml
----
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: ovn-vpc-nat-config
-  namespace: kube-system
-data:
-  image: docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}
----
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: ovn-vpc-nat-gw-config
-  namespace: kube-system
-data:
-  enable-vpc-nat-gw: 'true'
-```
-
-- `image`: The image used by the Gateway Pod.
-- `enable-vpc-nat-gw`: Controls whether the VPC Gateway feature is enabled.
-
 ### Create VPC Gateway and Set the Default Route
 
 ```yaml
@@ -293,7 +267,7 @@ spec:
 
 ### Create SNAT Rules
 
-Through SNAT rules, when a Pod in the VPC accesses an external address, it will go through the corresponding EIP for SNAT.
+Through SNAT rules and custom routing, when a Pod in the VPC accesses an external address, it will go through the corresponding EIP for SNAT.
 
 ```yaml
 ---
@@ -313,9 +287,11 @@ spec:
   internalCIDR: 10.0.1.0/24
 ```
 
+Please refer to [Custom Routing](#custom-routing) for custom routing rules.
+
 ### Create Floating IP
 
-Through floating IP rules, one IP in the VPC will be completely mapped to the EIP, and the external can access the IP in the VPC through this EIP. When the IP in the VPC accesses the external address, it will be SNAT to this EIP
+Through floating IP rules and custom routing, one IP in the VPC will be completely mapped to the EIP, and the external can access the IP in the VPC through this EIP. When the IP in the VPC accesses the external address, it will be SNAT to this EIP
 
 ```yaml
 ---
@@ -335,6 +311,25 @@ spec:
   eip: eipf01
   internalIp: 10.0.1.5
 ```
+
+Please refer to [Custom Routing](#custom-routing) for custom routing rules.
+
+### Modify the VPC Gateway Image
+
+The image used by the VPC Gateway can be adjusted through the `ovn-vpc-nat-config` ConfigMap under the `kube-system` Namespace:
+
+```yaml
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ovn-vpc-nat-config
+  namespace: kube-system
+data:
+  image: docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}
+```
+
+- `image`: The image used by the VPC Gateway Pod.
 
 ## Custom Routing
 
@@ -390,7 +385,7 @@ spec:
 
 ## Custom vpc-dns
 
-Due to the isolation between custom VPCs and default VPC networks, Pods in VPCs cannot use the default coredns service for domain name resolution. If you want to use coredns to resolve Service domain names within the custom VPC, you can use the `vpc-dns` resource provided by Kube-OVN.
+Due to the isolation between custom VPCs and default VPC networks, Pods in VPCs cannot use the default CoreDNS service for domain name resolution. If you want to use CoreDNS to resolve Service domain names within the custom VPC, you can use the `vpc-dns` resource provided by Kube-OVN.
 
 ### Create an Additional Network
 
@@ -455,13 +450,13 @@ data:
 ```
 
 - `enable-vpc-dns`: (optional) `true` to enable the feature, `false` to disable the feature. Default `true`.
-- `coredns-image`: (optional): DNS deployment image. Default is the cluster coredns deployment version.
+- `coredns-image`: (optional): DNS deployment image. Default is the cluster CoreDNS deployment version.
 - `coredns-template`: (optional): URL of the DNS deployment template. Default: `yamls/coredns-template.yaml` in the current version repository.
-- `coredns-vip`: VIP providing LB service for coredns.
+- `coredns-vip`: VIP providing LB service for CoreDNS.
 - `nad-name`: Name of the configured `network-attachment-definitions` resource.
 - `nad-provider`: Name of the used provider.
-- `k8s-service-host`: (optional) IP used by coredns to access the k8s apiserver service.
-- `k8s-service-port`: (optional) Port used by coredns to access the k8s apiserver service.
+- `k8s-service-host`: (optional) IP used by CoreDNS to access the k8s apiserver service.
+- `k8s-service-port`: (optional) Port used by CoreDNS to access the k8s apiserver service.
 
 ### Deploying VPC-DNS Dependent Resources
 
