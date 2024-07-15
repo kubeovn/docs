@@ -13,6 +13,7 @@ go install github.com/securego/gosec/v2/cmd/gosec@latest
 ```
 
 [gofumpt](https://github.com/mvdan/gofumpt) is used to apply stricter rules than `gofmt` and requires to be installed:
+
 ```bash
 go install mvdan.cc/gofumpt@latest
 ```
