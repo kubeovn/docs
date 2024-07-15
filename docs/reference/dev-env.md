@@ -11,6 +11,12 @@ Kube-OVN 使用 [Go](https://golang.org/){: target="_blank" } 开发并使用 [G
 go install github.com/securego/gosec/v2/cmd/gosec@latest
 ```
 
+
+[gofumpt](https://github.com/mvdan/gofumpt) 用来对代码进行格式化：
+```bash
+go install mvdan.cc/gofumpt@latest
+```
+
 为了降低最终生成镜像大小，Kube-OVN 使用了部分 Docker buildx 试验特性，请更新 Docker 至最新版本
 并开启 buildx:
 
