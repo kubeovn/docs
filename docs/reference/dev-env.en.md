@@ -12,6 +12,12 @@ and requires to be installed in the development environment:
 go install github.com/securego/gosec/v2/cmd/gosec@latest
 ```
 
+[gofumpt](https://github.com/mvdan/gofumpt) is used to apply stricter rules than `gofmt` and requires to be installed:
+
+```bash
+go install mvdan.cc/gofumpt@latest
+```
+
 To reduce the size of the final generated image, Kube-OVN uses some of the Docker buildx experimental features,
 please update Docker to the latest version and enable buildx:
 
