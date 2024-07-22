@@ -5,18 +5,7 @@
 Kube-OVN uses [Golang](https://golang.org/){: target="_blank" } to develop and [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" }
 to manage dependency, please check env `GO111MODULE="on"`。
 
-[gosec](https://github.com/securego/gosec){: target="_blank" } is used to scan for code security related issues
-and requires to be installed in the development environment:
-
-```bash
-go install github.com/securego/gosec/v2/cmd/gosec@latest
-```
-
-[gofumpt](https://github.com/mvdan/gofumpt) is used to apply stricter rules than `gofmt` and requires to be installed:
-
-```bash
-go install mvdan.cc/gofumpt@latest
-```
+[golangci-lint](https://golangci-lint.run){: target="_blank" } is used to scan code for compliance issues. It needs to be installed in the development environment. Please refer to [local-installation](https://golangci-lint.run/welcome/install/#local-installation){: target="_blank" }.
 
 To reduce the size of the final generated image, Kube-OVN uses some of the Docker buildx experimental features,
 please update Docker to the latest version and enable buildx:
