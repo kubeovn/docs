@@ -5,17 +5,7 @@
 Kube-OVN 使用 [Go](https://golang.org/){: target="_blank" } 开发并使用 [Go Modules](https://github.com/golang/go/wiki/Modules){: target="_blank" } 管理依赖，
 请确认环境变量 `GO111MODULE="on"`。
 
-[gosec](https://github.com/securego/gosec){: target="_blank" } 被用来扫描代码安全相关问题，需要在开发环境安装：
-
-```bash
-go install github.com/securego/gosec/v2/cmd/gosec@latest
-```
-
-[gofumpt](https://github.com/mvdan/gofumpt) 用来对代码进行格式化：
-
-```bash
-go install mvdan.cc/gofumpt@latest
-```
+[golangci-lint](https://golangci-lint.run){: target="_blank" } 被用来扫描代码规范性问题，需要在开发环境安装，请参考[local-installation](https://golangci-lint.run/welcome/install/#local-installation){: target="_blank" }。
 
 为了降低最终生成镜像大小，Kube-OVN 使用了部分 Docker buildx 试验特性，请更新 Docker 至最新版本
 并开启 buildx:
