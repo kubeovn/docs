@@ -49,15 +49,15 @@ chassis are bound to the `ovn-cluster-ovn-external` logical router port.
 
 ```bash
 # kubectl ko nbctl show
-switch 3de4cea7-1a71-43f3-8b62-435a57ef16a6 (ovn-external)
-    port ln-ovn-external
+switch 3de4cea7-1a71-43f3-8b62-435a57ef16a6 (external)
+    port localnet.external
         type: localnet
         addresses: ["unknown"]
-    port ovn-external-ovn-cluster
+    port external-ovn-cluster
         type: router
-        router-port: ovn-cluster-ovn-external
+        router-port: ovn-cluster-external
 router e1eb83ad-34be-4ed5-9a02-fcc8b1d357c4 (ovn-cluster)
-    port ovn-cluster-ovn-external
+    port ovn-cluster-external
         mac: "ac:1f:6b:2d:33:f1"
         networks: ["172.56.0.100/16"]
         gateway chassis: [a5682814-2e2c-46dd-9c1c-6803ef0dab66]
@@ -72,12 +72,12 @@ e7d81150-7743-4d6e-9e6f-5c688232e130
         Port br-external
             Interface br-external
                 type: internal
-        Port eno2
-            Interface eno2
-        Port patch-ln-ovn-external-to-br-int
-            Interface patch-ln-ovn-external-to-br-int
+        Port eth1
+            Interface eth1
+        Port patch-localnet.external-to-br-int
+            Interface patch-localnet.external-to-br-int
                 type: patch
-                options: {peer=patch-br-int-to-ln-ovn-external}
+                options: {peer=patch-br-int-to-localnet.external}
 ```
 
 ## Config EIP amd SNAT on Pod
@@ -88,23 +88,23 @@ SNAT and EIP can be configured by adding the `ovn.kubernetes.io/snat` or `ovn.ku
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pod-gw
+  name: pod-snat
   annotations:
     ovn.kubernetes.io/snat: 172.56.0.200
 spec:
   containers:
-  - name: snat-pod
+  - name: pod-snat
     image: docker.io/library/nginx:alpine
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pod-gw
+  name: pod-eip
   annotations:
     ovn.kubernetes.io/eip: 172.56.0.233
 spec:
   containers:
-  - name: eip-pod
+  - name: pod-eip
     image: docker.io/library/nginx:alpine
 ```
 
