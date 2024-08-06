@@ -32,6 +32,11 @@ The specific meaning of each field of the SecurityGroup can be found in the [Kub
 Pods bind security-groups by adding annotations, two annotations are used.
 
 - port_security: source address verification. If this function is enabled, only packets with ip addresses assigned by kube-ovn ipam can be exported from the pod network adapter. After this function is disabled, any ip address can be exported
+
+- When configuring a security group, the `priority` value ranges from 1 to 200, with smaller values indicating higher priority. When implementing a security group through ACL, the security group's priority is mapped to the ACL priority. The specific mapping relationship is as follows:
+
+  ACL priority=2300−Security group priority，therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
+
 - security_groups: indicates a security group that contains a series of ACL rules
 
 > These two annotations are responsible for functions that are independent of each other.
