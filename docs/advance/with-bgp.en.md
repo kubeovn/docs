@@ -87,7 +87,7 @@ kubectl annotate service sample ovn.kubernetes.io/bgp-
 
 The speakers will all start announcing the `ClusterIP` of that service to the outside world.
 
-# Publishing EIPs
+## Publishing EIPs
 
 EIPs can be announced by the NAT gateways to which they are attached. When BGP is enabled on a `VpcNatGateway`  
 a new BGP speaker sidecar gets injected to it.  
