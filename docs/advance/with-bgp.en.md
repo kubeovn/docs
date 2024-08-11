@@ -94,7 +94,7 @@ a new BGP speaker sidecar gets injected to it.
 
 To add BGP capabilities to NAT gateways, we first need to create a new `NetworkAttachmentDefinition` that can be  
 attached to our BGP speaker sidecars. This NAD will reference a provider shared by a `Subnet` in the default VPC (in which the Kubernetes API is running).  
-This will enable the sidecar to reach the K8S API, automatically detecting new EIPs added to the gateway. This operation only needs to be done once.  All the NAT gateways will use this provider from now on.
+This will enable the sidecar to reach the K8S API, automatically detecting new EIPs added to the gateway. This operation only needs to be done once.  All the NAT gateways will use this provider from now on. This is the same principle used for the CoreDNS in a custom VPC, which means you can reuse that NAD if you've already done that setup before.
 
 Create a `NetworkAttachmentDefintion` and a `Subnet` with the same `provider`.
 The name of the provider needs to be of the form `nadName.nadNamespace.ovn`:
@@ -136,6 +136,13 @@ data:
                                                        # can access the K8S API, as it can't by default due to VPC segmentation
   bgpSpeakerImage: docker.io/kubeovn/kube-ovn:v1.13.0  # Sets the BGP speaker image used
   image: docker.io/kubeovn/vpc-nat-gateway:v1.13.0
+```
+
+We need to make sure the default Subnet `ovn-default` uses the same NAD so both Subnets can see each others.  
+Edit the Subnet and add a `provider` field with your custom provider:
+
+```yaml
+provider: api-ovn-nad.default.ovn
 ```
 
 The NAT gateway(s) now needs to be created with BGP enabled so that the speaker sidecar gets created along it:
