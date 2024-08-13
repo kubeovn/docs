@@ -147,7 +147,7 @@ ENABLE_LB=${ENABLE_LB:-false}
 IFACE="p0"
 ```
 
-Install Kube-OVN:
+2. Install Kube-OVN:
 
 ```bash
 bash install.sh

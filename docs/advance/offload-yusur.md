@@ -10,7 +10,7 @@
 
 ### 配置 SR-IOV
 
-1.根据中科驭数 2200E 网卡的 vendor ID（1f47），找到本网卡在主机上的设备 ID，以下为（00:0a.0）和（00:0b.0），分别对应 2200E 上的两个光口，可以根据和光纤连接情况选用。
+1. 根据中科驭数 2200E 网卡的 vendor ID（1f47），找到本网卡在主机上的设备 ID，以下为（00:0a.0）和（00:0b.0），分别对应 2200E 上的两个光口，可以根据和光纤连接情况选用。
 
 ```bash
 lspci | grep 1f47
@@ -77,7 +77,7 @@ data:
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-device-plugin/v3.6.2/deployments/sriovdp-daemonset.yaml
 ```
 
-3 检查 SR-IOV 资源是否已经被注册到 kubernetes Node 的资源池中：
+3. 检查 SR-IOV 资源是否已经被注册到 kubernetes Node 的资源池中：
 
 ```bash
 kubectl describe node node1 | grep yusur
