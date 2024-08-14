@@ -78,3 +78,4 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | Key                          | Value             | Description                 |
 | ---------------------------- | ----------------- | --------------------------- |
 | ovn.kubernetes.io/enable_log | `true` or `false` | 是否开启 NetworkPolicy 日志 |
+| ovn.kubernetes.io/log_acl_actions | "allow,drop,pass"其中一个或多个组合 | 打印匹配 Action ACL 的日志 |
