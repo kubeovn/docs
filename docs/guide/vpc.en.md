@@ -281,14 +281,14 @@ metadata:
   name: eipd01
 spec:
   natGwDp: gw1
-  
+
 ---
 kind: IptablesDnatRule
 apiVersion: kubeovn.io/v1
 metadata:
   name: dnat01
 spec:
-  eip: eipd01 
+  eip: eipd01
   externalPort: '8888'
   internalIp: 10.0.1.10
   internalPort: '80'
@@ -565,9 +565,9 @@ View resource information:
 
 ```bash
 [root@hci-dev-mst-1 kubeovn]# kubectl get vpc-dns
-NAME        ACTIVE   VPC         SUBNET   
-test-cjh1   false    cjh-vpc-1   cjh-subnet-1   
-test-cjh2   true     cjh-vpc-1   cjh-subnet-2 
+NAME        ACTIVE   VPC         SUBNET
+test-cjh1   false    cjh-vpc-1   cjh-subnet-1
+test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 ```
 
 - `ACTIVE`: if the custom vpc-dns is ready.
@@ -577,3 +577,23 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 - Only one custom DNS component will be deployed in one VPC;
 - When multiple VPC-DNS resources (i.e. different subnets in the same VPC) are configured in one VPC, only one VPC-DNS resource with status `true` will be active, while the others will be `false`;
 - When the `true` VPC-DNS is deleted, another `false` VPC-DNS will be deployed.
+
+## Default subnet selection for custom VPC
+
+If the custom VPC is running multiple Subnets, you can specify the default Subnet for that VPC.
+
+```yaml
+kind: Vpc
+apiVersion: kubeovn.io/v1
+metadata:
+  name: test-vpc-1
+spec:
+  namespaces:
+  - ns1
+  defaultSubnet: test
+```
+
+- `defaultSubnet`: Name of the subnet that should be used by custom VPC as the default one.
+
+Please note that it will annotate the VPC namespaces with just one logical switch using `"ovn.kubernetes.io/logical_switch"` annotation.
+Any of the new Pods without `"ovn.kubernetes.io/logical_switch"` annotation will be added to the default Subnet.
