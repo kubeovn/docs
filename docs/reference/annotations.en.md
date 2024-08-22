@@ -77,3 +77,4 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | Key                          | Value             | Description              |
 | ---------------------------- | ----------------- | ------------------------ |
 | ovn.kubernetes.io/enable_log | `true` or `false` | Enable NetworkPolicy log |
+| ovn.kubernetes.io/log_acl_actions | One or more combinations of "allow,drop,pass" | Print ACL logs that match ACL action |
