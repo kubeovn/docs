@@ -99,9 +99,8 @@ helm install cilium cilium/cilium --version 1.11.6 \
     --set cni.chainingMode=generic-veth \
     --set cni.customConf=true \
     --set cni.configMap=cni-configuration \
-    --set tunnel=disabled \
-    --set enableIPv4Masquerade=false \
-    --set enableIdentityMark=false 
+    --set routingMode=native \
+    --set enableIPv4Masquerade=false 
 ```
 
 Confirm that the Cilium installation was successful:
