@@ -1,7 +1,7 @@
 # Integration with Cilium
 
 [Cilium](https://cilium.io/) is an eBPF-based networking and security component. Kube-OVN uses the
-[CNI Chaining](https://docs.cilium.io/en/stable/gettingstarted/cni-chaining/) mode to enhance existing features.
+[CNI Chaining](https://docs.cilium.io/en/stable/installation/cni-chaining/) mode to enhance existing features.
 Users can use both the rich network abstraction capabilities of Kube-OVN and the monitoring and security capabilities that come with eBPF.
 
 By integrating Cilium, Kube-OVN users can have the following gains:
