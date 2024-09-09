@@ -1,7 +1,7 @@
 # Cluster Inter-Connection with OVN-IC
 
 Kube-OVN supports interconnecting two Kubernetes cluster Pod networks via [OVN-IC](https://docs.ovn.org/en/latest/tutorials/ovn-interconnection.html),
-and the Pods in the two clusters can communicate directly via Pod IPs .
+and the Pods in the two clusters can communicate directly via Pod IPs.
 Kube-OVN uses tunnels to encapsulate cross-cluster traffic, allowing container networks to interconnect between two clusters
 as long as there is a set of IP reachable machines.
 
@@ -18,7 +18,8 @@ as long as there is a set of IP reachable machines.
     ENABLE_IC=true
     ````
 
-After opening the switch and deploying the cluster, the component deployment ovn-ic-controller will appear.
+    After opening the switch and deploying the cluster, the component deployment ovn-ic-controller will appear.
+
 2. The subnet CIDRs within OpenStack and Kubernetes cannot overlap with each other in auto-interconnect mode.
    If there is overlap, you need to refer to the subsequent manual interconnection process, which can only connect non-overlapping Subnets.
 3. A set of machines needs to exist that can be accessed by each cluster over the network and used to deploy controllers that interconnect across clusters.
