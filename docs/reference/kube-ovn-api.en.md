@@ -201,6 +201,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | policyRoutes | []*PolicyRoute | The policy route information configured under Vpc |
 | vpcPeerings | []*VpcPeering | Vpc interconnection information |
 | enableExternal | Bool | Whether vpc is connected to an external switch |
+| defaultSubnet | String | Name of the subnet that should be used by custom Vpc as the default one |
 
 ##### StaticRoute
 

@@ -66,7 +66,7 @@ kubectl annotate pod sample ovn.kubernetes.io/bgp-
 kubectl annotate subnet ovn-default ovn.kubernetes.io/bgp-
 ```
 
-See [Announcement Policies](#announcement-policies) for the announcement behaviour depending on the policy set in the annotation.
+See [Announcement Policies](#announcement-policies) for the announcement behavior depending on the policy set in the annotation.
 
 ## Publishing Services of type `ClusterIP`
 
@@ -96,7 +96,7 @@ To add BGP capabilities to NAT gateways, we first need to create a new `NetworkA
 attached to our BGP speaker sidecars. This NAD will reference a provider shared by a `Subnet` in the default VPC (in which the Kubernetes API is running).  
 This will enable the sidecar to reach the K8S API, automatically detecting new EIPs added to the gateway. This operation only needs to be done once.  All the NAT gateways will use this provider from now on. This is the same principle used for the CoreDNS in a custom VPC, which means you can reuse that NAD if you've already done that setup before.
 
-Create a `NetworkAttachmentDefintion` and a `Subnet` with the same `provider`.
+Create a `NetworkAttachmentDefinition` and a `Subnet` with the same `provider`.
 The name of the provider needs to be of the form `nadName.nadNamespace.ovn`:
 
 ```yaml

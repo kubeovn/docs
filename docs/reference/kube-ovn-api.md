@@ -201,6 +201,7 @@
 | policyRoutes | []*PolicyRoute | Vpc 下配置的策略路由信息 |
 | vpcPeerings | []*VpcPeering | Vpc 互联信息 |
 | enableExternal | Bool | Vpc 是否连接到外部交换机 |
+| defaultSubnet | String | VPC 下默认子网的名称 |
 
 ##### StaticRoute
 

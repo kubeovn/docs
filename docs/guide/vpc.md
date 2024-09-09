@@ -238,6 +238,7 @@ metadata:
   name: eip-random
 spec:
   natGwDp: gw1
+
 ```
 
 固定 EIP 地址分配：
@@ -284,7 +285,7 @@ apiVersion: kubeovn.io/v1
 metadata:
   name: dnat01
 spec:
-  eip: eipd01 
+  eip: eipd01
   externalPort: '8888'
   internalIp: 10.0.1.10
   internalPort: '80'
@@ -602,9 +603,9 @@ spec:
 
 ```bash
 [root@hci-dev-mst-1 kubeovn]# kubectl get vpc-dns
-NAME        ACTIVE   VPC         SUBNET   
-test-cjh1   false    cjh-vpc-1   cjh-subnet-1   
-test-cjh2   true     cjh-vpc-1   cjh-subnet-2 
+NAME        ACTIVE   VPC         SUBNET
+test-cjh1   false    cjh-vpc-1   cjh-subnet-1
+test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 ```
 
 - `ACTIVE`: `true` 成功部署了自定义 dns 组件，`false` 无部署
@@ -614,3 +615,22 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 - 一个 vpc 下只会部署一个自定义 dns 组件;
 - 当一个 vpc 下配置多个 vpc-dns 资源（即同一个 vpc 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `fasle`;
 - 当 `true` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。
+
+## 默认子网
+
+如果自定义 VPC 下存在多个子网，用户可以指定其中一个作为 VPC 下的默认子网。
+
+```yaml
+kind: Vpc
+apiVersion: kubeovn.io/v1
+metadata:
+  name: test-vpc-1
+spec:
+  namespaces:
+  - ns1
+  defaultSubnet: test
+```
+
+- `defaultSubnet`：VPC 下默认子网的名称。
+
+默认子网会给所有未指定子网的 Namespace 增加 `ovn.kubernetes.io/logical_switch` 注解，所有没有显式使用 `ovn.kubernetes.io/logical_switch` 注解的 Pod 都会自动从默认子网分配地址。
