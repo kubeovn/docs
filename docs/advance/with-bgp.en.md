@@ -141,11 +141,55 @@ data:
   image: docker.io/kubeovn/vpc-nat-gateway:v1.13.0
 ```
 
-We need to make sure the default Subnet `ovn-default` uses the same NAD so both Subnets can see each others.  
-Edit the Subnet and add a `provider` field with your custom provider:
-
+Some RBAC needs to be added so that the NAT gateways can poll the Kubernetes API, apply the following configuration:  
 ```yaml
-provider: api-ovn-nad.default.ovn
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+  name: system:vpc-nat-gw
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - pods
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - kubeovn.io
+    resources:
+      - iptables-eips
+      - subnets
+      - vpc-nat-gateways
+    verbs:
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+  name: vpc-nat-gw
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:vpc-nat-gw
+subjects:
+  - kind: ServiceAccount
+    name: vpc-nat-gw
+    namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vpc-nat-gw
+  namespace: kube-system
 ```
 
 The NAT gateway(s) now needs to be created with BGP enabled so that the speaker sidecar gets created along it:
