@@ -91,9 +91,10 @@ The speakers will all start announcing the `ClusterIP` of that service to the ou
 
 EIPs can be announced by the NAT gateways to which they are attached.  
 There are 2 announcement modes:
+
 - **ARP**: the NAT gateway uses ARP to advertise the EIPs attached to itself, this mode is always enabled
 - **BGP**: the NAT gateway provisions a sidecar to publish the EIPs to another BGP speaker
- 
+
 When BGP is enabled on a `VpcNatGateway` a new BGP speaker sidecar gets injected to it. When the gateway is in BGP mode, the behaviour becomes cumulative with the **ARP** mode. This means that EIPs will be announced by **BGP** but also keep being advertised using traditional **ARP**.
 
 To add BGP capabilities to NAT gateways, we first need to create a new `NetworkAttachmentDefinition` that can be attached to our BGP speaker sidecars. This NAD will reference a provider shared by a `Subnet` in the default VPC (in which the Kubernetes API is running).  
@@ -142,6 +143,7 @@ data:
 ```
 
 Some RBAC needs to be added so that the NAT gateways can poll the Kubernetes API, apply the following configuration:  
+
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
