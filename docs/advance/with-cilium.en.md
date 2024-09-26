@@ -137,7 +137,7 @@ To fix this problem, SIP address validation **needs to be disabled on Cilium**. 
 
 Run the following command in one of the Cilium pods to disable SIP validation:
 
-```
+```bash
 cilium config SourceIPVerification=Disabled
 ```
 
