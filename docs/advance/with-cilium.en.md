@@ -84,7 +84,7 @@ data:
     }
 ```
 
-Installation the chaining config:
+Installation of the chaining config:
 
 ```bash
 kubectl apply -f chaining.yaml
@@ -124,3 +124,22 @@ Image versions    cilium             quay.io/cilium/cilium:v1.10.5@sha256:061221
                   cilium-operator    quay.io/cilium/operator-generic:v1.10.5@sha256:2d2f730f219d489ff0702923bf24c0002cd93eb4b47ba344375566202f56d972: 2
 
 ```
+
+## Using Kube-OVN's NAT gateways with Cilium
+
+Cilium natively runs security checks against the traffic going out of interfaces it manages, including the **default interface** of NAT gateways pods.  
+Because the NAT gateway is doing SNAT and DNAT and forwarding the packets to pods within its VPC, the source address of most traffic coming out of
+the NAT gateway isn't using its Pod IPs.  
+Cilium runs **SIP** (Source IP) address validation on traffic coming out of pods. If the source address of a packet doesn't match one of the IP address of
+the Pod, the traffic is visibly dropped (can be seen on Hubble as **DROPPED** traffic).  
+This feature of Cilium is useful to enhance the network security of the cluster and prevent IP spoofing but it breaks NAT gateways.  
+To fix this problem, SIP address validation **needs to be disabled on Cilium**. The Kube-OVN issue related to this behaviour is documented [here](https://github.com/kubeovn/kube-ovn/issues/4314).  
+
+Run the following command in one of the Cilium pods to disable SIP validation:
+
+```
+cilium config SourceIPVerification=Disabled
+```
+
+This will propagate to the **entire cluster** and NAT gateways will be able to function correctly.  
+The configuration is **not permanent** at this stage and restarting Cilium will erase it. This issue is tracked on the [Cilium repository](https://github.com/cilium/cilium/issues/33889).
