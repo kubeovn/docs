@@ -12,7 +12,7 @@ Kube-OVN 可以将网络控制平面信息以及网络数据平面质量信息�
 Kube-OVN 使用 Prometheus Monitor CRD 来管理监控输出：
 
 ```bash
-# 网咯质量相关监控指标
+# 网络质量相关监控指标
 kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/pinger-monitor.yaml
 # kube-ovn-controller 相关监控指标
 kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/controller-monitor.yaml
