@@ -101,6 +101,7 @@ helm install cilium cilium/cilium --version 1.11.6 \
     --set cni.configMap=cni-configuration \
     --set routingMode=native \
     --set enableIPv4Masquerade=false \
+    --set devices="eth+ ovn0 genev_sys_6081 vxlan_sys_4789" \
     --set enableIdentityMark=false
 ```
 
