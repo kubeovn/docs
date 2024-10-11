@@ -32,10 +32,23 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/y
 
 Modify the corresponding configuration in yaml:
 
+If you only have one switch: 
+
 ```yaml
---neighbor-address=10.32.32.1
---neighbor-as=65030
---cluster-as=65000
+- --neighbor-address=10.32.32.254
+- --neighbor-ipv6-address=2409:AB00:AB00:2000::AFB:8AFE
+- --neighbor-as=65030
+- --cluster-as=65000
+```
+
+If you have a pair of switches: 
+
+```yaml
+
+- --neighbor-address=10.32.32.252,10.32.32.253
+- --neighbor-ipv6-address=2409:AB00:AB00:2000::AFB:8AFC,2409:AB00:AB00:2000::AFB:8AFD
+- --neighbor-as=65030
+- --cluster-as=65000
 ```
 
 - `neighbor-address`: The address of the BGP Peer, usually the router gateway address.
@@ -267,3 +280,15 @@ is handled by a daemon such as `kube-proxy`. The annotation for Services only su
 - `graceful-restart-deferral-time`: BGP Graceful restart deferral time refer to RFC4724 4.1.
 - `passivemode`: The Speaker runs in Passive mode and does not actively connect to the peer.
 - `ebgp-multihop`: The TTL value of EBGP Peer, default is 1.
+
+## BGP routes debug
+
+```bash
+
+# show peer neighbor
+gobgp neighbor
+
+# show announced routes to one peer
+gobgp neighbor 10.32.32.254 adj-out
+
+```

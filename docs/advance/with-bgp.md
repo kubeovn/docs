@@ -26,10 +26,23 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/y
 
 修改 yaml 内相应配置：
 
+如果你只有一个交换机：
+
 ```yaml
---neighbor-address=10.32.32.1
---neighbor-as=65030
---cluster-as=65000
+- --neighbor-address=10.32.32.254
+- --neighbor-ipv6-address=2409:AB00:AB00:2000::AFB:8AFE
+- --neighbor-as=65030
+- --cluster-as=65000
+```
+
+如果你有一对交换机：
+
+```yaml
+
+- --neighbor-address=10.32.32.252,10.32.32.253
+- --neighbor-ipv6-address=2409:AB00:AB00:2000::AFB:8AFC,2409:AB00:AB00:2000::AFB:8AFD
+- --neighbor-as=65030
+- --cluster-as=65000
 ```
 
 - `neighbor-address`: BGP Peer 的地址，通常为路由器网关地址。
@@ -197,3 +210,15 @@ kubectl annotate eip sample ovn.kubernetes.io/bgp=true
 - `graceful-restart-deferral-time`: BGP Graceful restart deferral time 可参考 RFC4724 4.1。
 - `passivemode`: Speaker 运行在 passive 模式，不主动连接 peer。
 - `ebgp-multihop`: ebgp ttl 默认值为 1。
+
+## BGP routes debug
+
+```bash
+
+# show peer neighbor
+gobgp neighbor
+
+# show announced routes to one peer
+gobgp neighbor 10.32.32.254 adj-out
+
+```
