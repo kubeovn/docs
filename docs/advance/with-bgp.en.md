@@ -32,7 +32,7 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/y
 
 Modify the corresponding configuration in yaml:
 
-If you only have one switch: 
+If you only have one switch:
 
 ```yaml
 - --neighbor-address=10.32.32.254
@@ -41,7 +41,7 @@ If you only have one switch:
 - --cluster-as=65000
 ```
 
-If you have a pair of switches: 
+If you have a pair of switches:
 
 ```yaml
 

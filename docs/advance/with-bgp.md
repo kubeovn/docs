@@ -3,7 +3,7 @@
 Kube-OVN 支持将 Pods、Subnets、Services 和 EIPs 的 IP 地址通过 BGP 协议向外部进行路由广播，从而使得外部可以直接访问到集群内的 IP 地址。
 如果需要使用该功能，需要在特定节点安装 `kube-ovn-speaker` 并对需要对外暴露的 Pod 或 Subnet 增加对应的 annotation。
 
-如果要在 EIP 上使用 BGP，需要使用特殊参数创建 VPC NAT Gateway，有关更多信息，请参阅[发布 EIPs](#eips)。
+如果要在 EIP 上使用 BGP，需要使用特殊参数创建 VPC NAT Gateway，有关更多信息，请参阅[发布 EIPs](#发布-eips)。
 
 ## 安装 kube-ovn-speaker
 
@@ -73,7 +73,7 @@ kubectl annotate pod sample ovn.kubernetes.io/bgp-
 kubectl annotate subnet ovn-default ovn.kubernetes.io/bgp-
 ```
 
-查看[发布策略](#_1)以了解如何通过设置注解来控制 BGP 对外发布策略。
+查看[发布策略](#发布策略)以了解如何通过设置注解来控制 BGP 对外发布策略。
 
 ## 发布 `ClusterIP` 类型 Service 路由
 
