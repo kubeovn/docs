@@ -1,6 +1,8 @@
 # SecurityGroup Usage
 
-Kube-OVN has supported the configuration of security-groups, and the CRD used to configure security-groups is SecurityGroup.
+Kube-OVN has support for the configuration of security-groups through the SecurityGroup CRD.
+
+Kube-OVN also supports **port security** to prevent MAC and IP spoofing by allowing only L2/L3 source addresses matching the ones allocated by the IPAM.
 
 ## SecurityGroup Example
 
@@ -29,15 +31,14 @@ spec:
 
 The specific meaning of each field of the SecurityGroup can be found in the [Kube-OVN API Reference](../reference/kube-ovn-api.en.md).
 
-Pods bind security-groups by adding annotations, two annotations are used.
+Pods bind security-groups by adding annotations, two annotations are used:
 
-- port_security: source address verification. If this function is enabled, only packets with ip addresses assigned by kube-ovn ipam can be exported from the pod network adapter. After this function is disabled, any ip address can be exported
-
-- When configuring a security group, the `priority` value ranges from 1 to 200, with smaller values indicating higher priority. When implementing a security group through ACL, the security group's priority is mapped to the ACL priority. The specific mapping relationship is as follows:
-
-  ACL priority=2300−Security group priority，therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
+- `port_security`: Source address verification. If this function is enabled, only packets with L2/L3 addresses assigned by Kube-OVN's IPAM can be exported from the pod network adapter. After this function is disabled, any L2/L3 address can be exported.
 
 - security_groups: indicates a security group that contains a series of ACL rules
+  
+  - When configuring a security group, the `priority` value ranges from 1 to 200, with smaller values indicating higher priority. When implementing a security group through ACLs, the security group's priority is mapped to the ACL priority. The specific mapping relationship is as follows:
+  ACL priority=2300−Security group priority，therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
 
 > These two annotations are responsible for functions that are independent of each other.
 
@@ -54,7 +55,7 @@ Pods bind security-groups by adding annotations, two annotations are used.
 
 ## Actual test
 
-Create a Pod using the following yaml, and specify the security-group in the annotation for the pod.
+Create a Pod using the following YAML, and specify the security-group in the annotation for the pod.
 
 ```yaml
 apiVersion: v1
