@@ -2,6 +2,8 @@
 
 Kube-OVN 支持了安全组的配置，配置安全组使用的 CRD 为 SecurityGroup。
 
+Kube-OVN 还支持 端口安全，通过仅允许与 IPAM 分配的 L2/L3 源地址匹配的地址，来防止 MAC 和 IP 欺骗。
+
 ## 安全组示例
 
 ```yaml
@@ -31,8 +33,8 @@ spec:
 
 Pod 通过添加 annotation 来绑定安全组，使用的 annotation 有两个：
 
-- port_security: 源地址校验，如果开启，只有 kube-ovn ipam 分配到的 ip 源地址的包可以从 pod 网卡出去，关闭后, 任意 ip 都可以。
-- security_groups： 安全组列表，包含一系列 ACL 规则。
+- `port_security`: 源地址验证。如果启用此功能，则只有由 Kube-OVN 的 IPAM 分配的 L2/L3 地址的报文可以从 Pod 网络适配器导出。禁用此功能后，任何 L2/L3 地址都可以从 Pod 发出。
+- `security_groups`： 安全组列表，包含一系列 ACL 规则。
 
 > 这两个 annotation 负责的功能是互相独立的。
 
@@ -49,7 +51,7 @@ Pod 通过添加 annotation 来绑定安全组，使用的 annotation 有两个�
 
 ## 实际测试
 
-利用以下 yaml 创建 Pod，在 annotation 中指定绑定示例中的安全组：
+利用以下 YAML 创建 Pod，在 annotation 中指定绑定示例中的安全组：
 
 ```yaml
 apiVersion: v1
