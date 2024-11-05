@@ -28,8 +28,13 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，其运行需要依赖 Kuber
 
 | 组件                | 端口                                          | 用途                           |
 | ------------------- | --------------------------------------------- | ------------------------------ |
-| ovn-central         | 6641/tcp, 6642/tcp, 6643/tcp, 6644/tcp        | ovn-db 和 raft server 监听端口 |
-| ovs-ovn             | Geneve 6081/udp, STT 7471/tcp, Vxlan 4789/udp | 隧道端口                       |
+| ovn-central         | 6641/tcp                                      | ovn nb db server 监听端口     |
+| ovn-central         | 6642/tcp                                      | ovn sb db server 监听端口     |
+| ovn-central         | 6643/tcp                                      | ovn northd server 监听端口    |
+| ovn-central         | 6644/tcp                                      | ovn raft server 监听端口      |
+| ovn-ic              | 6645/tcp                                      | ovn ic nb db server 监听端口  |
+| ovn-ic              | 6646/tcp                                      | ovn ic sb db server 监听端口  |
+| ovs-ovn             | Geneve 6081/udp, STT 7471/tcp, Vxlan 4789/udp | 隧道端口                      |
 | kube-ovn-controller | 10660/tcp                                     | 监控监听端口                   |
 | kube-ovn-daemon     | 10665/tcp                                     | 监控监听端口                   |
 | kube-ovn-monitor    | 10661/tcp                                     | 监控监听端口                   |

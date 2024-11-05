@@ -30,7 +30,12 @@ the environment configuration and the ports that need to be opened.
 
 | Component           | Port                                          | Usage                               |
 | ------------------- | --------------------------------------------- | ----------------------------------- |
-| ovn-central         | 6641/tcp, 6642/tcp, 6643/tcp, 6644/tcp        | ovn-db and raft server listen ports |
+| ovn-central         | 6641/tcp                                      | ovn nb db server listen ports       |
+| ovn-central         | 6642/tcp                                      | ovn sb db server listen ports       |
+| ovn-central         | 6643/tcp                                      | ovn northd server listen ports      |
+| ovn-central         | 6644/tcp                                      | ovn raft server listen ports        |
+| ovn-ic              | 6645/tcp                                      | ovn ic nb db server listen ports    |
+| ovn-ic              | 6646/tcp                                      | ovn ic sb db server listen ports    |
 | ovs-ovn             | Geneve 6081/udp, STT 7471/tcp, Vxlan 4789/udp | tunnel ports                        |
 | kube-ovn-controller | 10660/tcp                                     | metrics port                        |
 | kube-ovn-daemon     | 10665/tcp                                     | metrics port                        |
