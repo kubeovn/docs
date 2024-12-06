@@ -5,117 +5,118 @@ site_url: https://kubeovn.github.io/docs/
 repo_url: https://github.com/kubeovn/kube-ovn/
 edit_uri: ../docs/edit/master/docs/
 nav:
-  - 主页: 'index.md'
+  - 主页: "index.md"
   - 快速入门:
-      - 准备工作: 'start/prepare.md'
-      - 一键安装: 'start/one-step-install.md'
-      - Underlay 网络安装: 'start/underlay.md'
-      - 使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: 'start/sealos-install.md'
-      - 卸载: 'start/uninstall.md'
+      - 准备工作: "start/prepare.md"
+      - 一键安装: "start/one-step-install.md"
+      - Underlay 网络安装: "start/underlay.md"
+      - 使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: "start/sealos-install.md"
+      - 卸载: "start/uninstall.md"
   - 使用指南:
-      - 安装和配置选项: 'guide/setup-options.md'
-      - 子网使用: 'guide/subnet.md'
-      - 双栈使用: 'guide/dual-stack.md'
-      - 固定地址: 'guide/static-ip-mac.md'
-      - IP 池使用: 'guide/ippool.md'
-      - 自定义路由: 'guide/custom-routes.md'
-      - EIP 和 SNAT 配置: 'guide/eip-snat.md'
-      - VPC 使用: 'guide/vpc.md'
-      - VPC QoS 配置: 'guide/vpc-qos.md'
-      - 容器网络 QoS 配置: 'guide/qos.md'
-      - Webhook 使用: 'guide/webhook.md'
-      - 流量镜像: 'guide/mirror.md'
-      - NetworkPolicy 日志: 'guide/networkpolicy-log.md'
-      - LoadBalancer 类型 Service: 'guide/loadbalancer-service.md'
-      - 配置监控和面板: 'guide/prometheus-grafana.md'
-      - 配置原生 Prometheus: 'guide/prometheus.md'
+      - 安装和配置选项: "guide/setup-options.md"
+      - 子网使用: "guide/subnet.md"
+      - 双栈使用: "guide/dual-stack.md"
+      - 固定地址: "guide/static-ip-mac.md"
+      - IP 使用: "guide/ip.md"
+      - IP 池使用: "guide/ippool.md"
+      - 自定义路由: "guide/custom-routes.md"
+      - EIP 和 SNAT 配置: "guide/eip-snat.md"
+      - VPC 使用: "guide/vpc.md"
+      - VPC QoS 配置: "guide/vpc-qos.md"
+      - 容器网络 QoS 配置: "guide/qos.md"
+      - Webhook 使用: "guide/webhook.md"
+      - 流量镜像: "guide/mirror.md"
+      - NetworkPolicy 日志: "guide/networkpolicy-log.md"
+      - LoadBalancer 类型 Service: "guide/loadbalancer-service.md"
+      - 配置监控和面板: "guide/prometheus-grafana.md"
+      - 配置原生 Prometheus: "guide/prometheus.md"
   - 运维指南:
-      - Kubectl 插件使用: 'ops/kubectl-ko.md'
-      - 删除工作节点: 'ops/delete-worker-node.md'
-      - 更换 ovn-central 节点: 'ops/change-ovn-central-node.md'
-      - OVN 数据库备份和恢复: 'ops/recover-db.md'
-      - 修改子网 CIDR: 'ops/change-default-subnet.md'
-      - 修改 Join 子网 CIDR: 'ops/change-join-subnet.md'
-      - 卸载 Calico 安装 Kube-OVN: 'ops/from-calico.md'
-      - 调整日志等级: 'ops/change-log-level.md'
-      - 其他常见问题: 'ops/faq.md'
+      - Kubectl 插件使用: "ops/kubectl-ko.md"
+      - 删除工作节点: "ops/delete-worker-node.md"
+      - 更换 ovn-central 节点: "ops/change-ovn-central-node.md"
+      - OVN 数据库备份和恢复: "ops/recover-db.md"
+      - 修改子网 CIDR: "ops/change-default-subnet.md"
+      - 修改 Join 子网 CIDR: "ops/change-join-subnet.md"
+      - 卸载 Calico 安装 Kube-OVN: "ops/from-calico.md"
+      - 调整日志等级: "ops/change-log-level.md"
+      - 其他常见问题: "ops/faq.md"
   - 高级功能:
-      - 多网卡管理: 'advance/multi-nic.md'
-      - 性能调优: 'advance/performance-tuning.md'
-      - 手动编译 FastPath 模块: 'advance/fastpath.md'
-      - 使用 eBPF 加速节点内 TCP 通信: 'advance/accelerate-intra-node-tcp-with-ebpf.md'
-      - 使用 OVN-IC 进行多集群互联: 'advance/with-ovn-ic.md'
-      - 使用 Submariner 进行多集群互联: 'advance/with-submariner.md'
-      - Overlay 下路由方式网络打通: 'advance/overlay-with-route.md'
-      - BGP 支持: 'advance/with-bgp.md'
-      - Cilium 集成: 'advance/with-cilium.md'
-      - Cilium NetworkPolicy 支持: 'advance/cilium-networkpolicy.md'
-      - Cilium 网络流量观测: 'advance/cilium-hubble-observe.md'
-      - DHCP 设置: 'advance/dhcp.md'
-      - VPC 互联: 'advance/vpc-peering.md'
-      - 自定义 VPC 内部负载均衡: 'advance/vpc-internal-lb.md'
-      - 自定义 VPC 内部 DNS: 'advance/vpc-internal-dns.md'
-      - 外部网关设置: 'advance/external-gateway.md'
-      - VIP 预留设置: 'advance/vip.md'
-      - Mellanox 网卡 Offload 支持: 'advance/offload-mellanox.md'
-      - 芯启源网卡 Offload 支持: 'advance/offload-corigine.md'
-      - 云脉芯联网卡 Offload 支持: 'advance/offload-yunsilicon.md'
-      - 中科驭数网卡 Offload 支持: 'advance/offload-yusur.md'
-      - Windows 支持: 'advance/windows.md'
-      - DPDK 支持: 'advance/dpdk.md'
-      - OpenStack 集成: 'advance/with-openstack.md'
-      - OVN EIP FIP SNAT 支持: 'advance/ovn-eip-fip-snat.md'
-      - OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持: 'advance/ovn-l3-ha-based-ecmp-with-bfd.md'
-      - SecurityGroup 使用: 'advance/security-group.md'
-      - OVN IPsec 支持: 'advance/ovn-ipsec.md'
-      - OVN 流量镜像: 'advance/ovn-remote-port-mirroring.md'
-      - 节点本地 DNS 缓存和 Kube-OVN 适配 : 'advance/node-local-dns.md'
-      - 默认 VPC NAT 策略规则: 'advance/nat-policy-rule.md'
+      - 多网卡管理: "advance/multi-nic.md"
+      - 性能调优: "advance/performance-tuning.md"
+      - 手动编译 FastPath 模块: "advance/fastpath.md"
+      - 使用 eBPF 加速节点内 TCP 通信: "advance/accelerate-intra-node-tcp-with-ebpf.md"
+      - 使用 OVN-IC 进行多集群互联: "advance/with-ovn-ic.md"
+      - 使用 Submariner 进行多集群互联: "advance/with-submariner.md"
+      - Overlay 下路由方式网络打通: "advance/overlay-with-route.md"
+      - BGP 支持: "advance/with-bgp.md"
+      - Cilium 集成: "advance/with-cilium.md"
+      - Cilium NetworkPolicy 支持: "advance/cilium-networkpolicy.md"
+      - Cilium 网络流量观测: "advance/cilium-hubble-observe.md"
+      - DHCP 设置: "advance/dhcp.md"
+      - VPC 互联: "advance/vpc-peering.md"
+      - 自定义 VPC 内部负载均衡: "advance/vpc-internal-lb.md"
+      - 自定义 VPC 内部 DNS: "advance/vpc-internal-dns.md"
+      - 外部网关设置: "advance/external-gateway.md"
+      - VIP 预留设置: "advance/vip.md"
+      - Mellanox 网卡 Offload 支持: "advance/offload-mellanox.md"
+      - 芯启源网卡 Offload 支持: "advance/offload-corigine.md"
+      - 云脉芯联网卡 Offload 支持: "advance/offload-yunsilicon.md"
+      - 中科驭数网卡 Offload 支持: "advance/offload-yusur.md"
+      - Windows 支持: "advance/windows.md"
+      - DPDK 支持: "advance/dpdk.md"
+      - OpenStack 集成: "advance/with-openstack.md"
+      - OVN EIP FIP SNAT 支持: "advance/ovn-eip-fip-snat.md"
+      - OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持: "advance/ovn-l3-ha-based-ecmp-with-bfd.md"
+      - SecurityGroup 使用: "advance/security-group.md"
+      - OVN IPsec 支持: "advance/ovn-ipsec.md"
+      - OVN 流量镜像: "advance/ovn-remote-port-mirroring.md"
+      - 节点本地 DNS 缓存和 Kube-OVN 适配: "advance/node-local-dns.md"
+      - 默认 VPC NAT 策略规则: "advance/nat-policy-rule.md"
   - 技术参考:
-      - 总体架构: 'reference/architecture.md'
-      - Roadmap: 'reference/roadmap.md'
-      - 版本管理: 'reference/releasing.md'
-      - 功能成熟度: 'reference/feature-stage.md'
-      - Underlay 流量拓扑: 'reference/underlay-topology.md'
-      - Iptables 规则: 'reference/iptables-rules.md'
-      - kube-ovn-pinger 参数描述: 'reference/kube-ovn-pinger-args.md'
-      - 开发环境构建: 'reference/dev-env.md'
-      - 对上游 OVS/OVN 修改: 'reference/ovs-ovn-customized.md'
-      - 隧道协议说明: 'reference/tunnel-protocol.md'
-      - Kube-OVN 监控指标: 'reference/metrics.md'
-      - Kube-OVN 接口规范: 'reference/kube-ovn-api.md'
-      - Annotation 使用说明: 'reference/annotations.md'
-      - 文档规范: 'reference/document-convention.md'
-  - 联系方式: 'contact.md'
+      - 总体架构: "reference/architecture.md"
+      - Roadmap: "reference/roadmap.md"
+      - 版本管理: "reference/releasing.md"
+      - 功能成熟度: "reference/feature-stage.md"
+      - Underlay 流量拓扑: "reference/underlay-topology.md"
+      - Iptables 规则: "reference/iptables-rules.md"
+      - kube-ovn-pinger 参数描述: "reference/kube-ovn-pinger-args.md"
+      - 开发环境构建: "reference/dev-env.md"
+      - 对上游 OVS/OVN 修改: "reference/ovs-ovn-customized.md"
+      - 隧道协议说明: "reference/tunnel-protocol.md"
+      - Kube-OVN 监控指标: "reference/metrics.md"
+      - Kube-OVN 接口规范: "reference/kube-ovn-api.md"
+      - Annotation 使用说明: "reference/annotations.md"
+      - 文档规范: "reference/document-convention.md"
+  - 联系方式: "contact.md"
 theme:
-    font:
-      text: Inter
-    name: material
-    custom_dir: overrides
-    language: 'zh'
-    palette:
-      - scheme: default
-        primary: indigo
-        accent: indigo
-        toggle:
-          icon: material/brightness-7
-          name: Switch to dark mode
-      - scheme: slate
-        primary: indigo
-        accent: indigo
-        toggle:
-          icon: material/brightness-4
-          name: Switch to light mode
-    features:
-      - navigation.tabs
-      - navigation.tabs.sticky
-      - navigation.top
-      - search.highlight
-      - search.share
-      - search.suggest
-      - content.code.copy
-      - content.action.edit
-      - content.action.view
+  font:
+    text: Inter
+  name: material
+  custom_dir: overrides
+  language: "zh"
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - content.code.copy
+    - content.action.edit
+    - content.action.view
 markdown_extensions:
   - footnotes
   - fenced_code
@@ -160,6 +161,7 @@ plugins:
             卸载: Uninstall
             安装和配置选项: Installation and Configuration Options
             固定地址: Fixed Addresses
+            IP 使用: Configure IP
             IP 池使用: Configure IPPool
             自定义路由: Custom Routes
             子网使用: Config Subnet
@@ -222,7 +224,7 @@ plugins:
             SecurityGroup 使用: SecurityGroup Usage
             OVN IPsec 支持: OVN IPsec Support
             OVN 流量镜像: OVN Remote Port Mirroring
-            节点本地 DNS 缓存和 Kube-OVN 适配 : Node Local DNS Cache and Kube-OVN Adaptation
+            节点本地 DNS 缓存和 Kube-OVN 适配: Node Local DNS Cache and Kube-OVN Adaptation
             默认 VPC NAT 策略规则: Default VPC NAT Policy Rule
             调整日志等级: Change Log Level
             使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: Use Sealos to Deploy Kubernetes and Kube-OVN
@@ -263,7 +265,7 @@ extra:
   variables:
     version: v1.13.0
     branch: release-1.13
-copyright: 
-   <p>The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, 
-         please see our <a href="https://www.linuxfoundation.org/legal/trademark-usage">Trademark Usage page</a>.
-   </p>
+copyright:
+  <p>The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation,
+  please see our <a href="https://www.linuxfoundation.org/legal/trademark-usage">Trademark Usage page</a>.
+  </p>
