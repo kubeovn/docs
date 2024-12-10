@@ -56,6 +56,7 @@ nav:
       - VPC 互联: "advance/vpc-peering.md"
       - 自定义 VPC 内部负载均衡: "advance/vpc-internal-lb.md"
       - 自定义 VPC 内部 DNS: "advance/vpc-internal-dns.md"
+      - VPC Egress Gateway: "advance/vpc-egress-gateway.md"
       - 外部网关设置: "advance/external-gateway.md"
       - VIP 预留设置: "advance/vip.md"
       - Mellanox 网卡 Offload 支持: "advance/offload-mellanox.md"
