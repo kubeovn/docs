@@ -1,0 +1,382 @@
+# VPC Egress Gateway
+
+VPC Egress Gateway 用于控制 VPC（包括默认 VPC）内 Pod 访问外部网络。VPC Egress Gateway 参考了 VPC NAT Gateway 的设计，在 VPC NAT Gateway 的基础上实现了基于 ECMP 路由的负载均衡以及基于 BFD 的高可用，并支持 IPv6 以及双栈。
+
+> VPC Egress Gateway 支持默认 VPC 及自定义 VPC。
+
+## 使用要求
+
+VPC Egress Gateway 与 VPC NAT Gateway 相同，都需要先在集群中 [部署 Multus-CNI](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md){: target = "_blank" }。
+
+> 使用 VPC Egress Gateway 无需配置任何 ConfigMap。
+
+## 使用方法
+
+### 创建 NetworkAttachmentDefinition
+
+VPC Egress Gateway 使用多网卡来同时接入 VPC 及外部网络，因此需要先创建 NetworkAttachmentDefinition 用于连接外部网络。使用 `macvlan` 插件并由 Kube-OVN 提供 IPAM 的示例如下：
+
+```yaml
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: eth1
+  namespace: default
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "macvlan",
+      "master": "eth1",
+      "mode": "bridge",
+      "ipam": {
+        "type": "kube-ovn",
+        "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
+        "provider": "eth1.default"
+      }
+    }'
+---
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: macvlan1
+spec:
+  protocol: IPv4
+  provider: eth1.default
+  cidrBlock: 172.17.0.0/16
+  gateway: 172.17.0.1
+  excludeIps:
+    - 172.17.0.0..172.17.0.10
+```
+
+> 您可使用任意 CNI 插件创建 NetworkAttachmentDefinition 使 VPC Egress Gateway 接入相应的网络中。
+
+关于多网卡的具体使用方法，请参考 [多网卡管理](./multi-nic.md)。
+
+### 创建 VPC Egress Gateway
+
+创建 VPC Egress Gateway 资源，示例如下：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: VpcEgressGateway
+metadata:
+  name: gateway1
+  namespace: default
+spec:
+  vpc: ovn-cluster
+  replicas: 1
+  externalSubnet: macvlan1
+  policies:
+    - snat: true
+      subnets:
+        - ovn-default
+```
+
+上述资源会在 default 命名空间下为 VPC `ovn-cluster` 创建一个名为 gateway1 的单副本 VPC Egress Gateway，`ovn-cluster` 下 `ovn-default` 子网（10.16.0.0/16）下的所有 Pod 将通过 `macvlan1` 子网以 SNAT 的方式访问外部网络。
+
+创建完成后，查看 VPC Egress Gateway：
+
+```shell
+$ kubectl get veg gateway1
+NAME       VPC           REPLICAS   BFD ENABLED   EXTERNAL SUBNET   PHASE       READY   AGE
+gateway1   ovn-cluster   1          false         macvlan1          Completed   true    13s
+```
+
+查看更多信息：
+
+```shell
+kubectl get veg gateway1 -o wide
+NAME       VPC           REPLICAS   BFD ENABLED   EXTERNAL SUBNET   PHASE       READY   INTERNAL IPS     EXTERNAL IPS      WORKING NODES         AGE
+gateway1   ovn-cluster   1          false         macvlan1          Completed   true    ["10.16.0.12"]   ["172.17.0.11"]   ["kube-ovn-worker"]   82s
+```
+
+查看工作负载：
+
+```shell
+$ kubectl get deployment -l ovn.kubernetes.io/vpc-egress-gateway=gateway1
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+gateway1   1/1     1            1           4m40s
+
+$ kubectl get pod -l ovn.kubernetes.io/vpc-egress-gateway=gateway1 -o wide
+NAME                       READY   STATUS    RESTARTS   AGE     IP           NODE              NOMINATED NODE   READINESS GATES
+gateway1-b9f8b4448-76lhm   1/1     Running   0          4m48s   10.16.0.12   kube-ovn-worker   <none>           <none>
+```
+
+查看 Pod 中的 IP、路由及 iptables 规则：
+
+```shell
+$ kubectl exec gateway1-b9f8b4448-76lhm -c gateway -- ip address show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: net1@if13: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 62:d8:71:90:7b:86 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 172.17.0.11/16 brd 172.17.255.255 scope global net1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::60d8:71ff:fe90:7b86/64 scope link
+       valid_lft forever preferred_lft forever
+17: eth0@if18: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc noqueue state UP group default
+    link/ether 36:7c:6b:c7:82:6b brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.16.0.12/16 brd 10.16.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::347c:6bff:fec7:826b/64 scope link
+       valid_lft forever preferred_lft forever
+
+$ kubectl exec gateway1-b9f8b4448-76lhm -c gateway -- ip route show
+default via 172.17.0.1 dev net1
+10.16.0.0/16 dev eth0 proto kernel scope link src 10.16.0.12
+172.17.0.0/16 dev net1 proto kernel scope link src 172.17.0.11
+
+$ kubectl exec gateway1-b9f8b4448-76lhm -c gateway -- iptables -t nat -S
+-P PREROUTING ACCEPT
+-P INPUT ACCEPT
+-P OUTPUT ACCEPT
+-P POSTROUTING ACCEPT
+-A POSTROUTING -s 10.16.0.0/16 -j MASQUERADE --random-fully
+```
+
+在 Gateway Pod 中抓包验证网络流量：
+
+```shell
+$ kubectl exec -ti gateway1-b9f8b4448-76lhm -c gateway -- bash
+nobody@gateway1-b9f8b4448-76lhm:/kube-ovn$ tcpdump -i any -nnve icmp and host 172.17.0.1
+tcpdump: data link type LINUX_SLL2
+tcpdump: listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+06:50:58.936528 eth0  In  ifindex 17 92:26:b8:9e:f2:1c ethertype IPv4 (0x0800), length 104: (tos 0x0, ttl 63, id 30481, offset 0, flags [DF], proto ICMP (1), length 84)
+    10.16.0.9 > 172.17.0.1: ICMP echo request, id 37989, seq 0, length 64
+06:50:58.936574 net1  Out ifindex 2 62:d8:71:90:7b:86 ethertype IPv4 (0x0800), length 104: (tos 0x0, ttl 62, id 30481, offset 0, flags [DF], proto ICMP (1), length 84)
+    172.17.0.11 > 172.17.0.1: ICMP echo request, id 39449, seq 0, length 64
+06:50:58.936613 net1  In  ifindex 2 02:42:39:79:7f:08 ethertype IPv4 (0x0800), length 104: (tos 0x0, ttl 64, id 26701, offset 0, flags [none], proto ICMP (1), length 84)
+    172.17.0.1 > 172.17.0.11: ICMP echo reply, id 39449, seq 0, length 64
+06:50:58.936621 eth0  Out ifindex 17 36:7c:6b:c7:82:6b ethertype IPv4 (0x0800), length 104: (tos 0x0, ttl 63, id 26701, offset 0, flags [none], proto ICMP (1), length 84)
+    172.17.0.1 > 10.16.0.9: ICMP echo reply, id 37989, seq 0, length 64
+```
+
+OVN Logical Router 中会自动创建路由策略（自定义 VPC 中是静态路由）：
+
+```shell
+$ kubectl ko nbctl lr-policy-list ovn-cluster
+Routing Policies
+     31000                            ip4.dst == 10.16.0.0/16           allow
+     31000                           ip4.dst == 100.64.0.0/16           allow
+     30000                              ip4.dst == 172.18.0.2         reroute                100.64.0.3
+     30000                              ip4.dst == 172.18.0.3         reroute                100.64.0.2
+     30000                              ip4.dst == 172.18.0.4         reroute                100.64.0.4
+     29100                            ip4.src == 10.16.0.0/16         reroute                10.16.0.12
+     29000 ip4.src == $ovn.default.kube.ovn.control.plane_ip4         reroute                100.64.0.2
+     29000       ip4.src == $ovn.default.kube.ovn.worker2_ip4         reroute                100.64.0.4
+     29000        ip4.src == $ovn.default.kube.ovn.worker_ip4         reroute                100.64.0.3
+```
+
+如果您需要开启多副本负载均衡，修改 `.spec.replicas` 即可，示例如下：
+
+```shell
+$ kubectl patch veg gateway1 --type=merge -p '{"spec": {"replicas": 2}}'
+vpcegressgateway.kubeovn.io/gateway1 patched
+
+$ kubectl get veg gateway1
+NAME       VPC           REPLICAS   BFD ENABLED   EXTERNAL SUBNET   PHASE       READY   AGE
+gateway1   ovn-cluster   2          false         macvlan           Completed   true    39m
+
+$ kubectl get pod -l ovn.kubernetes.io/vpc-egress-gateway=gateway1 -o wide
+NAME                       READY   STATUS    RESTARTS   AGE   IP           NODE               NOMINATED NODE   READINESS GATES
+gateway1-b9f8b4448-76lhm   1/1     Running   0          40m   10.16.0.12   kube-ovn-worker    <none>           <none>
+gateway1-b9f8b4448-zd4dl   1/1     Running   0          64s   10.16.0.13   kube-ovn-worker2   <none>           <none>
+
+$ kubectl ko nbctl lr-policy-list ovn-cluster
+Routing Policies
+     31000                            ip4.dst == 10.16.0.0/16           allow
+     31000                           ip4.dst == 100.64.0.0/16           allow
+     30000                              ip4.dst == 172.18.0.2         reroute                100.64.0.3
+     30000                              ip4.dst == 172.18.0.3         reroute                100.64.0.2
+     30000                              ip4.dst == 172.18.0.4         reroute                100.64.0.4
+     29100                            ip4.src == 10.16.0.0/16         reroute                10.16.0.12, 10.16.0.13
+     29000 ip4.src == $ovn.default.kube.ovn.control.plane_ip4         reroute                100.64.0.2
+     29000       ip4.src == $ovn.default.kube.ovn.worker2_ip4         reroute                100.64.0.4
+     29000        ip4.src == $ovn.default.kube.ovn.worker_ip4         reroute                100.64.0.3
+```
+
+### 开启 BFD 高可用
+
+BFD 高可用依赖 VPC 的 BFD LRP 功能，因此需要先修改 VPC 资源，开启 BFD Port。示例如下：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Vpc
+metadata:
+  name: vpc1
+spec:
+  bfdPort:
+    enabled: true
+    ip: 10.255.255.255
+---
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: subnet1
+spec:
+  vpc: vpc1
+  protocol: IPv4
+  cidrBlock: 192.168.0.0/24
+```
+
+开启 BFD Port 后，对应的 OVN LR 上会自动创建一个专用于 BFD 的 LRP：
+
+```shell
+$ kubectl ko nbctl show vpc1
+router 0c1d1e8f-4c86-4d96-88b2-c4171c7ff824 (vpc1)
+    port bfd@vpc1
+        mac: "8e:51:4b:16:3c:90"
+        networks: ["10.255.255.255"]
+    port vpc1-subnet1
+        mac: "de:c9:5c:38:7a:61"
+        networks: ["192.168.0.1/24"]
+```
+
+完成后，将 VPC Egress Gateway 的 `.spec.bfd.enabled` 设置为 `true` 即可。示例如下：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: VpcEgressGateway
+metadata:
+  name: gateway2
+  namespace: default
+spec:
+  vpc: vpc1
+  replicas: 2
+  internalSubnet: subnet1
+  externalSubnet: macvlan
+  bfd:
+    enabled: true
+  policies:
+    - snat: true
+      ipBlocks:
+        - 192.168.0.0/24
+```
+
+查看 VPC Egress Gateway 信息：
+
+```shell
+$ kubectl get veg gateway2 -o wide
+NAME       VPC    REPLICAS   BFD ENABLED   EXTERNAL SUBNET   PHASE       READY   INTERNAL IPS                    EXTERNAL IPS                    WORKING NODES                            AGE
+gateway2   vpc1   2          true          macvlan           Completed   true    ["192.168.0.2","192.168.0.3"]   ["172.17.0.13","172.17.0.14"]   ["kube-ovn-worker","kube-ovn-worker2"]   58s
+
+$ kubectl get pod -l ovn.kubernetes.io/vpc-egress-gateway=gateway2 -o wide
+NAME                       READY   STATUS    RESTARTS   AGE     IP            NODE               NOMINATED NODE   READINESS GATES
+gateway2-fcc6b8b87-8lgvx   1/1     Running   0          2m18s   192.168.0.3   kube-ovn-worker2   <none>           <none>
+gateway2-fcc6b8b87-wmww6   1/1     Running   0          2m18s   192.168.0.2   kube-ovn-worker    <none>           <none>
+
+$ kubectl ko nbctl lr-route-list vpc1
+IPv4 Routes
+Route Table <main>:
+           192.168.0.0/24               192.168.0.2 src-ip ecmp ecmp-symmetric-reply bfd
+           192.168.0.0/24               192.168.0.3 src-ip ecmp ecmp-symmetric-reply bfd
+
+$ kubectl ko nbctl list bfd
+_uuid               : 223ede10-9169-4c7d-9524-a546e24bfab5
+detect_mult         : 3
+dst_ip              : "192.168.0.2"
+external_ids        : {af="4", vendor=kube-ovn, vpc-egress-gateway="default/gateway2"}
+logical_port        : "bfd@vpc1"
+min_rx              : 1000
+min_tx              : 1000
+options             : {}
+status              : up
+
+_uuid               : b050c75e-2462-470b-b89c-7bd38889b758
+detect_mult         : 3
+dst_ip              : "192.168.0.3"
+external_ids        : {af="4", vendor=kube-ovn, vpc-egress-gateway="default/gateway2"}
+logical_port        : "bfd@vpc1"
+min_rx              : 1000
+min_tx              : 1000
+options             : {}
+status              : up
+```
+
+进入 Pod 查看 BFD 连接：
+
+```shell
+$ kubectl exec gateway2-fcc6b8b87-8lgvx -c bfdd -- bfdd-control status
+There are 1 sessions:
+Session 1
+ id=1 local=192.168.0.3 (p) remote=10.255.255.255 state=Up
+
+$ kubectl exec gateway2-fcc6b8b87-wmww6 -c bfdd -- bfdd-control status
+There are 1 sessions:
+Session 1
+ id=1 local=192.168.0.2 (p) remote=10.255.255.255 state=Up
+```
+
+### 配置参数
+
+#### VPC BFD Port
+
+| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `enabled` | `boolean` | 是 | `false` | 是否开启 BFD Port。 | `true` |
+| `ip` | `string` | 否 | - | BFD Port 使用的 IP 地址，不可与其它地址冲突。支持 IPv6 及双栈。 | `169.255.255.255` / `fdff::1` / `169.255.255.255,fdff::1` |
+| `nodeSelector` | `object` | 是 | - | 用于选择承载 BFD Port 工作节点的标签选择器。BFD Port 会绑定一个由选择出来的节点组成的 OVN HA Chassis Group，并以 Active/Backup 的模式工作在 Active 节点上。如果未指定 nodeSelector，Kube-OVN 会自动选择至多三个节点。您可以通过 `kubectl ko nbctl list ha_chassis_group` 查看当前所有的 OVN HA Chassis Group 资源。 | - |
+| `nodeSelector.matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。| - |
+| `nodeSelector.matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。| - |
+
+#### VPC Egress Gateway
+
+Spec：
+
+| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `vpc` | `string` | 是 | 默认 VPC 名称（ovn-cluster） | VPC 名称。 | `vpc1` |
+| `replicas` | `integer/int32` | 是 | `1` | 副本数。 | `2` |
+| `prefix` | `string` | 是 | - | 工作负载 Deployment 名称前缀。不可修改。 | `veg-` |
+| `image` | `string` | 是 | - | 工作负载 Deployment 使用的镜像。 | `docker.io/kubeovn/kube-ovn:v1.14.0-debug` |
+| `internalSubnet` | `string` | 是 | VPC 默认子网名称 | 接入 VPC 网络的子网名称。 | `subnet1` |
+| `externalSubnet` | `string` | 否 | - | 接入外部网络的子网名称。 | `ext1` |
+| `internalIPs` | `string array` | 是 | - | 接入 VPC 网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
+| `externalIPs` | `string array` | 是 | - | 接入外部网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
+| `bfd` | `object` | 是 | - | BFD 配置。| - |
+| `policies` | `object array` | 是 | - | Egress 策略。必须配置至少一条策略。| - |
+| `nodeSelector` | `object array` | 是 | - | 工作负载的节点选择器，工作负载（Deployment/Pod）将运行在被选择的节点上。| - |
+
+BFD 配置：
+
+| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `enabled` | `boolean` | 是 | `false` | 是否开启 BFD。 | `true` |
+| `minRX` | `integer/int32` | 是 | `1000` | BFD minRX 值（ms）。 | `500` |
+| `minTX` | `integer/int32` | 是 | `1000` | BFD minTX 值（ms）。 | `500` |
+| `multiplier` | `integer/int32` | 是 | `3` | BFD multiplier 值。 | `1` |
+
+Egress 策略：
+
+| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `snat` | `boolean` | 是 | `false` | 是否开启 SNAT/MASQUERADE。 | `true` |
+| `ipBlocks` | `string array` | 是 | - | 应用于此 Gateway 的 IP 范围段。支持 IPv6。 | `192.168.0.1` / `192.168.0.0/24` |
+| `subnets` | `string array` | 是 | - | 应用于此 Gateway 的 VPC 子网名称。支持 IPv6 子网及双栈子网。 | `subnet1` |
+
+节点选择器：
+
+| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。| - |
+| `matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。| - |
+| `matchFields` | `object array` | 是 | - | 表达式形式的字段选择器。| - |
+
+Status：
+
+| 字段 | 类型 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- |
+| `ready` | `boolean` | Gateway 是否就绪。 | `true` |
+| `phase` | `string` | Gateway 处理阶段。 | `Pending` / `Processing` / `Completed` |
+| `internalIPs` | `string array` | 接入 VPC 网络使用的 IP 地址。| - |
+| `externalIPs` | `string array` | 接入外部网络使用的 IP 地址。| - |
+| `workload` | `object` | 工作负载信息。| - |
+| `workload.apiVersion` | `string` | 工作负载 API 版本。| `apps/v1` |
+| `workload.kind` | `string` | 工作负载类型。| `Deployment` |
+| `workload.name` | `string` | 工作负载名称。| `gateway1` |
+| `workload.nodes` | `string array` | 工作负载所在的节点名称。| - |
+| `conditions` | `object array` | - | - |
