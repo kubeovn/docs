@@ -256,7 +256,7 @@ spec:
   namespaces:
   - vpc1
   enableExternal: true  # vpc enableExternal will automatically create an lrp association to the public network specified above
-  addExternalSubnets: # configure addExternalSubnets to support connecting multiple additional public networks
+  extraExternalSubnets: # configure extraExternalSubnets to support connecting multiple additional public networks
   - extra
 ```
 
