@@ -330,3 +330,20 @@ Chain POSTROUTING (policy ACCEPT 0 packets, 0 bytes)
  pkts bytes target     prot opt in     out     source               destination
     0     0 MASQUERADE  all  --  *      *       0.0.0.0/0            10.109.201.193
 ```
+
+### 配置 lb service Pod 的 nodeSelector
+
+可以通过调整 `ovn-vpc-nat-config` ConfigMap 中的 `nodeSelector` 来指定 LoadBalancer service 网关 Pod 部署的节点。
+
+```yaml
+apiVersion: v1
+data:
+  image: docker.io/kubeovn/vpc-nat-gateway:v1.14.0
+  nodeSelector: |
+    kubernetes.io/hostname: kube-ovn-control-plane
+    kubernetes.io/os: linux
+kind: ConfigMap
+metadata:
+  name: ovn-vpc-nat-config
+  namespace: kube-system
+```

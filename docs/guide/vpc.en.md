@@ -172,7 +172,7 @@ Vlan and security policy in the underlying network device in advance.
 
 ### Enabling the VPC Gateway
 
-VPC gateway functionality needs to be enabled via `ovn-vpc-nat-gw-config` under `kube-system`:
+The VPC gateway functionality can be enabled by configuring the `ovn-vpc-nat-gw-config` in the `kube-system` namespace. The `nodeSelector` can be used to specify the node where the gateway is deployed:
 
 ```yaml
 ---
@@ -183,6 +183,8 @@ metadata:
   namespace: kube-system
 data:
   image: docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}
+  nodeSelector: |
+    kubernetes.io/hostname: kube-ovn-control-plane
 ---
 kind: ConfigMap
 apiVersion: v1
