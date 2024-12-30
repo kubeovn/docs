@@ -168,7 +168,7 @@ spec:
 
 ### 开启 VPC 网关功能
 
-VPC 网关功能需要通过 `kube-system` 下的 `ovn-vpc-nat-gw-config` 开启：
+VPC 网关功能需要通过 `kube-system` 命名空间下的 `ovn-vpc-nat-gw-config` 配置开启，其中 `nodeSelector` 可以指定网关部署所在的节点：
 
 ```yaml
 ---
@@ -179,6 +179,8 @@ metadata:
   namespace: kube-system
 data:
   image: 'docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}' 
+  nodeSelector: |
+    kubernetes.io/hostname: kube-ovn-control-plane
 ---
 kind: ConfigMap
 apiVersion: v1

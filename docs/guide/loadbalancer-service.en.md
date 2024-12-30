@@ -330,3 +330,19 @@ Chain POSTROUTING (policy ACCEPT 0 packets, 0 bytes)
  pkts bytes target     prot opt in     out     source               destination
     0     0 MASQUERADE  all  --  *      *       0.0.0.0/0            10.109.201.193
 ```
+
+### Configure the `nodeSelector` for the LB Service Pod
+
+You can specify the node where the LoadBalancer service gateway Pod is deployed by adjusting the `nodeSelector` in the `ovn-vpc-nat-config` ConfigMap.
+
+```yaml
+apiVersion: v1
+data:
+  image: docker.io/kubeovn/vpc-nat-gateway:v1.14.0
+  nodeSelector: |
+    kubernetes.io/hostname: kube-ovn-control-plane
+    kubernetes.io/os: linux
+kind: ConfigMap
+metadata:
+  name: ovn-vpc-nat-config
+  namespace: kube-system
