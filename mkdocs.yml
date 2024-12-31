@@ -93,7 +93,7 @@ theme:
   logo: static/kube-ovn-icon-color.svg
   favicon: static/kube-ovn-icon-color.svg
   font:
-    text: Inter
+    text: Roboto
   name: material
   custom_dir: overrides
   language: "zh"
