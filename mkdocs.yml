@@ -150,13 +150,13 @@ plugins:
           name: English
           site_name: Kube-OVN Document
           nav_translations:
-            主页: OVERVIEW
-            快速入门: GETTING STARTED
-            使用指南: USER GUIDE
-            运维指南: OPERATIONS
-            高级功能: ADVANCED USAGE
-            技术参考: REFERENCE
-            联系方式: CONTACT US
+            主页: Overview
+            快速入门: Getting Started
+            使用指南: User Guide
+            运维指南: Operations
+            高级功能: Advanced Features
+            技术参考: Reference
+            联系方式: Contact Us
             准备工作: Prerequisites
             一键安装: One-Click Installation
             Underlay 网络安装: Underlay Installation
