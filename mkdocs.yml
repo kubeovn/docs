@@ -89,6 +89,8 @@ nav:
       - 文档规范: "reference/document-convention.md"
   - 联系方式: "contact.md"
 theme:
+  logo: static/kube-ovn-icon-color.svg
+  favicon: static/kube-ovn-icon-color.svg
   font:
     text: Inter
   name: material
