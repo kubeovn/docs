@@ -87,34 +87,36 @@ nav:
       - 文档规范: 'reference/document-convention.md'
   - 联系方式: 'contact.md'
 theme:
-    font:
-      text: Inter
-    name: material
-    custom_dir: overrides
-    language: 'zh'
-    palette:
-      - scheme: default
-        primary: indigo
-        accent: indigo
-        toggle:
-          icon: material/brightness-7
-          name: Switch to dark mode
-      - scheme: slate
-        primary: indigo
-        accent: indigo
-        toggle:
-          icon: material/brightness-4
-          name: Switch to light mode
-    features:
-      - navigation.tabs
-      - navigation.tabs.sticky
-      - navigation.top
-      - search.highlight
-      - search.share
-      - search.suggest
-      - content.code.copy
-      - content.action.edit
-      - content.action.view
+  logo: static/kube-ovn-icon-color.svg
+  favicon: static/kube-ovn-icon-color.svg
+  font:
+    text: Inter
+  name: material
+  custom_dir: overrides
+  language: "zh"
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - content.code.copy
+    - content.action.edit
+    - content.action.view
 markdown_extensions:
   - footnotes
   - fenced_code
