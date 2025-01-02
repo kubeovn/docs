@@ -78,3 +78,4 @@ This list records the feature stages from the 1.8 release.
 | Load Balance in Custom VPC                       | false   | Alpha | 1.11  |       |
 | DNS in Custom VPC                                | false   | Alpha | 1.11  |       |
 | Underlay and Overlay Interconnection             | false   | Beta  | 1.12  |       |
+| VPC Egress Gateway                               | true    | Alpha | 1.14  |       |
