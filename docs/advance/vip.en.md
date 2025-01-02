@@ -223,4 +223,4 @@ spec:
 
 Due to the particularity of 'StatefulSet' and 'VM', after their Pod is destroyed and pulled up, it will re-use the previously set VIP.
 
-VM retention VIP needs to ensure that 'kube-ovn-controller' 'keep-vm-ip' parameter is' true '. Please refer to [Kubevirt VM enable keep its ip](../guide/setup-options.en.md#kubevirt-vm)
+VM retention VIP needs to ensure that 'kube-ovn-controller' 'keep-vm-ip' parameter is' true '. Please refer to [Kubevirt VM enable keep its ip](../guide/setup-options.en.md#kubevirt-vm-fixed-address-settings)

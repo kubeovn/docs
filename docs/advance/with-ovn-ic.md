@@ -254,13 +254,13 @@ switch da6138b8-de81-4908-abf9-b2224ec4edf3 (ts)
 
 下面手动设置路由，在该例子中，集群 `az1` 内的子网 CIDR 为 `10.16.0.0/24`，集群 `az2` 内的子网 CIDR 为 `10.17.0.0/24`。
 
-在集群 `az1` 设置到集群 `az2` 的路由:
+在集群 `az1` 设置到集群 `az2` 的路由：
 
 ```bash
 kubectl ko nbctl lr-route-add ovn-cluster 10.17.0.0/24 169.254.100.31
 ```
 
-在集群 `az2` 设置到集群 `az1` 的路由:
+在集群 `az2` 设置到集群 `az1` 的路由：
 
 ```bash
 kubectl ko nbctl lr-route-add ovn-cluster 10.16.0.0/24 169.254.100.79
@@ -272,7 +272,7 @@ kubectl ko nbctl lr-route-add ovn-cluster 10.16.0.0/24 169.254.100.79
 
 优先推荐方案 1，Kube-OVN v1.11.16 之后支持。
 
-方法同[单节点部署方案 1](#单节点部署方案-1)
+方法同[单节点部署方案 1](#1)
 
 ### 高可用部署方案 2
 
@@ -292,8 +292,8 @@ docker run --name=ovn-ic-db -d --env "ENABLE_OVN_LEADER_CHECK="false"" --network
 ctr -n k8s.io run -d --env "ENABLE_OVN_LEADER_CHECK="false"" --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw"  --env="NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"" --env="LOCAL_IP="192.168.65.3"" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
 ```
 
-- `LOCAL_IP`： 当前容器所在节点 IP 地址。
-- `NODE_IPS`： 运行 `OVN-IC` 数据库的三个节点 IP 地址，使用逗号进行分隔。
+- `LOCAL_IP`：当前容器所在节点 IP 地址。
+- `NODE_IPS`：运行 `OVN-IC` 数据库的三个节点 IP 地址，使用逗号进行分隔。
 
 接下来，在另外两个节点部署 `OVN-IC` 数据库的 follower。
 
@@ -309,8 +309,8 @@ docker run --name=ovn-ic-db -d --network=host --privileged -v /etc/ovn/:/etc/ovn
 ctr -n k8s.io run -d --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw"  --env="NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"" --env="LOCAL_IP="192.168.65.2"" --env="LEADER_IP="192.168.65.3"" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
 ```
 
-- `LOCAL_IP`： 当前容器所在节点 IP 地址。
-- `NODE_IPS`： 运行 `OVN-IC` 数据库的三个节点 IP 地址，使用逗号进行分隔。
+- `LOCAL_IP`：当前容器所在节点 IP 地址。
+- `NODE_IPS`：运行 `OVN-IC` 数据库的三个节点 IP 地址，使用逗号进行分隔。
 - `LEADER_IP`: 运行 `OVN-IC` 数据库 leader 节点的 IP 地址。
 
 在每个集群创建 `ovn-ic-config` 时指定多个 `OVN-IC` 数据库节点地址：
@@ -333,9 +333,9 @@ data:
 
 ## 支持集群互联 ECMP
 
-前提控制器是按照[单节点部署方案 1](#单节点部署方案-1)部署
+前提控制器是按照[单节点部署方案 1](#1)部署
 
-该方案默认支持集群互联 ECMP，ECMP path 默认为 3，同时也支持修改 ECMP path 条数，使用命令:
+该方案默认支持集群互联 ECMP，ECMP path 默认为 3，同时也支持修改 ECMP path 条数，使用命令：
 
 ```bash
 kubectl edit deployment ovn-ic-server -n kube-system
