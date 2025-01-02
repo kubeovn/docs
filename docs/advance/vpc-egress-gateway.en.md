@@ -174,8 +174,8 @@ Routing Policies
 If you need to enable load balancing, modify `.spec.replicas` as shown in the following example:
 
 ```shell
-$ kubectl patch veg gateway1 --type=merge -p '{"spec": {"replicas": 2}}'
-vpcegressgateway.kubeovn.io/gateway1 patched
+$ kubectl scale veg gateway1 --replicas=2
+vpcegressgateway.kubeovn.io/gateway1 scaled
 
 $ kubectl get veg gateway1
 NAME       VPC           REPLICAS   BFD ENABLED   EXTERNAL SUBNET   PHASE       READY   AGE

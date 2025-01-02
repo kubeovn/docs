@@ -174,8 +174,8 @@ Routing Policies
 如果您需要开启多副本负载均衡，修改 `.spec.replicas` 即可，示例如下：
 
 ```shell
-$ kubectl patch veg gateway1 --type=merge -p '{"spec": {"replicas": 2}}'
-vpcegressgateway.kubeovn.io/gateway1 patched
+$ kubectl scale veg gateway1 --replicas=2
+vpcegressgateway.kubeovn.io/gateway1 scaled
 
 $ kubectl get veg gateway1
 NAME       VPC           REPLICAS   BFD ENABLED   EXTERNAL SUBNET   PHASE       READY   AGE

@@ -77,3 +77,4 @@
 | [默认 VPC Load Balancer 类型 Service](../guide/loadbalancer-service.md) | false | Alpha | 1.11      |           |
 | [自定义 VPC 内部 DNS](../advance/vpc-internal-dns.md) | false | Alpha | 1.11      |           |
 | [Underlay 和 Overlay 互通](../start/underlay.md) | false | Beta | 1.12      |           |
+| [VPC Egress Gateway](../advance/vpc-egress-gateway.md) | true | Alpha | 1.14      |           |
