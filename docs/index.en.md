@@ -2,9 +2,17 @@
 
 ![Kube-OVN](static/kube-ovn-horizontal-color.svg){: style="width:40%"}
 
-Kube-OVN, a CNCF Sandbox Project, bridges the SDN into Cloud Native.
-It offers an advanced Container Network Fabric for Enterprises with the most functions,
-extreme performance and the easiest operation.
+# What is Kube-OVN?
+
+Kube-OVN is an enterprise-level cloud-native network orchestration system under CNCF that combines the capabilities of SDN with cloud-native technologies, providing the most functions, extreme performance and the easiest operation.
+
+Kube-OVN uses Open Virtual Network (OVN) and OpenVswitch at the underlying layer to implement network orchestration and exposes its rich capabilities to Kubernetes networking. OVN and OVS have a long history, having emerged long before Kubernetes was born, and have become the de facto standard in the SDN field. Kube-OVN brings them into Kubernetes, significantly enhancing Kubernetes' networking capabilities.
+
+# Why Kube-OVN?
+
+As the workloads running on Kubernetes become more diverse and the scenarios increase, the demand for networking also grows. As long-established networking components, OVN and OVS provide all the functionalities you need.
+
+If you need to run KubeVirt on Kubernetes or have multi-tenant networking requirements, you will find that Kube-OVN's capabilities perfectly match your scenarios. Kube-OVN combines SDN capabilities with cloud-native technologies, offering the most functions, extreme performance and the easiest operation.
 
 **Most Functions:**
 

@@ -2,8 +2,18 @@
 
 ![Kube-OVN](static/kube-ovn-horizontal-color.svg){: style="width:40%"}
 
-Kube-OVN 是一款 CNCF 旗下的企业级云原生网络编排系统，将 SDN 的能力和云原生结合，
-提供丰富的功能，极致的性能以及良好的可运维性。
+# What is Kube-OVN?
+
+Kube-OVN 是一款 CNCF 旗下的企业级云原生网络编排系统，将 SDN 的能力和云原生结合，提供丰富的功能，极致的性能以及良好的可运维性。
+
+Kube-OVN 在底层使用 Open Virtual Network（OVN）和 OpenVswitch 来实现网络的编排，并将其丰富的能力暴露给 Kubernetes 网络。
+OVN 和 OVS 有着悠久的历史，早在 Kubernetes 诞生前就已经出现，成为了 SDN 领域的事实标准。Kube-OVN 将它们引入到 Kubernetes 中，大幅增强了 Kubernetes 的网络能力。
+
+# Why Kube-OVN?
+
+随着在 Kubernetes 上运行的负载以及运行的场景越来越多样化，对网络的需求也越来越多。OVN 和 OVS 作为历史悠久的网络组件，你可以在他们身上找到所有你需要的功能。
+
+如果你需要在 Kubernetes 上运行 KubeVirt, 或者有多租户网络的需求，你会发现 Kube-OVN 的能力将会完美契合你的场景。Kube-OVN 将 SDN 的能力和云原生结合，提供丰富的功能，极致的性能以及良好的可运维性。
 
 **丰富的功能：**
 
@@ -31,4 +41,4 @@ Kube-OVN 可以在延迟和吞吐量等方面的指标达到近似或超出宿�
 
 Kube-OVN 提供了[一键安装脚本](start/one-step-install.md)，帮助用户迅速搭建生产就绪的容器网络。同时内置的丰富的[监控指标](reference/metrics.md)和 [Grafana 面板](guide/prometheus-grafana.md)，
 可帮助用户建立完善的监控体系。强大的[命令行工具](ops/kubectl-ko.md)可以简化用户的日常运维操作。通过[和 Cilium 结合](advance/with-cilium.md)，利用 eBPF 能力用户可以
-增强对网络的可观测性。 此外[流量镜像](guide/mirror.md)的能力可以方便用户自定义流量监控，并和传统的 NPM 系统对接。
+增强对网络的可观测性。此外[流量镜像](guide/mirror.md)的能力可以方便用户自定义流量监控，并和传统的 NPM 系统对接。
