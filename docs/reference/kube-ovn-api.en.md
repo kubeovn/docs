@@ -415,7 +415,7 @@ The meaning of the above tolerance fields can be found in the official Kubernete
 | conditions | []VpcDnsCondition | VpcDns status change information, refer to the beginning of the document for the definition of Condition |
 | active | Bool | Whether VpcDns is in use |
 
-For detailed documentation on the use of VpcDns, see [Customizing VPC DNS](../advance/vpc-internal-dns.md).
+For detailed documentation on the use of VpcDns, see [Customizing VPC DNS](../vpc/vpc-internal-dns.md).
 
 ### SwitchLBRule
 
@@ -437,7 +437,7 @@ For detailed documentation on the use of VpcDns, see [Customizing VPC DNS](../ad
 | sessionAffinity | String | Standard Kubernetes service sessionAffinity value |
 | ports | []SlrPort | List of SwitchLBRule ports |
 
-For detailed configuration information of SwitchLBRule, you can refer to [Customizing VPC Internal Load Balancing health check](../advance/vpc-internal-lb.md).
+For detailed configuration information of SwitchLBRule, you can refer to [Customizing VPC Internal Load Balancing health check](../vpc/vpc-internal-lb.md).
 
 ##### SlrPort
 

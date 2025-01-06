@@ -415,7 +415,7 @@
 | conditions | []VpcDnsCondition | VpcDns 状态变化信息，具体字段参考文档开头 Condition 定义 |
 | active | Bool | VpcDns 是否正在使用 |
 
-VpcDns 的详细使用文档，可以参考 [自定义 VPC 内部 DNS](../advance/vpc-internal-dns.md)。
+VpcDns 的详细使用文档，可以参考 [自定义 VPC 内部 DNS](../vpc/vpc-internal-dns.md)。
 
 ### SwitchLBRule
 
@@ -437,7 +437,7 @@ VpcDns 的详细使用文档，可以参考 [自定义 VPC 内部 DNS](../advanc
 | sessionAffinity | String | 标准 Kubernetes Service 中 sessionAffinity 取值 |
 | ports | []SlrPort | SwitchLBRule 端口列表 |
 
-SwitchLBRule 的详细配置信息，可以参考 [自定义 VPC 内部负载均衡](../advance/vpc-internal-lb.md)。
+SwitchLBRule 的详细配置信息，可以参考 [自定义 VPC 内部负载均衡](../vpc/vpc-internal-lb.md)。
 
 ##### SlrPort
 

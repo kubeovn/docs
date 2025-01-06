@@ -21,8 +21,6 @@ nav:
       - IP 池使用: "guide/ippool.md"
       - 自定义路由: "guide/custom-routes.md"
       - EIP 和 SNAT 配置: "guide/eip-snat.md"
-      - VPC 使用: "guide/vpc.md"
-      - VPC QoS 配置: "guide/vpc-qos.md"
       - 容器网络 QoS 配置: "guide/qos.md"
       - Webhook 使用: "guide/webhook.md"
       - 流量镜像: "guide/mirror.md"
@@ -30,6 +28,22 @@ nav:
       - LoadBalancer 类型 Service: "guide/loadbalancer-service.md"
       - 配置监控和面板: "guide/prometheus-grafana.md"
       - 配置原生 Prometheus: "guide/prometheus.md"
+  - KubeVirt:
+      - 固定 VM IP: "kubevirt/static-ip.md"
+      - VM 使用双栈网络: "kubevirt/dual-stack.md"
+      - 热迁移: "kubevirt/live-migration.md"
+      - 网卡动态热插拔: "kubevirt/hotplug.md"
+      - 自定义 DHCP: "kubevirt/dhcp.md"
+  - VPC 网络:
+      - VPC 入门: "vpc/vpc.md"
+      - Egress Gateway: "vpc/vpc-egress-gateway.md"
+      - Egress QoS 配置: "vpc/vpc-qos.md"
+      - 内部负载均衡: "vpc/vpc-internal-lb.md"
+      - 内部 DNS: "vpc/vpc-internal-dns.md"
+      - 安全组: "vpc/security-group.md"
+      - OVN EIP FIP SNAT 支持: "vpc/ovn-eip-fip-snat.md"
+      - OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持: "vpc/ovn-l3-ha-based-ecmp-with-bfd.md"
+      - VPC 互联: "vpc/vpc-peering.md"
   - 运维指南:
       - Kubectl 插件使用: "ops/kubectl-ko.md"
       - 删除工作节点: "ops/delete-worker-node.md"
@@ -52,11 +66,6 @@ nav:
       - Cilium 集成: "advance/with-cilium.md"
       - Cilium NetworkPolicy 支持: "advance/cilium-networkpolicy.md"
       - Cilium 网络流量观测: "advance/cilium-hubble-observe.md"
-      - DHCP 设置: "advance/dhcp.md"
-      - VPC 互联: "advance/vpc-peering.md"
-      - 自定义 VPC 内部负载均衡: "advance/vpc-internal-lb.md"
-      - 自定义 VPC 内部 DNS: "advance/vpc-internal-dns.md"
-      - VPC Egress Gateway: "advance/vpc-egress-gateway.md"
       - 外部网关设置: "advance/external-gateway.md"
       - VIP 预留设置: "advance/vip.md"
       - Mellanox 网卡 Offload 支持: "advance/offload-mellanox.md"
@@ -66,9 +75,6 @@ nav:
       - Windows 支持: "advance/windows.md"
       - DPDK 支持: "advance/dpdk.md"
       - OpenStack 集成: "advance/with-openstack.md"
-      - OVN EIP FIP SNAT 支持: "advance/ovn-eip-fip-snat.md"
-      - OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持: "advance/ovn-l3-ha-based-ecmp-with-bfd.md"
-      - SecurityGroup 使用: "advance/security-group.md"
       - OVN IPsec 支持: "advance/ovn-ipsec.md"
       - OVN 流量镜像: "advance/ovn-remote-port-mirroring.md"
       - 节点本地 DNS 缓存和 Kube-OVN 适配: "advance/node-local-dns.md"
@@ -221,8 +227,8 @@ plugins:
             配置原生 Prometheus: Config Native Prometheus
             Iptables 规则: Iptables Rules
             kube-ovn-pinger 参数描述: kube-ovn-pinger args description
-            自定义 VPC 内部负载均衡: VPC Internal Load Balancer
-            自定义 VPC 内部 DNS: VPC Internal DNS
+            内部负载均衡: Internal Load Balancer
+            内部 DNS: Internal DNS
             Kube-OVN 接口规范: Kube-OVN API Reference
             SecurityGroup 使用: SecurityGroup Usage
             OVN IPsec 支持: OVN IPsec Support
