@@ -50,7 +50,7 @@ spec:
 
 > 您可使用任意 CNI 插件创建 NetworkAttachmentDefinition 使 VPC Egress Gateway 接入相应的网络中。
 
-关于多网卡的具体使用方法，请参考 [多网卡管理](./multi-nic.md)。
+关于多网卡的具体使用方法，请参考 [多网卡管理](../advance//multi-nic.md)。
 
 ### 创建 VPC Egress Gateway
 
