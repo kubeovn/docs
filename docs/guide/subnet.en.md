@@ -140,7 +140,7 @@ EOF
 - `excludeIps`: The address list is reserved so that the container network will not automatically assign addresses in the list, which can be used as a fixed IP address assignment segment or to avoid conflicts with existing devices in the physical network in Underlay mode.
 - `gateway`：For this subnet gateway address, Kube-OVN will automatically assign the corresponding logical gateway in Overlay mode, and the address should be the underlying physical gateway address in Underlay mode.
 - `namespaces`: Bind the list of Namespace for this Subnet. Pods under the Namespace will be assigned addresses from the current Subnet after binding.
-- `routeTable`: Associate the route table, default is main table, route table definition please defer to [Static Routes](vpc.en.md#static-routes)
+- `routeTable`: Associate the route table, default is main table, route table definition please defer to [Static Routes](../vpc/vpc.en.md#static-routes)
 
 ### Create Pod in the Subnet
 
@@ -367,7 +367,7 @@ spec:
 - [Default VPC NAT Policy Rule](../advance/nat-policy-rule.en.md)
 - [Manage QoS](./qos.en.md)
 - [Manage Multiple Interface](../advance/multi-nic.en.md)
-- [DHCP](../advance/dhcp.en.md)
+- [DHCP](../kubevirt/dhcp.en.md)
 - [External Gateway](../advance/external-gateway.en.md)
 - [Cluster Inter-Connection with OVN-IC](../advance/with-ovn-ic.en.md)
 - [VIP Reservation](../advance/vip.en.md)

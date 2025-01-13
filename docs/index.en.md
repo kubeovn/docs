@@ -23,7 +23,7 @@ Leveraging the proven capabilities of OVS/OVN in the SDN,
 Kube-OVN brings the rich capabilities of network virtualization to the cloud-native space.
 It currently supports [Subnet Management](guide/subnet.en.md), [Static IP Allocation](guide/static-ip-mac.en.md),
 [Distributed/Centralized Gateways](guide/subnet.en.md#overlay-subnet-gateway-settings), [Underlay/Overlay Hybrid Networks](start/underlay.en.md),
-[VPC Multi-Tenant Networks](guide/vpc.en.md), [Cross-Cluster Interconnect](advance/with-ovn-ic.en.md), [QoS Management](guide/qos.en.md),
+[VPC Multi-Tenant Networks](vpc/vpc.en.md), [Cross-Cluster Interconnect](advance/with-ovn-ic.en.md), [QoS Management](guide/qos.en.md),
 [Multi-NIC Management](advance/multi-nic.en.md), [ACL](guide/subnet.en.md#subnet-acl), [Traffic Mirroring](guide/mirror.en.md),
 ARM Support, [Windows Support](advance/windows.en.md), and many more.
 
