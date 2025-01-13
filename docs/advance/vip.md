@@ -174,7 +174,7 @@ virtual-ip 被配置为 VIP 预留的 IP，virtual-parents 配置为开启 AAP �
 
 除 Pod 创建时自动分配的 IP，VIP 的 IP 也被成功绑定，并且当前 subnet 内的其它 Pod 能和这两个 IP 进行通信。
 
-## 2. [Switch LB rule](../advance/vpc-internal-lb.md) vip
+## 2. [Switch LB rule](../vpc/vpc-internal-lb.md) vip
 
 ```yaml
 apiVersion: kubeovn.io/v1

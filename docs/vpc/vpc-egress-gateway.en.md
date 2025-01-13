@@ -50,7 +50,7 @@ spec:
 
 > You can create a Network Attachment Definition with any CNI plugin to access the corresponding network.
 
-For details on how to use multi-nic, please refer to [Manage Multiple Interface](./multi-nic.en.md).
+For details on how to use multi-nic, please refer to [Manage Multiple Interface](../advance/multi-nic.en.md).
 
 ### Creating a VPC Egress Gateway
 

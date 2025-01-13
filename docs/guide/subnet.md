@@ -136,7 +136,7 @@ EOF
 - `excludeIps`: 保留地址列表，容器网络将不会自动分配列表内的地址，可用做固定 IP 地址分配段，也可在 Underlay 模式下避免和物理网络中已有设备冲突。
 - `gateway`：该子网网关地址，Overlay 模式下 Kube-OVN 会自动分配对应的逻辑网关，Underlay 模式下该地址需为底层物理网关地址。
 - `namespaces`: 绑定该子网的 Namespace 列表，绑定后 Namespace 下的 Pod 将会从当前子网分配地址。
-- `routeTable`: 关联的路由表，默认关联主路由表，路由表定义请参考[静态路由](vpc.md#_3)
+- `routeTable`: 关联的路由表，默认关联主路由表，路由表定义请参考[静态路由](../vpc/vpc.md#_3)
 
 ### 验证子网绑定生效
 
@@ -354,7 +354,7 @@ spec:
 - [默认 VPC NAT 策略规则](../advance/nat-policy-rule.md)
 - [QoS 设置](./qos.md)
 - [多网卡管理](../advance/multi-nic.md)
-- [DHCP 选项](../advance/dhcp.md)
+- [DHCP 选项](../kubevirt/dhcp.md)
 - [外部网关设置](../advance/external-gateway.md)
 - [集群互联设置](../advance/with-ovn-ic.md)
 - [虚拟 IP 设置](../advance/vip.md)

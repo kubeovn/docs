@@ -170,7 +170,7 @@ Query the configuration of the Pod after the POD is created:
 
 In addition to the IP assigned automatically when the Pod is created, the IP of the VIP is also successfully bound, and other Pods in the current subnet can communicate with these two IP addresses.
 
-## 2. [Switch LB rule](../advance/vpc-internal-lb.en.md) vip
+## 2. [Switch LB rule](../vpc/vpc-internal-lb.en.md) vip
 
 ```yaml
 apiVersion: kubeovn.io/v1
