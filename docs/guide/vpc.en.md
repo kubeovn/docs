@@ -417,7 +417,7 @@ spec:
 
 ### Modify the Provider of the ovn-default Logical Switch
 
-Modify the provider of ovn-default to the provider `ovn-nad.default.ovn` configured above in nad：
+Modify the provider of ovn-default to the provider `ovn-nad.default.ovn`configured above in nad:
 
 ```yaml
 apiVersion: kubeovn.io/v1

@@ -3,7 +3,7 @@
 > 该配置针对默认 VPC 下的网络，用户自定义 VPC 请参考 [VPC 网关](./vpc.md#vpc_2)
 
 Kube-OVN 支持利用 OVN 中的 L3 Gateway 功能来实现 Pod 级别的 SNAT 和 EIP 功能。
-通过使用 SNAT，一组 Pod 可以共享一个 IP 地址对外进行访问。 通过 EIP 的功能，一个 Pod 可以直接和一个外部 IP 关联，
+通过使用 SNAT，一组 Pod 可以共享一个 IP 地址对外进行访问。通过 EIP 的功能，一个 Pod 可以直接和一个外部 IP 关联，
 外部服务可以通过 EIP 直接访问 Pod，Pod 也将通过这个 EIP 访问外部服务。
 
 ![](../static/eip-snat.png)
@@ -35,7 +35,7 @@ data:
 ```
 
 - `enable-external-gw`: 是否开启 SNAT 和 EIP 功能。
-- `type`: `centrailized` 或 `distributed`， 默认为 `centralized` 如果使用 `distributed`，则集群所有节点都需要有同名网卡来承担网关功能。
+- `type`: `centralized` 或 `distributed`，默认为 `centralized` 如果使用 `distributed`，则集群所有节点都需要有同名网卡来承担网关功能。
 - `external-gw-nodes`: `centralized` 模式下，承担网关作用的节点名，逗号分隔。
 - `external-gw-nic`: 节点上承担网关作用的网卡名。
 - `external-gw-addr`: 物理网络网关的 IP 和掩码。
@@ -43,7 +43,7 @@ data:
 
 ## 观察 OVN 和 OVS 状态确认配置生效
 
-检查 OVN-NB 状态, 确认 `ovn-external` 逻辑交换机存在，并且 `ovn-cluster-ovn-external`
+检查 OVN-NB 状态，确认 `ovn-external` 逻辑交换机存在，并且 `ovn-cluster-ovn-external`
 逻辑路由器端口上 绑定了正确的地址和 chassis。
 
 ```bash
@@ -121,6 +121,6 @@ kubectl annotate pod pod-gw ovn.kubernetes.io/routed-
 
 `kube-ovn-controller` 的部分启动参数可对 SNAT 和 EIP 功能进行高阶配置：
 
-- `--external-gateway-config-ns`: Configmap `ovn-external-gw-config` 所属 Namespace， 默认为 `kube-system`。
+- `--external-gateway-config-ns`: Configmap `ovn-external-gw-config`所属 Namespace，默认为为 `kube-system`。
 - `--external-gateway-net`: 物理网卡所桥接的网桥名，默认为 `external`。
-- `--external-gateway-vlanid`: 物理网络 Vlan Tag 号，默认为 0， 即不使用 Vlan。
+- `--external-gateway-vlanid`: 物理网络 Vlan Tag 号，默认为 0，即不使用 Vlan。

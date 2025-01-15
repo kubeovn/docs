@@ -36,8 +36,8 @@ data:
 ```
 
 - `enable-external-gw`: Whether to enable SNAT and EIP functions.
-- `type`: `centrailized` or `distributed`， Default is `centralized` If `distributed` is used, all nodes of the cluster need to have the same name NIC to perform the gateway function.
-- `external-gw-nodes`: In `centralized` mode，The names of the node performing the gateway role, comma separated.
+- `type`: `centralized` or `distributed`， Default is `centralized` If `distributed` is used, all nodes of the cluster need to have the same name NIC to perform the gateway function.
+- `external-gw-nodes`: In `centralized`mode, The names of the node performing the gateway role, comma separated..
 - `external-gw-nic`: The name of the NIC that performs the role of a gateway on the node.
 - `external-gw-addr`: The IP and mask of the physical network gateway.
 - `nic-ip`,`nic-mac`: The IP and Mac assigned to the logical gateway port needs to be an unoccupied IP and Mac for the physical subnet.
