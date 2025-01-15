@@ -190,7 +190,7 @@ data:
 ```
 
 - `image`: 网关 Pod 所使用的镜像。
-- `enable-vpc-nat-gw`： 控制是否启用 VPC 网关功能。
+- `enable-vpc-nat-gw`：控制是否启用 VPC 网关功能。
 
 ### 创建 VPC 网关并配置默认路由
 
@@ -214,7 +214,7 @@ spec:
 - `subnet`：为 VPC 内某个 Subnet 名，VPC 网关 Pod 会在该子网下用 `lanIp` 来连接租户网络。
 - `lanIp`：`subnet` 内某个未被使用的 IP，VPC 网关 Pod 最终会使用该 IP。当 VPC 配置路由需要指向当前 VpcNatGateway 时 `nextHopIP` 需要设置为这个 `lanIp`。
 - `selector`：VpcNatGateway Pod 的节点选择器，格式和 Kubernetes 中的 NodeSelector 格式相同。
-- `externalSubnets`： VPC 网关使用的外部网络，如果不配置则默认使用 `ovn-vpc-external-network`，当前版本只支持配置一个外部网络。
+- `externalSubnets`：VPC 网关使用的外部网络，如果不配置则默认使用 `ovn-vpc-external-network`，当前版本只支持配置一个外部网络。
 
 其他可配参数：
 
@@ -265,7 +265,7 @@ spec:
   externalSubnet: ovn-vpc-external-network
 ```
 
-- `externalSubnet`： EIP 所在外部网络名称，如果不指定则默认为 `ovn-vpc-external-network`，如果指定则必须为所在 VPC 网关的 `externalSubnets` 中的一个。
+- `externalSubnet`：EIP 所在外部网络名称，如果不指定则默认为 `ovn-vpc-external-network`，如果指定则必须为所在 VPC 网关的 `externalSubnets` 中的一个。
 
 ### 创建 DNAT 规则
 
@@ -502,7 +502,7 @@ data:
 - `coredns-vip`：为 coredns 提供 lb 服务的 vip。
 - `nad-name`：配置的 `network-attachment-definitions` 资源名称。
 - `nad-provider`：使用的 provider 名称。
-- `k8s-service-host`：（可缺省） 用于 coredns 访问 k8s apiserver 服务的 ip。
+- `k8s-service-host`：（可缺省）用于 coredns 访问 k8s apiserver 服务的 ip。
 - `k8s-service-port`：（可缺省）用于 coredns 访问 k8s apiserver 服务的 port。
 
 ### 部署 vpc-dns 依赖资源
@@ -596,7 +596,7 @@ spec:
   subnet: cjh-subnet-1
 ```
 
-- `vpc`： 用于部署 dns 组件的 vpc 名称。
+- `vpc`：用于部署 dns 组件的 vpc 名称。
 - `subnet`：用于部署 dns 组件的子名称。
 
 查看资源信息：
