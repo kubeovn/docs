@@ -239,6 +239,7 @@ plugins:
             使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: Use Sealos to Deploy Kubernetes and Kube-OVN
             版本管理: Release Management
             Annotation 使用说明: Annotation Usage
+            VM 固定 IP: Fixed VM IP
         - locale: zh
           default: true
           name: 简体中文
