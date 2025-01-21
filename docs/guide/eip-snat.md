@@ -121,6 +121,6 @@ kubectl annotate pod pod-gw ovn.kubernetes.io/routed-
 
 `kube-ovn-controller` 的部分启动参数可对 SNAT 和 EIP 功能进行高阶配置：
 
-- `--external-gateway-config-ns`: Configmap `ovn-external-gw-config`所属 Namespace，默认为为 `kube-system`。
+- `--external-gateway-config-ns`: Configmap `ovn-external-gw-config` 所属 Namespace，默认为为 `kube-system`。
 - `--external-gateway-net`: 物理网卡所桥接的网桥名，默认为 `external`。
 - `--external-gateway-vlanid`: 物理网络 Vlan Tag 号，默认为 0，即不使用 Vlan。
