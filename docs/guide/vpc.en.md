@@ -223,7 +223,7 @@ metadata:
   name: eip-static
 spec:
   natGwDp: gw1
-  v4ip: 10.0.1.111
+  v4ip: 192.168.0.100
 ```
 
 Specify the external network on which the EIP is located:
