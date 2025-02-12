@@ -82,14 +82,35 @@ It can be observed that during the VM live migration process, the SSH connection
 During the live migration process, Kube-OVN implements techniques inspired by the Red Hat team's [Live migration - Reducing downtime with multi-chassis port bindings](https://www.openvswitch.org/support/ovscon2022/slides/Live-migration-with-OVN.pdf).
 
 To ensure network consistency between the source and target virtual machines during migration, the same IP address exists on the network for both the source and target VMs. This requires handling network conflicts and traffic confusion. The specific steps are as follows:
+Here’s the translation:
 
 1. KubeVirt initiates the migration and creates the corresponding Pod on the target machine.
-2. Kube-OVN detects that the target Pod is for a live migration and reuses the network port information from the source Pod.
-3. Kube-OVN sets up traffic replication, causing network traffic to be duplicated to both the source Pod and the target Pod, reducing downtime caused by control plane switching during network transition.
-4. Kube-OVN temporarily disables the network port of the target Pod, preventing the target Pod from actually receiving duplicated traffic and avoiding traffic confusion.
-5. KubeVirt completes memory synchronization and deactivates the source Pod, causing the source Pod to stop handling network traffic.
-6. KubeVirt activates the target Pod. At this point, libvirt sends a RARP request to activate the target Pod's network port, and the target Pod begins handling traffic.
-7. KubeVirt deletes the source Pod, completing the live migration process.
-8. Kube-OVN listens for migration completion events by watching the Migration CR and stops traffic replication once the migration is complete.
 
-Network interruptions primarily occur between steps 5 and 6. The duration of the network interruption mainly depends on the time taken by libvirt to send the RARP request. Our tests show that the network interruption time can be controlled within 0.5 seconds, and TCP connections remain uninterrupted.
+   ![image](../static/lm-1.png)
+
+2. Kube-OVN detects that the Pod is the target Pod for a live migration and reuses the network port information from the source Pod.
+
+   ![image](../static/lm-2.png)
+
+3. Kube-OVN sets up traffic replication, so network traffic will be copied to both the source Pod and the target Pod. This helps reduce the interruption time caused by control plane switch during network migration. The network port of the target Pod is temporarily disabled, so the target Pod will not actually receive the replicated traffic, avoiding traffic confusion.
+
+   ![image](../static/lm-3.png)
+
+4. KubeVirt synchronizes the VM memory.
+
+   ![image](../static/lm-4.png)
+
+5. KubeVirt completes the memory synchronization and deactivates the source Pod. At this point, the source Pod will not handle network traffic.
+
+   ![image](../static/lm-5.png)
+
+6. KubeVirt activates the target Pod. At this point, libvirt sends a RARP to activate the network port of the target Pod, and the target Pod starts processing traffic.
+
+   ![image](../static/lm-6.png)
+
+7. KubeVirt deletes the source Pod, completing the live migration. Kube-OVN listens for the migration completion event through the Watch Migration CR and stops traffic replication after the migration is finished.
+
+   ![image](../static/lm-7.png)
+
+In this process, the network interruption mainly occurs between steps 5 and 6. The network interruption time primarily depends on the time it takes for libvirt to send the RARP. Tests show that the network interruption time can be controlled within 0.5 seconds, and TCP connections will not experience interruptions due to the retry mechanism.
+

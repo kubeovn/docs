@@ -84,12 +84,31 @@ Kube-OVN 在热迁移的过程中实现借鉴了来自红帽团队的[Live migra
 在热迁移过程中为了保证源虚拟机和目标虚拟机的网络一致，在迁移过程中网络中会同时存在两个相同的 IP 地址，在这个过程中需要处理网络冲突和流量混乱。具体步骤如下：
 
 1. KubeVirt 发起迁移，并在目标机器创建对应的 Pod。
-2. Kube-OVN 检测到该 Pod 为热迁移的目标 Pod，复用源 Pod 的网络端口信息。
-3. Kube-OVN 设置流量复制，此时网络流量会同时复制到源 Pod 和目标 Pod，以减少网络切换时控制平面切换带来的中断时间。
-4. Kube-OVN 将目标 Pod 的网络端口暂时停用，因此目标 Pod 不会真正接受到复制的流量，避免流量混乱。
-5. KubeVirt 完成内存的同步，deactive 源 Pod，此时源 Pod 将不会处理网络流量。
-6. KubeVirt 激活目标 Pod，此时 libvirt 会发送 RARP 从而激活目标 Pod 的网络端口，目标 Pod 开始流量处理。
-7. KubeVirt 删除源 Pod，完成热迁移处理。
-8. Kube-OVN 通过 Watch Migration CR 来监听迁移完成事件，迁移完成后关闭流量复制。
 
-这个过程中网络中断主要发生在步骤 5 和步骤 6 之间，网络中断时间主要取决于 libvirt 的 RARP 发送时间，经测试网络中断时间可以控制在 0.5 秒以内，且不会出现 TCP 连接中断。
+  ![image](../static/lm-1.png)
+
+2. Kube-OVN 检测到该 Pod 为热迁移的目标 Pod，复用源 Pod 的网络端口信息。
+
+  ![image](../static/lm-2.png)
+
+3. Kube-OVN 设置流量复制，此时网络流量会同时复制到源 Pod 和目标 Pod，以减少网络切换时控制平面切换带来的中断时间，同时将目标 Pod 的网络端口暂时停用，因此目标 Pod 不会真正接受到复制的流量，避免流量混乱。
+  
+  ![image](../static/lm-3.png)
+
+4. KubeVirt 进行 VM 内存同步。
+
+  ![image](../static/lm-4.png)
+
+5. KubeVirt 完成内存的同步，deactive 源 Pod，此时源 Pod 将不会处理网络流量。
+
+  ![image](../static/lm-5.png)
+
+6. KubeVirt 激活目标 Pod，此时 libvirt 会发送 RARP 从而激活目标 Pod 的网络端口，目标 Pod 开始流量处理。
+
+  ![image](../static/lm-6.png)
+
+7. KubeVirt 删除源 Pod，完成热迁移，Kube-OVN 通过 Watch Migration CR 来监听迁移完成事件，迁移完成后关闭流量复制。
+
+  ![image](../static/lm-7.png)
+
+这个过程中网络中断主要发生在步骤 5 和步骤 6 之间，网络中断时间主要取决于 libvirt 的 RARP 发送时间，经测试网络中断时间可以控制在 0.5 秒以内，且 TCP 连接由于有重试机制不会出现中断。
