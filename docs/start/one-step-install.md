@@ -43,6 +43,8 @@ TUNNEL_TYPE="geneve"                   # 隧道封装协议，可选 geneve, vxl
 
 ### 执行安装脚本
 
+> 脚本执行需要有 root 权限
+
 `bash install.sh`
 
 等待安装完成。

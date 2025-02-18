@@ -44,6 +44,8 @@ You can also use regular expression to math NIC names，such as `IFACE=enp6s0f0,
 
 ### Run the Script
 
+> The script needs to be executed with root permission
+
 `bash install.sh`
 
 Wait Kube-OVN ready.
