@@ -1,6 +1,6 @@
 # LoadBalancer 类型 Service
 
-Kube-OVN 已经支持了 VPC 和 VPC 网关的实现，具体配置可以参考 [VPC 配置](vpc.md)。
+Kube-OVN 已经支持了 VPC 和 VPC 网关的实现，具体配置可以参考 [VPC 配置](../vpc/vpc.md)。
 
 由于 VPC 网关的使用比较复杂，基于 VPC 网关的实现做了简化，支持在默认 VPC 下创建 `LoadBalancer` 类型的 Service，实现通过 LoadBalancerIP 来访问默认 VPC 下的 Service。
 
@@ -8,7 +8,7 @@ Kube-OVN 已经支持了 VPC 和 VPC 网关的实现，具体配置可以参考 
 
 1. 安装了 `multus-cni` 和 `macvlan cni`。
 2. LoadBalancer Service 的支持，是对 VPC 网关代码进行简化实现的，仍然使用 `vpc-nat-gw` 的镜像，依赖 macvlan 提供多网卡功能支持。
-3. 目前只支持在`默认 VPC` 配置，自定义 VPC 下的 LoadBalancer 支持可以参考 VPC 的文档 [VPC 配置](vpc.md)。
+3. 目前只支持在`默认 VPC` 配置，自定义 VPC 下的 LoadBalancer 支持可以参考 VPC 的文档 [VPC 配置](../vpc/vpc.md)。
 
 ## 默认 VPC LoadBalancer Service 配置步骤
 

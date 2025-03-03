@@ -1,6 +1,6 @@
 # EIP 和 SNAT 配置
 
-> 该配置针对默认 VPC 下的网络，用户自定义 VPC 请参考 [VPC 网关](./vpc.md#vpc_2)
+> 该配置针对默认 VPC 下的网络，用户自定义 VPC 请参考 [VPC 网关](../vpc/vpc.md#vpc_2)
 
 Kube-OVN 支持利用 OVN 中的 L3 Gateway 功能来实现 Pod 级别的 SNAT 和 EIP 功能。
 通过使用 SNAT，一组 Pod 可以共享一个 IP 地址对外进行访问。通过 EIP 的功能，一个 Pod 可以直接和一个外部 IP 关联，

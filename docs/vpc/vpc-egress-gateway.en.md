@@ -1,20 +1,20 @@
 # VPC Egress Gateway
 
-VPC Egress Gateway 用于控制 VPC（包括默认 VPC）内 Pod 访问外部网络。VPC Egress Gateway 参考了 VPC NAT Gateway 的设计，在 VPC NAT Gateway 的基础上实现了基于 ECMP 路由的负载均衡以及基于 BFD 的高可用，并支持 IPv6 以及双栈。
+VPC Egress Gateway is used to control the access of Pods within VPCs (including the default VPC) to the external network. VPC Egress Gateway refers to the design of VPC NAT Gateway, and implements load balancing based on ECMP routing and high availability based on BFD. It also supports IPv6 and dual-stack.
 
-> VPC Egress Gateway 支持默认 VPC 及自定义 VPC。
+> VPC Egress Gateway supports both the default VPC and custom VPCs.
 
-## 使用要求
+## Requirements
 
-VPC Egress Gateway 与 VPC NAT Gateway 相同，都需要先在集群中 [部署 Multus-CNI](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md){: target = "_blank" }。
+The VPC Egress Gateway is the same as the VPC NAT Gateway in that it requires [Multus-CNI](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md){: target = "_blank" }.
 
-> 使用 VPC Egress Gateway 无需配置任何 ConfigMap。
+> No ConfigMap needs to be configured to use VPC Egress Gateway.
 
-## 使用方法
+## Usage
 
-### 创建 NetworkAttachmentDefinition
+### Creating a Network Attachment Definition
 
-VPC Egress Gateway 使用多网卡来同时接入 VPC 及外部网络，因此需要先创建 NetworkAttachmentDefinition 用于连接外部网络。使用 `macvlan` 插件并由 Kube-OVN 提供 IPAM 的示例如下：
+The VPC Egress Gateway uses multiple NICs to access both the VPC and the external network, so you need to create a Network Attachment Definition to connect to the external network. An example of using the `macvlan` plugin with IPAM provided by Kube-OVN is shown below:
 
 ```yaml
 apiVersion: k8s.cni.cncf.io/v1
@@ -48,13 +48,13 @@ spec:
     - 172.17.0.0..172.17.0.10
 ```
 
-> 您可使用任意 CNI 插件创建 NetworkAttachmentDefinition 使 VPC Egress Gateway 接入相应的网络中。
+> You can create a Network Attachment Definition with any CNI plugin to access the corresponding network.
 
-关于多网卡的具体使用方法，请参考 [多网卡管理](./multi-nic.md)。
+For details on how to use multi-nic, please refer to [Manage Multiple Interface](../advance/multi-nic.en.md).
 
-### 创建 VPC Egress Gateway
+### Creating a VPC Egress Gateway
 
-创建 VPC Egress Gateway 资源，示例如下：
+Create a VPC Egress Gateway resource as shown in the example below:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -72,9 +72,9 @@ spec:
         - ovn-default
 ```
 
-上述资源会在 default 命名空间下为 VPC `ovn-cluster` 创建一个名为 gateway1 的单副本 VPC Egress Gateway，`ovn-cluster` 下 `ovn-default` 子网（10.16.0.0/16）下的所有 Pod 将通过 `macvlan1` 子网以 SNAT 的方式访问外部网络。
+The above resource creates a VPC Egress Gateway named gateway1 for VPC `ovn-cluster` under the default namespace, and all Pods under the `ovn-default` subnet (10.16.0.0/16) within `ovn-cluster` VPC will access the external network via the `macvlan1` subnet with SNAT applied.
 
-创建完成后，查看 VPC Egress Gateway：
+After the creation is complete, check out the VPC Egress Gateway resource:
 
 ```shell
 $ kubectl get veg gateway1
@@ -82,7 +82,7 @@ NAME       VPC           REPLICAS   BFD ENABLED   EXTERNAL SUBNET   PHASE       
 gateway1   ovn-cluster   1          false         macvlan1          Completed   true    13s
 ```
 
-查看更多信息：
+To view more informations:
 
 ```shell
 kubectl get veg gateway1 -o wide
@@ -90,7 +90,7 @@ NAME       VPC           REPLICAS   BFD ENABLED   EXTERNAL SUBNET   PHASE       
 gateway1   ovn-cluster   1          false         macvlan1          Completed   true    ["10.16.0.12"]   ["172.17.0.11"]   ["kube-ovn-worker"]   82s
 ```
 
-查看工作负载：
+To view the workload:
 
 ```shell
 $ kubectl get deployment -l ovn.kubernetes.io/vpc-egress-gateway=gateway1
@@ -102,7 +102,7 @@ NAME                       READY   STATUS    RESTARTS   AGE     IP           NOD
 gateway1-b9f8b4448-76lhm   1/1     Running   0          4m48s   10.16.0.12   kube-ovn-worker   <none>           <none>
 ```
 
-查看 Pod 中的 IP、路由及 iptables 规则：
+To view IP addresses, routes, and iptables rules in the Pod:
 
 ```shell
 $ kubectl exec gateway1-b9f8b4448-76lhm -c gateway -- ip address show
@@ -138,7 +138,7 @@ $ kubectl exec gateway1-b9f8b4448-76lhm -c gateway -- iptables -t nat -S
 -A POSTROUTING -s 10.16.0.0/16 -j MASQUERADE --random-fully
 ```
 
-在 Gateway Pod 中抓包验证网络流量：
+Capture packets in the Gateway Pod to verify network traffic:
 
 ```shell
 $ kubectl exec -ti gateway1-b9f8b4448-76lhm -c gateway -- bash
@@ -155,7 +155,7 @@ tcpdump: listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot leng
     172.17.0.1 > 10.16.0.9: ICMP echo reply, id 37989, seq 0, length 64
 ```
 
-OVN Logical Router 中会自动创建路由策略（自定义 VPC 中是静态路由）：
+Routing policies (static routes for custom VPCs) are automatically created on the OVN Logical Router:
 
 ```shell
 $ kubectl ko nbctl lr-policy-list ovn-cluster
@@ -171,7 +171,7 @@ Routing Policies
      29000        ip4.src == $ovn.default.kube.ovn.worker_ip4         reroute                100.64.0.3
 ```
 
-如果您需要开启多副本负载均衡，修改 `.spec.replicas` 即可，示例如下：
+If you need to enable load balancing, modify `.spec.replicas` as shown in the following example:
 
 ```shell
 $ kubectl scale veg gateway1 --replicas=2
@@ -199,9 +199,9 @@ Routing Policies
      29000        ip4.src == $ovn.default.kube.ovn.worker_ip4         reroute                100.64.0.3
 ```
 
-### 开启 BFD 高可用
+### Enabling BFD-based High Availability
 
-BFD 高可用依赖 VPC 的 BFD LRP 功能，因此需要先修改 VPC 资源，开启 BFD Port。示例如下：
+BFD-based high availability relies on the VPC BFD LRP function, so you need to modify the VPC resource to enable BFD Port. Here is an example:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -223,7 +223,7 @@ spec:
   cidrBlock: 192.168.0.0/24
 ```
 
-开启 BFD Port 后，对应的 OVN LR 上会自动创建一个专用于 BFD 的 LRP：
+After the BFD Port is enabled, an LRP dedicated to BFD is automatically created on the corresponding OVN LR:
 
 ```shell
 $ kubectl ko nbctl show vpc1
@@ -236,7 +236,7 @@ router 0c1d1e8f-4c86-4d96-88b2-c4171c7ff824 (vpc1)
         networks: ["192.168.0.1/24"]
 ```
 
-完成后，将 VPC Egress Gateway 的 `.spec.bfd.enabled` 设置为 `true` 即可。示例如下：
+After that, set `.spec.bfd.enabled` to `true` in VPC Egress Gateway. An example is shown below:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -257,7 +257,7 @@ spec:
         - 192.168.0.0/24
 ```
 
-查看 VPC Egress Gateway 信息：
+To view VPC Egress Gateway information:
 
 ```shell
 $ kubectl get veg gateway2 -o wide
@@ -297,7 +297,7 @@ options             : {}
 status              : up
 ```
 
-进入 Pod 查看 BFD 连接：
+To view BFD connections:
 
 ```shell
 $ kubectl exec gateway2-fcc6b8b87-8lgvx -c bfdd -- bfdd-control status
@@ -311,72 +311,72 @@ Session 1
  id=1 local=192.168.0.2 (p) remote=10.255.255.255 state=Up
 ```
 
-### 配置参数
+### Configuration Parameters
 
 #### VPC BFD Port
 
-| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| Fields | Type | Optional | Default Value | Description | Example |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `enabled` | `boolean` | 是 | `false` | 是否开启 BFD Port。 | `true` |
-| `ip` | `string` | 否 | - | BFD Port 使用的 IP 地址，不可与其它地址冲突。支持 IPv6 及双栈。 | `169.255.255.255` / `fdff::1` / `169.255.255.255,fdff::1` |
-| `nodeSelector` | `object` | 是 | - | 用于选择承载 BFD Port 工作节点的标签选择器。BFD Port 会绑定一个由选择出来的节点组成的 OVN HA Chassis Group，并以 Active/Backup 的模式工作在 Active 节点上。如果未指定 nodeSelector，Kube-OVN 会自动选择至多三个节点。您可以通过 `kubectl ko nbctl list ha_chassis_group` 查看当前所有的 OVN HA Chassis Group 资源。 | - |
-| `nodeSelector.matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。| - |
-| `nodeSelector.matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。| - |
+| `enabled` | `boolean` | Yes | `false` | Whether to enable the BFD Port. | `true` |
+| `ip` | `string` | No | - | The IP address used by the BFD Port. Must NOT conflict with other addresses. IPv4, IPv6 and dual-stack are supported. | `169.255.255.255` / `fdff::1` / `169.255.255.255,fdff::1` |
+| `nodeSelector` | `object` | Yes | - | Label selector used to select nodes that carries the BFD Port work. the BFD Port binds an OVN HA Chassis Group of selected nodes and works in Active/Backup mode. If this field is not specified, Kube-OVN automatically selects up to three nodes. You can view all OVN HA Chassis Group resources by executing `kubectl ko nbctl list ha_chassis_group`. | - |
+| `nodeSelector.matchLabels` | `dict/map` | Yes | - | A map of {key,value} pairs. | - |
+| `nodeSelector.matchExpressions` | `object array` | Yes | - | A list of label selector requirements. The requirements are ANDed. | - |
 
 #### VPC Egress Gateway
 
 Spec：
 
-| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| Fields | Type | Optional | Default Value | Description | Example |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `vpc` | `string` | 是 | 默认 VPC 名称（ovn-cluster） | VPC 名称。 | `vpc1` |
-| `replicas` | `integer/int32` | 是 | `1` | 副本数。 | `2` |
-| `prefix` | `string` | 是 | - | 工作负载 Deployment 名称前缀。不可修改。 | `veg-` |
-| `image` | `string` | 是 | - | 工作负载 Deployment 使用的镜像。 | `docker.io/kubeovn/kube-ovn:v1.14.0-debug` |
-| `internalSubnet` | `string` | 是 | VPC 默认子网名称 | 接入 VPC 网络的子网名称。 | `subnet1` |
-| `externalSubnet` | `string` | 否 | - | 接入外部网络的子网名称。 | `ext1` |
-| `internalIPs` | `string array` | 是 | - | 接入 VPC 网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
-| `externalIPs` | `string array` | 是 | - | 接入外部网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
-| `bfd` | `object` | 是 | - | BFD 配置。| - |
-| `policies` | `object array` | 是 | - | Egress 策略。必须配置至少一条策略。| - |
-| `nodeSelector` | `object array` | 是 | - | 工作负载的节点选择器，工作负载（Deployment/Pod）将运行在被选择的节点上。| - |
+| `vpc` | `string` | Yes | Name of the default VPC (ovn-cluster) | VPC name. | `vpc1` |
+| `replicas` | `integer/int32` | Yes | `1` | Replicas. | `2` |
+| `prefix` | `string` | Yes | - | Prefix of the workload deployment name. This field is immutable. | `veg-` |
+| `image` | `string` | Yes | - | The image used by the workload deployment. | `docker.io/kubeovn/kube-ovn:v1.14.0-debug` |
+| `internalSubnet` | `string` | Yes | Name of the default subnet within the VPC. | Name of the subnet used to access the VPC network. | `subnet1` |
+| `externalSubnet` | `string` | No | - | Name of the subnet used to access the external network. | `ext1` |
+| `internalIPs` | `string array` | Yes | - | IP addresses used for accessing the VPC network. IPv4, IPv6 and dual-stack are supported. The number of IPs specified must NOT be less than `replicas`. It is recommended to set the number to `<replicas> + 1` to avoid extreme cases where the Pod is not created properly. | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
+| `externalIPs` | `string array` | Yes | - | IP addresses used for accessing the external network. IPv4, IPv6 and dual-stack are supported. The number of IPs specified must NOT be less than `replicas`. It is recommended to set the number to `<replicas> + 1` to avoid extreme cases where the Pod is not created properly. | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
+| `bfd` | `object` | Yes | - | BFD Configuration.| - |
+| `policies` | `object array` | Yes | - | Egress policies. At least one policy must be configured. | - |
+| `nodeSelector` | `object array` | Yes | - | Node selector applied to the workload. The workload (Deployment/Pod) will run on the selected nodes. | - |
 
-BFD 配置：
+BFD Configuration:
 
-| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| Fields | Type | Optional | Default Value | Description | Example |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `enabled` | `boolean` | 是 | `false` | 是否开启 BFD。 | `true` |
-| `minRX` | `integer/int32` | 是 | `1000` | BFD minRX 值（ms）。 | `500` |
-| `minTX` | `integer/int32` | 是 | `1000` | BFD minTX 值（ms）。 | `500` |
-| `multiplier` | `integer/int32` | 是 | `3` | BFD multiplier 值。 | `1` |
+| `enabled` | `boolean` | Yes | `false` | Whether to enable BFD. | `true` |
+| `minRX` | `integer/int32` | Yes | `1000` |  BFD minRX in milliseconds. | `500` |
+| `minTX` | `integer/int32` | Yes | `1000` | BFD minTX in milliseconds.  | `500` |
+| `multiplier` | `integer/int32` | Yes | `3` | BFD multiplier. | `1` |
 
-Egress 策略：
+Egress Policies:
 
-| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| Fields | Type | Optional | Default Value | Description | Example |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `snat` | `boolean` | 是 | `false` | 是否开启 SNAT/MASQUERADE。 | `true` |
-| `ipBlocks` | `string array` | 是 | - | 应用于此 Gateway 的 IP 范围段。支持 IPv6。 | `192.168.0.1` / `192.168.0.0/24` |
-| `subnets` | `string array` | 是 | - | 应用于此 Gateway 的 VPC 子网名称。支持 IPv6 子网及双栈子网。 | `subnet1` |
+| `snat` | `boolean` | Yes | `false` | Whether to enable SNAT/MASQUERADE. | `true` |
+| `ipBlocks` | `string array` | Yes | - | IP range segments applied to this Gateway. Both IPv4 and IPv6 are supported. | `192.168.0.1` / `192.168.0.0/24` |
+| `subnets` | `string array` | Yes | - | The VPC subnet name applied to this Gateway. IPv4, IPv6 and dual-stack subnets are supported. | `subnet1` |
 
-节点选择器：
+Node selector:
 
-| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| Fields | Type | Optional | Default Value | Description | Example |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。| - |
-| `matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。| - |
-| `matchFields` | `object array` | 是 | - | 表达式形式的字段选择器。| - |
+| `matchLabels` | `dict/map` | Yes | - | A map of {key,value} pairs. | - |
+| `matchExpressions` | `object array` | Yes | - | A list of label selector requirements. The requirements are ANDed. | - |
+| `matchFields` | `object array` | Yes | - | A list of field selector requirements. The requirements are ANDed. | - |
 
 Status：
 
-| 字段 | 类型 | 说明 | 示例 |
+| Fields | Type | Description | Example |
 | :--- | :--- | :--- | :--- |
-| `ready` | `boolean` | Gateway 是否就绪。 | `true` |
-| `phase` | `string` | Gateway 处理阶段。 | `Pending` / `Processing` / `Completed` |
-| `internalIPs` | `string array` | 接入 VPC 网络使用的 IP 地址。| - |
-| `externalIPs` | `string array` | 接入外部网络使用的 IP 地址。| - |
-| `workload` | `object` | 工作负载信息。| - |
-| `workload.apiVersion` | `string` | 工作负载 API 版本。| `apps/v1` |
-| `workload.kind` | `string` | 工作负载类型。| `Deployment` |
-| `workload.name` | `string` | 工作负载名称。| `gateway1` |
-| `workload.nodes` | `string array` | 工作负载所在的节点名称。| - |
+| `ready` | `boolean` | Whether the gateway is ready. | `true` |
+| `phase` | `string` | The gateway processing phase. | `Pending` / `Processing` / `Completed` |
+| `internalIPs` | `string array` | IP addresses used to access the VPC network. | - |
+| `externalIPs` | `string array` | IP addresses used to access the external network. | - |
+| `workload` | `object` | Workload information. | - |
+| `workload.apiVersion` | `string` | Workload API version. | `apps/v1` |
+| `workload.kind` | `string` | Workload kind. | `Deployment` |
+| `workload.name` | `string` | Workload name. | `gateway1` |
+| `workload.nodes` | `string array` | Names of the nodes where the workload resides. | - |
 | `conditions` | `object array` | - | - |
