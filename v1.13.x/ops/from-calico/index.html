@@ -22,7 +22,7 @@ sysctl<span class=w> </span>net.ipv4.conf.eth0.rp_filter<span class=o>=</span><s
 <span class=w>  </span><span class=k>done</span>
 <span class=k>done</span>
 </code></pre></div> <p>按需修改以下配置：</p> <div class=highlight><pre><span></span><code><span class=nv>REGISTRY</span><span class=o>=</span><span class=s2>&quot;kubeovn&quot;</span><span class=w>                     </span><span class=c1># 镜像仓库地址</span>
-<span class=nv>VERSION</span><span class=o>=</span><span class=s2>&quot;v1.13.1&quot;</span><span class=w>                      </span><span class=c1># 镜像版本/Tag</span>
+<span class=nv>VERSION</span><span class=o>=</span><span class=s2>&quot;v1.13.3&quot;</span><span class=w>                      </span><span class=c1># 镜像版本/Tag</span>
 <span class=nv>POD_CIDR</span><span class=o>=</span><span class=s2>&quot;10.16.0.0/16&quot;</span><span class=w>                </span><span class=c1># 默认子网 CIDR 不要和 SVC/NODE/JOIN CIDR 重叠</span>
 <span class=nv>SVC_CIDR</span><span class=o>=</span><span class=s2>&quot;10.96.0.0/12&quot;</span><span class=w>                </span><span class=c1># 需要和 apiserver 的 service-cluster-ip-range 保持一致</span>
 <span class=nv>JOIN_CIDR</span><span class=o>=</span><span class=s2>&quot;100.64.0.0/16&quot;</span><span class=w>              </span><span class=c1># Pod 和主机通信网络 CIDR，不要和 SVC/NODE/POD CIDR 重叠 </span>
