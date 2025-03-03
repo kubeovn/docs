@@ -32,7 +32,6 @@ nav:
       - 固定 VM IP: "kubevirt/static-ip.md"
       - VM 使用双栈网络: "kubevirt/dual-stack.md"
       - 热迁移: "kubevirt/live-migration.md"
-      - 网卡动态热插拔: "kubevirt/hotplug.md"
       - 自定义 DHCP: "kubevirt/dhcp.md"
   - VPC 网络:
       - VPC 入门: "vpc/vpc.md"
@@ -175,6 +174,14 @@ plugins:
             自定义路由: Custom Routes
             子网使用: Config Subnet
             LoadBalancer 类型 Service: LoadBalancer Type Service
+            VPC 网络: VPC Network
+            固定 VM IP: Fixed VM IP
+            VM 使用双栈网络: VM Use DualStack Network
+            热迁移: Live Migration
+            自定义 DHCP: Custom DHCP
+            VPC 入门: VPC Introduction
+            Egress Gateway: Egress Gateway
+            Egress QoS 配置: Egress QoS Configuration
             VPC 使用: Config VPC
             VPC QoS 配置: VPC QoS
             容器网络 QoS 配置: Manage QoS
@@ -240,6 +247,7 @@ plugins:
             版本管理: Release Management
             Annotation 使用说明: Annotation Usage
             VM 固定 IP: Fixed VM IP
+            安全组: Security Group
         - locale: zh
           default: true
           name: 简体中文
