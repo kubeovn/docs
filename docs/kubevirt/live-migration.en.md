@@ -113,4 +113,3 @@ Here’s the translation:
    ![image](../static/lm-7.png)
 
 In this process, the network interruption mainly occurs between steps 5 and 6. The network interruption time primarily depends on the time it takes for libvirt to send the RARP. Tests show that the network interruption time can be controlled within 0.5 seconds, and TCP connections will not experience interruptions due to the retry mechanism.
-

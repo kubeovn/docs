@@ -137,4 +137,3 @@ spec:
             userDataBase64: SGkuXG4=
 EOF
 ```
-
