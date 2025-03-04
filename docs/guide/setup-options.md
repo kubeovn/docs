@@ -201,7 +201,7 @@ args:
 ## Kubevirt VM 固定地址开启设置
 
 针对 Kubevirt 创建的 VM 实例，`kube-ovn-controller` 可以按照类似 StatefulSet Pod 的方式进行 IP 地址分配和管理。
-以达到 VM 实例在生命周期内启停，升级，迁移等操作过程中地址固定不变，更符虚拟化合用户的实际使用体验。
+以达到 VM 实例在生命周期内启停，升级，迁移等操作过程中地址固定不变，更符合虚拟化合用户的实际使用体验。
 
 该功能在 1.10.6 后默认开启，若要关闭此功能，需要在 `kube-ovn-controller` Deployment 的启动命令中设置如下参数：
 
