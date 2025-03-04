@@ -252,11 +252,11 @@ plugins:
           default: true
           name: 简体中文
           site_name: Kube-OVN 文档
-  # - git-revision-date-localized:
-  #     type: date
-  #     enable_creation_date: true
-  # - git-committers:
-  #     repository: kubeovn/docs
+  - git-revision-date-localized:
+      type: date
+      enable_creation_date: true
+  - git-committers:
+      repository: kubeovn/docs
   - minify:
       minify_html: true
       htmlmin_opts:
