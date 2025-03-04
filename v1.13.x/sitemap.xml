@@ -36,13 +36,6 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/cilium-networkpolicy/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/advance/dhcp/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/advance/dhcp/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/dhcp/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/advance/dpdk/</loc>
         <lastmod>2025-03-04</lastmod>
         <changefreq>daily</changefreq>
@@ -120,25 +113,11 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/overlay-with-route/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/advance/ovn-eip-fip-snat/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/advance/ovn-eip-fip-snat/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/ovn-eip-fip-snat/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/advance/ovn-ipsec/</loc>
         <lastmod>2025-03-04</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/advance/ovn-ipsec/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/ovn-ipsec/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/advance/ovn-l3-ha-based-ecmp-with-bfd/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/advance/ovn-l3-ha-based-ecmp-with-bfd/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/ovn-l3-ha-based-ecmp-with-bfd/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/advance/ovn-remote-port-mirroring/</loc>
@@ -155,39 +134,11 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/performance-tuning/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/advance/security-group/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/advance/security-group/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/security-group/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/advance/vip/</loc>
         <lastmod>2025-03-04</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/advance/vip/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/vip/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/advance/vpc-internal-dns/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/advance/vpc-internal-dns/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/vpc-internal-dns/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/advance/vpc-internal-lb/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/advance/vpc-internal-lb/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/vpc-internal-lb/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/advance/vpc-peering/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/advance/vpc-peering/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/advance/vpc-peering/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/advance/windows/</loc>
@@ -330,25 +281,39 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/guide/subnet/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/guide/vpc-qos/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/guide/vpc-qos/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/guide/vpc-qos/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/guide/vpc/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/guide/vpc/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/guide/vpc/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/guide/webhook/</loc>
         <lastmod>2025-03-04</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/guide/webhook/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/guide/webhook/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/kubevirt/dhcp/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/kubevirt/dhcp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/kubevirt/dhcp/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/kubevirt/dual-stack/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/kubevirt/dual-stack/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/kubevirt/dual-stack/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/kubevirt/live-migration/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/kubevirt/live-migration/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/kubevirt/live-migration/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/kubevirt/static-ip/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/kubevirt/static-ip/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/kubevirt/static-ip/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/ops/change-default-subnet/</loc>
@@ -547,6 +512,62 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/start/uninstall/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/vpc/ovn-eip-fip-snat/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/vpc/ovn-eip-fip-snat/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/vpc/ovn-eip-fip-snat/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/vpc/ovn-l3-ha-based-ecmp-with-bfd/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/vpc/ovn-l3-ha-based-ecmp-with-bfd/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/vpc/ovn-l3-ha-based-ecmp-with-bfd/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/vpc/security-group/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/vpc/security-group/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/vpc/security-group/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/vpc/vpc-internal-dns/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/vpc/vpc-internal-dns/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/vpc/vpc-internal-dns/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/vpc/vpc-internal-lb/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/vpc/vpc-internal-lb/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/vpc/vpc-internal-lb/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/vpc/vpc-peering/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/vpc/vpc-peering/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/vpc/vpc-peering/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/vpc/vpc-qos/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/vpc/vpc-qos/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/vpc/vpc-qos/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/vpc/vpc/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/vpc/vpc/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/vpc/vpc/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/en/</loc>
         <lastmod>2025-03-04</lastmod>
         <changefreq>daily</changefreq>
@@ -580,13 +601,6 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/advance/cilium-networkpolicy/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/cilium-networkpolicy/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/dhcp/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/advance/dhcp/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/dhcp/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/dpdk/</loc>
@@ -666,25 +680,11 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/overlay-with-route/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/ovn-eip-fip-snat/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/advance/ovn-eip-fip-snat/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/ovn-eip-fip-snat/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/ovn-ipsec/</loc>
         <lastmod>2025-03-04</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/advance/ovn-ipsec/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/ovn-ipsec/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/ovn-l3-ha-based-ecmp-with-bfd/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/advance/ovn-l3-ha-based-ecmp-with-bfd/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/ovn-l3-ha-based-ecmp-with-bfd/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/ovn-remote-port-mirroring/</loc>
@@ -701,39 +701,11 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/performance-tuning/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/security-group/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/advance/security-group/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/security-group/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/vip/</loc>
         <lastmod>2025-03-04</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/advance/vip/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/vip/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/vpc-internal-dns/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/advance/vpc-internal-dns/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/vpc-internal-dns/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/vpc-internal-lb/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/advance/vpc-internal-lb/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/vpc-internal-lb/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/vpc-peering/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/advance/vpc-peering/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xadvance/vpc-peering/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/en/advance/windows/</loc>
@@ -876,25 +848,39 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xguide/subnet/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/en/guide/vpc-qos/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/guide/vpc-qos/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xguide/vpc-qos/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.13.x/en/guide/vpc/</loc>
-        <lastmod>2025-03-04</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/guide/vpc/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xguide/vpc/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/en/guide/webhook/</loc>
         <lastmod>2025-03-04</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/guide/webhook/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xguide/webhook/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/kubevirt/dhcp/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/kubevirt/dhcp/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xkubevirt/dhcp/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/kubevirt/dual-stack/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/kubevirt/dual-stack/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xkubevirt/dual-stack/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/kubevirt/live-migration/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/kubevirt/live-migration/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xkubevirt/live-migration/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/kubevirt/static-ip/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/kubevirt/static-ip/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xkubevirt/static-ip/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/en/ops/change-default-subnet/</loc>
@@ -1091,5 +1077,61 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/start/uninstall/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xstart/uninstall/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/vpc/ovn-eip-fip-snat/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/vpc/ovn-eip-fip-snat/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xvpc/ovn-eip-fip-snat/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/vpc/ovn-l3-ha-based-ecmp-with-bfd/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/vpc/ovn-l3-ha-based-ecmp-with-bfd/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xvpc/ovn-l3-ha-based-ecmp-with-bfd/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/vpc/security-group/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/vpc/security-group/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xvpc/security-group/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/vpc/vpc-internal-dns/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/vpc/vpc-internal-dns/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xvpc/vpc-internal-dns/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/vpc/vpc-internal-lb/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/vpc/vpc-internal-lb/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xvpc/vpc-internal-lb/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/vpc/vpc-peering/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/vpc/vpc-peering/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xvpc/vpc-peering/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/vpc/vpc-qos/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/vpc/vpc-qos/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xvpc/vpc-qos/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/vpc/vpc/</loc>
+        <lastmod>2025-03-04</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/vpc/vpc/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xvpc/vpc/"/>
     </url>
 </urlset>
