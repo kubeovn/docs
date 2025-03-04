@@ -2,14 +2,14 @@
 
 ![Kube-OVN](static/kube-ovn-horizontal-color.svg){: style="width:40%"}
 
-# What is Kube-OVN?
+## What is Kube-OVN?
 
 Kube-OVN 是一款 CNCF 旗下的企业级云原生网络编排系统，将 SDN 的能力和云原生结合，提供丰富的功能，极致的性能以及良好的可运维性。
 
 Kube-OVN 在底层使用 Open Virtual Network（OVN）和 OpenVswitch 来实现网络的编排，并将其丰富的能力暴露给 Kubernetes 网络。
 OVN 和 OVS 有着悠久的历史，早在 Kubernetes 诞生前就已经出现，成为了 SDN 领域的事实标准。Kube-OVN 将它们引入到 Kubernetes 中，大幅增强了 Kubernetes 的网络能力。
 
-# Why Kube-OVN?
+## Why Kube-OVN?
 
 随着在 Kubernetes 上运行的负载以及运行的场景越来越多样化，对网络的需求也越来越多。OVN 和 OVS 作为历史悠久的网络组件，你可以在他们身上找到所有你需要的功能。
 
@@ -21,7 +21,7 @@ OVN 和 OVS 有着悠久的历史，早在 Kubernetes 诞生前就已经出现�
 
 借助 OVS/OVN 在 SDN 领域成熟的能力，Kube-OVN 将网络虚拟化的丰富功能带入云原生领域。目前已支持[子网管理](guide/subnet.md)，
 [静态 IP 分配](guide/static-ip-mac.md)，[分布式/集中式网关](guide/subnet.md#overlay)，[Underlay/Overlay 混合网络](start/underlay.md)，
-[VPC 多租户网络](guide/vpc.md)，[跨集群互联网络](advance/with-ovn-ic.md)，[QoS 管理](guide/qos.md)，
+[VPC 多租户网络](vpc/vpc.md)，[跨集群互联网络](advance/with-ovn-ic.md)，[QoS 管理](guide/qos.md)，
 [多网卡管理](advance/multi-nic.md)，[ACL 网络控制](guide/subnet.md#acl)，[流量镜像](guide/mirror.md)，ARM 支持，
 [Windows 支持](advance/windows.md)等诸多功能。
 

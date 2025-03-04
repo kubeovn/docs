@@ -41,16 +41,16 @@
 | [子网隔离 (未来会和子网 ACL 合并)](../guide/subnet.md) | true  | Beta  | 1.8       |           |
 | [Underlay 子网](../start/underlay.md) | true  | GA    | 1.8       |           |
 | [多网卡管理](../advance/multi-nic.md) | true  | Beta  | 1.8       |           |
-| [子网 DHCP](../advance/dhcp.md) | false | Alpha | 1.10      |           |
+| [子网 DHCP](../kubevirt/dhcp.md) | false | Alpha | 1.10      |           |
 | [子网设置外部网关](../advance/external-gateway.md) | false | Alpha | 1.8       |           |
 | [使用 OVN-IC 进行集群互联](../advance/with-ovn-ic.md) | false | Beta  | 1.8       |           |
 | [使用 Submariner 进行集群互联](../advance/with-submariner.md) | false | Alpha | 1.9       |           |
 | [子网 VIP 预留](../advance/vip.md) | true  | Alpha | 1.10      |           |
-| [创建自定义 VPC](../guide/vpc.md) | true  | Beta  | 1.8       |           |
-| [自定义 VPC 浮动 IP/SNAT/DNAT](../guide/vpc.md) | true  | Alpha | 1.10      |           |
-| [自定义 VPC 静态路由](../guide/vpc.md) | true  | Alpha | 1.10      |           |
-| [自定义 VPC 策略路由](../guide/vpc.md) | true  | Alpha | 1.10      |           |
-| [自定义 VPC 安全组](../advance/security-group.md) | true  | Alpha | 1.10      |           |
+| [创建自定义 VPC](../vpc/vpc.md) | true  | Beta  | 1.8       |           |
+| [自定义 VPC 浮动 IP/SNAT/DNAT](../vpc/vpc.md) | true  | Alpha | 1.10      |           |
+| [自定义 VPC 静态路由](../vpc/vpc.md) | true  | Alpha | 1.10      |           |
+| [自定义 VPC 策略路由](../vpc/vpc.md) | true  | Alpha | 1.10      |           |
+| [自定义 VPC 安全组](../vpc/security-group.md) | true  | Alpha | 1.10      |           |
 | [容器最大带宽 QoS](../guide/qos.md) | true  | GA    | 1.8       |           |
 | [linux-netem QoS](../guide/qos.md) | true  | Alpha | 1.9       |           |
 | [Prometheus 集成](../guide/prometheus.md) | false | GA    | 1.8       |           |
@@ -64,7 +64,7 @@
 | [Overlay 子网静态路由对外暴露](../advance/overlay-with-route.md) | false | Alpha | 1.8       |           |
 | [Overlay 子网 BGP 对外暴露](../advance/with-bgp.md) | false | Alpha | 1.9       |           |
 | [Cilium 集成](../advance/with-cilium.md) | false | Alpha | 1.10      |           |
-| [自定义 VPC 互联](../advance/vpc-peering.md) | false | Alpha | 1.10      |           |
+| [自定义 VPC 互联](../vpc/vpc-peering.md) | false | Alpha | 1.10      |           |
 | [Mellanox Offload](../advance/offload-mellanox.md) | false | Alpha | 1.8       |           |
 | [芯启源 Offload](../advance/offload-corigine.md) | false | Alpha | 1.10      |           |
 | [Windows 支持](../advance/windows.md) | false | Alpha | 1.10      |           |
@@ -75,5 +75,5 @@
 | [StatefulSet 固定 IP](../guide/static-ip-mac.md) | true  | GA    | 1.8       |           |
 | [VM 固定 IP](../guide/static-ip-mac.md) | false | Beta  | 1.9       |           |
 | [默认 VPC Load Balancer 类型 Service](../guide/loadbalancer-service.md) | false | Alpha | 1.11      |           |
-| [自定义 VPC 内部 DNS](../advance/vpc-internal-dns.md) | false | Alpha | 1.11      |           |
+| [自定义 VPC 内部 DNS](../vpc/vpc-internal-dns.md) | false | Alpha | 1.11      |           |
 | [Underlay 和 Overlay 互通](../start/underlay.md) | false | Beta | 1.12      |           |

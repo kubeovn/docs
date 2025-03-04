@@ -2,13 +2,13 @@
 
 ![Kube-OVN](static/kube-ovn-horizontal-color.svg){: style="width:40%"}
 
-# What is Kube-OVN?
+## What is Kube-OVN?
 
 Kube-OVN is an enterprise-level cloud-native network orchestration system under CNCF that combines the capabilities of SDN with cloud-native technologies, providing the most functions, extreme performance and the easiest operation.
 
 Kube-OVN uses Open Virtual Network (OVN) and OpenVswitch at the underlying layer to implement network orchestration and exposes its rich capabilities to Kubernetes networking. OVN and OVS have a long history, having emerged long before Kubernetes was born, and have become the de facto standard in the SDN field. Kube-OVN brings them into Kubernetes, significantly enhancing Kubernetes' networking capabilities.
 
-# Why Kube-OVN?
+## Why Kube-OVN?
 
 As the workloads running on Kubernetes become more diverse and the scenarios increase, the demand for networking also grows. As long-established networking components, OVN and OVS provide all the functionalities you need.
 
@@ -23,7 +23,7 @@ Leveraging the proven capabilities of OVS/OVN in the SDN,
 Kube-OVN brings the rich capabilities of network virtualization to the cloud-native space.
 It currently supports [Subnet Management](guide/subnet.en.md), [Static IP Allocation](guide/static-ip-mac.en.md),
 [Distributed/Centralized Gateways](guide/subnet.en.md#overlay-subnet-gateway-settings), [Underlay/Overlay Hybrid Networks](start/underlay.en.md),
-[VPC Multi-Tenant Networks](guide/vpc.en.md), [Cross-Cluster Interconnect](advance/with-ovn-ic.en.md), [QoS Management](guide/qos.en.md),
+[VPC Multi-Tenant Networks](vpc/vpc.en.md), [Cross-Cluster Interconnect](advance/with-ovn-ic.en.md), [QoS Management](guide/qos.en.md),
 [Multi-NIC Management](advance/multi-nic.en.md), [ACL](guide/subnet.en.md#subnet-acl), [Traffic Mirroring](guide/mirror.en.md),
 ARM Support, [Windows Support](advance/windows.en.md), and many more.
 
