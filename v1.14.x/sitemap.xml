@@ -162,6 +162,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.xen/advance/with-cilium/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.14.x/advance/with-metallb/</loc>
+        <lastmod>2025-04-02</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.x/advance/with-metallb/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.xen/advance/with-metallb/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.14.x/advance/with-openstack/</loc>
         <lastmod>2025-04-02</lastmod>
         <changefreq>daily</changefreq>
@@ -734,6 +741,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.x/en/advance/with-cilium/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.xadvance/with-cilium/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.14.x/en/advance/with-metallb/</loc>
+        <lastmod>2025-04-02</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.x/en/advance/with-metallb/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.xadvance/with-metallb/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.14.x/en/advance/with-openstack/</loc>
