@@ -193,10 +193,13 @@ kubectl exec -it $(kubectl get pods -l app=nginx -o name | head -n1) -- cat /var
 
 ## 注意事项
 
-1. **IP 地址池配置**：MetalLB 的地址池范围必须是 Underlay 子网 CIDR 的子集，并且需要在 Underlay 子网的 `excludeIps` 字段中明确排除，以避免 IP 分配冲突。
+!!! note "IP 地址池配置"
+    MetalLB 的地址池范围必须是 Underlay 子网 CIDR 的子集，并且需要在 Underlay 子网的 `excludeIps` 字段中明确排除，以避免 IP 分配冲突。
 
-2. **网络接口要求**：MetalLB 必须使用与 Kube-OVN Underlay 子网相同的网络接口（如示例中的 `underlay0.341`）。该接口应配置为 VLAN 子接口，以确保能够正确广播带有 VLAN 标签的 ARP 报文，从而正确通告 MetalLB VIP。
+!!! note "网络接口要求"
+    MetalLB 必须使用与 Kube-OVN Underlay 子网相同的网络接口（如示例中的 `underlay0.341`）。该接口应配置为 VLAN 子接口，以确保能够正确广播带有 VLAN 标签的 ARP 报文，从而正确通告 MetalLB VIP。
 
-3. **本地流量策略**：要启用本地优先功能，需要满足两个条件：
-   - Kube-OVN 控制器启用 `--enable-ovn-lb-prefer-local=true` 参数
-   - Service 配置中设置 `externalTrafficPolicy: Local`
+!!! note "本地流量策略"
+    要启用本地优先功能，需要满足两个条件：
+    - Kube-OVN 控制器启用 `--enable-ovn-lb-prefer-local=true` 参数
+    - Service 配置中设置 `externalTrafficPolicy: Local`

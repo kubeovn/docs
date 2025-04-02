@@ -20,7 +20,7 @@ Starting from version 1.14.0, Kube-OVN supports the integration of MetalLB with 
 
 The traffic flow for MetalLB integration with Kube-OVN Underlay is as follows:
 
-1. External client sends requests to the target VIP (e.g., 10.180.204.252), which is announced by MetalLB in L2 mode. In this traffic diagram, Node1 announces the metallb VIP
+1. External client sends requests to the target VIP (e.g., 10.180.204.252), which is announced by MetalLB in L2 mode. In this traffic diagram, Node1 announces the MetalLB VIP
 2. Requests reach the node announcing the VIP through the physical network, entering the `underlay0.341` network interface on the node
 3. Traffic reaches the `br-provider` bridge on the node, serving as the entry point for the Underlay network
 4. `br-provider` forwards traffic to the OVN logical network through OpenFlow flow table rules
@@ -72,7 +72,7 @@ spec:
   - 10.180.204.251
   - 10.180.204.252  # MetalLB address pool range, includes the VIP 10.180.204.252
   natOutgoing: false
-  enableExternalLBAddress: true   # When enabled, IPs in the subnet's CIDR can be used as metallb VIPs
+  enableExternalLBAddress: true   # When enabled, IPs in the subnet's CIDR can be used as MetalLB VIPs
 ```
 
 ### 3. Deploy MetalLB
@@ -193,10 +193,13 @@ kubectl exec -it $(kubectl get pods -l app=nginx -o name | head -n1) -- cat /var
 
 ## Notes
 
-1. **IP Address Pool Configuration**: The MetalLB address pool range must be a subset of the Underlay subnet CIDR and must be explicitly excluded in the Underlay subnet's `excludeIps` field to avoid IP allocation conflicts.
+!!! note "IP Address Pool Configuration"
+    The MetalLB address pool range must be a subset of the Underlay subnet CIDR and must be explicitly excluded in the Underlay subnet's `excludeIps` field to avoid IP allocation conflicts.
 
-2. **Network Interface Requirements**: MetalLB must use the same network interface as the Kube-OVN Underlay subnet (e.g., `underlay0.341` in the example). This interface should be configured as a VLAN sub-interface to ensure proper broadcasting of ARP messages with VLAN tags for correct MetalLB VIP announcement.
+!!! note "Network Interface Requirements"
+    MetalLB must use the same network interface as the Kube-OVN Underlay subnet (e.g., `underlay0.341` in the example). This interface should be configured as a VLAN sub-interface to ensure proper broadcasting of ARP messages with VLAN tags for correct MetalLB VIP announcement.
 
-3. **Local Traffic Policy**: To enable local preference, two conditions must be met:
-   - Kube-OVN controller enabled with `--enable-ovn-lb-prefer-local=true` parameter
-   - Service configured with `externalTrafficPolicy: Local`
+!!! note "Local Traffic Policy"
+    To enable local preference, two conditions must be met:
+    - Kube-OVN controller enabled with `--enable-ovn-lb-prefer-local=true` parameter
+    - Service configured with `externalTrafficPolicy: Local`
