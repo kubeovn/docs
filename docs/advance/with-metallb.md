@@ -16,7 +16,7 @@ Kube-OVN 从版本 1.14.0 开始支持 MetalLB 与 Underlay 子网的集成，�
 
 ![流量走向](../static/metallb_underlay.png)
 
-<div align="center"><em>图1：MetalLB VIP 与 Kube-OVN Underlay 集成的网络流量路径</em></div>
+<div align="center"><em>图 1：MetalLB VIP 与 Kube-OVN Underlay 集成的网络流量路径</em></div>
 
 MetalLB 与 Kube-OVN Underlay 集成的流量走向如下：
 
@@ -47,7 +47,8 @@ kubectl edit deployment -n kube-system kube-ovn-controller
 ```
 
 添加以下参数到命令行：
-```
+
+```text
 --enable-ovn-lb-prefer-local=true
 --ls-ct-skip-dst-lport-ips=false
 ```
