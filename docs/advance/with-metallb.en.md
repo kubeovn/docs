@@ -199,4 +199,4 @@ kubectl exec -it $(kubectl get pods -l app=nginx -o name | head -n1) -- cat /var
 
 3. **Local Traffic Policy**: To enable local preference, two conditions must be met:
    - Kube-OVN controller enabled with `--enable-ovn-lb-prefer-local=true` parameter
-   - Service configured with `externalTrafficPolicy: Local` 
+   - Service configured with `externalTrafficPolicy: Local`
