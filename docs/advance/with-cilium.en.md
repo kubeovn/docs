@@ -136,7 +136,7 @@ Cilium runs **SIP** (Source IP) address validation to prevent that. If the sourc
 the Pod, the traffic is visibly dropped (can be seen on Hubble as **DROPPED** traffic).
 
 This feature of Cilium is useful to enhance the network security of the cluster and prevent IP spoofing but it breaks NAT gateways.
-To fix this problem, SIP address validation **needs to be disabled on Cilium** in its Helm Chart:
+To fix this problem, SIP address validation **needs to be disabled on Cilium** in its Helm Chart by setting the `enableSourceIPVerification` value to `false`:
 
 ```yaml
 enableSourceIPVerification: false
