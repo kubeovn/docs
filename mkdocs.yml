@@ -11,6 +11,7 @@ nav:
       - 一键安装: "start/one-step-install.md"
       - Underlay 网络安装: "start/underlay.md"
       - 使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: "start/sealos-install.md"
+      - 在 Talos Linux 上部署 Kube-OVN: "start/talos-install.md"
       - 卸载: "start/uninstall.md"
   - 使用指南:
       - 安装和配置选项: "guide/setup-options.md"
@@ -62,6 +63,7 @@ nav:
       - 使用 Submariner 进行多集群互联: "advance/with-submariner.md"
       - Overlay 下路由方式网络打通: "advance/overlay-with-route.md"
       - BGP 支持: "advance/with-bgp.md"
+      - 使用 MetalLB 与 Kube-OVN Underlay 集成: "advance/with-metallb.md"
       - Cilium 集成: "advance/with-cilium.md"
       - Cilium NetworkPolicy 支持: "advance/cilium-networkpolicy.md"
       - Cilium 网络流量观测: "advance/cilium-hubble-observe.md"
@@ -126,6 +128,7 @@ theme:
     - content.action.edit
     - content.action.view
 markdown_extensions:
+  - admonition
   - footnotes
   - fenced_code
   - attr_list
@@ -208,6 +211,7 @@ plugins:
             使用 OVN-IC 进行多集群互联: Cluster Inter-Connection with OVN-IC
             使用 Submariner 进行多集群互联: Cluster Inter-Connection with Submariner
             BGP 支持: BGP Support
+            使用 MetalLB 与 Kube-OVN Underlay 集成: Integrating MetalLB with Kube-OVN Underlay
             Cilium 集成: Integration with Cilium
             Cilium NetworkPolicy 支持: Cilium NetworkPolicy Support
             Cilium 网络流量观测: Cilium Network Traffic Observation
@@ -244,6 +248,7 @@ plugins:
             默认 VPC NAT 策略规则: Default VPC NAT Policy Rule
             调整日志等级: Change Log Level
             使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: Use Sealos to Deploy Kubernetes and Kube-OVN
+            在 Talos Linux 上部署 Kube-OVN: Deploy Kube-OVN on Talos Linux
             版本管理: Release Management
             Annotation 使用说明: Annotation Usage
             VM 固定 IP: Fixed VM IP
