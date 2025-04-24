@@ -16,7 +16,7 @@ Before installation please read [Prerequisites](./prepare.en.md) first to make s
 We recommend using the stable release version for production environments, please use the following command to download:
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/refs/tags/{{ variables.version }}/dist/images/install.sh
 ```
 
 If you are interested in the latest features of the master branch, please use the following command to download:
@@ -89,28 +89,26 @@ $ helm repo list
 NAME            URL
 kubeovn         https://kubeovn.github.io/kube-ovn/
 
+$ helm repo update kubeovn
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "kubeovn" chart repository
+Update Complete. ⎈Happy Helming!⎈
+
 $ helm search repo kubeovn
-NAME                CHART VERSION   APP VERSION DESCRIPTION
-kubeovn/kube-ovn    0.1.0           1.12.0      Helm chart for Kube-OVN
+NAME                    CHART VERSION   APP VERSION     DESCRIPTION
+kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 ```
 
 ### Run helm install to install Kube-OVN
 
-The Node0IP, Node1IP, and Node2IP parameters are the IP addresses of the cluster master nodes, respectively. For other parameters, you can refer to the variable definitions in the values.yaml file.
+For available parameters, you can refer to the variable definitions in the `values.yaml` file.
 
 ```bash
-# Single master node environment install
-$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }} --set MASTER_NODES=${Node0IP}
-
-# Using the node information above as an example, execute the install command
-$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }} --set MASTER_NODES=172.18.0.3
+$ helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
-LAST DEPLOYED: Fri Mar 31 12:43:43 2023
-NAMESPACE: default
+LAST DEPLOYED: Thu Apr 24 08:30:13 2025
+NAMESPACE: kube-system
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
-
-# Highly Available Cluster Installation
-$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }} --set MASTER_NODES=${Node0IP}\,${Node1IP}\,${Node2IP}
 ```
