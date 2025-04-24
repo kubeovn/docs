@@ -99,10 +99,10 @@ Node0IP、Node1IP、Node2IP 参数分别为集群 master 节点的 IP 地址。�
 
 ```bash
 # 单 master 节点环境安装
-$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=${Node0IP}
+$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }} --set MASTER_NODES=${Node0IP}
 
 # 以上边的 node 信息为例，执行安装命令
-$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=172.18.0.3
+$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }} --set MASTER_NODES=172.18.0.3
 NAME: kube-ovn
 LAST DEPLOYED: Fri Mar 31 12:43:43 2023
 NAMESPACE: default
@@ -111,5 +111,5 @@ REVISION: 1
 TEST SUITE: None
 
 # 高可用集群安装
-$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=${Node0IP}\,${Node1IP}\,${Node2IP}
+$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }} --set MASTER_NODES=${Node0IP}\,${Node1IP}\,${Node2IP}
 ```

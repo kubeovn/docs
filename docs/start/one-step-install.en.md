@@ -100,10 +100,10 @@ The Node0IP, Node1IP, and Node2IP parameters are the IP addresses of the cluster
 
 ```bash
 # Single master node environment install
-$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=${Node0IP}
+$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }} --set MASTER_NODES=${Node0IP}
 
 # Using the node information above as an example, execute the install command
-$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=172.18.0.3
+$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }} --set MASTER_NODES=172.18.0.3
 NAME: kube-ovn
 LAST DEPLOYED: Fri Mar 31 12:43:43 2023
 NAMESPACE: default
@@ -112,5 +112,5 @@ REVISION: 1
 TEST SUITE: None
 
 # Highly Available Cluster Installation
-$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=${Node0IP}\,${Node1IP}\,${Node2IP}
+$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }} --set MASTER_NODES=${Node0IP}\,${Node1IP}\,${Node2IP}
 ```
