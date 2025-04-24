@@ -8,6 +8,7 @@
 
 ```shell
 helm install kube-ovn kubeovn/kube-ovn --wait \
+    --version {{ variables.version }} \
     --set OVN_DIR=/var/lib/ovn \
     --set OPENVSWITCH_DIR=/var/lib/openvswitch \
     --set DISABLE_MODULES_MANAGEMENT=true \
@@ -18,6 +19,7 @@ helm install kube-ovn kubeovn/kube-ovn --wait \
 
 ```shell
 helm install kubeovn kubeovn/kube-ovn --wait \
+    --version {{ variables.version }} \
     --set OVN_DIR=/var/lib/ovn \
     --set OPENVSWITCH_DIR=/var/lib/openvswitch \
     --set DISABLE_MODULES_MANAGEMENT=true \

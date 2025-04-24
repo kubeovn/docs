@@ -8,6 +8,7 @@ You can deploy Kube-OVN on Talos Linux clusters with the following command:
 
 ```shell
 helm install kube-ovn kubeovn/kube-ovn --wait \
+    --version {{ variables.version }} \
     --set OVN_DIR=/var/lib/ovn \
     --set OPENVSWITCH_DIR=/var/lib/openvswitch \
     --set DISABLE_MODULES_MANAGEMENT=true \
@@ -18,6 +19,7 @@ If you want to use underlay as the default network, you need to pass the relevan
 
 ```shell
 helm install kubeovn kubeovn/kube-ovn --wait \
+    --version {{ variables.version }} \
     --set OVN_DIR=/var/lib/ovn \
     --set OPENVSWITCH_DIR=/var/lib/openvswitch \
     --set DISABLE_MODULES_MANAGEMENT=true \
