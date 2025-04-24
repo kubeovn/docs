@@ -103,10 +103,10 @@ kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 Chart 参数的设置，可以参考 `values.yaml` 文件中变量定义。
 
 ```bash
-$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }}
+$ helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
-LAST DEPLOYED: Fri Mar 31 12:43:43 2023
-NAMESPACE: default
+LAST DEPLOYED: Thu Apr 24 08:30:13 2025
+NAMESPACE: kube-system
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None

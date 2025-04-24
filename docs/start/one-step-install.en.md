@@ -104,10 +104,10 @@ kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 For available parameters, you can refer to the variable definitions in the `values.yaml` file.
 
 ```bash
-$ helm install kube-ovn kubeovn/kube-ovn --version {{ variables.version }}
+$ helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
-LAST DEPLOYED: Fri Mar 31 12:43:43 2023
-NAMESPACE: default
+LAST DEPLOYED: Thu Apr 24 08:30:13 2025
+NAMESPACE: kube-system
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None

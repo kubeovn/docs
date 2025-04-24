@@ -8,6 +8,7 @@
 
 ```shell
 helm install kube-ovn kubeovn/kube-ovn --wait \
+    -n kube-system \
     --version {{ variables.version }} \
     --set OVN_DIR=/var/lib/ovn \
     --set OPENVSWITCH_DIR=/var/lib/openvswitch \
@@ -19,6 +20,7 @@ helm install kube-ovn kubeovn/kube-ovn --wait \
 
 ```shell
 helm install kubeovn kubeovn/kube-ovn --wait \
+    -n kube-system \
     --version {{ variables.version }} \
     --set OVN_DIR=/var/lib/ovn \
     --set OPENVSWITCH_DIR=/var/lib/openvswitch \
