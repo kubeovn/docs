@@ -15,7 +15,7 @@ Kube-OVN 提供了一键安装脚本，可以帮助你快速安装一个高可�
 我们推荐在生产环境使用稳定的 release 版本，请使用下面的命令下载稳定版本安装脚本：
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/refs/tags/{{ variables.version }}/dist/images/install.sh
 ```
 
 如果对 master 分支的最新功能感兴趣，想使用下面的命令下载开发版本部署脚本：
@@ -88,28 +88,26 @@ $ helm repo list
 NAME            URL
 kubeovn         https://kubeovn.github.io/kube-ovn/
 
+$ helm repo update kubeovn
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "kubeovn" chart repository
+Update Complete. ⎈Happy Helming!⎈
+
 $ helm search repo kubeovn
-NAME                CHART VERSION   APP VERSION DESCRIPTION
-kubeovn/kube-ovn    0.1.0           1.12.0      Helm chart for Kube-OVN
+NAME                    CHART VERSION   APP VERSION     DESCRIPTION
+kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 ```
 
 ### 执行 helm install 安装 Kube-OVN
 
-Node0IP、Node1IP、Node2IP 参数分别为集群 master 节点的 IP 地址。其他参数的设置，可以参考 values.yaml 文件中变量定义。
+Chart 参数的设置，可以参考 `values.yaml` 文件中变量定义。
 
 ```bash
-# 单 master 节点环境安装
-$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=${Node0IP}
-
-# 以上边的 node 信息为例，执行安装命令
-$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=172.18.0.3
+$ helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
-LAST DEPLOYED: Fri Mar 31 12:43:43 2023
-NAMESPACE: default
+LAST DEPLOYED: Thu Apr 24 08:30:13 2025
+NAMESPACE: kube-system
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
-
-# 高可用集群安装
-$ helm install kube-ovn kubeovn/kube-ovn --set MASTER_NODES=${Node0IP}\,${Node1IP}\,${Node2IP}
 ```
