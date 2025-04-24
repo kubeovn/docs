@@ -498,6 +498,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/start/sealos-install/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/start/talos-install/</loc>
+        <lastmod>2025-04-24</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.x/start/talos-install/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.xen/start/talos-install/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/start/underlay/</loc>
         <lastmod>2025-04-24</lastmod>
         <changefreq>daily</changefreq>
@@ -1063,6 +1070,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/start/sealos-install/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xstart/sealos-install/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.13.x/en/start/talos-install/</loc>
+        <lastmod>2025-04-24</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.13.x/en/start/talos-install/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.13.xstart/talos-install/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.13.x/en/start/underlay/</loc>
