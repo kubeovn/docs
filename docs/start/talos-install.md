@@ -2,6 +2,16 @@
 
 [Talos Linux](https://github.com/siderolabs/talos) 是为 Kubernetes 构建的现代 Linux 发行版。
 
+!!! note
+    部署 Kube-OVN 前，您必须确保 Talos 集群中没有安装 CNI：
+    ```yaml
+    cluster:
+      network:
+        cni:
+          # "none" indicates that Talos will not manage any CNI installation.
+          name: none
+    ```
+
 ## 通过 Helm Chart 部署 Kube-OVN
 
 您可以通过以下命令在 Talos Linux 集群上部署 Kube-OVN：

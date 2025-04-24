@@ -1,6 +1,16 @@
 # Deploy Kube-OVN on Talos Linux
 
-[Talos Linux](https://github.com/siderolabs/talos) is a modern Linux distribution built for Kubernetes。
+[Talos Linux](https://github.com/siderolabs/talos) is a modern Linux distribution built for Kubernetes.
+
+!!! note
+    Before deploying Kube-OVN, you MUST ensure that there is no CNI installed in the Talos cluster:
+    ```yaml
+    cluster:
+      network:
+        cni:
+          # "none" indicates that Talos will not manage any CNI installation.
+          name: none
+    ```
 
 ## Deploy Kube-OVN via Helm Chart
 
