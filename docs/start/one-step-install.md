@@ -15,7 +15,7 @@ Kube-OVN 提供了一键安装脚本，可以帮助你快速安装一个高可�
 我们推荐在生产环境使用稳定的 release 版本，请使用下面的命令下载稳定版本安装脚本：
 
 ```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/refs/tags/{{ variables.version }}/dist/images/install.sh
 ```
 
 如果对 master 分支的最新功能感兴趣，想使用下面的命令下载开发版本部署脚本：
