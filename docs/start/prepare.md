@@ -5,7 +5,7 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，其运行需要依赖 Kuber
 
 ## 软件版本
 
-- Kubernetes >= 1.23。
+- Kubernetes >= 1.29。
 - Docker >= 1.12.6, Containerd >= 1.3.4。
 - 操作系统: CentOS 7/8, Ubuntu 16.04/18.04/20.04。
 - 其他 Linux 发行版，需要检查一下内核模块是否存在 `geneve`, `openvswitch`, `ip_tables` 和 `iptable_nat`，Kube-OVN 正常工作依赖上述模块。

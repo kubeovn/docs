@@ -7,7 +7,7 @@ the environment configuration and the ports that need to be opened.
 
 ## Software Version
 
-- Kubernetes >= 1.23.
+- Kubernetes >= 1.29.
 - Docker >= 1.12.6, Containerd >= 1.3.4.
 - OS: CentOS 7/8, Ubuntu 16.04/18.04/20.04.
 - For other Linux distributions, please make sure `geneve`, `openvswitch`, `ip_tables` and `iptable_nat` kernel modules exist.
