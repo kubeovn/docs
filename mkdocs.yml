@@ -10,7 +10,6 @@ nav:
       - 准备工作: "start/prepare.md"
       - 一键安装: "start/one-step-install.md"
       - Underlay 网络安装: "start/underlay.md"
-      - 使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: "start/sealos-install.md"
       - 在 Talos Linux 上部署 Kube-OVN: "start/talos-install.md"
       - 卸载: "start/uninstall.md"
   - 使用指南:
@@ -244,7 +243,6 @@ plugins:
             节点本地 DNS 缓存和 Kube-OVN 适配: Node Local DNS Cache and Kube-OVN Adaptation
             默认 VPC NAT 策略规则: Default VPC NAT Policy Rule
             调整日志等级: Change Log Level
-            使用 Sealos 一键部署 Kubernetes 和 Kube-OVN: Use Sealos to Deploy Kubernetes and Kube-OVN
             在 Talos Linux 上部署 Kube-OVN: Deploy Kube-OVN on Talos Linux
             版本管理: Release Management
             Annotation 使用说明: Annotation Usage
