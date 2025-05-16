@@ -16,4 +16,22 @@ jobs:
           npm install -g markdownlint-rule-search-replace@1.0.9 
           pwd
           markdownlint "**/*.md" --disable MD013 MD033 MD045 MD024 MD041 MD029 MD051 -r markdownlint-rule-search-replace
-          markdownlint -V  
+          markdownlint -V
+          
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: committer cache
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: committer-cache
+
+      - run: pip install -r docs/requirements.txt
+      - name: build
+        env:
+          MKDOCS_GIT_COMMITTERS_APIKEY: ${{ secrets.GIT_COMMITER_TOKEM }}
+        run: |
+          mkdocs build -s

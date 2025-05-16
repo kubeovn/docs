@@ -6,6 +6,7 @@
   "packageRules": [
     {
       "matchPackageNames": ["*"],
+      "schedule": ["0 15 * * *"],
       "automerge": true
     }
   ]
