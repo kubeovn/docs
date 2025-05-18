@@ -8,7 +8,7 @@ nav:
   - 主页: "index.md"
   - 快速入门:
       - 准备工作: "start/prepare.md"
-      - 一键安装: "start/one-step-install.md"
+      - 一键安装/升级: "start/one-step-install.md"
       - Underlay 网络安装: "start/underlay.md"
       - 在 Talos Linux 上部署 Kube-OVN: "start/talos-install.md"
       - 卸载: "start/uninstall.md"
