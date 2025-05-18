@@ -1,6 +1,6 @@
-# 一键安装
+# 一键安装/升级
 
-Kube-OVN 提供了一键安装脚本，可以帮助你快速安装一个高可用，生产就绪的 Kube-OVN 容器网络，默认部署为 Overlay 类型网络。
+Kube-OVN 提供了一键安装/升级脚本，可以帮助你快速安装/升级一个高可用，生产就绪的 Kube-OVN 容器网络，默认部署为 Overlay 类型网络。
 
 从 Kube-OVN v1.12.0 版本开始，支持 Helm Chart 安装，默认部署为 Overlay 类型网络。
 
@@ -8,17 +8,17 @@ Kube-OVN 提供了一键安装脚本，可以帮助你快速安装一个高可�
 
 安装前请参考[准备工作](./prepare.md)确认环境配置正确。
 
-## 脚本安装
+## 脚本安装/升级
 
-### 下载安装脚本
+### 下载安装/升级脚本
 
-我们推荐在生产环境使用稳定的 release 版本，请使用下面的命令下载稳定版本安装脚本：
+我们推荐在生产环境使用稳定的 release 版本，请使用下面的命令下载稳定版本安装/升级脚本：
 
 ```bash
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/refs/tags/{{ variables.version }}/dist/images/install.sh
 ```
 
-如果对 master 分支的最新功能感兴趣，想使用下面的命令下载开发版本部署脚本：
+如果对 master 分支的最新功能感兴趣，想使用下面的命令下载开发版本安装/升级脚本：
 
 ```bash
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/install.sh
@@ -29,7 +29,7 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/insta
 使用编辑器打开脚本，并修改下列变量为预期值：
 
 ```bash
-REGISTRY="kubeovn"                     # 镜像仓库地址
+REGISTRY="kubeovn"                     # 镜像仓库地址, 如果需要自定义镜像仓库地址，请修改为自定义镜像仓库地址
 VERSION="{{ variables.version }}"                      # 镜像版本/Tag
 POD_CIDR="10.16.0.0/16"                # 默认子网 CIDR 不要和 SVC/NODE/JOIN CIDR 重叠
 SVC_CIDR="10.96.0.0/12"                # 需要和 apiserver 的 service-cluster-ip-range 保持一致
@@ -47,9 +47,9 @@ TUNNEL_TYPE="geneve"                   # 隧道封装协议，可选 geneve, vxl
 
 `bash install.sh`
 
-等待安装完成。
+等待安装/升级完成。
 
-## Helm Chart 安装
+## Helm Chart 安装/升级
 
 由于 Kube-OVN 的安装，需要设置一些参数，因此使用 Helm 安装 Kube-OVN，需要按照以下步骤执行。
 
@@ -103,7 +103,7 @@ kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 Chart 参数的设置，可以参考 `values.yaml` 文件中变量定义。
 
 ```bash
-$ helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
+$ helm upgrade --install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
 LAST DEPLOYED: Thu Apr 24 08:30:13 2025
 NAMESPACE: kube-system
