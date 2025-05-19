@@ -1,4 +1,4 @@
-# 在 Talos Linux 上部署 Kube-OVN
+# Talos 安装
 
 [Talos Linux](https://github.com/siderolabs/talos) 是为 Kubernetes 构建的现代 Linux 发行版。
 

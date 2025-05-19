@@ -1,4 +1,4 @@
-# Deploy Kube-OVN on Talos Linux
+# Install on Talos
 
 [Talos Linux](https://github.com/siderolabs/talos) is a modern Linux distribution built for Kubernetes.
 
