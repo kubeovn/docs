@@ -54,8 +54,8 @@ Wait Kube-OVN ready.
 
 When using this script to upgrade Kube-OVN, please pay attention to the following points:
 
-1. The script's `[Step 4/6]` will restart all container network Pods, so this step needs to be removed during the upgrade.
-2. If any parameters have been adjusted during the operation of Kube-OVN, those changes need to be updated in the script; otherwise, the previous parameter adjustments will be reverted.
+1. The script's `[Step 4/6]` restarts all container network Pods. During an upgrade, this step should be **skipped or commented out from the script** to avoid unintended restarts.
+2. **Important:** If any parameters were adjusted during Kube-OVN operation, these changes **must be updated in the script before upgrading**. Otherwise, previous parameter adjustments **will be reverted**.
 
 ## Helm Chart Installation
 
@@ -122,7 +122,7 @@ TEST SUITE: None
 
 ### Upgrade
 
-Similar to the situation with script upgrades, please ensure that all parameter adjustments have been updated in the corresponding `values.yaml` file before upgrading. Otherwise, previous parameter adjustments will be reverted.
+**Important:** Similar to script-based upgrades, ensure all parameter adjustments are updated in the `values.yaml` file **before upgrading with Helm**. Otherwise, previous parameter adjustments **will be reverted**.
 
 ```bash
 helm upgrade -f values.yaml kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
