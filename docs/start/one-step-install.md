@@ -49,6 +49,13 @@ TUNNEL_TYPE="geneve"                   # 隧道封装协议，可选 geneve, vxl
 
 等待安装完成。
 
+### 升级
+
+当使用该脚本进行 Kube-OVN 升级时需要注意以下几点：
+
+1. 脚本中的 `[Step 4/6]` 会重启所有容器网络 Pod。在升级过程中，应**跳过此步骤或在脚本中将其注释掉**，以避免不必要的重启。
+2. **重要提示：** 如果在 Kube-OVN 运行过程中对参数进行过调整，**务必在升级前将这些变更更新到脚本中**。否则，之前的参数调整将**被还原**。
+
 ## Helm Chart 安装
 
 由于 Kube-OVN 的安装，需要设置一些参数，因此使用 Helm 安装 Kube-OVN，需要按照以下步骤执行。
@@ -110,4 +117,12 @@ NAMESPACE: kube-system
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
+```
+
+### 升级
+
+**重要提示：** 与脚本升级类似，请确保在**使用 Helm 升级前**，所有参数调整都已更新到相应的 `values.yaml` 文件中。否则，之前的参数调整将**被还原**。
+
+```bash
+helm upgrade -f values.yaml kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 ```

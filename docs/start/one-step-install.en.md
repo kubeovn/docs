@@ -50,6 +50,13 @@ You can also use regular expression to math NIC names，such as `IFACE=enp6s0f0,
 
 Wait Kube-OVN ready.
 
+### Upgrade
+
+When using this script to upgrade Kube-OVN, please pay attention to the following points:
+
+1. The script's `[Step 4/6]` restarts all container network Pods. During an upgrade, this step should be **skipped or commented out from the script** to avoid unintended restarts.
+2. **Important:** If any parameters were adjusted during Kube-OVN operation, these changes **must be updated in the script before upgrading**. Otherwise, previous parameter adjustments **will be reverted**.
+
 ## Helm Chart Installation
 
 Since the installation of Kube-OVN requires setting some parameters, to install Kube-OVN using Helm, you need to follow the steps below.
@@ -111,4 +118,12 @@ NAMESPACE: kube-system
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
+```
+
+### Upgrade
+
+**Important:** Similar to script-based upgrades, ensure all parameter adjustments are updated in the `values.yaml` file **before upgrading with Helm**. Otherwise, previous parameter adjustments **will be reverted**.
+
+```bash
+helm upgrade -f values.yaml kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 ```
