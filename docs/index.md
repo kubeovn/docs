@@ -42,3 +42,32 @@ Kube-OVN 可以在延迟和吞吐量等方面的指标达到近似或超出宿�
 Kube-OVN 提供了[一键安装脚本](start/one-step-install.md)，帮助用户迅速搭建生产就绪的容器网络。同时内置的丰富的[监控指标](reference/metrics.md)和 [Grafana 面板](guide/prometheus-grafana.md)，
 可帮助用户建立完善的监控体系。强大的[命令行工具](ops/kubectl-ko.md)可以简化用户的日常运维操作。通过[和 Cilium 结合](advance/with-cilium.md)，利用 eBPF 能力用户可以
 增强对网络的可观测性。此外[流量镜像](guide/mirror.md)的能力可以方便用户自定义流量监控，并和传统的 NPM 系统对接。
+
+## CNI 选型建议
+
+Kubernetes 社区中存在很多优秀的 CNI 项目，用户在选型时会存在困难。我们认为最佳的方法是先找到自己真正的需求，然后去调研每个项目针对这个需求的解决方案有什么区别，而不是先列出所有产品的区别再看自己需要哪个。这背后的原因有两个：
+
+1. 每个项目 Maintainer 的主要精力都在维护自己的项目，解决自己社区的用户问题，而不是盯着看别的项目在做什么，了解其他项目背后的实现逻辑。因此 Maintainer 无法给出一个准确的对比列表，对于项目外部的人来说做这个事情只会更困难。
+2. 对于最终用户，花精力搞明白自己内部的需求是什么远比搞明白外部的两个项目有什么区别更重要。
+
+在 Kube-OVN 的项目下列出和其他 CNI 的区别并推荐 Kube-OVN 只会充满主观偏见和错误，因此这里我们只会列出**不要选择** Kube-OVN 的场景，并给出我们的推荐。
+
+### 你需要 eBPF 的方案
+
+选择 [Cilium](https://cilium.io/) 或 Calico eBPF。Kube-OVN 使用 Open vSwitch 作为数据平面，这是一项相对古老的网络虚拟化技术方案。
+
+### 你需要 CNI, Ingress, Service Mesh 和 Observability All in One 的方案
+
+选择 [Cilium](https://cilium.io/)。Kube-OVN 主要聚焦在 CNI 层面的网络能力，你需要通过组合生态内其他的项目来完成这些功能。
+
+### 你需要在 OpenShift 上运行
+
+选择 [ovn-kubernetes](https://ovn-kubernetes.io/)。在 OpenShift 上使用第三方 CNI 需要适配 [Cluster Network Operator](https://github.com/openshift/cluster-network-operator) 规范，Kube-OVN 目前没有这方面的工作计划。并且第三方网络插件不会获得 RedHat 官方的技术支持，而网络又是 Kubernetes 中重要的一环，大量后期的方案设计、故障排查你都需要在多个供应商之间进行协调。
+
+### 在公有云提供的 Kubernetes（EKS/AKS/GKE 等）上运行
+
+选择对应 Kubernetes 提供商的默认 CNI。原因同上。
+
+### 运行 AI 训练和推理任务
+
+选择 Hostnetwork 或者 [host-device](https://www.cni.dev/plugins/current/main/host-device/) 将物理设备直接分配给容器。AI 任务对网络延迟要求很高，任何额外的容器网络操作都是没有必要的。
