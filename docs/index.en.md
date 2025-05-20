@@ -53,3 +53,32 @@ Also built-in rich [monitoring metrics](reference/metrics.en.md) and [Grafana da
 Powerful [command line tools](ops/kubectl-ko.en.md) simplify daily operations and maintenance for users.
 By combining [with Cilium](advance/with-cilium.en.md), users can enhance the observability of their networks with eBPF capabilities.
 In addition, the ability to [mirror traffic](guide/mirror.en.md) makes it easy to customize traffic monitoring and interface with traditional NPM systems.
+
+## CNI Selection Recommendations
+
+The Kubernetes community offers many excellent CNI projects, which can make selection difficult for users. We recommend first identifying your actual requirements, then evaluating how different projects address those needs - rather than comparing all products first and then deciding which one fits. This approach makes sense for two reasons:
+
+1. Project maintainers primarily focus on their own projects and solving their community's problems - not tracking what other projects are doing or understanding their implementation details. Therefore, maintainers can't provide accurate comparison charts, and it's even harder for outsiders to do this.
+2. For end users, understanding your internal needs is far more important than understanding the differences between external projects.
+
+Creating a comparison chart under the Kube-OVN project that recommends Kube-OVN would inevitably be subjective and potentially inaccurate. Instead, we'll list scenarios where you **should not** choose Kube-OVN and provide our recommendations.
+
+### When You Need an eBPF Solution
+
+Choose [Cilium](https://cilium.io/) or Calico eBPF. Kube-OVN uses Open vSwitch as its data plane, which is a relatively older network virtualization technology.
+
+### When You Need an All-in-One Solution (CNI, Ingress, Service Mesh, and Observability)
+
+Choose [Cilium](https://cilium.io/). Kube-OVN primarily focuses on CNI-level networking capabilities, requiring you to combine it with other ecosystem projects for these additional features.
+
+### When Running on OpenShift
+
+Choose [ovn-kubernetes](https://ovn-kubernetes.io/). Using third-party CNIs on OpenShift requires adapting to the [Cluster Network Operator](https://github.com/openshift/cluster-network-operator) specifications, which Kube-OVN currently doesn't plan to support. Additionally, third-party network plugins won't receive official Red Hat support, and since networking is critical in Kubernetes, you'd need to coordinate between multiple vendors for solution design and troubleshooting.
+
+### When Using Public Cloud Kubernetes (EKS/AKS/GKE, etc.)
+
+Choose the default CNI provided by your Kubernetes vendor, for the same reasons as above.
+
+### When Running AI Training and Inference Workloads
+
+Use Hostnetwork or [host-device](https://www.cni.dev/plugins/current/main/host-device/) to assign physical devices directly to containers. AI workloads demand extremely low network latency, making any additional container network operations unnecessary.
