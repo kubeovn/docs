@@ -65,15 +65,21 @@ Creating a comparison chart under the Kube-OVN project that recommends Kube-OVN 
 
 ### When You Need an eBPF Solution
 
-Choose [Cilium](https://cilium.io/) or Calico eBPF. Kube-OVN uses Open vSwitch as its data plane, which is a relatively older network virtualization technology.
+Choose [Cilium](https://cilium.io/) or Calico eBPF.
+
+Kube-OVN uses Open vSwitch as its data plane, which is a relatively older network virtualization technology.
 
 ### When You Need an All-in-One Solution (CNI, Ingress, Service Mesh, and Observability)
 
-Choose [Cilium](https://cilium.io/). Kube-OVN primarily focuses on CNI-level networking capabilities, requiring you to combine it with other ecosystem projects for these additional features.
+Choose [Cilium](https://cilium.io/).
+
+Kube-OVN primarily focuses on CNI-level networking capabilities, requiring you to combine it with other ecosystem projects for these additional features.
 
 ### When Running on OpenShift
 
-Choose [ovn-kubernetes](https://ovn-kubernetes.io/). Using third-party CNIs on OpenShift requires adapting to the [Cluster Network Operator](https://github.com/openshift/cluster-network-operator) specifications, which Kube-OVN currently doesn't plan to support. Additionally, third-party network plugins won't receive official Red Hat support, and since networking is critical in Kubernetes, you'd need to coordinate between multiple vendors for solution design and troubleshooting.
+Choose [ovn-kubernetes](https://ovn-kubernetes.io/).
+
+Using third-party CNIs on OpenShift requires adapting to the [Cluster Network Operator](https://github.com/openshift/cluster-network-operator) specifications, which Kube-OVN currently doesn't plan to support. Additionally, third-party network plugins won't receive official Red Hat support, and since networking is critical in Kubernetes, you'd need to coordinate between multiple vendors for solution design and troubleshooting.
 
 ### When Using Public Cloud Kubernetes (EKS/AKS/GKE, etc.)
 
@@ -81,4 +87,6 @@ Choose the default CNI provided by your Kubernetes vendor, for the same reasons 
 
 ### When Running AI Training and Inference Workloads
 
-Use Hostnetwork or [host-device](https://www.cni.dev/plugins/current/main/host-device/) to assign physical devices directly to containers. AI workloads demand extremely low network latency, making any additional container network operations unnecessary.
+Use Hostnetwork or [host-device](https://www.cni.dev/plugins/current/main/host-device/) to assign physical devices directly to containers.
+
+AI workloads demand extremely low network latency, making any additional container network operations unnecessary.
