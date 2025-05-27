@@ -13,14 +13,14 @@
 <span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">none</span>
 </code></pre></div></p> </div> <h2 id=deploy-kube-ovn-via-helm-chart>Deploy Kube-OVN via Helm Chart<a class=headerlink href=#deploy-kube-ovn-via-helm-chart title="Permanent link">&para;</a></h2> <p>You can deploy Kube-OVN on Talos Linux clusters with the following command:</p> <div class=highlight><pre><span></span><code>helm<span class=w> </span>install<span class=w> </span>kube-ovn<span class=w> </span>kubeovn/kube-ovn<span class=w> </span>--wait<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>-n<span class=w> </span>kube-system<span class=w> </span><span class=se>\</span>
-<span class=w>    </span>--version<span class=w> </span>v1.13.11<span class=w> </span><span class=se>\</span>
+<span class=w>    </span>--version<span class=w> </span>v1.13.13<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>OVN_DIR</span><span class=o>=</span>/var/lib/ovn<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>OPENVSWITCH_DIR</span><span class=o>=</span>/var/lib/openvswitch<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>DISABLE_MODULES_MANAGEMENT</span><span class=o>=</span><span class=nb>true</span><span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span>cni_conf.MOUNT_LOCAL_BIN_DIR<span class=o>=</span><span class=nb>false</span>
 </code></pre></div> <p>If you want to use underlay as the default network, you need to pass the relevant chart values. Here is an example:</p> <div class=highlight><pre><span></span><code>helm<span class=w> </span>install<span class=w> </span>kubeovn<span class=w> </span>kubeovn/kube-ovn<span class=w> </span>--wait<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>-n<span class=w> </span>kube-system<span class=w> </span><span class=se>\</span>
-<span class=w>    </span>--version<span class=w> </span>v1.13.11<span class=w> </span><span class=se>\</span>
+<span class=w>    </span>--version<span class=w> </span>v1.13.13<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>OVN_DIR</span><span class=o>=</span>/var/lib/ovn<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>OPENVSWITCH_DIR</span><span class=o>=</span>/var/lib/openvswitch<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>DISABLE_MODULES_MANAGEMENT</span><span class=o>=</span><span class=nb>true</span><span class=w> </span><span class=se>\</span>
