@@ -9,9 +9,9 @@
 
 - 如果用户只有默认 VPC 下的子网需要使用 OVN NAT 功能，而且通过 pod annotation 方式使用，请参考当前文档。
 
-- 如果用户任意 VPC 下的子网都需要使用 OVN NAT 功能，或者希望通过 provider-network，vlan，subnet CRD 维护一个或者多个外部网络，以及通过 ovn-eip，ovn-dnat，ovn-fip，ovn-snat CRD 来维护 EIP 和 NAT，请参考[VPC OVN NAT](../vpc/ovn-eip-fip-snat.md)。
+- 如果用户任意 VPC 下的子网都需要使用 OVN NAT 功能，或者希望通过 provider-network，vlan，subnet CRD 维护一个或者多个外部网络，以及通过 ovn-eip，ovn-dnat，ovn-fip，ovn-snat CRD 来维护 EIP 和 NAT，请参考[VPC OVN NAT 网关](../vpc/ovn-eip-fip-snat.md)。
 
-- 如果用户任意 VPC 下的子网都需要使用 Iptables NAT 功能，请参考当前[VPC Iptables NAT网关](../vpc/vpc.md#vpc_2)。
+- 如果用户任意 VPC 下的子网都需要使用 Iptables NAT 功能，请参考当前[VPC Iptables NAT 网关](../vpc/vpc.md#vpc_2)。
 
 Kube-OVN 支持利用 OVN 中的 L3 Gateway 功能来实现 Pod 级别的 SNAT 和 EIP 功能。
 通过使用 SNAT，一组 Pod 可以共享一个 IP 地址对外进行访问。通过 EIP 的功能，一个 Pod 可以直接和一个外部 IP 关联，
