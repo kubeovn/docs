@@ -2,7 +2,7 @@
 
 > This configuration is for the network under the default VPC. User-defined VPCS support two types of NAT. Please refer to:
 
-- [VPC Iptables NAT Gateway](../vpc/vpc.md#vpc_2)
+- [VPC Iptables NAT Gateway](../vpc/vpc.md)
 - [VPC OVN NAT Gateway](../vpc/ovn-eip-fip-snat.md)
 
 > Any VPC supports the use of any one or more external subnets, but some factors need to be considered:
@@ -11,7 +11,7 @@
 
 - If the subnets under any VPC of the user need to use the OVN NAT function, or wish to maintain one or more external networks through provider network, vlan, subnet CRD, as well as through OVN-EIP, OVN-DNAT, OVN-FIP, For maintaining EIP and NAT, please refer to ovn-snat CRD [VPC OVN NAT Gateway](../vpc/ovn-eip-fip-snat.md).
 
-- If the subnets under any VPC of the user need to use the Iptables NAT function, please refer to [VPC Iptables NAT Gateway](../vpc/vpc.md#vpc_2).
+- If the subnets under any VPC of the user need to use the Iptables NAT function, please refer to [VPC Iptables NAT Gateway](../vpc/vpc.md).
 
 Kube-OVN supports SNAT and EIP functionality at the Pod level using the L3 Gateway feature in OVN.
 By using SNAT, a group of Pods can share an IP address for external access. With the EIP feature, a Pod can be directly associated with an external IP.
