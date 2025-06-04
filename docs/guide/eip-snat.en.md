@@ -10,6 +10,7 @@
 - If the user only needs to use the OVN NAT function for subnets under the default VPC and uses it through the pod annotation method, please refer to the current documentation.
 
 - If the subnets under any VPC of the user need to use the OVN NAT function, or wish to maintain one or more external networks through provider network, vlan, subnet CRD, as well as through OVN-EIP, OVN-DNAT, OVN-FIP, For maintaining EIP and NAT, please refer to ovn-snat CRD[VPC OVN NAT](../vpc/ovn-eip-fip-snat.md).
+
 - If the subnets under any VPC of the user need to use the Iptables NAT function, please refer to[VPC Iptables NAT网关](../vpc/vpc.md#vpc_2).
 
 Kube-OVN supports SNAT and EIP functionality at the Pod level using the L3 Gateway feature in OVN.

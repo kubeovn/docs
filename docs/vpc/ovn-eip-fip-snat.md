@@ -259,8 +259,8 @@ metadata:
 spec:
   namespaces:
   - vpc1
-  enableExternal: true  # 开启 enableExternal 后 VPC 会自动连接名为 external 的 ls
-  extraExternalSubnets: # 配置 extraExternalSubnets 支持连接多个额外的公网网络
+  enableExternal: true  # 开启 enableExternal 后 VPC 会自动连接外部网络，一般是名为 external 的 ls
+  extraExternalSubnets: # 配置 extraExternalSubnets 支持连接任意多个公网网络
   - extra
 ```
 

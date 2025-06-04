@@ -1,6 +1,6 @@
 # Support OVN EIP,FIP and SNAT
 
-Support the use of any number of 'provider-network vlan (external) subnet' resources by any VPC OVN NAT function, which is independent of the [default VPC EIP/SNAT] function.
+Support the use of any number of `provider-network vlan (external) subnet` resources by any VPC OVN NAT function, which is independent of the [default VPC EIP/SNAT] function.
 
 ## Two independent ways of use
 
@@ -45,8 +45,6 @@ The CRD supported by this function is basically the same as the iptables nat gw 
 ## 1. Deployment
 
 If the user selects the `default external network` mode for use:
-
-Currently allows all VPCs to share the same default provider vlan subnet resources, custom VPCs support extending provider vlan subnet to enable the use of multiple public networks. similar to OpenStack Neutron ovn mode. Compatible with previous scenarios [default VPC EIP/SNAT](../guide/eip-snat.en.md).
 
 During the deployment phase, you may need to specify a default public network logical switch based on actual conditions.
 If no vlan is in use (vlan 0), the following startup vlan id do not need to be configured.
@@ -164,7 +162,7 @@ spec:
   namespaces:
   - vpc1
   enableExternal: true
-# VPC enableExternal will automatically create an lrp association to the public network specified above
+# VPC enableExternal will automatically create an lrp association to the default public network specified above
 
 # cat 02-subnet.yml
 apiVersion: kubeovn.io/v1
@@ -265,8 +263,8 @@ metadata:
 spec:
   namespaces:
   - vpc1
-  enableExternal: true  # VPC enableExternal will automatically create an lrp association to the public network specified above
-  extraExternalSubnets: # configure extraExternalSubnets to support connecting multiple additional public networks
+  enableExternal: true  # VPC enableExternal will automatically create an lrp association to the default external network specified above
+  extraExternalSubnets: # configure extraExternalSubnets to support connecting any multiple public networks
   - extra
 ```
 
