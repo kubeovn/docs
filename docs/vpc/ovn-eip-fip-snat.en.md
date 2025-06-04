@@ -1,5 +1,13 @@
 # Support OVN EIP,FIP and SNAT
 
+Support the use of any number of `provider-network vlan (external) subnet` resources by any VPC OVN NAT function, which is independent of the [default VPC EIP/SNAT](../guide/eip-snat.en.md) function.
+
+## Two independent ways of use
+
+- `default external network`: If only one external network is needed, the startup parameters need to be specified in `kube-ovn-controller` and `kube-ovn-cni`. Then use this default external subnet through the `ovn-external-gw-config` or `VPC spec enableExternal` attribute.
+
+- `CRD`: Create the  `provider-network` `vlan` `subnet` resources, and then use any external subnets by `VPC spec extraExternalSubnets`, and then use `ovn-eip, ovn-dnat, ovn-fip, ovn-snat`.
+
 ``` mermaid
 
 graph LR
@@ -30,43 +38,43 @@ Pod is based on the general flow of distributed gateway FIP (dnat_and_snat) to e
 The CRD supported by this function is basically the same as the iptables nat gw public network solution.
 
 - ovn eip: occupies a public ip address and is allocated from the underlay provider network vlan subnet
-- ovn fip: one-to-one dnat snat, which provides direct public network access for ip addresses and vip in a vpc
-- ovn snat: a subnet cidr or a single vpc ip or vip can access public networks based on snat
-- ovn dnat: based router lb, which enables direct access to a group of endpoints in a vpc based on a public endpoint
+- ovn fip: one-to-one dnat snat, which provides direct public network access for ip addresses and vip in a VPC
+- ovn snat: a subnet cidr or a single VPC ip or vip can access public networks based on snat
+- ovn dnat: based router lb, which enables direct access to a group of endpoints in a VPC based on a public endpoint
 
 ## 1. Deployment
 
-Currently allows all vpcs to share the same default provider vlan subnet resources, custom vpcs support extending provider vlan subnet to enable the use of multiple public networks. similar to neutron ovn mode. Compatible with previous scenarios [default VPC EIP/SNAT](../guide/eip-snat.en.md).
+If the user selects the `default external network` mode for use:
 
 During the deployment phase, you may need to specify a default public network logical switch based on actual conditions.
-If no vlan is in use (vlan 0 is used), the following startup parameters do not need to be configured.
+If no vlan is in use (vlan 0), the following startup vlan id do not need to be configured.
 
 ```bash
 # When deploying you need to refer to the above scenario and specify the following parameters as needed according to the actual situation
 # 1. kube-ovn-controller Startup parameters to be configured：
           - --external-gateway-vlanid=204
           - --external-gateway-switch=external204
-          
-# 2. kube-ovn-cni Startup parameters to be configured:
-          - --external-gateway-switch=external204 
 
-# The above configuration is consistent with the following public network configuration vlan id and resource name, 
+# 2. kube-ovn-cni Startup parameters to be configured:
+          - --external-gateway-switch=external204
+
+# The above configuration is consistent with the following public network configuration vlan id and resource name,
 # currently only support to specify one underlay public network as the default external public network.
 ```
 
 The design and use of this configuration item takes into account the following factors：
 
 - Based on this configuration item can be docked to the provider network, vlan, subnet resources.
-- Based on this configuration item, the default vpc enable_eip_snat function can be docked to the existing vlan, subnet resources, while supporting the ipam
-- If only the default vpc's enable_eip_snat mode is used with the old pod annotaion based eip fip snat, then the following configuration is not required.
-- Based on this configuration you can not use the default vpc enable_eip_snat process, only by corresponding to vlan, subnet process, can be compatible with only custom vpc use eip snat usage scenarios.
+- Based on this configuration item, the default VPC enable_eip_snat function can be docked to the existing vlan, subnet resources, while supporting the ipam
+- If only the default VPC's enable_eip_snat mode is used with the old pod annotation based eip fip snat, then the following configuration is not required.
+- Based on this configuration you can not use the default VPC enable_eip_snat process, only by corresponding to vlan, subnet process, can be compatible with only custom VPC use eip snat usage scenarios.
 
 The neutron ovn mode also has a certain static file configuration designation that is, for now, generally consistent.
 
 ### 1.1 Create the underlay public network
 
 ``` bash
-# provider-network， vlan， subnet
+# provider-network,  vlan,  subnet
 # cat 01-provider-network.yaml
 
 apiVersion: kubeovn.io/v1
@@ -102,11 +110,11 @@ spec:
 
 ```
 
-### 1.2 Default vpc enable eip_snat
+### 1.2 Default VPC enable eip_snat
 
 ``` bash
 
-# Enable the default vpc and the above underlay public provider subnet interconnection
+# Enable the default VPC and the above underlay public provider subnet interconnection
 
 cat 00-centralized-external-gw-no-ip.yaml
 apiVersion: v1
@@ -116,8 +124,8 @@ metadata:
   namespace: kube-system
 data:
   enable-external-gw: "true"
-  external-gw-nodes: "pc-node-1,pc-node-2,pc-node-3" 
-  type: "centralized"  
+  external-gw-nodes: "pc-node-1,pc-node-2,pc-node-3"
+  type: "centralized"
   external-gw-nic: "vlan"
   external-gw-addr: "10.5.204.254/24"
 
@@ -127,7 +135,7 @@ This feature currently supports the ability to create lrp type ovn eip resources
 If specified, it is equivalent to specifying the ip to create an ovn-eip of type lrp.
 Of course, you can also manually create the lrp type ovn eip in advance.
 
-### 1.3 Custom vpc enable eip snat fip function
+### 1.3 Custom VPC enable eip snat fip function
 
 Clusters generally require multiple gateway nodes to achieve high availability. The configuration is as follows:
 
@@ -143,7 +151,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: vpc1
-  
+
 # cat 01-vpc-ecmp-enable-external-bfd.yml
 
 kind: Vpc
@@ -154,7 +162,7 @@ spec:
   namespaces:
   - vpc1
   enableExternal: true
-# vpc enableExternal will automatically create an lrp association to the public network specified above
+# VPC enableExternal will automatically create an lrp association to the default public network specified above
 
 # cat 02-subnet.yml
 apiVersion: kubeovn.io/v1
@@ -245,7 +253,7 @@ spec:
   - 10.10.204.1..10.10.204.100
 ```
 
-#### 1.4.2 Custom vpc configuration
+#### 1.4.2 Custom VPC configuration
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -255,8 +263,8 @@ metadata:
 spec:
   namespaces:
   - vpc1
-  enableExternal: true  # vpc enableExternal will automatically create an lrp association to the public network specified above
-  extraExternalSubnets: # configure extraExternalSubnets to support connecting multiple additional public networks
+  enableExternal: true  # VPC enableExternal will automatically create an lrp association to the default external network specified above
+  extraExternalSubnets: # configure extraExternalSubnets to support connecting any multiple public networks
   - extra
 ```
 
@@ -283,7 +291,7 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 This function is designed and used in the same way as iptables-eip, ovn-eip currently has three types
 
 - nat: indicates ovn dnat, fip, and snat.
-- lrp: indicates the resource used to connect a vpc to the public network
+- lrp: indicates the resource used to connect a VPC to the public network
 - lsp: In the ovn BFD-based ecmp static route scenario, an ovs internal port is provided on the gateway node as the next hop of the ecmp route
 
 ``` bash
@@ -296,7 +304,7 @@ metadata:
 spec:
   externalSubnet: external204
   type: nat
-  
+
 # Dynamically allocate an eip resource that is reserved for fip dnat_and_snat scenarios
 ```
 
@@ -333,9 +341,10 @@ metadata:
 spec:
   ovnEip: eip-static
   ipName: vpc-1-busybox01.vpc1  # the name of the ip crd, which is unique
+  type: "centralized"           # centralized or distributed
 
 --
-# Alternatively, you can specify a vpc or Intranet ip address
+# Alternatively, you can specify a VPC or Intranet ip address
 
 kind: OvnFip
 apiVersion: kubeovn.io/v1
@@ -345,6 +354,7 @@ spec:
   ovnEip: eip-static
   vpc: vpc1
   v4Ip: 192.168.0.2
+  type: "centralized"           # centralized or distributed
 
 ```
 
@@ -429,7 +439,7 @@ spec:
   ipName: test-fip-vip
 
 ---
-# Alternatively, you can specify a vpc or Intranet ip address
+# Alternatively, you can specify a VPC or Intranet ip address
 
 kind: OvnFip
 apiVersion: kubeovn.io/v1
@@ -517,7 +527,7 @@ spec:
   vpcSubnet: vpc1-subnet1 # eip corresponds to the entire network segment
 
 ---
-# Alternatively, you can specify a vpc and subnet cidr on an Intranet
+# Alternatively, you can specify a VPC and subnet cidr on an Intranet
 
 kind: OvnSnatRule
 apiVersion: kubeovn.io/v1
@@ -526,7 +536,7 @@ metadata:
 spec:
   ovnEip: snat-for-subnet-in-vpc
   vpc: vpc1
-  v4IpCidr: 192.168.0.0/24 # vpc subnet cidr or ip address
+  v4IpCidr: 192.168.0.0/24 # VPC subnet cidr or ip address
 
 ```
 
@@ -557,7 +567,7 @@ spec:
   ipName: vpc-1-busybox02.vpc1 # eip corresponds to a single pod ip
 
 ---
-# Alternatively, you can specify a vpc or Intranet ip address
+# Alternatively, you can specify a VPC or Intranet ip address
 
 kind: OvnSnatRule
 apiVersion: kubeovn.io/v1
@@ -681,7 +691,7 @@ spec:
   externalPort: "22"
 
 ---
-# Alternatively, you can specify a vpc or Intranet ip address
+# Alternatively, you can specify a VPC or Intranet ip address
 
 kind: OvnDnatRule
 apiVersion: kubeovn.io/v1
@@ -730,7 +740,7 @@ spec:
 
 
 ---
-# Alternatively, you can specify a vpc or Intranet ip address
+# Alternatively, you can specify a VPC or Intranet ip address
 
 kind: OvnDnatRule
 apiVersion: kubeovn.io/v1
@@ -759,7 +769,7 @@ test-dnat-vip   192.168.0.4           00:00:00:D0:C0:B5                         
 NAME       V4IP        V6IP   MAC                 TYPE   READY
 eip-dnat   10.5.49.4          00:00:00:4D:CE:49   dnat   true
 
-# kubectl get odnat eip-dnat 
+# kubectl get odnat eip-dnat
 NAME       EIP        PROTOCOL   V4EIP       V4IP          INTERNALPORT   EXTERNALPORT   IPNAME          READY
 eip-dnat   eip-dnat   tcp        10.5.49.4   192.168.0.4   22             22             test-dnat-vip   true
 
