@@ -1,12 +1,12 @@
 # Support OVN EIP,FIP and SNAT
 
-Support the use of any number of `provider-network vlan (external) subnet` resources by any VPC OVN NAT function, which is independent of the [default VPC EIP/SNAT] function.
+Support the use of any number of `provider-network vlan (external) subnet` resources by any VPC OVN NAT function, which is independent of the [default VPC EIP/SNAT](../guide/eip-snat.en.md) function.
 
 ## Two independent ways of use
 
 - `default external network`: If only one external network is needed, the startup parameters need to be specified in `kube-ovn-controller` and `kube-ovn-cni`. Then use this default external subnet through the `ovn-external-gw-config` or `VPC spec enableExternal` attribute.
 
-- `CRD`: Create the  `provider-network` `vlan` `subnet` resources, and then use any external subnets by `VPC spec extraExternalSubnets`, and then use `ovn-eip，ovn-dnat，ovn-fip，ovn-snat`.
+- `CRD`: Create the  `provider-network` `vlan` `subnet` resources, and then use any external subnets by `VPC spec extraExternalSubnets`, and then use `ovn-eip, ovn-dnat, ovn-fip, ovn-snat`.
 
 ``` mermaid
 
@@ -66,7 +66,7 @@ The design and use of this configuration item takes into account the following f
 
 - Based on this configuration item can be docked to the provider network, vlan, subnet resources.
 - Based on this configuration item, the default VPC enable_eip_snat function can be docked to the existing vlan, subnet resources, while supporting the ipam
-- If only the default VPC's enable_eip_snat mode is used with the old pod annotaion based eip fip snat, then the following configuration is not required.
+- If only the default VPC's enable_eip_snat mode is used with the old pod annotation based eip fip snat, then the following configuration is not required.
 - Based on this configuration you can not use the default VPC enable_eip_snat process, only by corresponding to vlan, subnet process, can be compatible with only custom VPC use eip snat usage scenarios.
 
 The neutron ovn mode also has a certain static file configuration designation that is, for now, generally consistent.
@@ -74,7 +74,7 @@ The neutron ovn mode also has a certain static file configuration designation th
 ### 1.1 Create the underlay public network
 
 ``` bash
-# provider-network， vlan， subnet
+# provider-network,  vlan,  subnet
 # cat 01-provider-network.yaml
 
 apiVersion: kubeovn.io/v1
