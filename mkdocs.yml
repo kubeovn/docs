@@ -260,6 +260,7 @@ plugins:
       enable_creation_date: true
   - git-committers:
       repository: kubeovn/docs
+      enabled: !ENV [ENABLE_GIT_COMMITTERS, false]
   - minify:
       minify_html: true
       htmlmin_opts:
