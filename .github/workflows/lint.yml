@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
       - name: lint
         run: |
           npm install -g markdownlint-cli
@@ -23,15 +23,7 @@ jobs:
           python-version: '3.13'
           cache: 'pip'
 
-      - name: committer cache
-        uses: actions/cache@v4
-        with:
-          path: .cache
-          key: committer-cache
-
       - run: pip install -r docs/requirements.txt
       - name: build
-        env:
-          MKDOCS_GIT_COMMITTERS_APIKEY: ${{ secrets.GIT_COMMITER_TOKEM }}
         run: |
           mkdocs build -s

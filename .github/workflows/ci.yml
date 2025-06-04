@@ -28,6 +28,7 @@ jobs:
       - name: build
         env:
           MKDOCS_GIT_COMMITTERS_APIKEY: ${{ secrets.GIT_COMMITER_TOKEM }}
+          ENABLE_GIT_COMMITTERS: true
         run: |
           git config --global user.name "ci-bot"
           git config --global user.email "ci-bot@example.com"
