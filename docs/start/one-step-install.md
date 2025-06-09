@@ -105,12 +105,24 @@ NAME                    CHART VERSION   APP VERSION     DESCRIPTION
 kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 ```
 
-### 执行 helm install 安装 Kube-OVN
+### v1 版本 chart 执行 helm install 安装 Kube-OVN
 
 Chart 参数的设置，可以参考 `values.yaml` 文件中变量定义。
 
 ```bash
-$ helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
+helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
+NAME: kube-ovn
+LAST DEPLOYED: Thu Apr 24 08:30:13 2025
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+### v2 版本 chart 执行 helm install 安装 Kube-OVN
+
+```bash
+helm install kube-ovn kubeovn/kube-ovn-v2 --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
 LAST DEPLOYED: Thu Apr 24 08:30:13 2025
 NAMESPACE: kube-system
@@ -121,8 +133,27 @@ TEST SUITE: None
 
 ### 升级
 
+#### v1 版本 chart 升级
+
 **重要提示：** 与脚本升级类似，请确保在**使用 Helm 升级前**，所有参数调整都已更新到相应的 `values.yaml` 文件中。否则，之前的参数调整将**被还原**。
 
 ```bash
 helm upgrade -f values.yaml kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 ```
+
+#### v2 版本 chart 升级
+
+**注意：升级 v2 chart 前，必须先手动 apply 新的 CRD，且 `{{ variables.version }}` 需与 CRD 下载 tag 保持一致。**
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/refs/tags/{{ variables.version }}/charts/kube-ovn-v2/crds/kube-ovn-crd.yaml
+```
+
+然后再升级 chart：
+
+```bash
+helm upgrade -f values.yaml kube-ovn kubeovn/kube-ovn-v2 --wait -n kube-system --version {{ variables.version }}
+```
+
+**注意：** v1 版本目前无法直接升级到 v2 版本的 chart，如果需要转换到 v2 的 chart，需要先卸载 v1 版本后重新安装 v2 版本。
+
