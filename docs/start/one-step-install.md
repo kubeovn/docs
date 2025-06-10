@@ -156,4 +156,3 @@ helm upgrade -f values.yaml kube-ovn kubeovn/kube-ovn-v2 --wait -n kube-system -
 ```
 
 **注意：** v1 版本目前无法直接升级到 v2 版本的 chart，如果需要转换到 v2 的 chart，需要先卸载 v1 版本后重新安装 v2 版本。
-
