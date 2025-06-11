@@ -185,7 +185,7 @@
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-vpc-nat-config</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
 <span class=nt>data</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/kubeovn/vpc-nat-gateway:v1.12.33</span>
+<span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/kubeovn/vpc-nat-gateway:v1.12.34</span>
 </code></pre></div> <ul> <li><code>image</code>: The image used by the VPC Gateway Pod.</li> </ul> <h2 id=custom-routing>Custom Routing<a class=headerlink href=#custom-routing title="Permanent link">&para;</a></h2> <p>Within the custom VPC, users can customize the routing rules within the VPC and combine it with the gateway for more flexible forwarding. Kube-OVN supports static routes and more flexible policy routes.</p> <h3 id=static-routes>Static Routes<a class=headerlink href=#static-routes title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Vpc</span>
 <span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>metadata</span><span class=p>:</span>

@@ -179,7 +179,7 @@
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-vpc-nat-config</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
 <span class=nt>data</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=s>&#39;docker.io/kubeovn/vpc-nat-gateway:v1.12.33&#39;</span>
+<span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=s>&#39;docker.io/kubeovn/vpc-nat-gateway:v1.12.34&#39;</span>
 </code></pre></div> <ul> <li><code>image</code>: 网关 Pod 所使用的镜像。</li> </ul> <h2 id=_3>自定义路由<a class=headerlink href=#_3 title="Permanent link">&para;</a></h2> <p>在自定义 VPC 内，用户可以自定义网络内部的路由规则，结合网关实现更灵活的转发。 Kube-OVN 支持静态路由和更为灵活的策略路由。</p> <h3 id=_4>静态路由<a class=headerlink href=#_4 title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Vpc</span>
 <span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>metadata</span><span class=p>:</span>
