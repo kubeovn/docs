@@ -123,6 +123,12 @@ spec:
 
 You can try to delete the Pod under StatefulSet to observe if the Pod IP changes.
 
+### Updating StatefulSet Pod IPs
+
+Since the IPs of StatefulSet Pods are bound to their lifecycle along with the Pod names, directly updating the `ovn.kubernetes.io/ip_pool` annotation in the StatefulSet will not update the Pod IPs.
+
+If you need to update the IPs of StatefulSet Pods, first scale the StatefulSet replicas down to 0. Then, update the annotation and restore the StatefulSet replicas afterward.
+
 ## KubeVirt VM Fixed Address
 
 For VM instances created by KubeVirt, `kube-ovn-controller` can assign and manage IP addresses in a similar way to the StatefulSet Pod.
