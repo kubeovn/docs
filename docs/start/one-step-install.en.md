@@ -106,12 +106,24 @@ NAME                    CHART VERSION   APP VERSION     DESCRIPTION
 kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 ```
 
-### Run helm install to install Kube-OVN
+### v1 Chart: Install Kube-OVN with Helm
 
-For available parameters, you can refer to the variable definitions in the `values.yaml` file.
+You can refer to the variable definitions in the `values.yaml` file for available parameters.
 
 ```bash
-$ helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
+helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
+NAME: kube-ovn
+LAST DEPLOYED: Thu Apr 24 08:30:13 2025
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+### v2 Chart: Install Kube-OVN with Helm
+
+```bash
+helm install kube-ovn kubeovn/kube-ovn-v2 --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
 LAST DEPLOYED: Thu Apr 24 08:30:13 2025
 NAMESPACE: kube-system
@@ -122,8 +134,26 @@ TEST SUITE: None
 
 ### Upgrade
 
+#### v1 Chart Upgrade
+
 **Important:** Similar to script-based upgrades, ensure all parameter adjustments are updated in the `values.yaml` file **before upgrading with Helm**. Otherwise, previous parameter adjustments **will be reverted**.
 
 ```bash
 helm upgrade -f values.yaml kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 ```
+
+#### v2 Chart Upgrade
+
+**Note:** Before upgrading the v2 chart, you must manually apply the new CRDs, and `{{ variables.version }}` must match the tag used for downloading the CRDs.
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/refs/tags/{{ variables.version }}/charts/kube-ovn-v2/crds/kube-ovn-crd.yaml
+```
+
+Then upgrade the chart:
+
+```bash
+helm upgrade -f values.yaml kube-ovn kubeovn/kube-ovn-v2 --wait -n kube-system --version {{ variables.version }}
+```
+
+**Note:** Currently, you cannot directly upgrade from the v1 chart to the v2 chart. If you need to switch to the v2 chart, you must uninstall the v1 chart and then install the v2 chart from scratch.
