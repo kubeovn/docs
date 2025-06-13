@@ -111,6 +111,12 @@ spec:
 
 可以尝试删除 StatefulSet 下 Pod 观察 Pod IP 变化信息。
 
+### 更新 StatefulSet Pod IP
+
+由于 StatefulSet 下的 IP 和 Pod Name 生命周期绑定，直接更新 Statefulset 的 `ovn.kubernetes.io/ip_pool` Annotation 无法更新 Pod 的 IP。
+
+如果遇到需要更新 StatefulSet Pod IP 的场景请先将 StatefulSet 的副本数 scale 到 0，之后再更新 Annotation 并恢复 StatefulSet 副本数。
+
 ## KubeVirt VM 固定地址
 
 针对 KubeVirt 创建的 VM 实例，`kube-ovn-controller` 可以按照类似 StatefulSet Pod 的方式进行 IP 地址分配和管理。
