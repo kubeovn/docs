@@ -8,6 +8,10 @@ Kube-OVN 使用隧道对跨集群流量进行封装，两个集群之间只要�
 
 ![](../static/inter-connection.png)
 
+!!! warning "Limitation"
+
+    OVN-IC 的方式只能做到 Pod IP 的跨集群打通，无法完成 Service，DNS 和 NetworkPolicy 的跨集群打通，如果需要跨集群服务发现的能力请考虑使用 Istio 或其他跨集群服务治理项目。
+
 ## 前提条件
 
 1. 1.11.16 之后版本部署的集群默认关闭了集群互联的开关，需要在部署脚本 `install.sh` 里修改下列变量：
