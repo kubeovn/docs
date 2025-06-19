@@ -10,6 +10,10 @@ as long as there is a set of IP reachable machines.
 
 ![](../static/inter-connection.png)
 
+!!! note "Limitation"
+
+    The OVN-IC method can only achieve cross-cluster connectivity for Pod IPs and cannot complete cross-cluster connectivity for Services, DNS, and NetworkPolicies. If cross-cluster service discovery capabilities are needed, please consider using Istio or other cross-cluster service governance projects.
+
 ## Prerequisites
 
 1. Clusters configured in versions after 1.11.16 have the cluster interconnection switch turned off by default. You need to mark the following in the configuration script `install.sh`:
