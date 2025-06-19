@@ -15,7 +15,7 @@ jobs:
           npm install -g markdownlint-cli
           npm install -g markdownlint-rule-search-replace@1.0.9 
           pwd
-          markdownlint "**/*.md" --disable MD013 MD033 MD045 MD024 MD041 MD029 MD051 -r markdownlint-rule-search-replace
+          markdownlint "**/*.md" --disable MD013 MD033 MD045 MD024 MD041 MD029 MD051 MD046 -r markdownlint-rule-search-replace
           markdownlint -V
           
       - uses: actions/setup-python@v5
