@@ -84,7 +84,7 @@
 | v6availableIPrange | String | 子网现在可用的 IPv6 地址范围 |
 | v6UsingIPs | Float64 | 子网现在已用的 IPv6 IP 地址数量 |
 | v6usingIPrange | String | 子网现在已用的 IPv6 地址范围 |
-| sctivateGateway | String | 集中式子网，主备模式下当前正在工作的网关节点 |
+| activateGateway | String | 集中式子网，主备模式下当前正在工作的网关节点 |
 | dhcpV4OptionsUUID | String | 子网下 lsp dhcpv4_options 关联的 DHCP_Options 记录标识 |
 | dhcpV6OptionsUUID | String | 子网下 lsp dhcpv6_options 关联的 DHCP_Options 记录标识 |
 | u2oInterconnectionIP | String | 开启 Overlay/Underlay 互联模式后，所占用的用于互联的 IP 地址 |
