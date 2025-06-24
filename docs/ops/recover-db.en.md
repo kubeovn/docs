@@ -26,7 +26,7 @@ file system failure or lack of disk space, but the cluster is still working norm
 ### Check the Logs to Confirm Status
 
 Check the log in `/var/log/ovn/ovn-northd.log`, if it shows similar error as follows,
-you can make sue that there is an exception in the database:
+you can make sure that there is an exception in the database:
 
 ```bash
  * ovn-northd is not running
