@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - master
+      - v1.14
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -33,5 +34,6 @@ jobs:
           git config --global user.name "ci-bot"
           git config --global user.email "ci-bot@example.com"
           git fetch origin gh-pages
-          mike deploy --push -u v1.14.x dev -t "v1.14.x (dev)"
+          mike deploy --push -u v1.14.x current stable -t "v1.14.x (stable)"
+          mike set-default stable --push
           mike list
