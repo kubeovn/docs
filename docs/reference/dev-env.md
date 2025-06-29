@@ -1,4 +1,8 @@
-# 开发环境构建
+# 开发和贡献指导
+
+## 贡献流程
+
+Kube-OVN 并没有复杂的贡献流程，一切工作都可以在 Github 上发生。当你想提交新的功能/修复某个问题，只需要在 Github 上创建 Issue 和 PR，经过 Maintainer 的 Review 且所有 Github Action 通过，代码就可以被合并。
 
 ## 环境准备
 

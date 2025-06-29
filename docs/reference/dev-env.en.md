@@ -1,4 +1,8 @@
-# Development Setup
+# Development and Contribution Guide
+
+## Contribution Process  
+
+Kube-OVN does not have a complex contribution process—all work happens on GitHub. If you want to submit a new feature or fix a bug, simply create an Issue and Pull Request (PR) on GitHub. After maintainers review and all GitHub Actions pass, the code will be merged.  
 
 ## Environmental Preparation
 
