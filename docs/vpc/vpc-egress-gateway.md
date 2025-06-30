@@ -338,8 +338,10 @@ Spec：
 | `internalIPs` | `string array` | 是 | - | 接入 VPC 网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
 | `externalIPs` | `string array` | 是 | - | 接入外部网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
 | `bfd` | `object` | 是 | - | BFD 配置。| - |
-| `policies` | `object array` | 是 | - | Egress 策略。必须配置至少一条策略。| - |
+| `policies` | `object array` | 是 | - | Egress 策略。可与 `selectors` 同时配置。| - |
+| `selectors` | `object array` | 是 | - | 通过 Namespace Selector 以及 Pod Selector 配置 Egress 策略。匹配到的 Pod 将开启 SNAT/MASQUERADE。可与 `policies` 同时配置。| - |
 | `nodeSelector` | `object array` | 是 | - | 工作负载的节点选择器，工作负载（Deployment/Pod）将运行在被选择的节点上。| - |
+| `trafficPolicy` | `string` | 是 | `Cluster` | 可选值：`Cluster`/`Local`。**仅开启 BFD 时生效**。 设置为 `Local` 时，Egress 流量将优先导向同节点上的 VPC Egress Gateway 实例。若同节点上的 VPC Egress Gateway 实例出现故障，Egress 流量将导向其它实例。 | `Local` |
 
 BFD 配置：
 
@@ -357,6 +359,17 @@ Egress 策略：
 | `snat` | `boolean` | 是 | `false` | 是否开启 SNAT/MASQUERADE。 | `true` |
 | `ipBlocks` | `string array` | 是 | - | 应用于此 Gateway 的 IP 范围段。支持 IPv6。 | `192.168.0.1` / `192.168.0.0/24` |
 | `subnets` | `string array` | 是 | - | 应用于此 Gateway 的 VPC 子网名称。支持 IPv6 子网及双栈子网。 | `subnet1` |
+
+Selectors：
+
+| 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `namespaceSelector` | `object` | 是 | - | Namespace 选择器。空值时将匹配所有 Namespace。 | - |
+| `namespaceSelector.matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。 | - |
+| `namespaceSelector.matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。| - |
+| `podSelector` | `object` | 是 | - | Pod 选择器。空值时将匹配所有 Pod。 | - |
+| `podSelector.matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。| - |
+| `podSelector.matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。| - |
 
 节点选择器：
 
