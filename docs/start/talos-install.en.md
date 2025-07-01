@@ -36,7 +36,7 @@ helm install kubeovn kubeovn/kube-ovn --wait \
 ```
 
 !!! note
-    Logical network interfaces, such as VLAN, Bond, and Bridge, cannot be used as provider interfaces for Underlay networks. Physical network interfaces used by Underlay networks need to be configured with `ignore=true` in the Talos machine configuration. Here is an example:
+    Logical network interfaces, such as VLAN, Bond, and Bridge, cannot be used as provider interfaces for Underlay networks. Physical interfaces used for the Underlay network **MUST** be configured with `ignore=true` in the Talos machine configuration. Here is an example:
     ```yaml
     machine:
       network:
