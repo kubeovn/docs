@@ -46,7 +46,7 @@ helm install kubeovn kubeovn/kube-ovn --wait \
 ```
 
 !!! note
-    Underlay 使用的网卡需要在部署 Kube-OVN 前在 Talos 配置中将其设置为 ignore。示例如下：
+    VLAN、Bond、Bridge 等类型的虚拟网卡不可用作 Underlay 网络的节点网卡。Underlay 使用的物理网卡需要在 Talos 配置中将其设置为 `ignore=true`。示例如下：
     ```yaml
     machine:
       network:
