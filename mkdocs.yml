@@ -270,6 +270,9 @@ plugins:
 #      author: Kube-OVN Team
 #      cover_subtitle: v1.10.3
 extra:
+  analytics:
+    provider: google
+    property: G-X2R3RHC957
   version:
     provider: mike
     default: stable
