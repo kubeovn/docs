@@ -1,8 +1,18 @@
 # VPC Egress Gateway
 
-VPC Egress Gateway 用于控制 VPC（包括默认 VPC）内 Pod 访问外部网络。VPC Egress Gateway 参考了 VPC NAT Gateway 的设计，在 VPC NAT Gateway 的基础上实现了基于 ECMP 路由的负载均衡以及基于 BFD 的高可用，并支持 IPv6 以及双栈。
+VPC Egress Gateway 用于控制 VPC（包括默认 VPC）内 Pod 访问外部网络，并具有以下特点：
 
-> VPC Egress Gateway 支持默认 VPC 及自定义 VPC。
+- 通过 ECMP 实现 Active-Active 高可用，可实现吞吐量横向扩展
+- 通过 BFD 实现 <1s 的快速故障切换
+- 支持 IPv6 及双栈
+- 可通过 Namespace 选择器和 Pod 选择器实现细粒度路由控制
+- 可通过 Node 选择器，实现 Egress Gateway 灵活调度
+
+同时 VPC Egress Gateway 具有如下限制：
+
+- 使用 macvlan 实现底层网络打通，需要底层网络[支持 Underlay](../start/underlay.md#_2)
+- Gateway 多实例模式下需要占用多个 Egress IP
+- 目前只支持 SNAT，不支持 EIP 和 DNAT
 
 ## 使用要求
 

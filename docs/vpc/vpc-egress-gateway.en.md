@@ -1,8 +1,18 @@
 # VPC Egress Gateway
 
-VPC Egress Gateway is used to control the access of Pods within VPCs (including the default VPC) to the external network. VPC Egress Gateway refers to the design of VPC NAT Gateway, and implements load balancing based on ECMP routing and high availability based on BFD. It also supports IPv6 and dual-stack.
+**VPC Egress Gateway** is used to control external network access for Pods within a VPC (including the default VPC) and has the following features:
 
-> VPC Egress Gateway supports both the default VPC and custom VPCs.
+- Achieves Active-Active high availability through ECMP, enabling horizontal throughput scaling
+- Implements fast failover (<1s) via BFD
+- Supports IPv6 and dual-stack
+- Enables granular routing control through `NamespaceSelector` and `PodSelector`
+- Allows flexible scheduling of Egress Gateway through `NodeSelector`
+
+At the same time, VPC Egress Gateway has the following limitations:
+
+- Uses macvlan for underlying network connectivity, requiring [Underlay support](../start/underlay.en.md#environment-requirements) from the underlying network
+- In multi-instance Gateway mode, multiple Egress IPs are required
+- Currently only supports SNAT; EIP and DNAT are not supported
 
 ## Requirements
 
