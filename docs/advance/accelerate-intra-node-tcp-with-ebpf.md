@@ -7,12 +7,12 @@
 
 在当前的实现下，同主机的两个 Pod 进行 TCP 进行通信需要经过大量的网络栈，包括 TCP/IP, netfilter，OVS 等如下图所示：
 
-![without eBPF](../static/intra-node-without-ebpf.png)
+![Without eBPF](../static/intra-node-without-ebpf.png)
 
 istio-tcpip-bypass 插件可以自动分析并识别出同主机内的 TCP 通信，并绕过复杂的内核栈从而可以直接进行 socket 间的数据传输，
 来降低网络栈处理开销，如下图所示：
 
-![with eBPF](../static/intra-node-with-ebpf.png)
+![With eBPF](../static/intra-node-with-ebpf.png)
 
 由于该组件可以自动识别同主机内的 TCP 通信，并进行优化。在基于代理模式的 Service Mesh 环境下，该组件也可以增强 Service Mesh 的性能表现。
 

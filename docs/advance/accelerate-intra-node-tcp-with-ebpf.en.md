@@ -7,11 +7,11 @@ At some edge and 5G scenarios, there will be a lot of TCP communication between 
 
 At present, two Pods on the same host need to go through a lot of network stacks, including TCP/IP, netfilter, OVS, etc., as shown in the following figure:
 
-![without eBPF](../static/intra-node-without-ebpf.png)
+![Without eBPF](../static/intra-node-without-ebpf.png)
 
 istio-tcpip-bypass plugin can automatically analyze and identify TCP communication within the same host, and bypass the complex kernel stack so that socket data transmission can be performed directly to reduce network stack processing overhead, as shown in the following figure:
 
-![with eBPF](../static/intra-node-with-ebpf.png)
+![With eBPF](../static/intra-node-with-ebpf.png)
 
 Due to the fact that this component can automatically identify TCP communication within the same host and optimize it. In the Service Mesh environment based on the proxy mode, this component can also enhance the performance of Service Mesh.
 
