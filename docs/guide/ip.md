@@ -66,7 +66,6 @@ spec:
 创建成功后查询该 IP：
 
 ```bash
-
 # kubectl get subnet ovn-default
 NAME          PROVIDER   VPC           PROTOCOL   CIDR           PRIVATE   NAT    DEFAULT   GATEWAYTYPE   V4USED   V4AVAILABLE   V6USED   V6AVAILABLE   EXCLUDEIPS      U2OINTERCONNECTIONIP
 ovn-default   ovn        ovn-cluster   IPv4       10.16.0.0/16   false     true   true      distributed   7        65526         0        0             ["10.16.0.1"]
@@ -173,8 +172,7 @@ spec:
 删除 Pod 或者 VM 后， 该 IP CR 依然保留。
 
 ```bash
-
-root@base:~/test/ip# kubectl get po -n default -o wide
+# kubectl get po -n default -o wide
 NAME            READY   STATUS    RESTARTS   AGE   IP          NODE              NOMINATED NODE   READINESS GATES
 pod-static-01   1/1     Running   0          30s   10.16.0.3   kube-ovn-worker   <none>           <none>
 

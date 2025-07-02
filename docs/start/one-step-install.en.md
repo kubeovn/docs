@@ -64,7 +64,7 @@ Since the installation of Kube-OVN requires setting some parameters, to install 
 ### View the node IP address
 
 ```bash
-$ kubectl get node -o wide
+# kubectl get node -o wide
 NAME                     STATUS     ROLES           AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
 kube-ovn-control-plane   NotReady   control-plane   20h   v1.26.0   172.18.0.3    <none>        Ubuntu 22.04.1 LTS   5.10.104-linuxkit   containerd://1.6.9
 kube-ovn-worker          NotReady   <none>          20h   v1.26.0   172.18.0.2    <none>        Ubuntu 22.04.1 LTS   5.10.104-linuxkit   containerd://1.6.9
@@ -73,15 +73,15 @@ kube-ovn-worker          NotReady   <none>          20h   v1.26.0   172.18.0.2  
 ### Add label to node
 
 ```bash
-$ kubectl label node -lbeta.kubernetes.io/os=linux kubernetes.io/os=linux --overwrite
+# kubectl label node -lbeta.kubernetes.io/os=linux kubernetes.io/os=linux --overwrite
 node/kube-ovn-control-plane not labeled
 node/kube-ovn-worker not labeled
 
-$ kubectl label node -lnode-role.kubernetes.io/control-plane kube-ovn/role=master --overwrite
+# kubectl label node -lnode-role.kubernetes.io/control-plane kube-ovn/role=master --overwrite
 node/kube-ovn-control-plane labeled
 
 # The following labels are used for the installation of dpdk images and can be ignored in non-dpdk cases
-$ kubectl label node -lovn.kubernetes.io/ovs_dp_type!=userspace ovn.kubernetes.io/ovs_dp_type=kernel --overwrite
+# kubectl label node -lovn.kubernetes.io/ovs_dp_type!=userspace ovn.kubernetes.io/ovs_dp_type=kernel --overwrite
 node/kube-ovn-control-plane labeled
 node/kube-ovn-worker labeled
 ```
@@ -89,19 +89,19 @@ node/kube-ovn-worker labeled
 ### Add Helm Repo information
 
 ```bash
-$ helm repo add kubeovn https://kubeovn.github.io/kube-ovn/
+# helm repo add kubeovn https://kubeovn.github.io/kube-ovn/
 "kubeovn" has been added to your repositories
 
 $ helm repo list
 NAME            URL
 kubeovn         https://kubeovn.github.io/kube-ovn/
 
-$ helm repo update kubeovn
+# helm repo update kubeovn
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "kubeovn" chart repository
 Update Complete. ⎈Happy Helming!⎈
 
-$ helm search repo kubeovn
+# helm search repo kubeovn
 NAME                    CHART VERSION   APP VERSION     DESCRIPTION
 kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 ```
@@ -111,7 +111,7 @@ kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 You can refer to the variable definitions in the `values.yaml` file for available parameters.
 
 ```bash
-helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
+# helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
 LAST DEPLOYED: Thu Apr 24 08:30:13 2025
 NAMESPACE: kube-system
@@ -123,7 +123,7 @@ TEST SUITE: None
 ### v2 Chart: Install Kube-OVN with Helm
 
 ```bash
-helm install kube-ovn kubeovn/kube-ovn-v2 --wait -n kube-system --version {{ variables.version }}
+# helm install kube-ovn kubeovn/kube-ovn-v2 --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
 LAST DEPLOYED: Thu Apr 24 08:30:13 2025
 NAMESPACE: kube-system
