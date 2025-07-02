@@ -1,0 +1,29 @@
+name: Auto Cherry-pick
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cherry-pick:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'need backport')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Execute Cherry-pick
+        env:
+          # Configure target branches for cherry-pick, separated by commas
+          TARGET_BRANCHES: "v1.14,v1.13"
+        run: |
+          chmod +x ./hack/cherry-pick.sh
+          ./hack/cherry-pick.sh "${{ github.event.pull_request.merge_commit_sha }}" "$TARGET_BRANCHES" "${{ github.event.pull_request.number }}" 
