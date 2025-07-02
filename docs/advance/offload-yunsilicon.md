@@ -54,7 +54,7 @@ bash install.sh
 
 1. 找到 metaScale 设备的设备 ID，下面是 `b3:00.0`:
 
-```shell
+```bash
 [root@k8s-master ~]# lspci -d 1f67:
 b3:00.0 Ethernet controller: Device 1f67:1111 (rev 02)
 b3:00.1 Ethernet controller: Device 1f67:1111 (rev 02)
@@ -62,27 +62,27 @@ b3:00.1 Ethernet controller: Device 1f67:1111 (rev 02)
 
 2. 找到与设备 ID 相关的接口，下面是 `p3p1`：
 
-```shell
+```bash
 ls -l /sys/class/net/ | grep b3:00.0
 lrwxrwxrwx 1 root root 0 May  7 16:30 p3p1 -> ../../devices/pci0000:b2/0000:b2:00.0/0000:b3:00.0/net/p3p1
 ```
 
 3. 检查可用的 VF 数量：
 
-```shell
+```bash
 cat /sys/class/net/p3p1/device/sriov_totalvfs
 512
 ```
 
 4. 创建 VF：
 
-```shell
+```bash
 echo '10' > /sys/class/net/p3p1/device/sriov_numvfs
 ```
 
 5. 确认 VF 创建成功：
 
-```shell
+```bash
 lspci -d 1f67:
 b3:00.0 Ethernet controller: Device 1f67:1111 (rev 02)
 b3:00.1 Ethernet controller: Device 1f67:1111 (rev 02)

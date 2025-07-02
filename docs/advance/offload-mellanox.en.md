@@ -44,7 +44,7 @@ Check whether the network card is bound to bond:
 
 > In this example, the network cards enp132s0f0np0 and enp132s0f1np1 are bound to bond1
 
-```shell
+```bash
 # ip link show enp132s0f0np0 | grep bond
 160: enp132s0f0np0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master bond1 state UP mode DEFAULT group default qlen 1000
 # ip link show enp132s0f1np1 | grep bond
@@ -53,7 +53,7 @@ Check whether the network card is bound to bond:
 
 Remove bond and existing VF:
 
-```shell
+```bash
 ifenslave -d bond1 enp132s0f0np0
 ifenslave -d bond1 enp132s0f1np1
 echo 0 > /sys/class/net/enp132s0f0np0/device/sriov_numvfs
@@ -162,7 +162,7 @@ SR-IOV VF LAG allows the NIC's physical functions (PFs) to get the rules that th
 
 In this example, LACP mode will be used, and the configuration is as follows:
 
-```shell
+```bash
 modprobe bonding mode=802.3ad
 ip link set enp132s0f0np0 master bond1
 ip link set enp132s0f1np1 master bond1
