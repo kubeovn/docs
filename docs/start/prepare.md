@@ -38,3 +38,16 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，其运行需要依赖 Kuber
 | kube-ovn-controller | 10660/tcp                                     | 监控监听端口                   |
 | kube-ovn-daemon     | 10665/tcp                                     | 监控监听端口                   |
 | kube-ovn-monitor    | 10661/tcp                                     | 监控监听端口                   |
+
+如果节点上运行了 firewalld，您还需要开启 Packet Forwarding 以及 Masquerade：
+
+```shell
+# 开启 Packet Forwarding
+firewall-cmd --add-forward --permanent
+# 开启 IPv4 Masquerade
+firewall-cmd --add-masquerade --permanent
+# 为 Kube-OVN IPv6/双栈 子网开启 Masquerade，如果您的子网配置不同请按需调整
+firewall-cmd --permanent --add-rich-rule 'rule family="ipv6" source address="fd00:10:16::/112" masquerade'
+
+firewall-cmd --reload
+```
