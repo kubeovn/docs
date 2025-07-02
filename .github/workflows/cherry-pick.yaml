@@ -16,13 +16,13 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.name "cherry-pick-bot"
-          git config --global user.email "cherry-pick-bot@users.noreply.github.com"
+          git config --global user.name "ci-bot"
+          git config --global user.email "ci-bot@example.com"
 
       - name: Execute Cherry-pick
         env:
           # Configure target branches for cherry-pick, separated by commas
-          TARGET_BRANCHES: "v1.14,v1.13"
+          TARGET_BRANCHES: "v1.14"
+          GITHUB_TOKEN: ${{ secrets.GIT_COMMITER_TOKEM }}
         run: |
-          chmod +x ./hack/cherry-pick.sh
           ./hack/cherry-pick.sh "${{ github.event.pull_request.merge_commit_sha }}" "$TARGET_BRANCHES" "${{ github.event.pull_request.number }}" 
