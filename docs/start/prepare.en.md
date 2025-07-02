@@ -48,7 +48,7 @@ If you are running firewalld on nodes, you need also to enable packet forwarding
 firewall-cmd --add-forward --permanent
 # enable IPv4 masquerade
 firewall-cmd --add-masquerade --permanent
-# enable IPv6 masquerade for fd00:10:16::/112
+# enable IPv6 masquerade for the Kube-OVN IPv6/DualStack subnet (adjust if your subnet differs)
 firewall-cmd --permanent --add-rich-rule 'rule family="ipv6" source address="fd00:10:16::/112" masquerade'
 
 firewall-cmd --reload

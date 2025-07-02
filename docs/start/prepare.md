@@ -46,7 +46,7 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，其运行需要依赖 Kuber
 firewall-cmd --add-forward --permanent
 # 开启 IPv4 Masquerade
 firewall-cmd --add-masquerade --permanent
-# 为 fd00:10:16::/112 开启 IPv6 Masquerade 
+# 为 Kube-OVN IPv6/双栈 子网开启 Masquerade，如果您的子网配置不同请按需调整
 firewall-cmd --permanent --add-rich-rule 'rule family="ipv6" source address="fd00:10:16::/112" masquerade'
 
 firewall-cmd --reload
