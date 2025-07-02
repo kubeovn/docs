@@ -63,7 +63,7 @@ TUNNEL_TYPE="geneve"                   # 隧道封装协议，可选 geneve, vxl
 ### 查看节点 IP 地址
 
 ```bash
-$ kubectl get node -o wide
+# kubectl get node -o wide
 NAME                     STATUS     ROLES           AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
 kube-ovn-control-plane   NotReady   control-plane   20h   v1.26.0   172.18.0.3    <none>        Ubuntu 22.04.1 LTS   5.10.104-linuxkit   containerd://1.6.9
 kube-ovn-worker          NotReady   <none>          20h   v1.26.0   172.18.0.2    <none>        Ubuntu 22.04.1 LTS   5.10.104-linuxkit   containerd://1.6.9
@@ -72,15 +72,15 @@ kube-ovn-worker          NotReady   <none>          20h   v1.26.0   172.18.0.2  
 ### 给节点添加 label
 
 ```bash
-$ kubectl label node -lbeta.kubernetes.io/os=linux kubernetes.io/os=linux --overwrite
+# kubectl label node -lbeta.kubernetes.io/os=linux kubernetes.io/os=linux --overwrite
 node/kube-ovn-control-plane not labeled
 node/kube-ovn-worker not labeled
 
-$ kubectl label node -lnode-role.kubernetes.io/control-plane kube-ovn/role=master --overwrite
+# kubectl label node -lnode-role.kubernetes.io/control-plane kube-ovn/role=master --overwrite
 node/kube-ovn-control-plane labeled
 
 # 以下 label 用于 dpdk 镜像的安装，非 dpdk 情况，可以忽略
-$ kubectl label node -lovn.kubernetes.io/ovs_dp_type!=userspace ovn.kubernetes.io/ovs_dp_type=kernel --overwrite
+# kubectl label node -lovn.kubernetes.io/ovs_dp_type!=userspace ovn.kubernetes.io/ovs_dp_type=kernel --overwrite
 node/kube-ovn-control-plane labeled
 node/kube-ovn-worker labeled
 ```
@@ -88,19 +88,19 @@ node/kube-ovn-worker labeled
 ### 添加 Helm Repo 信息
 
 ```bash
-$ helm repo add kubeovn https://kubeovn.github.io/kube-ovn/
+# helm repo add kubeovn https://kubeovn.github.io/kube-ovn/
 "kubeovn" has been added to your repositories
 
-$ helm repo list
+# helm repo list
 NAME            URL
 kubeovn         https://kubeovn.github.io/kube-ovn/
 
-$ helm repo update kubeovn
+# helm repo update kubeovn
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "kubeovn" chart repository
 Update Complete. ⎈Happy Helming!⎈
 
-$ helm search repo kubeovn
+# helm search repo kubeovn
 NAME                    CHART VERSION   APP VERSION     DESCRIPTION
 kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 ```
@@ -110,7 +110,7 @@ kubeovn/kube-ovn        v1.13.10        1.13.10         Helm chart for Kube-OVN
 Chart 参数的设置，可以参考 `values.yaml` 文件中变量定义。
 
 ```bash
-helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
+# helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
 LAST DEPLOYED: Thu Apr 24 08:30:13 2025
 NAMESPACE: kube-system
@@ -122,7 +122,7 @@ TEST SUITE: None
 ### v2 版本 chart 执行 helm install 安装 Kube-OVN
 
 ```bash
-helm install kube-ovn kubeovn/kube-ovn-v2 --wait -n kube-system --version {{ variables.version }}
+# helm install kube-ovn kubeovn/kube-ovn-v2 --wait -n kube-system --version {{ variables.version }}
 NAME: kube-ovn
 LAST DEPLOYED: Thu Apr 24 08:30:13 2025
 NAMESPACE: kube-system
