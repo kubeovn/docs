@@ -93,7 +93,7 @@ spec:
 
 After the Pod has been created, checkout the IP addresses:
 
-```shell
+```bash
 $ kubectl get ips | grep pod1
 pod1.default                        10.16.0.12   00:00:00:FF:34:24  kube-ovn-worker  ovn-default
 pod1.default.attachnet.default.ovn  172.19.0.21  00:00:00:A0:30:68  kube-ovn-worker  subnet1
@@ -105,7 +105,7 @@ The IP address `172.19.0.21` will be used later.
 
 Create the following OVN remote port mirroring：
 
-```shell
+```bash
 kubectl ko nbctl mirror-add mirror1 gre 99 from-lport 172.19.0.21
 kubectl ko nbctl lsp-attach-mirror coredns-787d4945fb-gpnkb.kube-system mirror1
 ```
@@ -136,14 +136,14 @@ ovn-nbctl lsp-detach-mirror PORT MIRROR   detach source PORT from MIRROR
 
 Execute the following commands in the Pod:
 
-```shell
+```bash
 root@pod1:/kube-ovn# ip link add mirror1 type gretap local 172.19.0.21 key 99 dev net1
 root@pod1:/kube-ovn# ip link set mirror1 up
 ```
 
 Now you can capture the mirrored packets:
 
-```shell
+```bash
 root@pod1:/kube-ovn# tcpdump -i mirror1 -nnve
 tcpdump: listening on mirror1, link-type EN10MB (Ethernet), snapshot length 262144 bytes
 05:13:30.328808 00:00:00:a3:f5:e2 > 00:00:00:97:0f:6e, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.16.0.7 tell 10.16.0.4, length 28
