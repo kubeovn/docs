@@ -57,7 +57,7 @@ bash install.sh
 
 1. Find the device id of metaScale device, below is `b3:00.0`
 
-```shell
+```bash
 [root@k8s-master ~]# lspci -d 1f67:
 b3:00.0 Ethernet controller: Device 1f67:1111 (rev 02)
 b3:00.1 Ethernet controller: Device 1f67:1111 (rev 02)
@@ -65,27 +65,27 @@ b3:00.1 Ethernet controller: Device 1f67:1111 (rev 02)
 
 2. Find the related interface with device id, below is `p3p1`
 
-```shell
+```bash
 ls -l /sys/class/net/ | grep b3:00.0
 lrwxrwxrwx 1 root root 0 May  7 16:30 p3p1 -> ../../devices/pci0000:b2/0000:b2:00.0/0000:b3:00.0/net/p3p1
 ```
 
 3. Check available VF number
 
-```shell
+```bash
 cat /sys/class/net/p3p1/device/sriov_totalvfs
 512
 ```
 
 4. Create VFs
 
-```shell
+```bash
 echo '10' > /sys/class/net/p3p1/device/sriov_numvfs
 ```
 
 5. Find the device ids of VFs created above
 
-```shell
+```bash
 lspci -d 1f67:
 b3:00.0 Ethernet controller: Device 1f67:1111 (rev 02)
 b3:00.1 Ethernet controller: Device 1f67:1111 (rev 02)
