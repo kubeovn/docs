@@ -43,7 +43,7 @@ the environment configuration and the ports that need to be opened.
 
 If you are running firewalld on nodes, you need also to enable packet forwarding and masquerade:
 
-```shell
+```bash
 # enable packet forwarding
 firewall-cmd --add-forward --permanent
 # enable IPv4 masquerade

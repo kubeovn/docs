@@ -41,7 +41,7 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，其运行需要依赖 Kuber
 
 如果节点上运行了 firewalld，您还需要开启 Packet Forwarding 以及 Masquerade：
 
-```shell
+```bash
 # 开启 Packet Forwarding
 firewall-cmd --add-forward --permanent
 # 开启 IPv4 Masquerade

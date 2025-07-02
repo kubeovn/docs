@@ -106,7 +106,7 @@ spec:
 
 测试网络连通性
 
-```shell
+```bash
 # kubectl exec -it vpc-1-pod -- ping $(kubectl get pod vpc-2-pod -o jsonpath='{.status.podIP}')
 PING 172.31.0.2 (172.31.0.2): 56 data bytes
 64 bytes from 172.31.0.2: seq=0 ttl=62 time=0.655 ms
