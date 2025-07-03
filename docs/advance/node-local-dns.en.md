@@ -78,3 +78,43 @@ You can also capture packets at the node and verify as follows. You can see that
 
 **⚠️ Note:**  
 If NetworkPolicy is configured in your environment, make sure to explicitly allow traffic to the local DNS IP (such as 169.254.20.10) and the node's CIDR in your NetworkPolicy. This prevents DNS requests and responses from being blocked by NetworkPolicy, which could cause Pods to fail DNS resolution.
+
+
+### NetworkPolicy Example
+
+Below is an example NetworkPolicy that allows Pods to access the local DNS cache and node network:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-local-dns-and-node-cidr
+  namespace: default  # Change the namespace as needed
+spec:
+  podSelector: {}  # Apply to all Pods; add label selectors as needed
+  policyTypes:
+  - Ingress
+  - Egress
+  egress:
+  # Allow access to local DNS cache
+  - to:
+    - ipBlock:
+        cidr: 169.254.20.10/32
+  # Allow access to node CIDR (modify according to your actual node network CIDR)
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/8  # Example node CIDR; modify as needed
+  ingress:
+  # Allow responses from local DNS cache
+  - from:
+    - ipBlock:
+        cidr: 169.254.20.10/32
+  # Allow traffic from node CIDR (modify according to your actual node network CIDR)
+  - from:
+    - ipBlock:
+        cidr: 10.0.0.0/8  # Example node CIDR; modify as needed
+```
+
+**Notes:**
+- `169.254.20.10/32`: The IP address of the local DNS cache
+- `10.0.0.0/8`: Example node CIDR; please modify according to your actual node network range

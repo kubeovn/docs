@@ -78,3 +78,42 @@ Address: 20.205.243.166
 
 **⚠️ 注意：**  
 如果环境中配置了 NetworkPolicy，需要确保在 NetworkPolicy 中额外放行本地 DNS IP（如 169.254.20.10）和节点的 CIDR，以避免 NetworkPolicy 拦截 DNS 请求和响应流量，导致 Pod 无法正常解析域名。
+
+### NetworkPolicy 配置示例
+
+以下是一个允许 Pod 访问本地 DNS 缓存和节点网络的 NetworkPolicy 配置示例：
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-local-dns-and-node-cidr
+  namespace: default  # 根据实际需要修改命名空间
+spec:
+  podSelector: {}  # 应用到所有 Pod，可根据需要添加标签选择器
+  policyTypes:
+  - Ingress
+  - Egress
+  egress:
+  # 允许访问本地 DNS 缓存
+  - to:
+    - ipBlock:
+        cidr: 169.254.20.10/32
+  # 允许访问节点 CIDR（请根据实际节点网络 CIDR 修改）
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/8  # 示例节点 CIDR，请根据实际情况修改
+  ingress:
+  # 允许来自本地 DNS 缓存的响应
+  - from:
+    - ipBlock:
+        cidr: 169.254.20.10/32
+  # 允许来自节点 CIDR 的流量（请根据实际节点网络 CIDR 修改）
+  - from:
+    - ipBlock:
+        cidr: 10.0.0.0/8  # 示例节点 CIDR，请根据实际情况修改
+```
+
+**配置说明：**
+- `169.254.20.10/32`：本地 DNS 缓存的 IP 地址
+- `10.0.0.0/8`：示例节点 CIDR，请根据实际的节点网络段进行修改
