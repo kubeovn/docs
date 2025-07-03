@@ -79,7 +79,6 @@ You can also capture packets at the node and verify as follows. You can see that
 **⚠️ Note:**  
 If NetworkPolicy is configured in your environment, make sure to explicitly allow traffic to the local DNS IP (such as 169.254.20.10) and the node's CIDR in your NetworkPolicy. This prevents DNS requests and responses from being blocked by NetworkPolicy, which could cause Pods to fail DNS resolution.
 
-
 ### NetworkPolicy Example
 
 Below is an example NetworkPolicy that allows Pods to access the local DNS cache and node network:
