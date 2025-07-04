@@ -1,26 +1,38 @@
 #!/bin/bash
 
 # Auto Cherry-pick Script
-# Automatically cherry-pick specified commit to target branches
+# Automatically cherry-pick commit from master to target branches
 
 set -euo pipefail
 
 # Check parameters
-if [ $# -ne 3 ]; then
-    echo "Usage: $0 <merge_commit_sha> <target_branches> <pr_number>"
-    echo "Example: $0 abc123def 'v1.14,v1.13' 123"
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+    echo "Usage: $0 <target_branches> [commit_index]"
+    echo "Example: $0 'v1.14,v1.13'        # Cherry-pick latest commit"
+    echo "Example: $0 'v1.14,v1.13' -1     # Cherry-pick previous commit"
+    echo "Example: $0 'v1.14,v1.13' -2     # Cherry-pick commit before previous"
     exit 1
 fi
 
-MERGE_COMMIT="$1"
-TARGET_BRANCHES="$2"
-PR_NUMBER="$3"
-
-echo "Cherry-picking commit $MERGE_COMMIT to branches: $TARGET_BRANCHES (PR #$PR_NUMBER)"
+TARGET_BRANCHES="$1"
+COMMIT_INDEX="${2:-0}"  # Default to 0 (latest commit)
 
 # Get current branch and fetch latest code
 CURRENT_BRANCH=$(git branch --show-current)
 git fetch origin
+
+# Get the specified commit from master branch
+if [ "$COMMIT_INDEX" -eq 0 ]; then
+    MERGE_COMMIT=$(git rev-parse origin/master)
+    COMMIT_DESC="latest commit"
+else
+    # For negative indices, use HEAD~n syntax
+    OFFSET=$((-COMMIT_INDEX))
+    MERGE_COMMIT=$(git rev-parse "origin/master~$OFFSET")
+    COMMIT_DESC="commit at index $COMMIT_INDEX"
+fi
+
+echo "Cherry-picking $COMMIT_DESC from master ($MERGE_COMMIT) to branches: $TARGET_BRANCHES"
 
 # Check if working directory is clean
 if ! git diff --quiet || ! git diff --cached --quiet; then
