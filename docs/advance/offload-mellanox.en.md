@@ -230,7 +230,7 @@ This plugin creates device plugin endpoints based on the configurations given in
   - `devices`: Target Devices' device Hex code as string
   - `drivers`: Target device driver names as string
 
-`selectors` also supports VF selection based on `pciAddresses`, `acpiIndexes` and other parameters. For more detailed configuration, please refer to [SR-IOV ConfigMap configuration](https://github.com/k8snetworkplumbingwg/sriov-network-device- plugin/tree/v3.6.2?tab=readme-ov-file#configurations)
+`selectors` also supports VF selection based on `pciAddresses`, `acpiIndexes` and other parameters. For more detailed configuration, please refer to [SR-IOV ConfigMap configuration](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin/tree/v3.6.2?tab=readme-ov-file#configurations)
 
 Please read the [SR-IOV device plugin](https://github.com/intel/sriov-network-device-plugin) to deploy:
 

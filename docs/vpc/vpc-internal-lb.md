@@ -84,7 +84,7 @@ spec:
 `OVN` 支持 `IPv4` 的负载平衡器服务终端的运行状况检查。
 启用运行状况检查后，负载平衡器会对服务终端的状态进行检测维护，并仅使用运行状况良好的服务终端。
 
-[[Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)
+[[Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)](<https://www.ovn.org/support/dist-docs/ovn-nb.5.html>)
 
 根据 `ovn` 负载均衡器的运行状况检查，对 `SwitchLBRule` 添加健康检查。在创建 `SwitchLBRule` 的同时，从对应的 `VPC` 和 `subnet` 中获取一个可复用的 `vip` 作为检测端点，并添加对应的 `ip_port_mappings` 和 `load_balancer_health_check` 到对应的负载均衡器上。
 

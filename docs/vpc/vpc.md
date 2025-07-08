@@ -13,6 +13,10 @@ Kube-OVN 支持多租户隔离级别的 VPC 网络。不同 VPC 网络相互独�
 
 ![](../static/network-topology.png)
 
+## 实现原理
+
+在 Kube-OVN 中，每个 VPC 会映射到 OVN 中的一个[逻辑路由器](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_TABLE){: target="_blank" }。多个逻辑路由器之间是相互独立的网络单元，每个逻辑路由器下可以关联各自的[逻辑交换机](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Switch_TABLE){: target="_blank" }，进而有独立的网络端口和 IP 地址空间。不同 VPC 下的流量在经过隧道时 OVN 会通过不同的 Datapath ID 进行区分和隔离，并通过 Datapath ID 进行转发，从而可以做到 IP 地址空间相互隔离，不同 VPC 下可以使用相同的 IP 地址而不会冲突。隧道封装格式请参考[OVN Architecture Design Decisions](https://man7.org/linux/man-pages/man7/ovn-architecture.7.html#DESIGN_DECISIONS){: target="_blank" }。
+
 ## 创建自定义 VPC
 
 创建两个 VPC：

@@ -57,6 +57,8 @@ spec:
 为了在 Overlay 网络模式下达到这个目的， Kube-OVN 创建了一个 `join` 子网，
 并在每个 Node 节点创建了一块虚拟网卡 ovn0 接入 `join` 子网，通过该网络完成节点和 Pod 之间的网络互通。
 
+所有 Pods 和 Nodes 之间的网络通信都会通过 ovn0 网卡进行，Node 访问 Pod 时通过 ovn0 网卡进入虚拟网络，虚拟网络通过 ovn0 网卡进入主机网络。
+
 该子网的配置为安装时指定，可以参考[内置网络设置](setup-options.md#_2)，如果要在安装后修改。
 join 子网的 CIDR 请参考[修改 Join 子网](../ops/change-join-subnet.md)
 
