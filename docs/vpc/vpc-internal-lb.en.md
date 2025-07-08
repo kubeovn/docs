@@ -79,7 +79,7 @@ If both `selector` and `endpoints` are configured, the `selector` configuration 
 `OVN` supports health checks for load balancer endpoints, for IPv4 load balancers only.
 When health checks are enabled, the load balancer uses only healthy endpoints.
 
-[[Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)
+[[Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)](<https://www.ovn.org/support/dist-docs/ovn-nb.5.html>)
 
 Add a health check to `SwitchLBRule` based on the health check of the `ovn` load balancer.While creating the `SwitchLBRule`, obtain a reusable `vip` from the corresponding `VPC` and `subnet` as the detection endpoint and associate the corresponding `IP_Port_Mappings` and `Load_Balancer_Health_Check` to the corresponding load balancer.
 

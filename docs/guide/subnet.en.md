@@ -62,6 +62,8 @@ In the Kubernetes network specification, it is required that Nodes can communica
 To achieve this in Overlay network mode, Kube-OVN creates a `join` Subnet and creates a virtual NIC `ovn0`
 at each node that connect to the `join` subnet, through which the nodes and Pods can communicate with each other.
 
+All network communication between Pods and Nodes will go through the `ovn0` network interface. When a Node accesses a Pod, it enters the virtual network via the `ovn0` interface, and the virtual network then connects to the host network through the `ovn0` interface.
+
 The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](setup-options.en.md#built-in-network-settings) for more details.
 To change the CIDR of the Join Subnet after installation please refer to [Change Join CIDR](../ops/change-join-subnet.en.md).
 
