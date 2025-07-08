@@ -25,7 +25,7 @@ It currently supports [Subnet Management](guide/subnet.en.md), [Static IP Alloca
 [Distributed/Centralized Gateways](guide/subnet.en.md#overlay-subnet-gateway-settings), [Underlay/Overlay Hybrid Networks](start/underlay.en.md),
 [VPC Multi-Tenant Networks](vpc/vpc.en.md), [Cross-Cluster Interconnect](advance/with-ovn-ic.en.md), [QoS Management](guide/qos.en.md),
 [Multi-NIC Management](advance/multi-nic.en.md), [ACL](guide/subnet.en.md#subnet-acl), [Traffic Mirroring](guide/mirror.en.md),
-ARM Support, [Windows Support](advance/windows.en.md), and many more.
+ARM Support, and many more.
 
 **Extreme Performance:**
 

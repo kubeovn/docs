@@ -72,7 +72,6 @@ nav:
       - 芯启源网卡 Offload 支持: "advance/offload-corigine.md"
       - 云脉芯联网卡 Offload 支持: "advance/offload-yunsilicon.md"
       - 中科驭数网卡 Offload 支持: "advance/offload-yusur.md"
-      - Windows 支持: "advance/windows.md"
       - DPDK 支持: "advance/dpdk.md"
       - OpenStack 集成: "advance/with-openstack.md"
       - OVN IPsec 支持: "advance/ovn-ipsec.md"
@@ -222,7 +221,6 @@ plugins:
             芯启源网卡 Offload 支持: Offload with Corigine
             云脉芯联网卡 Offload 支持: Offload with Yunsilicon
             中科驭数网卡 Offload 支持: Offload with YUSUR
-            Windows 支持: Windows Support
             DPDK 支持: DPDK Support
             OpenStack 集成: Integration with OpenStack
             总体架构: Architecture

@@ -67,7 +67,6 @@
 | [自定义 VPC 互联](../vpc/vpc-peering.md) | false | Alpha | 1.10      |           |
 | [Mellanox Offload](../advance/offload-mellanox.md) | false | Alpha | 1.8       |           |
 | [芯启源 Offload](../advance/offload-corigine.md) | false | Alpha | 1.10      |           |
-| [Windows 支持](../advance/windows.md) | false | Alpha | 1.10      |           |
 | [DPDK 支持](../advance/dpdk.md) | false | Alpha | 1.10      |           |
 | [OpenStack 集成](../advance/dpdk.md) | false | Alpha | 1.9       |           |
 | [单个 Pod 固定 IP/Mac](../guide/static-ip-mac.md) | true  | GA    | 1.8       |           |
