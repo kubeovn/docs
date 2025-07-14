@@ -31,10 +31,9 @@
 | Kube-OVN Optimized | 13.9         | 12.9         | 27.6          | 5.57         |
 | HOST Network       | 13.1         | 12.4         | 28.2          | 6.02         |
 
-### Overlay， Underlay 以及 Calico 不同模式性能对比
+### Overlay， Underlay 模式性能对比
 
-下面我们会比较优化后 Kube-OVN 在不同包大小下的 Overlay 和 Underlay 性能，并和 Calico 的 `IPIP Always`,
-`IPIP never` 以及宿主机网络做比较。
+下面我们会比较优化后 Kube-OVN 在不同包大小下的 Overlay 和 Underlay 性能，并和宿主机网络做比较。
 
 *Environment*:
 
@@ -50,8 +49,6 @@
 | ------------------ | -------------| -------------| --------------| -------------|
 | Kube-OVN Overlay   | 15.2         | 14.6         | 23.6          | 2.65         |
 | Kube-OVN Underlay  | 14.3         | 13.8         | 24.2          | 3.46         |
-| Calico IPIP        | 21.4         | 20.2         | 23.6          | 1.18         |
-| Calico NoEncap     | 19.3         | 16.9         | 23.6          | 1.76         |
 | HOST Network       | 16.6         | 15.4         | 24.8          | 2.64         |
 
 `qperf -t 60 <server ip> -ub -oo msg_size:1K -vu tcp_lat tcp_bw udp_lat udp_bw`
@@ -60,8 +57,6 @@
 | ------------------ | -------------| -------------| --------------| -------------|
 | Kube-OVN Overlay   | 16.5         | 15.8         | 10.2          | 2.77         |
 | Kube-OVN Underlay  | 15.9         | 14.5         | 9.6           | 3.22         |
-| Calico IPIP        | 22.5         | 21.5         | 1.45          | 1.14         |
-| Calico NoEncap     | 19.4         | 18.3         | 3.76          | 1.63         |
 | HOST Network       | 18.1         | 16.6         | 9.32          | 2.66         |
 
 `qperf -t 60 <server ip> -ub -oo msg_size:4K -vu tcp_lat tcp_bw udp_lat udp_bw`
@@ -70,8 +65,6 @@
 | ------------------ | -------------| -------------| --------------| -------------|
 | Kube-OVN Overlay   | 34.7         | 41.6         | 16.0          | 9.23         |
 | Kube-OVN Underlay  | 32.6         | 44           | 15.1          | 6.71         |
-| Calico IPIP        | 44.8         | 52.9         | 2.94          | 3.26         |
-| Calico NoEncap     | 40           | 49.6         | 6.56          | 4.19         |
 | HOST Network       | 35.9         | 45.9         | 14.6          | 5.59         |
 
 > 在部分情况下容器网络的性能会优于宿主机网络，这是优于经过优化后容器网络路径完全绕过了 netfilter，
