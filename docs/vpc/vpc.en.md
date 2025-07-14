@@ -196,7 +196,7 @@ data:
 - `image`: The image used by the Gateway Pod.
 - `enable-vpc-nat-gw`: Controls whether the VPC Gateway feature is enabled.
 
-### Create VPC Gateway and Set the Default Route
+### Create VPC Gateway
 
 ```yaml
 kind: VpcNatGateway

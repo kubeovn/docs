@@ -192,7 +192,7 @@ data:
 - `image`: 网关 Pod 所使用的镜像。
 - `enable-vpc-nat-gw`：控制是否启用 VPC 网关功能。
 
-### 创建 VPC 网关并配置默认路由
+### 创建 VPC 网关
 
 ```yaml
 kind: VpcNatGateway
