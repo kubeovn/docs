@@ -50,7 +50,6 @@ nav:
       - OVN 数据库备份和恢复: "ops/recover-db.md"
       - 修改子网 CIDR: "ops/change-default-subnet.md"
       - 修改 Join 子网 CIDR: "ops/change-join-subnet.md"
-      - 卸载 Calico 安装 Kube-OVN: "ops/from-calico.md"
       - 调整日志等级: "ops/change-log-level.md"
       - 其他常见问题: "ops/faq.md"
   - 高级功能:
@@ -200,7 +199,6 @@ plugins:
             OVN 数据库备份和恢复: OVN DB Backup and Recovery
             修改子网 CIDR: Change Subnet CIDR
             修改 Join 子网 CIDR: Change Join Subnet CIDR
-            卸载 Calico 安装 Kube-OVN: Install Kube-OVN From Calico
             其他常见问题: FAQ
             多网卡管理: Manage Multiple Interface
             性能调优: Performance Tuning
