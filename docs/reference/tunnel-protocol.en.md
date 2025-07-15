@@ -44,6 +44,6 @@ This protocol is not currently supported by the SmartNic and cannot use the offl
 
 ## References
 
-- [https://ipwithease.com/vxlan-vs-geneve-understand-the-difference/](https://blog.russellbryant.net/2017/05/30/ovn-geneve-vs-vxlan-does-it-matter/){: target="_blank" }
+- [https://ipwithease.com/vxlan-vs-geneve-understand-the-difference/](https://ipwithease.com/vxlan-vs-geneve-understand-the-difference/){: target="_blank" }
 - [OVN FAQ](https://docs.ovn.org/en/latest/faq/general.html){: target="_blank" }
 - [What is Geneve](https://www.redhat.com/en/blog/what-geneve){: target="_blank" }
