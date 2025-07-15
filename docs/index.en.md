@@ -61,7 +61,7 @@ The Kubernetes community offers many excellent CNI projects, which can make sele
 1. Project maintainers primarily focus on their own projects and solving their community's problems - not tracking what other projects are doing or understanding their implementation details. Therefore, maintainers can't provide accurate comparison charts, and it's even harder for outsiders to do this.
 2. For end users, understanding your internal needs is far more important than understanding the differences between external projects.
 
-Creating a comparison chart under the Kube-OVN project that recommends Kube-OVN would inevitably be subjective and potentially inaccurate. Instead, we'll list scenarios where you **should not** choose Kube-OVN and provide our recommendations.
+Creating a comparison chart under the Kube-OVN project that recommends Kube-OVN would inevitably be subjective and potentially inaccurate. Instead, we'll list scenarios where you **SHOULD NOT** choose Kube-OVN and provide our recommendations.
 
 ### When You Need an eBPF Solution
 
