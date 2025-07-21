@@ -8,6 +8,9 @@ which dramatically reduce latency and significantly increase the throughput.
 
 ![](../static/hw-offload.png)
 
+!!! note  
+   The solution described in this article was verified in 2022. However, hardware NICs may now have new features, and some limitations mentioned may have been resolved. Please consult your hardware vendor for the latest technical constraints and capabilities.
+
 ## Prerequisites
 
 - Corigine Agilio CX series SmartNIC.
