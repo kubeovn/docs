@@ -6,8 +6,8 @@ Yunsilicon metaScale SmartNICs provide a drop-in accelerator for OVS which can s
 
 !!! note  
 
-   1. The solution described in this article was verified in 2024. However, hardware NICs may now have new features, and some limitations mentioned may have been resolved. Please consult your hardware vendor for the latest technical constraints and capabilities.
-   2. Currently, Yunsilicon only supports the v1.11 series version of Kube-OVN, and some of the latest features cannot be used.
+    1. The solution described in this article was verified in 2024. However, hardware NICs may now have new features, and some limitations mentioned may have been resolved. Please consult your hardware vendor for the latest technical constraints and capabilities.
+    2. Currently, Yunsilicon only supports the v1.11 series version of Kube-OVN, and some of the latest features cannot be used.
 
 ## Prerequisites
 
