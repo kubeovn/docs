@@ -4,7 +4,10 @@ The OVS software based solution is CPU intensive, affecting system performance a
 
 Yunsilicon metaScale SmartNICs provide a drop-in accelerator for OVS which can support very high flow and policy capacities without degradation in performance. By taking use of SR-IOV technology we can achieve low network latency and high throughput.
 
-> Currently, Yunsilicon only supports the v1.11 series version of Kube-OVN, and some of the latest features cannot be used.
+!!! note  
+
+   1. The solution described in this article was verified in 2024. However, hardware NICs may now have new features, and some limitations mentioned may have been resolved. Please consult your hardware vendor for the latest technical constraints and capabilities.
+   2. Currently, Yunsilicon only supports the v1.11 series version of Kube-OVN, and some of the latest features cannot be used.
 
 ## Prerequisites
 
