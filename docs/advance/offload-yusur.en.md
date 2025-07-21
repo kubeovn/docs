@@ -2,6 +2,9 @@
 
 Kube-OVN uses OVS for traffic forwarding in the final data plane, and the associated flow table matching, tunnel encapsulation and other functions are CPU-intensive, which consumes a lot of CPU resources and leads to higher latency and lower throughput under heavy traffic.YUSUR CONFLUX-22OOE series SmartNIC can offload OVS-related operations to the hardware. This technology can shorten the data path without modifying the OVS control plane, avoiding the use of host CPU resources, which dramatically reduce latency and significantly increase the throughput.
 
+!!! note  
+   The solution described in this article was verified in 2024. However, hardware NICs may now have new features, and some limitations mentioned may have been resolved. Please consult your hardware vendor for the latest technical constraints and capabilities.
+
 ## Prerequisites
 
 - YUSUR CONFLUX-22OOE series SmartNIC。
