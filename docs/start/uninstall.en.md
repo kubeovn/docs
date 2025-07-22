@@ -8,12 +8,20 @@ Feel free to contact us with an Issue to give us feedback on why you don't use K
 
 ## Delete Resource in Kubernetes
 
-Download and run the script below to delete resource created in Kubernetes:
+Please choose the uninstall command based on your installation method:
 
-```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/cleanup.sh
-bash cleanup.sh
-```
+=== "Script Uninstall"
+
+    ```bash
+    wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/cleanup.sh
+    bash cleanup.sh
+    ```
+
+=== "Helm Uninstall"
+
+    ```bash
+    helm uninstall kube-ovn -n kube-system
+    ```
 
 ## Cleanup Config and Logs on Every Node
 

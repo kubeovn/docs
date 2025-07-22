@@ -5,12 +5,20 @@
 
 ## 删除在 Kubernetes 中创建的资源
 
-下载下面的脚本，执行脚本删除在 Kubernetes 中创建的资源：
+请根据你的安装方式选择卸载命令：
 
-```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/cleanup.sh
-bash cleanup.sh
-```
+=== "Script Uninstall"
+
+    ```bash
+    wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/cleanup.sh
+    bash cleanup.sh
+    ```
+
+=== "Helm Uninstall"
+
+    ```bash
+    helm uninstall kube-ovn -n kube-system
+    ```
 
 ## 清理主机上的日志和配置文件
 
