@@ -78,3 +78,19 @@ Kube-OVN 主要聚焦在 CNI 层面的网络能力，你需要通过组合生态
 选择 Hostnetwork 或者 [host-device](https://www.cni.dev/plugins/current/main/host-device/) 将物理设备直接分配给容器。
 
 AI 任务对网络延迟要求很高，任何额外的容器网络操作都是没有必要的。
+
+## 概念澄清：OVN/ovn-kubernetes/Kube-OVN
+
+由于以上几个单词的相似性，以及一些简称，在交流沟通中会导致上述几个单词的混淆，在这里做简要澄清：
+
+### OVN
+
+[OVN](https://www.ovn.org/en/) 是 Open vSwitch 社区维护的一个虚拟网络控制器，提供了虚拟网络的基础抽象。其本身平台无关，可为 OpenStack, Kubernetes 等多个 CMS 提供网络服务。ovn-kubernetes 和 Kube-OVN 都是依靠 OVN 的网络能力给 Kubernetes 提供网络功能。
+
+### ovn-kubernetes
+
+[ovn-kubernetes](https://ovn-kubernetes.io/) 最早是由 OVN 维护者发起的使用 OVN 为 Kubernetes 提供 CNI 网络能力的项目。目前是 OpenShift 上的默认网络，在 OpenShift 的环境中有着广泛使用，并提供了 [UDN](https://ovn-kubernetes.io/okeps/okep-5193-user-defined-networks/), [Multihoming](https://ovn-kubernetes.io/features/multiple-networks/multi-homing/), [Hardware Acceleration](https://ovn-kubernetes.io/features/hardware-offload/ovs-doca/) 等高级功能。
+
+### Kube-OVN
+
+Kube-OVN 最早诞生是为了解决静态 IP 地址分配，按照 Namespace 分配地址空间，集中式网关等问题而基于 OVN 研发的项目。项目早期借鉴了大量 ovn-kubernetes 的经验和架构设计，例如：使用 annotation 传递 Pod 网络信息、使用 join 网络打通容器网络和主机网络等。目前已经在社区的协助下演化出 Underlay，VPC，KubeVirt 支持等丰富的能力。
