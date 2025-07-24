@@ -90,3 +90,28 @@ Choose the default CNI provided by your Kubernetes vendor, for the same reasons 
 Use Hostnetwork or [host-device](https://www.cni.dev/plugins/current/main/host-device/) to assign physical devices directly to containers.
 
 AI workloads demand extremely low network latency, making any additional container network operations unnecessary.
+
+## Concepts Clarification: OVN/ovn-kubernetes/Kube-OVN
+
+Due to the similarity of these terms and some abbreviations, confusion often arises in communication. Here’s a brief clarification:
+
+### OVN
+
+[OVN](https://www.ovn.org/en/) is a virtual network controller maintained by the Open vSwitch community, providing foundational abstractions for virtual networking. It is platform-agnostic and can offer networking services to multiple CMS (Cloud Management Systems) such as OpenStack and Kubernetes. Both *ovn-kubernetes* and *Kube-OVN* rely on OVN’s networking capabilities to provide network functionality for Kubernetes.
+
+### ovn-kubernetes
+
+[ovn-kubernetes](https://ovn-kubernetes.io/) was initially a project launched by OVN maintainers to provide CNI networking capabilities for Kubernetes using OVN. It is now the default network for OpenShift and is widely used in OpenShift environments. It offers advanced features such as:
+
+- [UDN (User-Defined Networks)](https://ovn-kubernetes.io/okeps/okep-5193-user-defined-networks/)
+- [Multihoming](https://ovn-kubernetes.io/features/multiple-networks/multi-homing/)
+- [Hardware Acceleration](https://ovn-kubernetes.io/features/hardware-offload/ovs-doca/)
+
+### Kube-OVN
+
+Kube-OVN was originally developed to address issues like static IP allocation, namespace-based address space assignment, and centralized gateways by building on OVN. In its early stages, it heavily borrowed design principles and architecture from *ovn-kubernetes*, such as:
+
+- Using annotations to pass Pod network information.
+- Leveraging *join* networks to bridge container and host networks.
+
+With community contributions, it has evolved to support advanced features like Underlay networking, VPC, and KubeVirt integration.
