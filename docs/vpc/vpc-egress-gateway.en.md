@@ -1,6 +1,6 @@
 # VPC Egress Gateway
 
-**VPC Egress Gateway** is used to control external network access for Pods within a VPC (including the default VPC) and has the following features:
+**VPC Egress Gateway** is used to control external network access for Pods within a VPC (including the default VPC) with a group of static addresses and has the following features:
 
 - Achieves Active-Active high availability through ECMP, enabling horizontal throughput scaling
 - Implements fast failover (<1s) via BFD
@@ -12,7 +12,24 @@ At the same time, VPC Egress Gateway has the following limitations:
 
 - Uses macvlan for underlying network connectivity, requiring [Underlay support](../start/underlay.en.md#environment-requirements) from the underlying network
 - In multi-instance Gateway mode, multiple Egress IPs are required
-- Currently only supports SNAT; EIP and DNAT are not supported
+- Currently, only supports SNAT; EIP and DNAT are not supported
+- Currently, recording source address translation relationships is not supported
+
+Here's the English translation of the provided text:
+
+## Implementation Details
+
+Each Egress Gateway consists of multiple Pods with multiple network interfaces. Each Pod has two network interfaces: one joins the virtual network for communication within the VPC, and the other connects to the underlying physical network via Macvlan for external network communication. Virtual network traffic ultimately accesses the external network through NAT within the Egress Gateway instances.
+
+![](../static/vpc-eg-1.png)
+
+Each Egress Gateway instance registers its address in the OVN routing table. When a Pod within the VPC needs to access external network, OVN uses source address hashing to forward traffic to multiple Egress Gateway instance addresses, achieving load balancing. As the number of Egress Gateway instances increases, throughput can also scale horizontally.
+
+![](../static/vpc-eg-2.png)
+
+OVN uses the BFD protocol to probe multiple Egress Gateway instances. When an Egress Gateway instance fails, OVN marks the corresponding route as unavailable, enabling rapid failure detection and recovery.
+
+![](../static/vpc-eg-3.png)
 
 ## Requirements
 
