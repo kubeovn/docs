@@ -693,7 +693,7 @@ deployment "kube-ovn-monitor" successfully rolled out
 
 ### log {kube-ovn|ovn|ovs|linux|all}
 
-使用该命令会抓取 kube-ovn 所有节点上的 Kube-OVN，OVN，Openvswitch 的 log 以及 linux 常用的一些 debug 信息。
+使用该命令会抓取 kube-ovn 所有节点上的 Kube-OVN，OVN，Open vSwitch 的 log 以及 linux 常用的一些 debug 信息。
 
 ```bash
 # kubectl ko log all

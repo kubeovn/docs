@@ -696,7 +696,7 @@ deployment "kube-ovn-monitor" successfully rolled out
 
 ### log {kube-ovn|ovn|ovs|linux|all}
 
-Using this command will capture the logs of Kube-OVN, OVN, Openvswitch on all nodes of kube-ovn and some debug information commonly used in linux.
+Using this command will capture the logs of Kube-OVN, OVN, Open vSwitch on all nodes of kube-ovn and some debug information commonly used in linux.
 
 ```bash
 # kubectl ko log all
