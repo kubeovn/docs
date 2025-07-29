@@ -21,7 +21,7 @@ VPC Egress Gateway 用于控制 VPC（包括默认 VPC）内 Pod 使用一组固
 
 ![](../static/vpc-eg-1.png)
 
-每个 Egress Gateway 实例会将自己的地址注册到 OVN 路由表内，当 VPC 内 Pod 需要访问外部网络时，OVN 会使用源地址哈希将流量转发到多个 Egress Gateway 实例地址，从而实现负载均衡，随着 Egress Gateway 实例数量从增加，吞吐量也可以实现横向扩展。
+每个 Egress Gateway 实例会将自己的地址注册到 OVN 路由表内，当 VPC 内 Pod 需要访问外部网络时，OVN 会使用源地址哈希将流量转发到多个 Egress Gateway 实例地址，从而实现负载均衡，随着 Egress Gateway 实例数量的增加，吞吐量也可以实现横向扩展。
 
 ![](../static/vpc-eg-2.png)
 
