@@ -1,6 +1,6 @@
 # VPC Egress Gateway
 
-VPC Egress Gateway 用于控制 VPC（包括默认 VPC）内 Pod 访问外部网络，并具有以下特点：
+VPC Egress Gateway 用于控制 VPC（包括默认 VPC）内 Pod 使用一组固定地址访问外部网络，并具有以下特点：
 
 - 通过 ECMP 实现 Active-Active 高可用，可实现吞吐量横向扩展
 - 通过 BFD 实现 <1s 的快速故障切换
@@ -10,9 +10,24 @@ VPC Egress Gateway 用于控制 VPC（包括默认 VPC）内 Pod 访问外部网
 
 同时 VPC Egress Gateway 具有如下限制：
 
-- 使用 macvlan 实现底层网络打通，需要底层网络[支持 Underlay](../start/underlay.md#_2)
+- 使用 Macvlan 实现底层网络打通，需要底层网络[支持 Underlay](../start/underlay.md#_2)
 - Gateway 多实例模式下需要占用多个 Egress IP
 - 目前只支持 SNAT，不支持 EIP 和 DNAT
+- 目前不支持记录源地址转换关系
+
+## 实现原理
+
+每个 Egress Gateway 由多个多网卡的 Pod 组成，每个 Pod 两块网卡，一个网卡加入虚拟网络用于和 VPC 内地址通信，另一个网卡通过 Macvlan 接入底层物理网络，用于和外部网络通信。虚拟网络流量最终在 Egress Gateway 实例内通过 NAT 访问外部网络。
+
+![](../static/vpc-eg-1.png)
+
+每个 Egress Gateway 实例会将自己的地址注册到 OVN 路由表内，当 VPC 内 Pod 需要访问外部网络时，OVN 会使用源地址哈希将流量转发到多个 Egress Gateway 实例地址，从而实现负载均衡，随着 Egress Gateway 实例数量从增加，吞吐量也可以实现横向扩展。
+
+![](../static/vpc-eg-2.png)
+
+OVN 通过 BFD 协议对多个 Egress Gateway 实例进行探测，当某个 Egress Gateway 实例故障后，OVN 会将对应路由设置为不可用，从而实现故障的快速恢复。
+
+![](../static/vpc-eg-3.png)
 
 ## 使用要求
 
