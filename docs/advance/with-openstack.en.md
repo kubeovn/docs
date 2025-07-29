@@ -8,7 +8,7 @@ or shared underlying OVN to connect the OpenStack and Kubernetes networks.
 ## Cluster Interconnection
 
 This pattern is similar to [Cluster Inter-Connection with OVN-IC](./with-ovn-ic.md) to connect two Kubernetes cluster networks,
-except that the two ends of the cluster are replaced with OpenStack and Kubernetes。
+except that the two ends of the cluster are replaced with OpenStack and Kubernetes.
 
 ### Prerequisites
 
@@ -27,7 +27,7 @@ docker run --name=ovn-ic-db -d --network=host -v /etc/ovn/:/etc/ovn -v /var/run/
 
 ### Kubernetes Side Operations
 
-Create `ovn-ic-config` ConfigMap in `kube-system` Namespace ：
+Create `ovn-ic-config` ConfigMap in `kube-system` Namespace:
 
 ```yaml
 apiVersion: v1
@@ -83,8 +83,8 @@ Start the `OVN-IC` controller at a node that has access to the `OVN-IC` DB:
   start_ic
 ```
 
-- `ovn-ic-nb-db`，`ovn-ic-sb-db`: OVN-IC Northbound database and southbound database addresses.
-- `ovn-northd-nb-db`， `ovn-northd-sb-db`: Current cluster OVN northbound database and southbound data address.
+- `ovn-ic-nb-db`, `ovn-ic-sb-db`: OVN-IC Northbound database and southbound database addresses.
+- `ovn-northd-nb-db`, `ovn-northd-sb-db`: Current cluster OVN northbound database and southbound data address.
 
 Configuration gateway nodes:
 
@@ -125,7 +125,7 @@ OpenStack requires networking-ovn as a Neutron backend implementation.
 
 ### Neutron Modification
 
-Modify the Neutron configuration file `/etc/neutron/plugins/ml2/ml2_conf.ini`：
+Modify the Neutron configuration file `/etc/neutron/plugins/ml2/ml2_conf.ini`:
 
 ```bash
 [ovn]
@@ -135,7 +135,7 @@ ovn_sb_connection = tcp:[192.168.137.176]:6642,tcp:[192.168.137.177]:6642,tcp:[1
 ovn_l3_scheduler = OVN_L3_SCHEDULER
 ```
 
-- `ovn_nb_connection`， `ovn_sb_connection`: The address needs to be changed to the address of the `ovn-central` nodes deployed by Kube-OVN.
+- `ovn_nb_connection`, `ovn_sb_connection`: The address needs to be changed to the address of the `ovn-central` nodes deployed by Kube-OVN.
 
 Modify the OVS configuration for each node:
 

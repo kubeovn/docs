@@ -119,18 +119,18 @@ data:
   nad-provider: ovn-nad.default.ovn
 ```
 
-* `enable-vpc-dns`：enable vpc dns feature, true as default
-* `coredns-image`：dns deployment image. Defaults to the clustered coredns deployment version
-* `coredns-vip`：The vip that provides lb services for coredns.
-* `coredns-template`：The URL where the coredns deployment template is located. defaults to the current version of the ovn directory. `coredns-template.yaml` default is `https://raw.githubusercontent.com/kubeovn/kube-ovn/<kube-ovn version>/yamls/coredns-template.yaml`.
-* `nad-name`：Configured network-attachment-definitions Resource name.
-* `nad-provider`：The name of the provider to use.
-* `k8s-service-host`：The ip used for coredns to access the k8s apiserver service, defaults to the apiserver address within the cluster.
-* `k8s-service-port`：The port used for coredns to access the k8s apiserver service, defaults to the apiserver port within the cluster.
+* `enable-vpc-dns`: enable vpc dns feature, true as default
+* `coredns-image`: dns deployment image. Defaults to the clustered coredns deployment version
+* `coredns-vip`: the vip that provides lb services for coredns.
+* `coredns-template`: the URL where the coredns deployment template is located. defaults to the current version of the ovn directory. `coredns-template.yaml` default is `https://raw.githubusercontent.com/kubeovn/kube-ovn/<kube-ovn version>/yamls/coredns-template.yaml`.
+* `nad-name`: configured network-attachment-definitions Resource name.
+* `nad-provider`: the name of the provider to use.
+* `k8s-service-host`: the ip used for coredns to access the k8s apiserver service, defaults to the apiserver address within the cluster.
+* `k8s-service-port`: the port used for coredns to access the k8s apiserver service, defaults to the apiserver port within the cluster.
 
 ## Deploying vpc-dns
 
-configure vpc-dns yaml：
+configure vpc-dns yaml:
 
 ```yaml
 kind: VpcDns
@@ -143,8 +143,8 @@ spec:
   replicas: 2
 ```
 
-* `vpc` ： The name of the vpc used to deploy the dns component.
-* `subnet`：Sub-name for deploying dns components.
+* `vpc`: the name of the vpc used to deploy the dns component.
+* `subnet`: subnet name for deploying dns components.
 * `replicas`: vpc dns deployment replicas
 
 View information about deployed resources:

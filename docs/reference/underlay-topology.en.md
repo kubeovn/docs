@@ -20,7 +20,7 @@ Packets enter the physic network via the node NIC and are exchanged and routed a
 
 ![](../static/underlay-traffic-3.png)
 
-> Here br-provider-1 and br-provider-2 can be the same OVS bridge，multiple subnet can share a Provider Network。
+> Here br-provider-1 and br-provider-2 can be the same OVS bridge,multiple subnet can share a Provider Network.
 
 ## Pods in Different Nodes and Different Subnets
 

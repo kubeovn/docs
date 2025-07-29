@@ -7,7 +7,7 @@ The community will continue to iterate on the performance.
 Some general performance optimizations have been integrated into the latest version,
 so it is recommended to use the latest version to get better default performance.
 
-For more on the process and methodology of performance optimization, please watch the video [Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web)。
+For more on the process and methodology of performance optimization, please watch the video [Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web).
 
 ## Benchmarking
 

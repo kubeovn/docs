@@ -132,6 +132,6 @@ When the EIP or SNAT takes into effect, the `ovn.kubernetes.io/routed` annotatio
 
 Some args of `kube-ovn-controller` allow for advanced configuration of SNAT and EIP:
 
-- `--external-gateway-config-ns`: The Namespace of Configmap `ovn-external-gw-config`, default is `kube-system`。
+- `--external-gateway-config-ns`: The Namespace of Configmap `ovn-external-gw-config`, default is `kube-system`.
 - `--external-gateway-net`: The name of the bridge to which the physical NIC is bridged, default is `external`.
 - `--external-gateway-vlanid`: Physical network Vlan Tag number, default is 0, i.e. no Vlan is used.

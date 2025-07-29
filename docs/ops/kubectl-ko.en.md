@@ -193,7 +193,7 @@ pod "ovs-ovn-t87zk" deleted
 ### [nbctl | sbctl] [options ...]
 
 This subcommand executes the `ovn-nbctl` and `ovn-sbctl` commands directly into the leader node of the OVN northbound or southbound database.
-For more detailed usage of this command, please refer to the official documentation of the upstream OVN [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html){: target="_blank" } 和 [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html){: target="_blank" }。
+For more detailed usage of this command, please refer to the official documentation of the upstream OVN [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html){: target="_blank" } 和 [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html){: target="_blank" }.
 
 ```bash
 # kubectl ko nbctl show
@@ -243,7 +243,7 @@ router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
 ### vsctl {nodeName} [options ...]
 
 This command will go to the `ovs-ovn` container on the corresponding `nodeName` and execute the corresponding `ovs-vsctl` command to query and configure `vswitchd`.
-For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-vsctl(8)](https://man7.org/linux/man-pages/man8/ovs-vsctl.8.html){: target="_blank" }。
+For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-vsctl(8)](https://man7.org/linux/man-pages/man8/ovs-vsctl.8.html){: target="_blank" }.
 
 ```bash
 # kubectl ko vsctl kube-ovn-01 show
@@ -278,7 +278,7 @@ For more detailed usage of this command, please refer to the official documentat
 ### ofctl {nodeName} [options ...]
 
 This command will go to the `ovs-ovn` container on the corresponding `nodeName` and execute the corresponding `ovs-ofctl` command to query or manage OpenFlow.
-For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-ofctl(8)](https://man7.org/linux/man-pages/man8/ovs-ofctl.8.html){: target="_blank" }。
+For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-ofctl(8)](https://man7.org/linux/man-pages/man8/ovs-ofctl.8.html){: target="_blank" }.
 
 ```bash
 # kubectl ko ofctl kube-ovn-01 dump-flows br-int
@@ -293,7 +293,7 @@ NXST_FLOW reply (xid=0x4): flags=[more]
 ### dpctl {nodeName} [options ...]
 
 This command will go to the `ovs-ovn` container on the corresponding `nodeName` and execute the corresponding `ovs-dpctl` command to query or manage the OVS datapath.
-For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-dpctl(8)](https://man7.org/linux/man-pages/man8/ovs-dpctl.8.html){: target="_blank" }。
+For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-dpctl(8)](https://man7.org/linux/man-pages/man8/ovs-dpctl.8.html){: target="_blank" }.
 
 ```bash
 # kubectl ko dpctl kube-ovn-01 show
@@ -314,7 +314,7 @@ system@ovs-system:
 ### appctl {nodeName} [options ...]
 
 This command will enter the `ovs-ovn` container on the corresponding `nodeName` and execute the corresponding `ovs-appctl` command to operate the associated daemon process.
-For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-appctl(8)](https://man7.org/linux/man-pages/man8/ovs-appctl.8.html){: target="_blank" }。
+For more detailed usage of this command, please refer to the official documentation of the upstream OVS [ovs-appctl(8)](https://man7.org/linux/man-pages/man8/ovs-appctl.8.html){: target="_blank" }.
 
 ```bash
 # kubectl ko appctl kube-ovn-01 vlog/list

@@ -4,7 +4,7 @@ IPPool is a more granular IPAM management unit than Subnet. You can subdivide th
 
 ## Instructions
 
-Below is an example：
+Below is an example:
 
 ```yaml
 apiVersion: kubeovn.io/v1

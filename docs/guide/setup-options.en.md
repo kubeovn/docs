@@ -87,7 +87,7 @@ args:
 ## Global Traffic Mirroring Setting
 
 When global traffic mirroring is enabled, Kube-OVN will create a `mirror0` virtual NIC on each node
-and copy all container network traffic from the current machine to that NIC，
+and copy all container network traffic from the current machine to that NIC,
 Users can perform traffic analysis with tcpdump and other tools. This function can be enabled in the installation script:
 
 ```bash
@@ -167,7 +167,7 @@ args:
 - --enable-eip-snat=false
 ```
 
-EIP and SNAT is enabled by default. More information can refer to [EIP and SNAT](./eip-snat.en.md)。
+EIP and SNAT is enabled by default. More information can refer to [EIP and SNAT](./eip-snat.en.md).
 
 ## Centralized Gateway ECMP Settings
 

@@ -138,7 +138,7 @@ spec:
 
 ### Create Subnet
 
-Bind Vlan to a Subnet as below：
+Bind Vlan to a Subnet as below:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -237,7 +237,7 @@ nmcli device set eth0 managed yes
 nmcli -t -f GENERAL.STATE device show eth0 | grep -qw unmanaged || nmcli device reapply eth0
 ```
 
-**Notice**：If the host nic's MAC is changed, Kube-OVN will not change the OVS bridge's MAC unless kube-ovn-cni is restarted.
+**Notice**: If the host nic's MAC is changed, Kube-OVN will not change the OVS bridge's MAC unless kube-ovn-cni is restarted.
 
 ## Known Issues
 
