@@ -15,15 +15,13 @@ At the same time, VPC Egress Gateway has the following limitations:
 - Currently, only supports SNAT; EIP and DNAT are not supported
 - Currently, recording source address translation relationships is not supported
 
-Here's the English translation of the provided text:
-
 ## Implementation Details
 
 Each Egress Gateway consists of multiple Pods with multiple network interfaces. Each Pod has two network interfaces: one joins the virtual network for communication within the VPC, and the other connects to the underlying physical network via Macvlan for external network communication. Virtual network traffic ultimately accesses the external network through NAT within the Egress Gateway instances.
 
 ![](../static/vpc-eg-1.png)
 
-Each Egress Gateway instance registers its address in the OVN routing table. When a Pod within the VPC needs to access external network, OVN uses source address hashing to forward traffic to multiple Egress Gateway instance addresses, achieving load balancing. As the number of Egress Gateway instances increases, throughput can also scale horizontally.
+Each Egress Gateway instance registers its address in the OVN routing table. When a Pod within the VPC needs to access the external network, OVN uses source address hashing to forward traffic to multiple Egress Gateway instance addresses, achieving load balancing. As the number of Egress Gateway instances increases, throughput can also scale horizontally.
 
 ![](../static/vpc-eg-2.png)
 
