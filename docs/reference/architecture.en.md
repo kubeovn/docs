@@ -55,7 +55,7 @@ This component performs the translation of all resources within Kubernetes to OV
 The `kube-ovn-controller` listens for events on all resources related to network functionality and updates the logical network
 within the OVN based on resource changes. The main resources listened including:
 
-Pod，Service，Endpoint，Node，NetworkPolicy，VPC，Subnet，Vlan，ProviderNetwork。
+Pod, Service, Endpoint, Node, NetworkPolicy, VPC, Subnet, Vlan, ProviderNetwork.
 
 Taking the Pod event as an example, `kube-ovn-controller` listens to the Pod creation event, allocates the address via the built-in in-memory IPAM function,
 and calls `ovn-central` to create logical ports, static routes and possible ACL rules.
@@ -106,4 +106,4 @@ This component collects OVN status information and the monitoring metrics, all m
 
 #### kubectl-ko
 
-This component is a kubectl plugin, which can quickly run common operations, for more usage, please refer to [kubectl plugin].(../ops/kubectl-ko.en.md)。
+This component is a kubectl plugin, which can quickly run common operations, for more usage, please refer to [kubectl plugin](../ops/kubectl-ko.en.md).

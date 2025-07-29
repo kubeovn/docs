@@ -9,7 +9,7 @@ it can be modified by following the steps in this document.
 
 ## Edit Subnet
 
-Use `kubectl edit` to modify `cidrBlock`，`gateway` and `excludeIps`.
+Use `kubectl edit` to modify `cidrBlock`, `gateway` and `excludeIps`.
 
 ```bash
 kubectl edit subnet test-subnet

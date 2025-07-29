@@ -242,7 +242,7 @@ env:
   value: "vxlan"
 ```
 
-If you need to use the STT tunnel and need to compile additional kernel modules for ovs, please refer to [Performance Tunning](../advance/performance-tuning.en.md)。
+If you need to use the STT tunnel and need to compile additional kernel modules for ovs, please refer to [Performance Tuning](../advance/performance-tuning.en.md).
 
 Please refer to [Tunneling Protocol Selection](../reference/tunnel-protocol.en.md) for the differences between the different protocols in practice.
 

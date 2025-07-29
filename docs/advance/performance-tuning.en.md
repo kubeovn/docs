@@ -163,7 +163,7 @@ The `FastPath` module can reduce CPU overhead by bypassing netfilter, since in m
 > If you need to use the functions provided by netfilter such as iptables, ipvs, nftables, etc. in the container network, this module will disable the related functions.
 
 Since kernel modules are kernel version dependent, it is not possible to provide a single kernel module artifact that adapts to all kernels.
-We pre-compiled the `FastPath` module for part of the kernels, which can be accessed by [tunning-package](https://github.com/kubeovn/tunning-package).
+We pre-compiled the `FastPath` module for part of the kernels, which can be accessed by [tuning-package](https://github.com/kubeovn/tunning-package).
 
 You can also compile it manually, see [Compiling FastPath Module](./fastpath.md)
 
@@ -189,7 +189,7 @@ It has been tested that the CPU consumption of flow-related operations is reduce
 when the corresponding instruction set optimizations are enabled.
 
 Similar to the compilation of the `FastPath` module, it is not possible to provide a single kernel module artifact for all kernels.
-Users need to compile manually or go to [tunning-package](https://github.com/kubeovn/tunning-package) to see if a compiled package is available for download.
+Users need to compile manually or go to [tuning-package](https://github.com/kubeovn/tunning-package) to see if a compiled package is available for download.
 
 Before using this kernel module, please check if the CPU supports the following instruction set:
 
@@ -238,8 +238,6 @@ apt install -y autoconf automake libtool gcc build-essential libssl-dev
 Compile the OVS kernel module and install:
 
 ```bash
-apt install -y autoconf automake libtool gcc build-essential libssl-dev
-
 git clone -b branch-2.17 --depth=1 https://github.com/openvswitch/ovs.git
 cd ovs
 curl -s  https://github.com/kubeovn/ovs/commit/2d2c83c26d4217446918f39d5cd5838e9ac27b32.patch |  git apply

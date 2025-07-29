@@ -663,7 +663,7 @@ If the target of diagnose is specified as IPPorts, the script will let each `kub
 
 ### tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]
 
-This command performs performance tuning related operations, please refer to [Performance Tunning](../advance/performance-tuning.en.md).
+This command performs performance tuning related operations, please refer to [Performance Tuning](../advance/performance-tuning.en.md).
 
 ### reload
 

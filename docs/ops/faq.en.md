@@ -34,7 +34,7 @@ IpExt:
     InNoECTPkts: 7683903
 ```
 
-If `InCsumErrors` is present and increases with netwoork failures, you can confirm that this is the problem.
+If `InCsumErrors` is present and increases with network failures, you can confirm that this is the problem.
 
 ### Solution
 
