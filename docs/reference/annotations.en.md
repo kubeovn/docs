@@ -10,8 +10,8 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 |----------------------------------------|-------------------------------------|------------------------------------------------------------------------------------------------------------------------|
 | ovn.kubernetes.io/allocated            | `true` or `false`                   | If the Pod primary interface has already been allocated an address                                                     |
 | ovn.kubernetes.io/routed               | `true` or `false`                   | If the Pod primary interface has already been allocated a route                                                        |
-| ovn.kubernetes.io/mac_address          | String                              | MAC address allocated to Pod primary interface，when creating a Pod, you can set a fixed MAC address by this Annotation |
-| ovn.kubernetes.io/ip_address           | String                              | IP address allocated to Pod primary interface，when creating a Pod, you can set a fixed IP address by this Annotation   |
+| ovn.kubernetes.io/mac_address          | String                              | MAC address allocated to Pod primary interface, when creating a Pod, you can set a fixed MAC address by this Annotation |
+| ovn.kubernetes.io/ip_address           | String                              | IP address allocated to Pod primary interface, when creating a Pod, you can set a fixed IP address by this Annotation   |
 | ovn.kubernetes.io/cidr                 | String                              | Subnet CIDR that the Pod primary interface belongs to                                                                  |
 | ovn.kubernetes.io/gateway              | String                              | Subnet Gateway address that the Pod primary interface belongs to                                                       |
 | ovn.kubernetes.io/ip_pool              | IP list, separated by comma         | Pod primary interface will choose address from this list, used for workload fix address                                |

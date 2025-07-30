@@ -62,7 +62,7 @@ If no vlan is in use (vlan 0), the following startup vlan id do not need to be c
 # currently only support to specify one underlay public network as the default external public network.
 ```
 
-The design and use of this configuration item takes into account the following factors：
+The design and use of this configuration item takes into account the following factors:
 
 - Based on this configuration item can be docked to the provider network, vlan, subnet resources.
 - Based on this configuration item, the default VPC enable_eip_snat function can be docked to the existing vlan, subnet resources, while supporting the ipam

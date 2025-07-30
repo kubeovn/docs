@@ -6,7 +6,7 @@ Due to the complexity of using VPC gateways, the implementation based on VPC gat
 
 First, make sure the following conditions are met in the environment:
 
-1. Install `multus-cni` and `macvlan cni`。
+1. Install `multus-cni` and `macvlan cni`.
 2. LoadBalancer Service support relies on simplified implementation of VPC gateway code, still utilizing the vpc-nat-gw image and depending on macvlan for multi-interface functionality support.
 3. Currently, it only supports configuration in the default VPC. Support for LoadBalancers in custom VPCs can be referred to in the [VPC configuration](../vpc/vpc.en.md).
 

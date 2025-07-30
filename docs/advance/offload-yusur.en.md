@@ -8,9 +8,9 @@ Kube-OVN uses OVS for traffic forwarding in the final data plane, and the associ
 
 ## Prerequisites
 
-- YUSUR CONFLUX-22OOE series SmartNIC。
-- ensure hados(Heterogeneous Agile Developing & Operating System) installed。
-- Enable SR-IOV in BIOS。
+- YUSUR CONFLUX-22OOE series SmartNIC.
+- ensure hados(Heterogeneous Agile Developing & Operating System) installed.
+- Enable SR-IOV in BIOS.
 
 ## Installation Guide
 
@@ -100,7 +100,7 @@ The device IDs obtained during SR-IOV Device Plugin scheduling need to be passed
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v4.0.2/deployments/multus-daemonset-thick.yml
 ```
 
-Create `NetworkAttachmentDefinition`：
+Create `NetworkAttachmentDefinition`:
 
 ```yaml
 apiVersion:
@@ -142,7 +142,7 @@ spec:
 wget https://github.com/kubeovn/kube-ovn/blob/release-1.12/dist/images/install.sh
 ```
 
-Change the related options，IFACE should be the physic NIC and has an IP:
+Change the related options, `IFACE` should be the physic NIC and has an IP:
 
 ```bash
 ENABLE_MIRROR=${ENABLE_MIRROR:-false}

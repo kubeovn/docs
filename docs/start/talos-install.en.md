@@ -1,6 +1,6 @@
 # Install on Talos
 
-[Talos Linux](https://github.com/siderolabs/talos) is a modern Linux distribution built for Kubernetes。
+[Talos Linux](https://github.com/siderolabs/talos) is a modern Linux distribution built for Kubernetes.
 
 ## Deploy Kube-OVN via Helm Chart
 

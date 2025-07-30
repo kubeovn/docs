@@ -74,10 +74,10 @@ spec:
       policy: policyDst
 ```
 
-- `remoteVpc`: The name of another peering VPC.
-- `localConnectIP`: As the IP address and CIDR of the interconnection endpoint. Note that both IPs should belong to the same CIDR and should not conflict with existing subnets.
-- `cidr`：CIDR of the peering Subnet.
-- `nextHopIP`：The `localConnectIP` on the other end of the peering VPC.
+- `remoteVpc`: the name of another peering VPC.
+- `localConnectIP`: as the IP address and CIDR of the interconnection endpoint. Note that both IPs should belong to the same CIDR and should not conflict with existing subnets.
+- `cidr`: CIDR of the peering Subnet.
+- `nextHopIP`: the `localConnectIP` on the other end of the peering VPC.
 
 Create Pods under the two Subnets
 

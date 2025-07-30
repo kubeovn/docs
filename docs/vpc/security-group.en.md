@@ -38,7 +38,7 @@ Pods bind security-groups by adding annotations, two annotations are used:
 - security_groups: indicates a security group that contains a series of ACL rules
   
   - When configuring a security group, the `priority` value ranges from 1 to 200, with smaller values indicating higher priority. When implementing a security group through ACLs, the security group's priority is mapped to the ACL priority. The specific mapping relationship is as follows:
-  ACL priority=2300−Security group priority，therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
+  ACL priority=2300−Security group priority, therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
 
 > These two annotations are responsible for functions that are independent of each other.
 

@@ -93,11 +93,11 @@ AI workloads demand extremely low network latency, making any additional contain
 
 ## Concepts Clarification: OVN/ovn-kubernetes/Kube-OVN
 
-Due to the similarity of these terms and some abbreviations, confusion often arises in communication. Here’s a brief clarification:
+Due to the similarity of these terms and some abbreviations, confusion often arises in communication. Here's a brief clarification:
 
 ### OVN
 
-[OVN](https://www.ovn.org/en/) is a virtual network controller maintained by the Open vSwitch community, providing foundational abstractions for virtual networking. It is platform-agnostic and can offer networking services to multiple CMS (Cloud Management Systems) such as OpenStack and Kubernetes. Both *ovn-kubernetes* and *Kube-OVN* rely on OVN’s networking capabilities to provide network functionality for Kubernetes.
+[OVN](https://www.ovn.org/en/) is a virtual network controller maintained by the Open vSwitch community, providing foundational abstractions for virtual networking. It is platform-agnostic and can offer networking services to multiple CMS (Cloud Management Systems) such as OpenStack and Kubernetes. Both *ovn-kubernetes* and *Kube-OVN* rely on OVN's networking capabilities to provide network functionality for Kubernetes.
 
 ### ovn-kubernetes
 

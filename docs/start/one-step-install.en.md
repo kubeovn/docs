@@ -3,7 +3,7 @@
 Kube-OVN provides a one-click installation script and charts repo to help you quickly install a highly available,
 production-ready Kube-OVN container network with Overlay networking by default.
 
-If you need Underlay/Vlan networking as the default container network，please read [Underlay Installation](./underlay.en.md)
+If you need Underlay/Vlan networking as the default container network, please read [Underlay Installation](./underlay.en.md)
 
 Before installation please read [Prerequisites](./prepare.en.md) first to make sure the environment is ready. If you want to completely remove Kube-OVN, please refer to [Uninstallation](./uninstall.en.md).
 
@@ -35,10 +35,10 @@ SVC_CIDR="10.96.0.0/12"                # Be consistent with apiserver's service-
 JOIN_CIDR="100.64.0.0/16"              # Pod/Host communication Subnet CIDR, don't overlay with SVC/NODE/POD CIDR
 LABEL="node-role.kubernetes.io/master" # The node label to deploy OVN DB
 IFACE=""                               # The name of the host NIC used by the container network, or if empty use the NIC that host Node IP in Kubernetes
-TUNNEL_TYPE="geneve"                   # Tunnel protocol，available options: geneve, vxlan or stt. stt requires compilation of ovs kernel module
+TUNNEL_TYPE="geneve"                   # Tunnel protocol, available options: geneve, vxlan or stt. stt requires compilation of ovs kernel module
 ```
 
-You can also use regular expression to math NIC names，such as `IFACE=enp6s0f0,eth.*`.
+You can also use regular expression to match NIC names, such as `IFACE=enp6s0f0,eth.*`.
 
 ### Run the Script
 

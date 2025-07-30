@@ -18,7 +18,7 @@ You can use the following command to deploy cert-manager:
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 ```
 
-More cert-manager usage please refer to [cert-manager document](https://cert-manager.io/docs/){: target = "_blank" }。
+More cert-manager usage please refer to [cert-manager document](https://cert-manager.io/docs/){: target = "_blank" }.
 
 ## Install Webhook
 

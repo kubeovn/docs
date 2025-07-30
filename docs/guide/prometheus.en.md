@@ -114,7 +114,7 @@ data:
 ```
 
 Prometheus provides role-based querying of Kubernetes resource monitoring operations, which can be configured in the official documentation
-[kubernetes_sd_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)。
+[kubernetes_sd_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config).
 
 ### Deploy Prometheus
 
@@ -258,7 +258,7 @@ ovn-northd            ClusterIP   10.4.126.234   <none>        6643/TCP         
 ovn-sb                ClusterIP   10.4.216.249   <none>        6642/TCP                 13d
 ```
 
-Add annotation `prometheus.io/scrape="true"` to Service：
+Add annotation `prometheus.io/scrape="true"` to Service:
 
 ```bash
 # kubectl annotate svc -n kube-system kube-ovn-cni  prometheus.io/scrape=true
@@ -312,4 +312,4 @@ Looking at the Prometheus Status Targets information, you can only see the Servi
 
 ![](../static/prometheus-filter-service.png)
 
-For more information about adding filter parameters to relabel, please check [Prometheus-Relabel](https://godleon.github.io/blog/Prometheus/Prometheus-Relabel/)。
+For more information about adding filter parameters to relabel, please check [Prometheus-Relabel](https://godleon.github.io/blog/Prometheus/Prometheus-Relabel/).

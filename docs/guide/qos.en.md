@@ -128,8 +128,8 @@ iperf Done.
 
 ## linux-netem QoS
 
-Pod can use annotation below to config `linux-netem` type QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` and
-`ovn.kubernetes.io/loss`。
+Pod can use annotation below to config `linux-netem` type QoS: `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` and
+`ovn.kubernetes.io/loss`.
 
 > To install netem related modules on RHEL series operating systems, follow these instructions:
 > yum install -y kernel-modules-extra && modprobe sch_netem

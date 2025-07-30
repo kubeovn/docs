@@ -70,7 +70,7 @@ The subnet's `provider` MUST be the same as the `provider` of the NetworkAttachm
 
 ## Create Receiving Pod
 
-Create the following Pod：
+Create the following Pod:
 
 ```yaml
 apiVersion: v1
@@ -103,7 +103,7 @@ The IP address `172.19.0.21` will be used later.
 
 ## Create OVN Remote Port Mirroring
 
-Create the following OVN remote port mirroring：
+Create the following OVN remote port mirroring:
 
 ```bash
 kubectl ko nbctl mirror-add mirror1 gre 99 from-lport 172.19.0.21
