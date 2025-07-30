@@ -160,6 +160,7 @@
 | --- | --- | --- |
 | defaultInterface | String | 该桥接网络默认使用的网卡接口名称 |
 | customInterfaces | []CustomInterface | 该桥接网络特殊使用的网卡配置 |
+| nodeSelector | LabelSelector | 基于节点标签选择需要创建 OVS 网桥的节点，支持 matchLabels 和 matchExpressions（一旦使用 nodeSelector，excludeNodes 将不再生效） |
 | excludeNodes | []String | 该桥接网络不会绑定的节点名称 |
 | exchangeLinkName | Bool | 是否交换桥接网卡和对应 OVS 网桥名称 |
 
