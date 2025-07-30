@@ -139,9 +139,11 @@ spec:
   cidrBlock: 172.17.0.0/16
   gateway: 172.17.0.1
   vlan: vlan1
+  disableGatewayCheck: false
 ```
 
-将 `vlan` 的值指定为需要使用的 VLAN 名称即可。多个 Subnet 可以引用同一个 VLAN。
+- `vlan`：需要使用的 VLAN 名称，多个 Subnet 可以引用同一个 VLAN。
+- `disableGatewayCheck`：若所在 Underlay 网络网关不存在，可将该字段设置为 `true`，关闭网关探测。
 
 ## 容器创建
 
