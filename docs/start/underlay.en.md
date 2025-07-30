@@ -150,9 +150,11 @@ spec:
    cidrBlock: 172.17.0.0/16
    gateway: 172.17.0.1
    vlan: vlan1
+   disableGatewayCheck: false
 ```
 
-Simply specify the value of `vlan` as the name of the VLAN to be used. Multiple subnets can refer to the same VLAN.
+- `vlan`: The VLAN name to be used. Multiple subnets can reference the same VLAN.
+- `disableGatewayCheck`: If the gateway in the underlying network does not exist, set this field to `true` to disable gateway detection.
 
 ## Create Pod
 
@@ -177,11 +179,10 @@ spec:
    gateway: 172.17.0.1
    vlan: vlan1
    logicalGateway: true
-   disableGatewayCheck: false
 ```
 
-- `vlan`: The VLAN name to be used. Multiple subnets can reference the same VLAN.
-- `disableGatewayCheck`: If the gateway in the underlying network does not exist, set this field to `true` to disable gateway detection.
+When this feature is turned on, the Pod does not use an external gateway,
+but a Logical Router created by Kube-OVN to forward cross-subnet communication.
 
 ## Interconnection of Underlay and Overlay Networks
 
