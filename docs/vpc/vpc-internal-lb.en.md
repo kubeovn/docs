@@ -35,8 +35,8 @@ spec:
 ```
 
 - usage of `selector`, `sessionAffinity`, and `port` is the same as Kubernetes Service.
-- `vip`：customize load balancing IP address.
-- `namespace`：namespace of the `pod` selected by `selector`.
+- `vip`: customize load balancing IP address.
+- `namespace`: namespace of the `pod` selected by `selector`.
 
 Kube OVN will determine the VPC of the selected `pod` based on the `SwitchLBRule` definition and set the corresponding L2 LB.
 
@@ -68,9 +68,9 @@ spec:
 
 usage of `sessionAffinity`, and `port` is the same as Kubernetes Service.
 
-- `vip`：customize load balancing IP address.
-- `namespace`：namespace of the `pod` selected by `selector`.
-- `endpoints`：load balancing backend IP list.
+- `vip`:customize load balancing IP address.
+- `namespace`:namespace of the `pod` selected by `selector`.
+- `endpoints`:load balancing backend IP list.
   
 If both `selector` and `endpoints` are configured, the `selector` configuration will be automatically ignored.
 

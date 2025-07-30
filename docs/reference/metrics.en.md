@@ -111,7 +111,7 @@ Network quality related metrics:
 
 ## kube-ovn-controller
 
-`kube-ovn-controller` status metrics：
+`kube-ovn-controller` status metrics:
 
 | Type      | Metric                                  | Description                                                           |
 |-----------|-----------------------------------------|-----------------------------------------------------------------------|

@@ -54,9 +54,9 @@ spec:
 ```
 
 - `subnet`: The IP address is reserved from the Subnet.
-- `podType`: Used to specify the Owner type of the Pod: "StatefulSet", "VirtualMachine".
+- `podType`: Used to specify the Owner type of the Pod: `StatefulSet`, `VirtualMachine`.
 - `podName`: Pod name or VirtualMachine name.
-- `namespace`: Used to specify the namespace where the IP resource resides，Pod namespace or VirtualMachine namespace.
+- `namespace`: Used to specify the namespace where the IP resource resides, Pod namespace or VirtualMachine namespace.
 
 > Note: These IP properties are not allowed to change
 

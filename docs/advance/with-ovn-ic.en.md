@@ -163,7 +163,7 @@ data:
 **Note:** To ensure the correct operation, the ConfigMap `ovn-ic-config` is not allowed to be modified.
 If any parameter needs to be changed, please delete this ConfigMap, modify it and then apply it again.
 
-Check if the interconnected logical switch `ts` has been established in the `ovn-ic` container with the following command：
+Check if the interconnected logical switch `ts` has been established in the `ovn-ic` container with the following command:
 
 ```bash
 # ovn-ic-sbctl show
@@ -304,8 +304,8 @@ If you are  using `containerd` you can use the following command:
 ctr -n k8s.io run -d --env "ENABLE_OVN_LEADER_CHECK="false"" --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw"  --env="NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"" --env="LOCAL_IP="192.168.65.3"" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
 ```
 
-- `LOCAL_IP`： The IP address of the node where the current container is located.
-- `NODE_IPS`： The IP addresses of the three nodes running the `OVN-IC` database, separated by commas.
+- `LOCAL_IP`: The IP address of the node where the current container is located.
+- `NODE_IPS`: The IP addresses of the three nodes running the `OVN-IC` database, separated by commas.
 
 Next, deploy the follower of the `OVN-IC` DB on the other two nodes.
 
@@ -321,8 +321,8 @@ If using `containerd` you can use the following command:
 ctr -n k8s.io run -d --net-host --privileged --mount="type=bind,src=/etc/ovn/,dst=/etc/ovn,options=rbind:rw" --mount="type=bind,src=/var/run/ovn,dst=/var/run/ovn,options=rbind:rw" --mount="type=bind,src=/var/log/ovn,dst=/var/log/ovn,options=rbind:rw"  --env="NODE_IPS="192.168.65.3,192.168.65.2,192.168.65.1"" --env="LOCAL_IP="192.168.65.2"" --env="LEADER_IP="192.168.65.3"" docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-ic-db bash start-ic-db.sh
 ```
 
-- `LOCAL_IP`： The IP address of the node where the current container is located.
-- `NODE_IPS`： The IP addresses of the three nodes running the `OVN-IC` database, separated by commas.
+- `LOCAL_IP`: The IP address of the node where the current container is located.
+- `NODE_IPS`: The IP addresses of the three nodes running the `OVN-IC` database, separated by commas.
 - `LEADER_IP`: The IP address of the `OVN-IC` DB leader node.
 
 Specify multiple `OVN-IC` database node addresses when creating `ovn-ic-config` for each cluster:

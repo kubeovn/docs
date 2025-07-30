@@ -60,7 +60,7 @@ This list records the feature stages from the 1.8 release.
 | Traffic Mirroring                                | false   | GA    | 1.8   |       |
 | NetworkPolicy                                    | true    | Beta  | 1.8   |       |
 | Webhook                                          | false   | Alpha | 1.10  |       |
-| Performance Tunning                              | false   | Beta  | 1.8   |       |
+| Performance Tuning                               | false   | Beta  | 1.8   |       |
 | Interconnection with Routes in Overlay Mode      | false   | Alpha | 1.8   |       |
 | BGP Support                                      | false   | Alpha | 1.9   |       |
 | Cilium Integration                               | false   | Alpha | 1.10  |       |

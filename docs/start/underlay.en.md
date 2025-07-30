@@ -40,7 +40,7 @@ Vlan and security policy in the underlying network device in advance.
 
 For management and container networks using the same NIC, Kube-OVN will transfer the NIC's Mac address, IP address, route,
 and MTU to the corresponding OVS Bridge to support single NIC deployment of Underlay networks.
-OVS Bridge name format is `br-PROVIDER_NAME`，`PROVIDER_NAME` is the name of `ProviderNetwork` (Default: provider).
+OVS Bridge name format is `br-PROVIDER_NAME`, `PROVIDER_NAME` is the name of `ProviderNetwork` (Default: provider).
 
 ## Specify Network Mode When Deploying
 
@@ -59,8 +59,8 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/d
 ENABLE_ARP_DETECT_IP_CONFLICT # disable vlan arp conflict detection if necessary
 NETWORK_TYPE                  # set to vlan
 VLAN_INTERFACE_NAME           # set to the NIC that carries the Underlay traffic, e.g. eth1
-VLAN_ID                       # The VLAN Tag need to be added，if set 0 no vlan tag will be added
-POD_CIDR                      # The Underlay network CIDR， e.g. 192.168.1.0/24
+VLAN_ID                       # The VLAN Tag need to be added, if set 0 no vlan tag will be added
+POD_CIDR                      # The Underlay network CIDR, e.g. 192.168.1.0/24
 POD_GATEWAY                   # Underlay physic gateway address, e.g. 192.168.1.1
 EXCLUDE_IPS                   # Exclude ranges to avoid conflicts between container network and IPs already in use on the physical network, e.g. 192.168.1.1..192.168.1.100
 ENABLE_LB                     # If Underlay Subnet needs to visit Service set it to true
@@ -133,12 +133,12 @@ spec:
   provider: net1
 ```
 
-- `id`: VLAN ID/Tag，Kube-OVN will add this Vlan tag to traffic, if set 0, no tag is added. the vlan tag applies to a localnet port.
+- `id`: VLAN ID/Tag, Kube-OVN will add this Vlan tag to traffic, if set 0, no tag is added. the vlan tag applies to a localnet port.
 - `provider`: The name of ProviderNetwork. Multiple VLAN can use a same ProviderNetwork.
 
 ### Create Subnet
 
-Bind Vlan to a Subnet as below：
+Bind Vlan to a Subnet as below:
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -237,7 +237,7 @@ nmcli device set eth0 managed yes
 nmcli -t -f GENERAL.STATE device show eth0 | grep -qw unmanaged || nmcli device reapply eth0
 ```
 
-**Notice**：If the host nic's MAC is changed, Kube-OVN will not change the OVS bridge's MAC unless kube-ovn-cni is restarted.
+**Notice**: If the host nic's MAC is changed, Kube-OVN will not change the OVS bridge's MAC unless kube-ovn-cni is restarted.
 
 ## Known Issues
 

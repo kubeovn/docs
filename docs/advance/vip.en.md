@@ -1,6 +1,6 @@
 # VIP reserved IP
 
-VIP Virtual IP addresses are reserved for IP addresses. The reason for the design of VIP is that the IP and POD of kube-ovn are directly related in naming, so the function of reserving IP can not be realized directly based on IP. At the beginning of the design, VIP refers to the function of Openstack neutron Allowed-Address-Pairs（AAP）, which can be used for Openstack octavia load balancer projects. It can also be used to provide in-machine application (POD) IP, as seen in the aliyun terway project. In addition, because neutron has the function of reserving IP, VIP has been extended to a certain extent, so that VIP can be directly used to reserve IP for POD, but this design will lead to the function of VIP and IP become blurred, which is not an elegant way to achieve, so it is not recommended to use in production. In addition, since the Switch LB of OVN can provide a function of using the internal IP address of the subnet as the front-end VIP of the LB, the scenario of using the OVN Switch LB Rule in the subnet for the VIP is extended.
+VIP Virtual IP addresses are reserved for IP addresses. The reason for the design of VIP is that the IP and POD of kube-ovn are directly related in naming, so the function of reserving IP can not be realized directly based on IP. At the beginning of the design, VIP refers to the function of Openstack neutron Allowed-Address-Pairs(AAP), which can be used for Openstack octavia load balancer projects. It can also be used to provide in-machine application (POD) IP, as seen in the aliyun terway project. In addition, because neutron has the function of reserving IP, VIP has been extended to a certain extent, so that VIP can be directly used to reserve IP for POD, but this design will lead to the function of VIP and IP become blurred, which is not an elegant way to achieve, so it is not recommended to use in production. In addition, since the Switch LB of OVN can provide a function of using the internal IP address of the subnet as the front-end VIP of the LB, the scenario of using the OVN Switch LB Rule in the subnet for the VIP is extended.
 In short, there are only three use cases for VIP design at present:
 
 - Allowed-Address-Pairs VIP
@@ -76,9 +76,9 @@ static-vip01   10.16.0.121           00:00:00:F0:DB:26                         o
 
 Pod can use annotation to specify VIP to enable AAP function. labels must meet the condition of node selector in VIP.
 
-Pod annotation supports specifying multiple VIPs. The configuration format is：ovn.kubernetes.io/aaps: vip-aap,vip-aap2,vip-aap3
+Pod annotation supports specifying multiple VIPs. The configuration format is: `ovn.kubernetes.io/aaps: vip-aap,vip-aap2,vip-aap3`
 
-AAP support [multi nic](./multi-nic.en.md)，If a Pod is configured with multiple nics, AAP will configure the Port corresponding to the same subnet of the Pod and VIP.
+AAP support [multi nic](./multi-nic.en.md), if a Pod is configured with multiple nics, AAP will configure the Port corresponding to the same subnet of the Pod and VIP.
 
 #### 1.3.1 Create VIP support AAP
 
@@ -99,7 +99,7 @@ VIP also supports the assignment of fixed and random addresses, as described abo
 - `namespace`: In AAP scenarios, a VIP needs to specify a namespace explicitly. Only resources in the same namespace can enable the AAP function.
 - `selector`: In the AAP scenario, the node selector used to select the Pod attached to the VIP has the same format as the NodeSelector format in Kubernetes.
 
-Query the Port corresponding to the VIP：
+Query the Port corresponding to the VIP:
 
 ```bash
 # kubectl ko nbctl show ovn-default
@@ -128,7 +128,7 @@ spec:
             - NET_ADMIN
 ```
 
-Query the configuration of the AAP after the AAP is created：
+Query the configuration of the AAP after the AAP is created:
 
 ```bash
 # kubectl ko nbctl list logical_switch_port aap-vip
@@ -202,7 +202,7 @@ spec:
 
 > This feature has been supported since v1.12.
 
-You can use annotations to assign a VIP to a Pod, then the pod will use the vip's ip address：
+You can use annotations to assign a VIP to a Pod, then the pod will use the vip's ip address:
 
 ```yaml
 apiVersion: v1

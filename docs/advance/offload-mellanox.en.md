@@ -84,7 +84,7 @@ devlink dev param set pci/84:00.0 name flow_steering_mode value smfs cmode runti
 devlink dev param set pci/84:00.1 name flow_steering_mode value smfs cmode runtime
 ```
 
-> Note: If you don’t know which mode to choose, you can use the default mode without configuration.
+> Note: If you don't know which mode to choose, you can use the default mode without configuration.
 
 Check the number of available VFs:
 
@@ -443,7 +443,7 @@ switchdev
 
 The device IDs obtained during SR-IOV Device Plugin scheduling need to be passed to Kube-OVN via Multus-CNI, so Multus-CNI needs to be configured to perform the related tasks.
 
-Please read [Multus-CNI Document](https://github.com/k8snetworkplumbingwg/multus-cni) to deploy：
+Please read [Multus-CNI Document](https://github.com/k8snetworkplumbingwg/multus-cni) to deploy:
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v4.0.2/deployments/multus-daemonset-thick.yml
@@ -451,7 +451,7 @@ kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-c
 
 > Note: multus provides Thin and Thick versions of the plug-in. To support SR-IOV, you need to install the Thick version.
 
-Create `NetworkAttachmentDefinition`：
+Create `NetworkAttachmentDefinition`:
 
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
@@ -493,7 +493,7 @@ Download the scripts:
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
 ```
 
-Change the related options，`IFACE` should be the physic NIC and has an IP:
+Change the related options, `IFACE` should be the physic NIC and has an IP:
 
 ```bash
 ENABLE_MIRROR=${ENABLE_MIRROR:-false}
@@ -503,7 +503,7 @@ IFACE="bond1"
 # Take manual configuration of the network card in SR-IOV and Device Plugin as an example. If bond is bound, set IFACE to bond1. If bond is not bound, set IFACE to enp132s0f0np0 or enp132s0f1np1.
 ```
 
-Install Kube-OVN：
+Install Kube-OVN:
 
 ```bash
 bash install.sh
@@ -545,7 +545,7 @@ Download the scripts:
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/install.sh
 ```
 
-Change the related options，`IFACE` should be the physic NIC and has an IP:
+Change the related options, `IFACE` should be the physic NIC and has an IP:
 
 ```bash
 ENABLE_MIRROR=${ENABLE_MIRROR:-false}
@@ -555,7 +555,7 @@ IFACE=""
 # If Underlay uninstallation is required, IFACE needs to be set to other non-PF network cards. (When IFACE is empty, the K8s cluster communication network card will be used by default. Note that this network card cannot be a PF network card)
 ```
 
-Install Kube-OVN：
+Install Kube-OVN:
 
 ```bash
 bash install.sh
