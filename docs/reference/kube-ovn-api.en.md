@@ -160,6 +160,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | --- | --- | --- |
 | defaultInterface | String | The name of the NIC interface used by default for this bridge network |
 | customInterfaces | []CustomInterface | The special NIC configuration used by this bridge network |
+| nodeSelector | LabelSelector | Select nodes for creating OVS bridges based on node labels, supports matchLabels and matchExpressions (once nodeSelector is used, excludeNodes will no longer take effect) |
 | excludeNodes | []String | The names of the nodes that will not be bound to this bridge network |
 | exchangeLinkName | Bool | Whether to exchange the bridge NIC and the corresponding OVS bridge name |
 

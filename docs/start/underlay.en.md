@@ -97,15 +97,24 @@ spec:
     - interface: eth2
       nodes:
         - node1
-  excludeNodes:
-    - node2
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/arch: amd64
+      network-type: underlay
+    matchExpressions:
+      - key: kubernetes.io/hostname
+        operator: In
+        values:
+          - node1
+          - node2
 ```
 
 **Note: The length of the ProviderNetwork resource name must not exceed 12.**
 
 - `defaultInterface`: The default node NIC name. When the ProviderNetwork is successfully created, an OVS bridge named br-net1 (in the format `br-NAME`) is created in each node (except excludeNodes) and the specified node NIC is bridged to this bridge.
 - `customInterfaces`: Optionally, you can specify the NIC to be used for a specific node.
-- `excludeNodes`: Optional, to specify nodes that do not bridge the NIC. Nodes in this list will be added with the `net1.provider-network.ovn.kubernetes.io/exclude=true` tag.
+- `nodeSelector`: Optional, used to select nodes for creating OVS bridges based on node labels. Supports both `matchLabels` and `matchExpressions` selection methods.
+- `excludeNodes`: Optional, to specify nodes that do not bridge the NIC. Nodes in this list will be added with the `net1.provider-network.ovn.kubernetes.io/exclude=true` tag.  **Note: Once `nodeSelector` is used, `excludeNodes` will no longer take effect. It is recommended to use only `nodeSelector`.**
 
 Other nodes will be added with the following tags:
 
