@@ -177,10 +177,11 @@ spec:
    gateway: 172.17.0.1
    vlan: vlan1
    logicalGateway: true
+   disableGatewayCheck: false
 ```
 
-When this feature is turned on, the Pod does not use an external gateway,
-but a Logical Router created by Kube-OVN to forward cross-subnet communication.
+- `vlan`: The VLAN name to be used. Multiple subnets can reference the same VLAN.
+- `disableGatewayCheck`: If the gateway in the underlying network does not exist, set this field to `true` to disable gateway detection.
 
 ## Interconnection of Underlay and Overlay Networks
 
