@@ -5,6 +5,10 @@
 
 该 CRD 最终会部署一个 coredns，该 Pod 有两个网卡，一个网卡在用户自定义 VPC，另一个网卡在默认 VPC 从而实现网络互通，同时通过[自定义 VPC 内部负载均衡](./vpc-internal-lb.md)提供自定义 VPC 内的一个内部负载均衡。
 
+!!! note
+
+    该 DNS 地址**不会**自动注入到 Pod 或 VM 内，用户需要自己通过 Webhook 或者虚拟机镜像模板调整 `/etc/resolve.conf` 的内容。
+
 ## 部署 vpc-dns 所依赖的资源
 
 ```yaml
@@ -166,7 +170,7 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 
 ## 验证部署结果
 
-查看 vpc-dns Pod 状态，使用 label `app=vpc-dns`，可以查看所有 vpc-dns pod 状态：
+查看 vpc-dns Pod 状态，使用 label `app=vpc-dns`，可以查看所有 vpc-dns Pod 状态：
 
 ```bash
 # kubectl -n kube-system get pods -l app=vpc-dns
@@ -189,4 +193,4 @@ vpc-dns-test-cjh1   10.96.0.3   53/UDP,53/TCP,9153/TCP   kube-system/slr-vpc-dns
 nslookup kubernetes.default.svc.cluster.local 10.96.0.3
 ```
 
-该 VPC 下的 switch lb rule 所在的子网以及同一 VPC 下的其他子网下的 pod 都可以解析。
+该 VPC 下的 switch lb rule 所在的子网以及同一 VPC 下的其他子网下的 Pod 都可以解析。
