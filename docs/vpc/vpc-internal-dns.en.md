@@ -4,6 +4,10 @@ Due to the isolation of the user-defined VPC and the default VPC network, the co
 
 This CRD eventually deploys a coredns that has two NICs, one in the user-defined VPC and the other in the default VPC to enable network interoperability and provide an internal load balancing within the custom VPC through the [custom VPC internal load balancing](./vpc-internal-lb.en.md).
 
+!!! note
+
+    This DNS address **will not** be automatically injected into Pods or VMs. Users need to modify the content of `/etc/resolv.conf` through Webhook or VM image templates.
+
 ## Deployment of vpc-dns dependent resources
 
 ```yaml
@@ -165,7 +169,7 @@ Restrictions: only one custom dns component will be deployed under a VPC
 
 ## Validate deployment results
 
-To view vpc-dns Pod status, use label app=vpc-dns to view all vpc-dns pod status:
+To view vpc-dns Pod status, use label `app=vpc-dns` to view all vpc-dns Pod status:
 
 ```bash
 # kubectl -n kube-system get pods -l app=vpc-dns
@@ -188,4 +192,4 @@ Go to the Pod under this VPC and test the dns resolution:
 nslookup kubernetes.default.svc.cluster.local 10.96.0.3
 ```
 
-The subnet where the switch lb rule under this VPC is located and the pods under other subnets under the same VPC can be resolved.
+The subnet where the switch lb rule under this VPC is located and the Pods under other subnets under the same VPC can be resolved.
