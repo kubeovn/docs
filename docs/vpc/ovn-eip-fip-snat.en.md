@@ -223,7 +223,7 @@ Route Table <main>:
 
 ```
 
-> Note: Note: Considering that enableExternal supports multiple external networks and it is impossible to determine which external network uses which route, automatic maintenance of public network routes is currently not supported. Users can specify policy routes or static routes through the VPC CRD definition
+> Note: Considering that enableExternal supports multiple external networks and it is impossible to determine which external network uses which route, automatic maintenance of public network routes is currently not supported. Users can specify policy routes or static routes through the VPC CRD definition
 
 ### 1.4 Use additional public network
 
