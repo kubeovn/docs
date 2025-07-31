@@ -156,6 +156,11 @@ spec:
   namespaces:
   - vpc1
   enableExternal: true
+  staticRoutes:
+    - cidr: 0.0.0.0/0
+      nextHopIP: 10.5.204.254
+      policy: policyDst
+
 # VPC 启用 enableExternal 会自动创建 lrp 关联到上述指定的公网
 
 # cat 02-subnet.yml
@@ -209,8 +214,11 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 IPv4 Routes
 Route Table <main>:
                 0.0.0.0/0              10.5.204.254 dst-ip
-# 目前该路由已自动维护
+# 请在 VPC CRD 定义中配置该默认路由
+
 ```
+
+> 注意：考虑到 enableExternal 支持多外部网络，无法确定哪个外部网络使用哪种路由，所以目前不支持自动维护公网路由，用户可以通过 VPC CRD 定义中指定策略路由或者静态路由
 
 ### 1.4 使用额外的公网网络
 

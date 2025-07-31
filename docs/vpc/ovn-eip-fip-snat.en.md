@@ -162,6 +162,11 @@ spec:
   namespaces:
   - vpc1
   enableExternal: true
+  staticRoutes:
+  - cidr: 0.0.0.0/0
+    nextHopIP: 10.5.204.254
+    policy: policyDst
+
 # VPC enableExternal will automatically create an lrp association to the default public network specified above
 
 # cat 02-subnet.yml
@@ -213,8 +218,12 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 IPv4 Routes
 Route Table <main>:
                 0.0.0.0/0              10.5.204.254 dst-ip
-# The route currently supports automatic maintenance
+
+# Please configure this default route in the VPC CRD definition
+
 ```
+
+> Note: Considering that enableExternal supports multiple external networks and it is impossible to determine which external network uses which route, automatic maintenance of public network routes is currently not supported. Users can specify policy routes or static routes through the VPC CRD definition
 
 ### 1.4 Use additional public network
 
