@@ -30,6 +30,7 @@ jobs:
         env:
           MKDOCS_GIT_COMMITTERS_APIKEY: ${{ secrets.GIT_COMMITER_TOKEM }}
           ENABLE_GIT_COMMITTERS: true
+          ENABLE_PDF_EXPORT: 1
         run: |
           git config --global user.name "ci-bot"
           git config --global user.email "ci-bot@example.com"
