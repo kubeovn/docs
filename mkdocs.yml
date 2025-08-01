@@ -264,6 +264,7 @@ plugins:
   - markdownextradata: {}
   - with-pdf:
       author: Kube-OVN Team
+      copyright: 2025 Kube-OVN Team
       cover_subtitle: v1.14.4
       enabled_if_env: ENABLE_PDF_EXPORT
 extra:
