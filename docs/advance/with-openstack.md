@@ -149,6 +149,10 @@ ovs-vsctl set open . external-ids:ovn-encap-ip=192.168.137.200
 
 接下来介绍如何在 Kubernetes 中查询 OpenStack 的网络资源并在 OpenStack 的子网中创建 Pod。
 
+!!! note
+
+    使用该功能需要在 `kube-ovn-controller` 的 args 中开启资源同步 `--enable-external-vpc=true`。
+
 查询 OpenStack 中已有的网络资源，如下资源已经预先创建完成：
 
 ```bash
