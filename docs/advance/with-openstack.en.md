@@ -152,6 +152,10 @@ ovs-vsctl set open . external-ids:ovn-encap-ip=192.168.137.200
 
 The next section describes how to query OpenStack's network resources in Kubernetes and create Pods in the subnet from OpenStack.
 
+!!! note
+
+    To use this feature, you need to enable resource synchronization in the `kube-ovn-controller` args by setting `--enable-external-vpc=true`.
+
 Query the existing network resources in OpenStack for the following resources that have been pre-created.
 
 ```bash

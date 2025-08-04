@@ -262,7 +262,7 @@ plugins:
       htmlmin_opts:
         remove_comments: true
   - markdownextradata: {}
-  - with-pdf:
+  - to-pdf:
       author: Kube-OVN Team
       copyright: 2025 Kube-OVN Team
       cover_subtitle: v1.14.4
