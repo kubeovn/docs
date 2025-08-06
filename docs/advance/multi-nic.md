@@ -33,6 +33,19 @@ net1 网络的网络定义来自于 multus-cni 中的 NetworkAttachmentDefinitio
 
 在容器所在机器的 CNI 可以通过在配置中配置 `kube-ovn-cni` 作为 ipam 插件, `kube-ovn-cni` 将会读取 Pod annotation 并将地址信息通过 CNI 协议的标准格式返回给相应的 CNI 插件。
 
+## 兼容性问题
+
+`NetworkAttachmentDefinition` 支持 `spec` 为空，multus 会自动在 `defaultConfDir` 搜索同名的 CNI 配置文件，如下所示：
+
+```yaml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: macvlan-conf-2
+```
+
+但是 `kube-ovn-controller` 需要集中获取每个 `NetworkAttachmentDefinition` 里的 `provider` 信息，无法去每个节点获取对应相关配置。因此 `spec` 为空的用法和 Kube-OVN 的 IPAM 能力存在兼容性问题。
+
 ## 使用方法
 
 ### 安装 Kube-OVN 和 Multus

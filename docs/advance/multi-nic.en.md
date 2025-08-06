@@ -35,6 +35,19 @@ then manage the address from it, and write the address information assigned to t
 The CNI on the container machine can configure `kube-ovn-cni` as the ipam plugin.
 `kube-ovn-cni` will read the Pod annotation and return the address information to the corresponding CNI plugin using the standard format of the CNI protocol.
 
+## Compatibility Issues
+
+`NetworkAttachmentDefinition` supports an empty `spec`, where Multus will automatically search for the CNI configuration file with the same name in the `defaultConfDir` on each Node, as shown below:
+
+```yaml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: macvlan-conf-2
+```
+
+However, `kube-ovn-controller` needs to centrally retrieve the `provider` information from each `NetworkAttachmentDefinition` and cannot fetch the corresponding configurations from each node individually. As a result, the usage of an empty `spec` is incompatible with Kube-OVN's IPAM capability.
+
 ## Usage
 
 ### Install Kube-OVN and Multus
