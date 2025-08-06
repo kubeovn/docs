@@ -30,6 +30,7 @@ nav:
       - 配置原生 Prometheus: "guide/prometheus.md"
   - KubeVirt:
       - 固定 VM IP: "kubevirt/static-ip.md"
+      - 虚拟机克隆: "kubevirt/vm-clone.md"
       - VM 使用双栈网络: "kubevirt/dual-stack.md"
       - 热迁移: "kubevirt/live-migration.md"
       - 自定义 DHCP: "kubevirt/dhcp.md"
@@ -176,6 +177,7 @@ plugins:
             LoadBalancer 类型 Service: LoadBalancer Type Service
             VPC 网络: VPC Network
             固定 VM IP: Fixed VM IP
+            虚拟机克隆: VM Clone
             VM 使用双栈网络: VM Use DualStack Network
             热迁移: Live Migration
             自定义 DHCP: Custom DHCP
