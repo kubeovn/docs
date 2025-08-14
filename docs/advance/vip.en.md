@@ -170,7 +170,21 @@ Query the configuration of the Pod after the POD is created:
 
 In addition to the IP assigned automatically when the Pod is created, the IP of the VIP is also successfully bound, and other Pods in the current subnet can communicate with these two IP addresses.
 
-## 2. [Switch LB rule](../vpc/vpc-internal-lb.en.md) vip
+## 2. [SwitchLBRule](../vpc/vpc-internal-lb.en.md) VIP
+
+!!! note
+
+  This feature might be broken in recent versions, with users reporting that the VIP ceases to respond randomly. Issue is tracked here https://github.com/kubeovn/kube-ovn/issues/5377
+
+VIPs with type set to `switch_lb_vip` are used when a **SwitchLBRule** wishes to have its VIP in the same CIDR as the **Subnet** in which it is deployed.
+
+This is due to a limitation of OVN where the VIP of a loadbalancer should never be in the same CIDR as the subnet in which pods/VMs are trying to reach it. For example, a loadbalancer cannot have a VIP `10.0.0.100` if a pod in subnet `10.0.0.0/24` is expected to reach it.
+
+The reason is that if the VIP is part of the subnet, the pods/VMs that try to reach the loadbalancer will have a local route to the VIP on their network interface. They will try to resolve the VIP's MAC address using ARP and will fail to do so because it doesn't physically exist. But if the VIP is in another subnet, the pods/VMs will forward the request to their default gateway on which a rule has been configured by OVN to NAT the traffic to the backends of the loadbalancer.
+
+Using type `switch_lb_vip` circumvents that issue by creating a logical port that responds to ARP requests for the VIP. The traffic is redirected to the default gateway by responding with its MAC address.
+
+The definition of such a `switch_lb_vip` VIP is simple.
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -179,12 +193,13 @@ metadata:
   name: slr-01
 spec:
   subnet: ovn-default
+  v4ip: 10.0.0.100
   type: switch_lb_vip
-
 ```
 
-- `subnet`: The IP address is reserved from the Subnet.
-- `type`: Currently, two types of ip addresses are supported. If the value is empty, it indicates that the ip address is used only for ipam ip addresses. switch_lb_vip indicates that the IP address is used only for switch lb.
+- `subnet`: the IP address will be reserved from this **subnet**
+- `v4ip`: optional argument to use a specific IP within the subnet (SLRs only support IPv4)
+- `type`: `switch_lb_vip` indicates that this VIP is used by a SwitchLB
 
 ## 3. POD Use VIP to reserve IP address
 
