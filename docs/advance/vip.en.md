@@ -174,7 +174,7 @@ In addition to the IP assigned automatically when the Pod is created, the IP of 
 
 !!! note
 
-  This feature might be broken in recent versions, with users reporting that the VIP ceases to respond randomly. Issue is tracked here https://github.com/kubeovn/kube-ovn/issues/5377
+    This feature might be broken in recent versions, with users reporting that the VIP ceases to respond randomly. Issue is tracked here https://github.com/kubeovn/kube-ovn/issues/5377
 
 VIPs with type set to `switch_lb_vip` are used when a **SwitchLBRule** wishes to have its VIP in the same CIDR as the **Subnet** in which it is deployed.
 
