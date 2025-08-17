@@ -43,7 +43,7 @@ Kube-OVN will determine the VPC of the selected `pods` based on the `SwitchLBRul
 
 !!! note
 
-  If you wish to manually specify the VPC/Subnet targeted by the SwitchLBRule and avoid auto-detection, use annotation `ovn.kubernetes.io/logical_router` and `kubernetes.io/logical_switch` on the SLR.
+    If you wish to manually specify the VPC/Subnet targeted by the SwitchLBRule and avoid auto-detection, use annotation `ovn.kubernetes.io/logical_router` and `ovn.kubernetes.io/logical_switch` on the SLR.
 
 ## Manually Defined Load Balancing Rules by `Endpoints`
 
@@ -87,7 +87,7 @@ Health checks are enabled by default on SLRs whether they use fields `selector` 
 
 !!! note
 
-  If you wish to disable healthchecks, you can use the annotation `ovn.kubernetes.io/service_health_check: false` on the SLR.
+    If you wish to disable healthchecks, you can use the annotation `ovn.kubernetes.io/service_health_check: false` on the SLR.
 
 ### How they work
 
@@ -109,7 +109,7 @@ Due to how OVN implements load balancers, this IP address **should** be outside 
 
 For example, a load balancer cannot have a VIP `10.0.0.100` if a pod in subnet `10.0.0.0/24` is expected to reach it. In that case, using address `192.168.1.100` would work, as it isn't part of the source CIDR.
 
-If you wish to use a VIP with an address in the source subnet, you must declare a custom resource `Vip` with type `switch_lb_rule` before creating the SLR. For more information, [head to the documentation on custom VIPs](/docs/advance/vip.en.md#2-switchlbrule-vip).
+If you wish to use a VIP with an address in the source subnet, you must declare a custom resource `Vip` with type `switch_lb_rule` before creating the SLR. For more information, [head to the documentation on custom VIPs](../advance/vip.en.md#2-switchlbrule-vip).
 
 ## Creating a `SwitchLBRule`
 
