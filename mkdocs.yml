@@ -176,9 +176,9 @@ plugins:
             子网使用: Config Subnet
             LoadBalancer 类型 Service: LoadBalancer Type Service
             VPC 网络: VPC Network
-            固定 VM IP: Fixed VM IP
-            虚拟机克隆: VM Clone
-            VM 使用双栈网络: VM Use DualStack Network
+            固定 VM IP: Fixed Virtual Machine Addresses
+            虚拟机克隆: Virtual Machine Clone
+            VM 使用双栈网络: DualStack Network
             热迁移: Live Migration
             自定义 DHCP: Custom DHCP
             VPC 入门: VPC Introduction
@@ -247,7 +247,6 @@ plugins:
             Talos 安装: Install on Talos
             版本管理: Release Management
             Annotation 使用说明: Annotation Usage
-            VM 固定 IP: Fixed VM IP
             安全组: Security Group
         - locale: zh
           default: true

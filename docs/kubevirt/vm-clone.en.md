@@ -70,3 +70,5 @@ spec:
   patches:
   - '{"op": "remove", "path": "/spec/template/metadata/annotations/ovn.kubernetes.io~1ip_address"}'
 ```
+
+If you need to make more granular modifications to the annotations of a virtual machine clone, please refer to the [KubeVirt Clone API](https://kubevirt.io/user-guide/storage/clone_api/#json-patches).
