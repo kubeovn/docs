@@ -1,4 +1,4 @@
-# Fixed VM IP
+# Fixed Virtual Machine Addresses
 
 In container environments, container IP addresses are typically dynamically assigned and may change after container restarts. However, VM users prefer their VM's IP address to be fixed for subsequent management and operations.
 
