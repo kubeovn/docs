@@ -13,14 +13,14 @@
 <span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">none</span>
 </code></pre></div></p> </div> <h2 id=helm-chart-kube-ovn>通过 Helm Chart 部署 Kube-OVN<a class=headerlink href=#helm-chart-kube-ovn title="Permanent link">&para;</a></h2> <p>您可以通过以下命令在 Talos Linux 集群上部署 Kube-OVN：</p> <div class=highlight><pre><span></span><code>helm<span class=w> </span>install<span class=w> </span>kube-ovn<span class=w> </span>kubeovn/kube-ovn<span class=w> </span>--wait<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>-n<span class=w> </span>kube-system<span class=w> </span><span class=se>\</span>
-<span class=w>    </span>--version<span class=w> </span>v1.13.13<span class=w> </span><span class=se>\</span>
+<span class=w>    </span>--version<span class=w> </span>v1.13.15<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>OVN_DIR</span><span class=o>=</span>/var/lib/ovn<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>OPENVSWITCH_DIR</span><span class=o>=</span>/var/lib/openvswitch<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>DISABLE_MODULES_MANAGEMENT</span><span class=o>=</span><span class=nb>true</span><span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span>cni_conf.MOUNT_LOCAL_BIN_DIR<span class=o>=</span><span class=nb>false</span>
 </code></pre></div> <p>如果您希望使用 Underlay 作为默认网络，可以通过 Helm 命令传入相关的 Chart 参数。示例如下：</p> <div class=highlight><pre><span></span><code>helm<span class=w> </span>install<span class=w> </span>kubeovn<span class=w> </span>kubeovn/kube-ovn<span class=w> </span>--wait<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>-n<span class=w> </span>kube-system<span class=w> </span><span class=se>\</span>
-<span class=w>    </span>--version<span class=w> </span>v1.13.13<span class=w> </span><span class=se>\</span>
+<span class=w>    </span>--version<span class=w> </span>v1.13.15<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>OVN_DIR</span><span class=o>=</span>/var/lib/ovn<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>OPENVSWITCH_DIR</span><span class=o>=</span>/var/lib/openvswitch<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>DISABLE_MODULES_MANAGEMENT</span><span class=o>=</span><span class=nb>true</span><span class=w> </span><span class=se>\</span>
