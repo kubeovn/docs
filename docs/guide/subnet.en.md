@@ -255,6 +255,10 @@ spec:
 
 ## Subnet ACL
 
+!!! warning
+
+    Kube-OVN supports four types of access control mechanisms: [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/), [Network Policy API](https://network-policy-api.sigs.k8s.io/), Subnet ACL, and [Security Group](../vpc/security-group.en.md). All of these are implemented using OVN ACLs at the underlying level. Among them, NetworkPolicy and Network Policy API are designed with rule layering in mind, ensuring no priority conflicts. However, mixing other types of access control methods may lead to priority conflicts. It is recommended to avoid using multiple access control mechanisms simultaneously to prevent rule confusion caused by priority conflicts.
+
 For scenarios with fine-grained ACL control, Subnet of Kube-OVN provides ACL to enable fine-grained rules.
 
 The ACL rules in Subnet are the same as the ACL rules in OVN, and you can refer to [ovn-nb ACL Table](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE){: target = "_blank" } for more details.

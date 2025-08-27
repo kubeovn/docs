@@ -244,6 +244,10 @@ spec:
 
 ## 子网 ACL 设置
 
+!!! warning
+
+    Kube-OVN 同时支持 [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)，[Network Policy API](https://network-policy-api.sigs.k8s.io/)，Subnet ACL 和 [Security Group](../vpc/security-group.md) 四种类型的访问控制，其底层都是通过 OVN ACL 来实现。其中 NetworkPolicy 和 NetworkPolicy API 在设计时考虑了规则分层，可以做到优先级不冲突，其他类型的访问控制方式混用都可能导致优先级冲突。我们推荐不要同时使用多种访问控制规则，以避免优先级冲突带来的规则混乱。
+
 对于有细粒度 ACL 控制的场景，Kube-OVN 的 Subnet 提供了 ACL 规则的设置，可以实现网络规则的精细控制。
 
 Subnet 中的 ACL 规则和 OVN 的 ACL 规则一致，相关字段内容可以参考 [ovn-nb ACL Table](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE){: target = "_blank" }，
