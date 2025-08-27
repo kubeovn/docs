@@ -29,7 +29,7 @@ nav:
       - 配置监控和面板: "guide/prometheus-grafana.md"
       - 配置原生 Prometheus: "guide/prometheus.md"
   - KubeVirt:
-      - 固定 VM IP: "kubevirt/static-ip.md"
+      - VM 固定 IP: "kubevirt/static-ip.md"
       - 虚拟机克隆: "kubevirt/vm-clone.md"
       - VM 使用双栈网络: "kubevirt/dual-stack.md"
       - 热迁移: "kubevirt/live-migration.md"
@@ -122,6 +122,7 @@ theme:
     - search.highlight
     - search.share
     - search.suggest
+    - content.code.annotate
     - content.code.copy
     - content.action.edit
     - content.action.view
@@ -176,7 +177,7 @@ plugins:
             子网使用: Config Subnet
             LoadBalancer 类型 Service: LoadBalancer Type Service
             VPC 网络: VPC Network
-            固定 VM IP: Fixed Virtual Machine Addresses
+            VM 固定 IP: Fixed Virtual Machine Addresses
             虚拟机克隆: Virtual Machine Clone
             VM 使用双栈网络: DualStack Network
             热迁移: Live Migration

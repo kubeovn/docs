@@ -25,8 +25,7 @@ Below is an example using the `bridge` network mode: creating a VM, performing r
 
 1. **Create VM**
 
-    ```bash
-    kubectl apply -f - <<EOF
+    ```yaml
     apiVersion: kubevirt.io/v1
     kind: VirtualMachine
     metadata:
@@ -66,7 +65,6 @@ Below is an example using the `bridge` network mode: creating a VM, performing r
             - name: cloudinitdisk
               cloudInitNoCloud:
                 userDataBase64: SGkuXG4=
-    EOF
     ```
 
 2. **View VM Status**
@@ -93,8 +91,7 @@ You can observe that in bridge mode, the VM's IP address remains unchanged after
 
 For scenarios where users need to specify the VM's IP address, they can add an annotation to the VM when creating it to assign a specific IP address. Other usage methods are consistent with native KubeVirt.
 
-```bash
-kubectl apply -f - <<EOF
+```yaml
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
@@ -107,7 +104,7 @@ spec:
         kubevirt.io/size: small
         kubevirt.io/domain: testvm
       annotations:
-        ovn.kubernetes.io/ip_address: 10.16.0.15
+        ovn.kubernetes.io/ip_address: 10.16.0.15  #(1)
         kubevirt.io/allow-pod-bridge-network-live-migration: "true"
     spec:
       domain:
@@ -135,5 +132,6 @@ spec:
         - name: cloudinitdisk
           cloudInitNoCloud:
             userDataBase64: SGkuXG4=
-EOF
 ```
+
+1. :man_raising_hand: assign the IP address here.
