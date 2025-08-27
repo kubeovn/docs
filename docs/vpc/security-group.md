@@ -1,8 +1,10 @@
 # SecurityGroup 使用
 
-Kube-OVN 支持了安全组的配置，配置安全组使用的 CRD 为 SecurityGroup。
+Kube-OVN 支持安全组来控制一组 Pod 的网络访问规则。同时支持端口安全，仅允许 Pod 使用 IPAM 分配的 L2/L3 源地址，来防止 MAC 和 IP 伪造欺骗。
 
-Kube-OVN 还支持 端口安全，通过仅允许与 IPAM 分配的 L2/L3 源地址匹配的地址，来防止 MAC 和 IP 欺骗。
+!!! warning
+
+    Kube-OVN 同时支持 [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)，[Network Policy API](https://network-policy-api.sigs.k8s.io/)，[Subnet ACL](../guide/subnet.md#acl) 和 Security Group 四种类型的访问控制，其底层都是通过 OVN ACL 来实现。其中 NetworkPolicy 和 NetworkPolicy API 在设计时考虑了规则分层，可以做到优先级不冲突，其他类型的访问控制方式混用都可能导致优先级冲突。我们推荐不要同时使用多种访问控制规则，以避免优先级冲突带来的规则混乱。
 
 ## 安全组示例
 

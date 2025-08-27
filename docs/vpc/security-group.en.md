@@ -1,8 +1,10 @@
 # SecurityGroup Usage
 
-Kube-OVN has support for the configuration of security-groups through the SecurityGroup CRD.
+Kube-OVN supports security groups to control network access rules for a group of Pods. It also supports port security, allowing Pods to use only the L2/L3 source addresses assigned by IPAM to prevent MAC and IP spoofing.
 
-Kube-OVN also supports **port security** to prevent MAC and IP spoofing by allowing only L2/L3 source addresses matching the ones allocated by the IPAM.
+!!! warning
+
+    Kube-OVN supports four types of access control: [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/), [Network Policy API](https://network-policy-api.sigs.k8s.io/), [Subnet ACL](../guide/subnet.en.md#subnet-acl), and Security Group. All of these are implemented through OVN ACLs at the underlying level. Among them, NetworkPolicy and Network Policy API are designed with rule layering in mind, ensuring no priority conflicts. However, mixing other types of access control methods may lead to priority conflicts. We recommend avoiding the simultaneous use of multiple access control rules to prevent rule confusion caused by priority conflicts.
 
 ## SecurityGroup Example
 
