@@ -133,4 +133,4 @@ If you need to update the IPs of StatefulSet Pods, first scale the StatefulSet r
 
 For VM instances created by KubeVirt, `kube-ovn-controller` can assign and manage IP addresses in a similar way to the StatefulSet Pod.
 This allows VM instances address fixed during start-up, shutdown, upgrade, migration, and other operations throughout their lifecycle,
-making them more compatible with the actual virtualization user experience.
+making them more compatible with the actual virtualization user experience. For specific operations, please refer to [Fixed Virtual Machine Addresses](../kubevirt/static-ip.en.md).
