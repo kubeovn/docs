@@ -25,8 +25,7 @@ Kube-OVN 支持为 KubeVirt 下 `bridge` 和 `managedTap` 网络模式下的 IP 
 
 1. 创建 VM
 
-```bash
-kubectl apply -f - <<EOF
+```yaml
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
@@ -66,7 +65,6 @@ spec:
         - name: cloudinitdisk
           cloudInitNoCloud:
             userDataBase64: SGkuXG4=
-EOF
 ```
 
 2. 查看 VM 状态
@@ -93,8 +91,7 @@ virtctl migrate testvm
 
 对于需要指定 VM 的 IP 地址的场景，用户可以通过创建 VM 时添加 annotation 的方式为 VM 指定 IP 地址。其他使用方式和原生 KubeVirt 一致。
 
-```bash
-kubectl apply -f - <<EOF
+```yaml
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
@@ -107,7 +104,7 @@ spec:
         kubevirt.io/size: small
         kubevirt.io/domain: testvm
       annotations:
-        ovn.kubernetes.io/ip_address: 10.16.0.15
+        ovn.kubernetes.io/ip_address: 10.16.0.15 #(1)
         kubevirt.io/allow-pod-bridge-network-live-migration: "true"
     spec:
       domain:
@@ -135,5 +132,6 @@ spec:
         - name: cloudinitdisk
           cloudInitNoCloud:
             userDataBase64: SGkuXG4=
-EOF
 ```
+
+1. :man_raising_hand: 在这里指定 IP 地址。

@@ -120,4 +120,4 @@ spec:
 ## KubeVirt VM 固定地址
 
 针对 KubeVirt 创建的 VM 实例，`kube-ovn-controller` 可以按照类似 StatefulSet Pod 的方式进行 IP 地址分配和管理。
-以达到 VM 实例在生命周期内启停，升级，迁移等操作过程中地址固定不变，更符虚拟化合用户的实际使用体验。
+以达到 VM 实例在生命周期内启停，升级，迁移等操作过程中地址固定不变，更符虚拟化合用户的实际使用体验。具体操作请参考 [VM 固定 IP](../kubevirt/static-ip.md)。
