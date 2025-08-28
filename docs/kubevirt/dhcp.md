@@ -1,7 +1,13 @@
-# DHCP 设置
+# DHCP
 
-在使用 SR-IOV 或 DPDK 类型网络时，KubeVirt 内置的 DHCP 无法在该网络模式下工作。Kube-OVN 可以利用 OVN 的 DHCP 能力在子网级别设置
- DHCP 选项，从而帮助该网络类型的 KubeVirt 虚机正常使用 DHCP 获得分配的 IP 地址。Kube-OVN 同时支持 DHCPv4 和 DHCPv6。
+在使用 `managedTap`，`SR-IOV` 或 `DPDK` 类型网络时，KubeVirt 内置的 DHCP 无法在该网络模式下工作。Kube-OVN 可以利用 OVN 的 DHCP 能力在子网级别设置
+ DHCP 选项，从而帮助该网络类型的 KubeVirt 虚机正常使用 DHCP 获得分配的 IP 地址。同时 Kube-OVN 的 DHCP 还提供了 DHCPv6, IPv6RA, DNS，TFTP 等 DHCP 高级选项，用户可以根据自己的需求定义 DHCP 服务的具体行为。
+
+!!! warning
+
+    1. 对于 `bridge` 类型网络，KubeVirt 的 DHCP 会先于 Kube-OVN 拦截并响应 DHCP 请求，因此在 Kube-OVN 设置的 DHCP 功能无法生效。如果要使用 Kube-OVN 提供的高级 DHCP 能力，
+    我们推荐使用 `managedTap` 类型网络替换 `bridge` 类型网络。`managedTap` 类型网络的配置请参考[配置 managedTap 类型网络](dual-stack.md#managedtap)。
+    2. 目前只支持子网级别统一 DHCP 配置，不支持 Pod 级别 DHCP 配置。
 
 子网 DHCP 的配置如下：
 
@@ -34,8 +40,8 @@ spec:
 ```
 
 - `enableDHCP`: 是否开启子网的 DHCP 功能。
-- `dhcpV4Options`,`dhcpV6Options`: 该字段直接暴露 ovn-nb 内 DHCP 相关选项，请参考 [DHCP Options](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#DHCP_Options_TABLE)。
+- `dhcpV4Options`,`dhcpV6Options`: 该字段直接暴露 ovn-nb 内 DHCP 相关选项，请参考 [DHCP Options](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#DHCP_Options_TABLE){: target = "_blank" }。
 默认值分别为 `"lease_time=3600, router=$ipv4_gateway, server_id=169.254.0.254, server_mac=$random_mac"` 和 `server_id=$random_mac`。
 - `enableIPv6RA`: 是否开启 DHCPv6 的路由广播功能。
-- `ipv6RAConfigs`：该字段直接暴露 ovn-nb 内 Logical_Router_Port 相关选项，请参考 [Logical Router Port](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Port_TABLE) 默认值为
+- `ipv6RAConfigs`：该字段直接暴露 ovn-nb 内 Logical_Router_Port 相关选项，请参考 [Logical Router Port](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Port_TABLE){: target = "_blank" } 默认值为
 `address_mode=dhcpv6_stateful, max_interval=30, min_interval=5, send_periodic=true`。

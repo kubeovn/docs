@@ -33,7 +33,7 @@ nav:
       - 虚拟机克隆: "kubevirt/vm-clone.md"
       - VM 使用双栈网络: "kubevirt/dual-stack.md"
       - 热迁移: "kubevirt/live-migration.md"
-      - 自定义 DHCP: "kubevirt/dhcp.md"
+      - DHCP: "kubevirt/dhcp.md"
   - VPC 网络:
       - VPC 入门: "vpc/vpc.md"
       - Egress Gateway: "vpc/vpc-egress-gateway.md"
@@ -181,7 +181,7 @@ plugins:
             虚拟机克隆: Virtual Machine Clone
             VM 使用双栈网络: DualStack Network
             热迁移: Live Migration
-            自定义 DHCP: Custom DHCP
+            DHCP: DHCP
             VPC 入门: VPC Introduction
             Egress Gateway: Egress Gateway
             Egress QoS 配置: Egress QoS Configuration
@@ -214,7 +214,6 @@ plugins:
             Cilium 集成: Integration with Cilium
             Cilium NetworkPolicy 支持: Cilium NetworkPolicy Support
             Cilium 网络流量观测: Cilium Network Traffic Observation
-            DHCP 设置: DHCP
             VPC 互联: VPC Peering
             外部网关设置: External Gateway
             VIP 预留设置: VIP Reservation
