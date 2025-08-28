@@ -135,3 +135,12 @@ spec:
 ```
 
 1. :man_raising_hand: 在这里指定 IP 地址。
+
+## VM 更换 IP
+
+Kube-OVN 目前不支持在线更换 VM IP，更换后的 IP 地址需要在 VM 重启后生效。
+
+使用下面的步骤更换 VM IP：
+
+1. 修改 VM Annotation，更换为所需要的 IP 地址。
+2. 运行 `virtctl restart <vm name>` 重启 VM，使新的 IP 地址生效。
