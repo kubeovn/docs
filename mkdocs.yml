@@ -11,6 +11,7 @@ nav:
       - 一键安装: "start/one-step-install.md"
       - Underlay 安装: "start/underlay.md"
       - Talos 安装: "start/talos-install.md"
+      - 生产就绪？: "start/production.md"
       - 卸载: "start/uninstall.md"
   - 使用指南:
       - 安装和配置选项: "guide/setup-options.md"
@@ -168,6 +169,7 @@ plugins:
             准备工作: Prerequisites
             一键安装: One-Click Installation
             Underlay 安装: Underlay Installation
+            生产就绪？: Production Ready?
             卸载: Uninstall
             安装和配置选项: Installation and Configuration Options
             固定地址: Fixed Addresses
