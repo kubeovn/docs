@@ -163,9 +163,8 @@ The `FastPath` module can reduce CPU overhead by bypassing netfilter, since in m
 > If you need to use the functions provided by netfilter such as iptables, ipvs, nftables, etc. in the container network, this module will disable the related functions.
 
 Since kernel modules are kernel version dependent, it is not possible to provide a single kernel module artifact that adapts to all kernels.
-We pre-compiled the `FastPath` module for part of the kernels, which can be accessed by [tuning-package](https://github.com/kubeovn/tunning-package).
 
-You can also compile it manually, see [Compiling FastPath Module](./fastpath.md)
+You need to compile it manually, see [Compiling FastPath Module](./fastpath.md)
 
 After obtaining the kernel module, you can load the `FastPath` module on each node
 using `insmod kube_ovn_fastpath.ko` and verify that the module was loaded successfully using `dmesg`:
@@ -189,7 +188,7 @@ It has been tested that the CPU consumption of flow-related operations is reduce
 when the corresponding instruction set optimizations are enabled.
 
 Similar to the compilation of the `FastPath` module, it is not possible to provide a single kernel module artifact for all kernels.
-Users need to compile manually or go to [tuning-package](https://github.com/kubeovn/tunning-package) to see if a compiled package is available for download.
+Users need to compile it manually.
 
 Before using this kernel module, please check if the CPU supports the following instruction set:
 
