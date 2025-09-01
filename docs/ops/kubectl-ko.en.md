@@ -53,16 +53,18 @@ Available Subcommands:
   dpctl {nodeName} [ovs-dpctl options ...]   invoke ovs-dpctl on the specified node
   appctl {nodeName} [ovs-appctl options ...]   invoke ovs-appctl on the specified node
   tcpdump {namespace/podname} [tcpdump options ...]     capture pod traffic
-  {trace|ovn-trace} ...    trace ovn microflow of specific packet"
+  {trace|ovn-trace} ...    trace ovn microflow of specific packet
     {trace|ovn-trace} {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]    trace ICMP/TCP/UDP
     {trace|ovn-trace} {namespace/podname} {target ip address} [target mac address] arp {request|reply}                     trace ARP request/reply
     {trace|ovn-trace} {node//nodename} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]       trace ICMP/TCP/UDP
     {trace|ovn-trace} {node//nodename} {target ip address} [target mac address] arp {request|reply}                        trace ARP request/reply
-  echo "  diagnose {all|node|subnet|IPPorts} [nodename|subnetName|{proto1}-{IP1}-{Port1},{proto2}-{IP2}-{Port2}]    diagnose connectivity of all nodes or a specific node or specify subnet's ds pod or IPPorts like 'tcp-172.18.0.2-53,udp-172.18.0.3-53'"
-  tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]  deploy  kernel optimisation components to the system
+  diagnose {all|node|subnet|IPPorts} [nodename|subnetName|{proto1}-{IP1}-{Port1},{proto2}-{IP2}-{Port2}]    diagnose connectivity of all nodes or a specific node or specify subnet's ds pod or IPPorts like 'tcp-172.18.0.2-53,udp-172.18.0.3-53'
+  env-check    check the environment configuration
   reload    restart all kube-ovn components
   log {kube-ovn|ovn|ovs|linux|all}    save log to ./kubectl-ko-log/
-  perf [image] performance test default image is kubeovn/test:v1.12.0  
+  perf [image] performance test default image is docker.io/kubeovn/test:v1.13.0
+  icnbctl [ovn-nbctl options ...]    invoke ovn-ic-nbctl
+  icsbctl [ovn-sbctl options ...]    invoke ovn-ic-sbctl 
 ```
 
 The specific functions and usage of each command are described below.
@@ -660,10 +662,6 @@ I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
 If the target of diagnose is specified as subnet, the script will create a daemonset on the subnet, and `kube-ovn-pinger` will detect the connectivity and network delay of all pods in this daemonset, and automatically destroy the daemonset after the test.
 
 If the target of diagnose is specified as IPPorts, the script will let each `kube-ovn-pinger` pod detect whether the target protocol, IP, and Port are reachable.
-
-### tuning {install-fastpath|local-install-fastpath|remove-fastpath|install-stt|local-install-stt|remove-stt} {centos7|centos8}} [kernel-devel-version]
-
-This command performs performance tuning related operations, please refer to [Performance Tuning](../advance/performance-tuning.en.md).
 
 ### reload
 
