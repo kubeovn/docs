@@ -154,10 +154,9 @@ args:
 
 > 如容器网络内需要使用 netfilter 提供的功能如 iptables，ipvs，nftables 等，该模块会使相关功能失效。
 
-由于内核模块和内核版本相关，无法提供一个单一适应所有内核的内核模块制品。我们预先编译了部分内核的 `FastPath` 模块，
-可以前往 [tunning-package](https://github.com/kubeovn/tunning-package) 进行下载。
+由于内核模块和内核版本相关，无法提供一个单一适应所有内核的内核模块制品。
 
-也可以手动进行编译，方法参考[手动编译 FastPath 模块](./fastpath.md)
+用户需要手动进行编译，方法参考[手动编译 FastPath 模块](./fastpath.md)
 
 获得内核模块后可在每个节点使用 `insmod kube_ovn_fastpath.ko` 加载 `FastPath` 模块，并使用 `dmesg` 验证模块加载成功：
 
@@ -176,8 +175,7 @@ args:
 OVS 的 flow 处理包括哈希计算，匹配等操作会消耗大约 10% 左右的 CPU 资源。现代 x86 CPU 上的一些指令集例如 `popcnt` 和 `sse4.2` 可以
 加速相关计算过程，但内核默认编译未开启相关选项。经测试在开启相应指令集优化后，flow 相关操作 CPU 消耗将会降至 5% 左右。
 
-和 `FastPath` 模块的编译类似，由于内核模块和内核版本相关，无法提供一个单一适应所有内核的内核模块制品。用户需要手动编译或者
-前往 [tunning-package](https://github.com/kubeovn/tunning-package) 查看是否有已编译好的制品进行下载。
+和 `FastPath` 模块的编译类似，由于内核模块和内核版本相关，无法提供一个单一适应所有内核的内核模块制品，用户需要手动编译。
 
 使用该内核模块前请先确认 CPU 是否支持相关指令集：
 
