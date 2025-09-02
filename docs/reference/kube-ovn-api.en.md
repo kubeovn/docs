@@ -1,6 +1,6 @@
 # Kube-OVN API Reference
 
-Based on Kube-OVN v1.12.0, we have compiled a list of CRD resources supported by Kube-OVN, listing the types and meanings of each field of CRD definition for reference.
+Based on v1.14 version of Kube-OVN, we have compiled a list of CRD resources supported by Kube-OVN, listing the types and meanings of each field of CRD definition for reference.
 
 ## Generic Condition Definition
 
@@ -10,14 +10,17 @@ Based on Kube-OVN v1.12.0, we have compiled a list of CRD resources supported by
 | status | String | The value of status, in the range of `True`, `False` or `Unknown` |
 | reason | String | The reason for the status change |
 | message | String | The specific message of the status change |
+| observedGeneration | Int64 | The observed generation of the resource |
 | lastUpdateTime | Time | The last time the status was updated |
 | lastTransitionTime | Time | Time of last status type change |
 
 In each CRD definition, the Condition field in Status follows the above format, so we explain it in advance.
 
-## Subnet Definition
+## Core Network Resources
 
-### Subnet
+### Subnet Definition
+
+#### Subnet
 
 | Property Name | Type | Description |
 | --- | --- | --- |
@@ -27,7 +30,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | spec | SubnetSpec | Subnet specific configuration information |
 | status | SubnetStatus | Subnet status information |
 
-#### SubnetSpec
+##### SubnetSpec
 
 | Property Name | Type | Description |
 | --- | --- | --- |
@@ -38,13 +41,14 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | cidrBlock | String | The range of the subnet, e.g. 10.16.0.0/16 |
 | gateway | String | The gateway address of the subnet, the default value is the first available address under the CIDRBlock of the subnet |
 | excludeIps | []String | The range of addresses under this subnet that will not be automatically assigned |
-| provider | String | Default value is `ovn`. In the case of multiple NICs, the value is `<name>.<namespace>` of the NetworkAttachmentDefinition, Kube-OVN will use this information to find the corresponding subnet resource |
+| provider | String | Default value is `OVN`. In the case of multiple NICs, the value is `<name>.<namespace>` of the NetworkAttachmentDefinition, Kube-OVN will use this information to find the corresponding subnet resource |
 | gatewayType | String | The gateway type in overlay mode, either `distributed` or `centralized` |
 | gatewayNode | String | The gateway node when the gateway mode is centralized, node names can be comma-separated |
 | natOutgoing | Bool | Whether the outgoing traffic is NAT |
 | externalEgressGateway | String | The address of the external gateway. This parameter and the natOutgoing parameter cannot be set at the same time |
 | policyRoutingPriority | Uint32 | Policy route priority. Used to control the forwarding of traffic to the external gateway address after the subnet gateway |
 | policyRoutingTableID | Uint32 | The TableID of the local policy routing table, should be different for each subnet to avoid conflicts |
+| mtu | Uint32 | The MTU size of the subnet |
 | private | Bool | Whether the subnet is a private subnet, which denies access to addresses inside the subnet if the subnet is private |
 | allowSubnets | []String | If the subnet is a private subnet, the set of addresses that are allowed to access the subnet |
 | vlan | String | The name of vlan to which the subnet is bound |
@@ -58,11 +62,18 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | enableIPv6RA | Bool | Whether to configure the ipv6_ra_configs parameter for the lrp port of the router connected to the subnet |
 | ipv6RAConfigs | String | The ipv6_ra_configs parameter configuration for the lrp port of the router connected to the subnet |
 | acls | []Acl | The acls record associated with the logical-switch of the subnet |
+| allowEWTraffic | Bool | Whether to allow east-west traffic |
+| natOutgoingPolicyRules | []NatOutgoingPolicyRule | NAT outgoing policy rules |
+| u2oInterconnectionIP | String | The IP address used for Underlay/Overlay interconnection |
 | u2oInterconnection | Bool | Whether to enable interconnection mode for Overlay/Underlay |
 | enableLb | *Bool | Whether the logical-switch of the subnet is associated with load-balancer records |
 | enableEcmp | Bool | Centralized subnet, whether to enable ECMP routing |
+| enableMulticastSnoop | Bool | Whether to enable multicast snooping |
+| enableExternalLBAddress | Bool | Whether to enable external load balancer addresses |
+| routeTable | String | Route table name |
+| namespaceSelectors | []LabelSelector | Namespace selectors |
 
-##### Acl
+###### Acl
 
 | Property Name | Type | Description |
 | --- | --- | --- |
@@ -71,27 +82,46 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | match | String | Acl rule match expression |
 | action | String | The action of the rule, which value is in the range of `allow-related`, `allow-stateless`, `allow`, `drop`, `reject` |
 
-#### SubnetStatus
+###### NatOutgoingPolicyRule
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| match | NatOutGoingPolicyMatch | Match conditions |
+| action | String | Action |
+
+###### NatOutGoingPolicyMatch
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| srcIPs | String | Source IP address range |
+| dstIPs | String | Destination IP address range |
+
+##### SubnetStatus
 
 | Property Name | Type | Description |
 | --- | --- | --- |
 | conditions | []SubnetCondition | Subnet status change information, refer to the beginning of the document for the definition of Condition |
-| v4AvailableIPs | Float64 | Number of available IPv4 IPs |
+| v4availableIPs | Float64 | Number of available IPv4 IPs |
 | v4availableIPrange | String | The available range of IPv4 addresses on the subnet |
-| v4UsingIPs | Float64 | Number of used IPv4 IPs |
+| v4usingIPs | Float64 | Number of used IPv4 IPs |
 | v4usingIPrange | String | Used IPv4 address ranges on the subnet |
-| v6AvailableIPs | Float64 | Number of available IPv6 IPs |
+| v6availableIPs | Float64 | Number of available IPv6 IPs |
 | v6availableIPrange | String | The available range of IPv6 addresses on the subnet |
-| v6UsingIPs | Float64 | Number of used IPv6 IPs |
+| v6usingIPs | Float64 | Number of used IPv6 IPs |
 | v6usingIPrange | String | Used IPv6 address ranges on the subnet |
 | activateGateway | String | The currently working gateway node in centralized subnet of master-backup mode |
 | dhcpV4OptionsUUID | String | The DHCP_Options record identifier associated with the lsp dhcpv4_options on the subnet |
 | dhcpV6OptionsUUID | String | The DHCP_Options record identifier associated with the lsp dhcpv6_options on the subnet |
 | u2oInterconnectionIP | String | The IP address used for interconnection when Overlay/Underlay interconnection mode is enabled |
+| u2oInterconnectionMAC | String | The MAC address used for interconnection when Overlay/Underlay interconnection mode is enabled |
+| u2oInterconnectionVPC | String | The associated VPC when Overlay/Underlay interconnection mode is enabled |
+| natOutgoingPolicyRules | []NatOutgoingPolicyRuleStatus | NAT outgoing policy rules status |
+| mcastQuerierIP | String | The IP address of the multicast querier |
+| mcastQuerierMAC | String | The MAC address of the multicast querier |
 
-## IP Definition
+### IP Definition
 
-### IP
+#### IP
 
 | Property Name | Type | Description |
 | --- | --- | --- |
@@ -100,7 +130,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
 | spec | IPSpec | IP specific configuration information |
 
-#### IPSepc
+##### IPSpec
 
 | Property Name | Type | Description |
 | --- | --- | --- |
@@ -110,15 +140,97 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | attachSubnets | []String | The name of the other subnets attached to this primary IP (field deprecated) |
 | nodeName | String | The name of the node where the pod is bound |
 | ipAddress | String | IP address, in `v4IP,v6IP` format for dual-stack cases |
-| v4IPAddress | String | IPv4 IP address |
-| v6IPAddress | String | IPv6 IP address |
-| attachIPs | []String | Other IP addresses attached to this primary IP (field is deprecated) |
-| macAddress | String | The Mac address of the bound pod |
-| attachMacs | []String | Other Mac addresses attached to this primary IP (field deprecated) |
+| v4IpAddress | String | IPv4 IP address |
+| v6IpAddress | String | IPv6 IP address |
+| attachIps | []String | Other IP addresses attached to this primary IP (field is deprecated) |
+| macAddress | String | The MAC address of the bound pod |
+| attachMacs | []String | Other MAC addresses attached to this primary IP (field deprecated) |
 | containerID | String | The Container ID corresponding to the bound pod |
 | podType | String | Special workload pod, can be `StatefulSet`, `VirtualMachine` or empty |
 
-## Underlay configuration
+### Vpc Definition
+
+#### Vpc
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `Vpc` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | VpcSpec | Vpc specific configuration information |
+| status | VpcStatus | Vpc status information |
+
+##### VpcSpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| defaultSubnet | String | Default subnet name |
+| namespaces | []String | List of namespaces bound by Vpc |
+| staticRoutes | []StaticRoute | Static route configuration |
+| policyRoutes | []PolicyRoute | Policy route configuration |
+| vpcPeerings | []VpcPeering | VPC peering configuration |
+| enableExternal | Bool | Whether to enable external connection |
+| extraExternalSubnets | []String | Extra external subnets |
+| enableBfd | Bool | Whether to enable BFD (Bidirectional Forwarding Detection) |
+| bfdPort | BFDPort | BFD port configuration |
+
+###### StaticRoute
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| policy | String | Route policy |
+| cidr | String | Destination CIDR |
+| nextHopIP | String | Next hop IP address |
+| ecmpMode | String | ECMP mode |
+| bfdId | String | BFD ID |
+| routeTable | String | Route table name |
+
+###### PolicyRoute
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| priority | Int | Policy route priority |
+| match | String | Match conditions |
+| action | String | Action, can be `allow`, `drop`, `reroute` |
+| nextHopIP | String | Next hop IP address for rerouting (required only when action is reroute) |
+
+###### VpcPeering
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| remoteVpc | String | Remote VPC name |
+| localConnectIP | String | Local connection IP address |
+
+###### BFDPort
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| enabled | Bool | Whether BFD is enabled |
+| ip | String | IP address of the BFD port |
+| nodeSelector | LabelSelector | Node selector for selecting nodes to host the BFD LRP |
+
+##### VpcStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| conditions | []VpcCondition | Vpc status change information, refer to the beginning of the document for the definition of Condition |
+| standby | Bool | Whether this is a standby VPC |
+| default | Bool | Whether this is the default VPC |
+| defaultLogicalSwitch | String | Default logical switch name |
+| router | String | Associated router name |
+| tcpLoadBalancer | String | TCP load balancer name |
+| udpLoadBalancer | String | UDP load balancer name |
+| sctpLoadBalancer | String | SCTP load balancer name |
+| tcpSessionLoadBalancer | String | TCP session load balancer name |
+| udpSessionLoadBalancer | String | UDP session load balancer name |
+| sctpSessionLoadBalancer | String | SCTP session load balancer name |
+| subnets | []String | List of subnets under the VPC |
+| vpcPeerings | []String | List of VPC peerings |
+| enableExternal | Bool | Whether external connection is enabled |
+| extraExternalSubnets | []String | Extra external subnets |
+| enableBfd | Bool | Whether BFD is enabled |
+
+## Underlay Network Configuration
 
 ### Vlan
 
@@ -142,6 +254,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | Property Name | Type | Description |
 | --- | --- | --- |
 | subnets | []String | The list of subnets to which the vlan is bound |
+| conflict | Bool | Whether there is a conflict |
 | conditions | []VlanCondition | Vlan status change information, refer to the beginning of the document for the definition of Condition |
 
 ### ProviderNetwork
@@ -180,242 +293,75 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | vlans | []String | The name of the vlan to which the bridge network is bound |
 | conditions | []ProviderNetworkCondition | ProviderNetwork status change information, refer to the beginning of the document for the definition of Condition |
 
-## Vpc Definition
+## Security Configuration
 
-### Vpc
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
-| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `Vpc` |
-| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | VpcSpec | Vpc specific configuration information |
-| status | VpcStatus | Vpc status information |
-
-#### VpcSpec
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| namespaces | []String | List of namespaces bound by Vpc |
-| staticRoutes | []*StaticRoute | The static route information configured under Vpc |
-| policyRoutes | []*PolicyRoute | The policy route information configured under Vpc |
-| vpcPeerings | []*VpcPeering | Vpc interconnection information |
-| enableExternal | Bool | Whether vpc is connected to an external switch |
-| defaultSubnet | String | Name of the subnet that should be used by custom Vpc as the default one |
-
-##### StaticRoute
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| policy | String | Routing policy, takes the value of `policySrc` or `policyDst` |
-| cidr | String | Routing cidr value |
-| nextHopIP | String | The next hop information of the route |
-
-##### PolicyRoute
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| priority | Int32 | Priority for policy route |
-| match | String | Match expression for policy route |
-| action | String | Action for policy route, the value is in the range of `allow`, `drop`, `reroute` |
-| nextHopIP | String | The next hop of the policy route, separated by commas in the case of ECMP routing |
-
-##### VpcPeering
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| remoteVpc | String | Name of the interconnected peering vpc |
-| localConnectIP | String | The local ip for vpc used to connect to peer vpc |
-
-#### VpcStatus
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| conditions | []VpcCondition | Vpc status change information, refer to the beginning of the documentation for the definition of Condition |
-| standby | Bool | Whether the vpc creation is complete, the subnet under the vpc needs to wait for the vpc creation to complete other proceeding |
-| default | Bool | Whether it is the default vpc |
-| defaultLogicalSwitch | String | The default subnet under vpc |
-| router | String | The logical-router name for the vpc |
-| tcpLoadBalancer | String | TCP LB information for vpc |
-| udpLoadBalancer | String | UDP LB information for vpc |
-| tcpSessionLoadBalancer | String | TCP Session Hold LB Information for Vpc |
-| udpSessionLoadBalancer | String | UDP session hold LB information for Vpc |
-| subnets | []String | List of subnets for vpc |
-| vpcPeerings | []String | List of peer vpcs for vpc interconnection |
-| enableExternal| Bool | Whether the vpc is connected to an external switch |
-
-### VpcNatGateway
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources are kubeovn.io/v1 |
-| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `VpcNatGateway` |
-| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | VpcNatSpec | Vpc gateway specific configuration information |
-
-#### VpcNatSpec
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| vpc | String | Vpc name which the vpc gateway belongs to |
-| subnet | String | The name of the subnet to which the gateway pod belongs |
-| lanIp | String | The IP address assigned to the gateway pod |
-| selector | []String | Standard Kubernetes selector match information |
-| tolerations | []VpcNatToleration | Standard Kubernetes tolerance information |
-
-##### VpcNatToleration
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| key | String | The key information of the taint tolerance |
-| operator | String | Takes the value of `Exists` or `Equal` |
-| value | String | The value information of the taint tolerance |
-| effect | String | The effect of the taint tolerance, takes the value of `NoExecute`, `NoSchedule`, or `PreferNoSchedule` |
-| tolerationSeconds | Int64 | The amount of time the pod can continue to run on the node after the taint is added |
-
-The meaning of the above tolerance fields can be found in the official Kubernetes documentation [Taint and Tolerance](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/taint-and-toleration/){: target="_blank" }.
-
-### IptablesEIP
+### SecurityGroup
 
 | Property Name | Type | Description |
 | --- | --- | --- |
 | apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
-| kind | String | Standard Kubernetes resource type field, all instances of this resource have the value `IptablesEIP` |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `SecurityGroup` |
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | IptablesEipSpec | IptablesEIP specific configuration information used by vpc gateway |
-| status | IptablesEipStatus | IptablesEIP status information used by vpc gateway |
+| spec | SecurityGroupSpec | SecurityGroup specific configuration information |
+| status | SecurityGroupStatus | SecurityGroup status information |
 
-#### IptablesEipSpec
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| v4ip | String | IptablesEIP v4 address |
-| v6ip | String | IptablesEIP v6 address |
-| macAddress | String | The assigned mac address, not actually used |
-| natGwDp | String | Vpc gateway name |
-
-#### IptablesEipStatus
+#### SecurityGroupSpec
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| ready | Bool | Whether IptablesEIP is configured complete |
-| ip | String | The IP address used by IptablesEIP, currently only IPv4 addresses are supported |
-| redo | String | IptablesEIP crd creation or update time |
-| nat | String | The type of IptablesEIP, either `fip`, `snat`, or `dnat` |
-| conditions | []IptablesEIPCondition | IptablesEIP status change information, refer to the beginning of the documentation for the definition of Condition |
+| ingressRules | []SecurityGroupRule | Ingress security group rules |
+| egressRules | []SecurityGroupRule | Egress security group rules |
+| allowSameGroupTraffic | Bool | Whether to allow traffic within the same security group |
 
-### IptablesFIPRule
+##### SecurityGroupRule
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ipVersion | String | IP version |
+| protocol | String | Protocol, can be `all`, `icmp`, `tcp`, `udp` |
+| priority | Int | Priority |
+| remoteType | String | Remote type, can be `address` or `securityGroup` |
+| remoteAddress | String | Remote address |
+| remoteSecurityGroup | String | Remote security group |
+| portRangeMin | Int | Minimum port range |
+| portRangeMax | Int | Maximum port range |
+| policy | String | Policy, can be `allow` or `drop` |
+
+#### SecurityGroupStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| portGroup | String | Associated port group |
+| allowSameGroupTraffic | Bool | Whether traffic within the same security group is allowed |
+| ingressMd5 | String | MD5 value of ingress rules |
+| egressMd5 | String | MD5 value of egress rules |
+| ingressLastSyncSuccess | Bool | Whether the last sync of ingress rules was successful |
+| egressLastSyncSuccess | Bool | Whether the last sync of egress rules was successful |
+
+## Load Balancing and Virtual IP
+
+### Vip
 
 | Property Name | Type | Description |
 | --- | --- | --- |
 | apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
-| kind | String | Standard Kubernetes resource type field, all instances of this resource have the value `IptablesFIPRule` |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `Vip` |
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | IptablesFIPRuleSpec | The IptablesFIPRule specific configuration information used by vpc gateway |
-| status | IptablesFIPRuleStatus | IptablesFIPRule status information used by vpc gateway |
+| spec | VipSpec | Vip specific configuration information |
+| status | VipStatus | Vip status information |
 
-#### IptablesFIPRuleSpec
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| eip | String | Name of the IptablesEIP used for IptablesFIPRule |
-| internalIp | String | The corresponding internal IP address |
-
-#### IptablesFIPRuleStatus
+#### VipSpec
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| ready | Bool | Whether IptablesFIPRule is configured or not |
-| v4ip | String | The v4 IP address used by IptablesEIP |
-| v6ip | String | The v6 IP address used by IptablesEIP |
-| natGwDp | String | Vpc gateway name |
-| redo | String | IptablesFIPRule crd creation or update time |
-| conditions | []IptablesFIPRuleCondition | IptablesFIPRule status change information, refer to the beginning of the documentation for the definition of Condition |
-
-### IptablesSnatRule
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
-| kind | String | Standard Kubernetes resource type field, all instances of this resource have the value `IptablesSnatRule` |
-| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | IptablesSnatRuleSpec | The IptablesSnatRule specific configuration information used by the vpc gateway |
-| status | IptablesSnatRuleStatus | IptablesSnatRule status information used by vpc gateway |
-
-#### IptablesSnatRuleSpec
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| eip | String | Name of the IptablesEIP used by IptablesSnatRule |
-| internalIp | String | IptablesSnatRule's corresponding internal IP address |
-
-#### IptablesSnatRuleStatus
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| ready | Bool | Whether the configuration is complete |
-| v4ip | String | The v4 IP address used by IptablesSnatRule |
-| v6ip | String | The v6 IP address used by IptablesSnatRule |
-| natGwDp | String | Vpc gateway name |
-| redo | String | IptablesSnatRule crd creation or update time |
-| conditions | []IptablesSnatRuleCondition | IptablesSnatRule status change information, refer to the beginning of the documentation for the definition of Condition |
-
-### IptablesDnatRule
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
-| kind | String | Standard Kubernetes resource type field, all instances of this resource have the value `IptablesDnatRule` |
-| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | IptablesDnatRuleSpec | The IptablesDnatRule specific configuration information used by vpc gateway |
-| status | IptablesDnatRuleStatus | IptablesDnatRule status information used by vpc gateway |
-
-#### IptablesDnatRuleSpec
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| eip | Sting | Name of IptablesEIP used by IptablesDnatRule |
-| externalPort | Sting | External port used by IptablesDnatRule |
-| protocol | Sting | Vpc gateway dnat protocol type |
-| internalIp | Sting | Internal IP address used by IptablesDnatRule |
-| internalPort | Sting | Internal port used by IptablesDnatRule |
-
-#### IptablesDnatRuleStatus
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| ready | Bool | Whether the configuration is complete |
-| v4ip | String | The v4 IP address used by IptablesDnatRule |
-| v6ip | String | The v6 IP address used by IptablesDnatRule |
-| natGwDp | String | Vpc gateway name |
-| redo | String | IptablesDnatRule crd creation or update time |
-| conditions | []IptablesDnatRuleCondition | IptablesDnatRule Status change information, refer to the beginning of the documentation for the definition of Condition |
-
-### VpcDns
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources have kubeovn.io/v1 |
-| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `VpcDns` |
-| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | VpcDnsSpec | VpcDns specific configuration information |
-| status | VpcDnsStatus | VpcDns status information |
-
-#### VpcDnsSpec
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| vpc | String | Name of the vpc where VpcDns is located |
-| subnet | String | The subnet name of the address assigned to the VpcDns pod |
-
-#### VpcDnsStatus
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| conditions | []VpcDnsCondition | VpcDns status change information, refer to the beginning of the document for the definition of Condition |
-| active | Bool | Whether VpcDns is in use |
-
-For detailed documentation on the use of VpcDns, see [Customizing VPC DNS](../vpc/vpc-internal-dns.md).
+| namespace | String | The namespace to which the VIP belongs |
+| subnet | String | The subnet to which the VIP belongs |
+| type | String | VIP type |
+| v4ip | String | IPv4 address |
+| v6ip | String | IPv6 address |
+| macAddress | String | MAC address |
+| selector | []String | Selector |
+| attachSubnets | []String | List of attached subnets |
 
 ### SwitchLBRule
 
@@ -431,202 +377,281 @@ For detailed documentation on the use of VpcDns, see [Customizing VPC DNS](../vp
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| vip | String | Vip address of SwitchLBRule |
-| namespace | String | SwitchLBRule's namespace |
-| selector | []String | Standard Kubernetes selector match information |
-| sessionAffinity | String | Standard Kubernetes service sessionAffinity value |
-| ports | []SlrPort | List of SwitchLBRule ports |
+| vip | String | Virtual IP address |
+| namespace | String | Namespace |
+| selector | []String | Backend selector |
+| endpoints | []String | List of backend endpoints |
+| sessionAffinity | String | Session affinity |
+| ports | []SwitchLBRulePort | Port configuration |
 
-For detailed configuration information of SwitchLBRule, you can refer to [Customizing VPC Internal Load Balancing health check](../vpc/vpc-internal-lb.md).
-
-##### SlrPort
+##### SwitchLBRulePort
 
 | Property Name | Type | Description |
 | --- | --- | --- |
 | name | String | Port name |
 | port | Int32 | Port number |
-| targetPort | Int32 | Target port of SwitchLBRule |
+| targetPort | Int32 | Target port number |
 | protocol | String | Protocol type |
 
-#### SwitchLBRuleStatus
+## QoS and IP Pool Management
+
+### QoSPolicy
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| conditions | []SwitchLBRuleCondition | SwitchLBRule status change information, refer to the beginning of the document for the definition of Condition |
-| ports | String | Port information |
-| service | String | Name of the service |
-
-## Security Group and Vip
-
-### SecurityGroup
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources are kubeovn.io/v1 |
-| kind | String | Standard Kubernetes resource type field, all instances of this resource will have a value of `SecurityGroup` |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `QoSPolicy` |
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | SecurityGroupSpec | Security Group specific configuration information |
-| status | SecurityGroupStatus | Security group status information |
+| spec | QoSPolicySpec | QoSPolicy specific configuration information |
 
-#### SecurityGroupSpec
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| ingressRules | []*SgRule | Inbound security group rules |
-| egressRules | []*SgRule | Outbound security group rules |
-| allowSameGroupTraffic | Bool | Whether lsps in the same security group can interoperate and whether traffic rules need to be updated |
-
-##### SgRule
+#### QoSPolicySpec
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| ipVersion | String | IP version number, `ipv4` or `ipv6` |
-| protocol | String | The value of `icmp`, `tcp`, or `udp` |
-| priority | Int | Acl priority. The value range is 1-200, the smaller the value, the higher the priority. |
-| remoteType | String | The value is either `address` or `securityGroup` |
-| remoteAddress | String | The address of the other side |
-| remoteSecurityGroup | String | The name of security group on the other side |
-| portRangeMin | Int | The starting value of the port range, the minimum value is 1. |
-| portRangeMax | Int | The ending value of the port range, the maximum value is 65535. |
-| policy | String | The value is `allow` or `drop` |
+| bandwidthLimitRules | QoSPolicyBandwidthLimitRules | Bandwidth limit rules |
+| shared | Bool | Whether it is a shared policy |
+| bindingType | QoSPolicyBindingType | Binding type |
 
-#### SecurityGroupStatus
+### IPPool
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| portGroup | String | The name of the port-group for the security group |
-| allowSameGroupTraffic | Bool | Whether lsps in the same security group can interoperate, and whether the security group traffic rules need to be updated |
-| ingressMd5 | String | The MD5 value of the inbound security group rule |
-| egressMd5 | String | The MD5 value of the outbound security group rule |
-| ingressLastSyncSuccess | Bool | Whether the last synchronization of the inbound rule was successful |
-| egressLastSyncSuccess | Bool | Whether the last synchronization of the outbound rule was successful |
-
-### Vip
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources are kubeovn.io/v1 |
-| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `Vip` |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `IPPool` |
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | VipSpec | Vip specific configuration information |
-| status | VipStatus | Vip status information |
+| spec | IPPoolSpec | IPPool specific configuration information |
+| status | IPPoolStatus | IPPool status information |
 
-#### VipSpec
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| namespace | String | Vip's namespace |
-| subnet | String | Vip's subnet |
-| type | String | The type of Vip, either `switch_lb_vip`, or empty |
-| v4ip | String | Vip IPv4 ip address |
-| v6ip | String | Vip IPv6 ip address |
-| macAddress | String | Vip mac address |
-| parentV4ip | String | Not currently in use |
-| parentV6ip | String | Not currently in use |
-| parentMac | String | Not currently in use |
-| selector | []String | Standard Kubernetes selector match information |
-| attachSubnets | []String | This field is deprecated and no longer used |
-
-#### VipStatus
+#### IPPoolSpec
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| conditions | []VipCondition | Vip status change information, refer to the beginning of the documentation for the definition of Condition |
-| ready | Bool | Vip is ready or not |
-| v4ip | String | Vip IPv4 ip address, should be the same as the spec field |
-| v6ip | String | Vip IPv6 ip address, should be the same as the spec field |
-| mac | String | The vip mac address, which should be the same as the spec field |
-| pv4ip | String | Not currently used |
-| pv6ip | String | Not currently used |
-| pmac | String | Not currently used |
+| subnet | String | Subnet |
+| namespaces | []String | List of bound namespaces |
+| ips | []String | List of IP addresses |
+
+## NAT and Elastic IP Management
+
+### IptablesEIP
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `IptablesEIP` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | IptablesEIPSpec | IptablesEIP specific configuration information |
+| status | IptablesEIPStatus | IptablesEIP status information |
+
+#### IptablesEIPSpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| v4ip | String | IPv4 address |
+| v6ip | String | IPv6 address |
+| macAddress | String | MAC address |
+| natGwDp | String | NAT gateway data path |
+| qosPolicy | String | QoS policy |
+| externalSubnet | String | External subnet |
 
 ### OvnEip
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources are kubeovn.io/v1 |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
 | kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `OvnEip` |
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | OvnEipSpec | OvnEip specific configuration information for default vpc |
-| status | OvnEipStatus | OvnEip status information for default vpc |
+| spec | OvnEipSpec | OvnEip specific configuration information |
+| status | OvnEipStatus | OvnEip status information |
 
 #### OvnEipSpec
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| externalSubnet | String | OvnEip's subnet name |
-| v4Ip | String | OvnEip IPv4 address |
-| v6Ip | String | OvnEip IPv6 address |
-| macAddress | String | OvnEip Mac address |
-| type | String | OvnEip use type, the value can be `lrp`, `lsp` or `nat` |
+| externalSubnet | String | External subnet |
+| v4Ip | String | IPv4 address |
+| v6Ip | String | IPv6 address |
+| macAddress | String | MAC address |
+| type | String | Type, can be lrp, lsp or nat |
 
-#### OvnEipStatus
+### IptablesFIPRule
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| conditions | []OvnEipCondition | OvnEip status change information, refer to the beginning of the documentation for the definition of Condition |
-| type | String | OvnEip use type, the value can be `lrp`, `lsp` or `nat` |
-| nat | String | dnat snat fip |
-| v4Ip | String | The IPv4 ip address used by ovnEip |
-| v6Ip | String | The IPv4 ip address used by ovnEip |
-| macAddress | String | Mac address used by ovnEip |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `IptablesFIPRule` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | IptablesFIPRuleSpec | IptablesFIPRule specific configuration information |
+
+#### IptablesFIPRuleSpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| eip | String | Elastic IP address |
+| internalIP | String | Internal IP address |
 
 ### OvnFip
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources are kubeovn.io/v1 |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
 | kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `OvnFip` |
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | OvnFipSpec | OvnFip specific configuration information in default vpc |
-| status | OvnFipStatus | OvnFip status information in default vpc |
+| spec | OvnFipSpec | OvnFip specific configuration information |
+| status | OvnFipStatus | OvnFip status information |
 
 #### OvnFipSpec
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| ovnEip | String | Name of the bound ovnEip |
-| ipType | String | vip crd or ip crd ("" means ip crd) |
-| ipName | String | The IP crd name corresponding to the bound Pod |
-| vpc | String | The vpc crd name corresponding to the bound Pod |
-| V4Ip | String | The IPv4 ip addresss corresponding to vip or the bound Pod |
+| ovnEip | String | Associated OVN EIP |
+| ipType | String | IP type, can be vip or ip |
+| ipName | String | IP name |
+| vpc | String | VPC |
+| v4Ip | String | IPv4 address |
+| v6Ip | String | IPv6 address |
+| type | String | Type, can be distributed or centralized |
 
-#### OvnFipStatus
+### IptablesDnatRule
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| ready | Bool | OvnFip is ready or not |
-| v4Eip | String | Name of the ovnEip to which ovnFip is bound |
-| v4Ip | String | The ovnEip address currently in use |
-| vpc | String | The name of the vpc where ovnFip is located |
-| conditions | []OvnFipCondition | OvnFip status change information, refer to the beginning of the document for the definition of Condition |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `IptablesDnatRule` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | IptablesDnatRuleSpec | IptablesDnatRule specific configuration information |
+
+#### IptablesDnatRuleSpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| eip | String | Elastic IP address |
+| externalPort | String | External port |
+| protocol | String | Protocol type |
+| internalIP | String | Internal IP address |
+| internalPort | String | Internal port |
+
+### OvnDnatRule
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `OvnDnatRule` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | OvnDnatRuleSpec | OvnDnatRule specific configuration information |
+| status | OvnDnatRuleStatus | OvnDnatRule status information |
+
+#### OvnDnatRuleSpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ovnEip | String | Associated OVN EIP |
+| ipType | String | IP type, can be vip or ip |
+| ipName | String | IP name |
+| internalPort | String | Internal port |
+| externalPort | String | External port |
+| protocol | String | Protocol type |
+| vpc | String | VPC |
+| v4Ip | String | IPv4 address |
+| v6Ip | String | IPv6 address |
+
+### IptablesSnatRule
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `IptablesSnatRule` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | IptablesSnatRuleSpec | IptablesSnatRule specific configuration information |
+
+#### IptablesSnatRuleSpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| eip | String | Elastic IP address |
+| internalCIDR | String | Internal CIDR range |
 
 ### OvnSnatRule
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources have kubeovn.io/v1 |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
 | kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `OvnSnatRule` |
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | OvnSnatRuleSpec | OvnSnatRule specific configuration information in default vpc |
-| status | OvnSnatRuleStatus | OvnSnatRule status information in default vpc |
+| spec | OvnSnatRuleSpec | OvnSnatRule specific configuration information |
+| status | OvnSnatRuleStatus | OvnSnatRule status information |
 
 #### OvnSnatRuleSpec
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| ovnEip | String | Name of the ovnEip to which ovnSnatRule is bound |
-| vpcSubnet | String | The name of the subnet of the vpc configured by ovnSnatRule |
-| vpc | String | The vpc crd name corresponding to the ovnSnatRule bound Pod |
-| ipName | String | The IP crd name corresponding to the ovnSnatRule bound Pod |
-| v4IpCidr | String | The IPv4 cidr of the vpc subnet |
+| ovnEip | String | Associated OVN EIP |
+| vpcSubnet | String | VPC subnet |
+| ipName | String | IP name |
+| vpc | String | VPC |
+| v4IpCidr | String | IPv4 CIDR range |
+| v6IpCidr | String | IPv6 CIDR range |
 
-#### OvnSnatRuleStatus
+## VPC Advanced Features
+
+### VpcNatGateway
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| ready | Bool | OvnSnatRule is ready or not |
-| v4Eip | String | The ovnEip address to which ovnSnatRule is bound |
-| v4IpCidr | String | The cidr address used to configure snat in the logical-router |
-| vpc | String | The name of the vpc where ovnSnatRule is located |
-| conditions | []OvnSnatRuleCondition | OvnSnatRule status change information, refer to the beginning of the document for the definition of Condition |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `VpcNatGateway` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | VpcNatGatewaySpec | VpcNatGateway specific configuration information |
+| status | VpcNatGatewayStatus | VpcNatGateway status information |
+
+#### VpcNatGatewaySpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| vpc | String | VPC |
+| subnet | String | Subnet |
+| externalSubnets | []String | List of external subnets |
+| lanIP | String | LAN IP address |
+| selector | []String | Node selector |
+| qosPolicy | String | QoS policy |
+
+### VpcEgressGateway
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `VpcEgressGateway` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | VpcEgressGatewaySpec | VpcEgressGateway specific configuration information |
+| status | VpcEgressGatewayStatus | VpcEgressGateway status information |
+
+#### VpcEgressGatewaySpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| vpc | String | VPC |
+| replicas | Int32 | Number of replicas |
+| prefix | String | Name prefix |
+| image | String | Container image |
+| internalSubnet | String | Internal subnet |
+| externalSubnet | String | External subnet |
+| internalIPs | []String | List of internal IPs |
+| externalIPs | []String | List of external IPs |
+| trafficPolicy | String | Traffic policy |
+
+### VpcDns
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `VpcDns` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | VpcDNSSpec | VpcDns specific configuration information |
+| status | VpcDNSStatus | VpcDns status information |
+
+#### VpcDNSSpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| replicas | Int32 | Number of replicas |
+| vpc | String | VPC |
+| subnet | String | Subnet |
