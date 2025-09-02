@@ -1,6 +1,6 @@
 # Kube-OVN 接口规范
 
-基于 Kube-OVN v1.14 版本，整理了 Kube-OVN 支持的 CRD 资源列表，列出 CRD 定义各字段的取值类型和含义，以供参考。
+基于 Kube-OVN 最新版本，整理了 Kube-OVN 支持的 CRD 资源列表，列出 CRD 定义各字段的取值类型和含义，以供参考。
 
 ## 通用的 Condition 定义
 
@@ -273,7 +273,6 @@
 | --- | --- | --- |
 | defaultInterface | String | 该桥接网络默认使用的网卡接口名称 |
 | customInterfaces | []CustomInterface | 该桥接网络特殊使用的网卡配置 |
-| nodeSelector | LabelSelector | 基于节点标签选择需要创建 OVS 网桥的节点，支持 matchLabels 和 matchExpressions（一旦使用 nodeSelector，excludeNodes 将不再生效） |
 | excludeNodes | []String | 该桥接网络不会绑定的节点名称 |
 | exchangeLinkName | Bool | 是否交换桥接网卡和对应 OVS 网桥名称 |
 
@@ -318,15 +317,15 @@
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
-| ipVersion | String | IP 版本 |
-| protocol | String | 协议，可为 `all`、`icmp`、`tcp`、`udp` |
-| priority | Int | 优先级 |
-| remoteType | String | 远程类型，可为 `address` 或 `securityGroup` |
+| ipVersion | String | IP 版本，取值为 `ipv4` 或 `ipv6` |
+| protocol | SgProtocol | 协议类型，取值为 `all`、`icmp`、`tcp` 或 `udp` |
+| priority | Int | 规则优先级，取值范围为 1-200，数值越小，优先级越高 |
+| remoteType | SgRemoteType | 远程类型，取值为 `address` 或 `securityGroup` |
 | remoteAddress | String | 远程地址 |
-| remoteSecurityGroup | String | 远程安全组 |
-| portRangeMin | Int | 端口范围最小值 |
-| portRangeMax | Int | 端口范围最大值 |
-| policy | String | 策略，可为 `allow` 或 `drop` |
+| remoteSecurityGroup | String | 远程安全组名称 |
+| portRangeMin | Int | 端口范围起始值，最小取值为 1 |
+| portRangeMax | Int | 端口范围最大值，最大取值为 65535 |
+| policy | SgPolicy | 策略动作，取值为 `allow` 或 `drop` |
 
 #### SecurityGroupStatus
 
@@ -364,6 +363,16 @@
 | selector | []String | 选择器 |
 | attachSubnets | []String | 附加的子网列表 |
 
+#### VipStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| conditions | []VipCondition | VIP 状态变化信息，具体字段参考文档开头 Condition 定义 |
+| type | String | VIP 类型 |
+| v4ip | String | IPv4 地址 |
+| v6ip | String | IPv6 地址 |
+| mac | String | MAC 地址 |
+
 ### SwitchLBRule
 
 | 属性名称 | 类型 | 描述 |
@@ -393,6 +402,14 @@
 | port | Int32 | 端口号 |
 | targetPort | Int32 | 目标端口号 |
 | protocol | String | 协议类型 |
+
+#### SwitchLBRuleStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| conditions | []SwitchLBRuleCondition | SwitchLBRule 状态变化信息，具体字段参考文档开头 Condition 定义 |
+| ports | String | SwitchLBRule 端口信息 |
+| service | String | SwitchLBRule 提供服务的 service 名称 |
 
 ## QoS 和 IP 池管理
 
@@ -431,6 +448,20 @@
 | namespaces | []String | 绑定的命名空间列表 |
 | ips | []String | IP 地址列表 |
 
+#### IPPoolStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| v4AvailableIPs | BigInt | IPv4 可用 IP 地址数量 |
+| v4AvailableIPRange | String | IPv4 可用 IP 地址范围 |
+| v4UsingIPs | BigInt | IPv4 已使用 IP 地址数量 |
+| v4UsingIPRange | String | IPv4 已使用 IP 地址范围 |
+| v6AvailableIPs | BigInt | IPv6 可用 IP 地址数量 |
+| v6AvailableIPRange | String | IPv6 可用 IP 地址范围 |
+| v6UsingIPs | BigInt | IPv6 已使用 IP 地址数量 |
+| v6UsingIPRange | String | IPv6 已使用 IP 地址范围 |
+| conditions | []IPPoolCondition | IP 池状态变化信息，具体字段参考文档开头 Condition 定义 |
+
 ## NAT 和弹性 IP 管理
 
 ### IptablesEIP
@@ -453,6 +484,17 @@
 | natGwDp | String | NAT 网关数据路径 |
 | qosPolicy | String | QoS 策略 |
 | externalSubnet | String | 外部子网 |
+
+#### IptablesEIPStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ready | Bool | IptablesEIP 是否配置完成 |
+| ip | String | IptablesEIP 使用的 IP 地址，目前只支持了 IPv4 地址 |
+| redo | String | IptablesEIP CRD 创建或者更新时间 |
+| nat | String | IptablesEIP 的使用类型，取值为 `fip`、`snat` 或者 `dnat` |
+| qosPolicy | String | QoS 策略名称 |
+| conditions | []IptablesEIPCondition | IptablesEIP 状态变化信息，具体字段参考文档开头 Condition 定义 |
 
 ### OvnEip
 
@@ -555,6 +597,22 @@
 | v4Ip | String | IPv4 地址 |
 | v6Ip | String | IPv6 地址 |
 
+#### OvnDnatRuleStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| vpc | String | 所属 VPC |
+| v4Eip | String | IPv4 EIP 地址 |
+| v6Eip | String | IPv6 EIP 地址 |
+| externalPort | String | 外部端口 |
+| v4Ip | String | IPv4 地址 |
+| v6Ip | String | IPv6 地址 |
+| internalPort | String | 内部端口 |
+| protocol | String | 协议类型 |
+| ipName | String | IP 名称 |
+| ready | Bool | DNAT 规则是否配置完成 |
+| conditions | []OvnDnatRuleCondition | OVN DNAT 规则状态变化信息，具体字段参考文档开头 Condition 定义 |
+
 ### IptablesSnatRule
 
 | 属性名称 | 类型 | 描述 |
@@ -608,12 +666,46 @@
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
-| vpc | String | 所属 VPC |
-| subnet | String | 所属子网 |
+| vpc | String | VPC 网关 Pod 所在的 VPC 名称 |
+| subnet | String | VPC 网关 Pod 所属的子网名称 |
 | externalSubnets | []String | 外部子网列表 |
-| lanIP | String | LAN IP 地址 |
-| selector | []String | 节点选择器 |
-| qosPolicy | String | QoS 策略 |
+| lanIp | String | VPC 网关 Pod 指定分配的 IP 地址 |
+| selector | []String | 标准 Kubernetes Selector 匹配信息 |
+| tolerations | []Toleration | 标准 Kubernetes 容忍信息 |
+| affinity | Affinity | 标准 Kubernetes 亲和性配置 |
+| qosPolicy | String | QoS 策略名称 |
+| bgpSpeaker | VpcBgpSpeaker | BGP speaker 配置 |
+
+##### VpcBgpSpeaker
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| enabled | Bool | 是否启用 BGP speaker |
+| asn | Uint32 | 本地自治系统号 |
+| remoteAsn | Uint32 | 远程自治系统号 |
+| neighbors | []String | BGP 邻居列表 |
+| holdTime | Duration | BGP 保持时间 |
+| routerId | String | BGP 路由器 ID |
+| password | String | BGP 认证密码 |
+| enableGracefulRestart | Bool | 是否启用优雅重启 |
+| extraArgs | []String | 额外参数列表 |
+
+##### Route
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| cidr | String | 路由目标 CIDR |
+| nextHopIP | String | 下一跳 IP 地址 |
+
+#### VpcNatGatewayStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| qosPolicy | String | QoS 策略名称 |
+| externalSubnets | []String | 外部子网列表 |
+| selector | []String | 标准 Kubernetes Selector 匹配信息 |
+| tolerations | []Toleration | 标准 Kubernetes 容忍信息 |
+| affinity | Affinity | 标准 Kubernetes 亲和性配置 |
 
 ### VpcEgressGateway
 
