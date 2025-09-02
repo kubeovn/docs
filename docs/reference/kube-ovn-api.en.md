@@ -318,15 +318,15 @@ In each CRD definition, the Condition field in Status follows the above format, 
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| ipVersion | String | IP version |
-| protocol | String | Protocol, can be `all`, `icmp`, `tcp`, `udp` |
-| priority | Int | Priority |
-| remoteType | String | Remote type, can be `address` or `securityGroup` |
+| ipVersion | String | IP version, can be `ipv4` or `ipv6` |
+| protocol | SgProtocol | Protocol type, can be `all`, `icmp`, `tcp` or `udp` |
+| priority | Int | Rule priority, range 1-200, smaller value means higher priority |
+| remoteType | SgRemoteType | Remote type, can be `address` or `securityGroup` |
 | remoteAddress | String | Remote address |
-| remoteSecurityGroup | String | Remote security group |
-| portRangeMin | Int | Minimum port range |
-| portRangeMax | Int | Maximum port range |
-| policy | String | Policy, can be `allow` or `drop` |
+| remoteSecurityGroup | String | Remote security group name |
+| portRangeMin | Int | Port range minimum value, minimum value is 1 |
+| portRangeMax | Int | Port range maximum value, maximum value is 65535 |
+| policy | SgPolicy | Policy action, can be `allow` or `drop` |
 
 #### SecurityGroupStatus
 
@@ -364,6 +364,16 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | selector | []String | Selector |
 | attachSubnets | []String | List of attached subnets |
 
+#### VipStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| conditions | []VipCondition | VIP status change information, refer to the beginning of the document for the definition of Condition |
+| type | String | VIP type |
+| v4ip | String | IPv4 address |
+| v6ip | String | IPv6 address |
+| mac | String | MAC address |
+
 ### SwitchLBRule
 
 | Property Name | Type | Description |
@@ -393,6 +403,14 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | port | Int32 | Port number |
 | targetPort | Int32 | Target port number |
 | protocol | String | Protocol type |
+
+#### SwitchLBRuleStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| conditions | []SwitchLBRuleCondition | SwitchLBRule status change information, refer to the beginning of the document for the definition of Condition |
+| ports | String | SwitchLBRule port information |
+| service | String | SwitchLBRule service name |
 
 ## QoS and IP Pool Management
 
@@ -431,6 +449,20 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | namespaces | []String | List of bound namespaces |
 | ips | []String | List of IP addresses |
 
+#### IPPoolStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| v4AvailableIPs | BigInt | Number of available IPv4 addresses |
+| v4AvailableIPRange | String | Available IPv4 address range |
+| v4UsingIPs | BigInt | Number of used IPv4 addresses |
+| v4UsingIPRange | String | Used IPv4 address range |
+| v6AvailableIPs | BigInt | Number of available IPv6 addresses |
+| v6AvailableIPRange | String | Available IPv6 address range |
+| v6UsingIPs | BigInt | Number of used IPv6 addresses |
+| v6UsingIPRange | String | Used IPv6 address range |
+| conditions | []IPPoolCondition | IP pool status change information, refer to the beginning of the document for the definition of Condition |
+
 ## NAT and Elastic IP Management
 
 ### IptablesEIP
@@ -453,6 +485,17 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | natGwDp | String | NAT gateway data path |
 | qosPolicy | String | QoS policy |
 | externalSubnet | String | External subnet |
+
+#### IptablesEIPStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ready | Bool | Whether IptablesEIP is configured successfully |
+| ip | String | IP address used by IptablesEIP, currently only supports IPv4 address |
+| redo | String | IptablesEIP CRD creation or update time |
+| nat | String | IptablesEIP usage type, can be `fip`, `snat` or `dnat` |
+| qosPolicy | String | QoS policy name |
+| conditions | []IptablesEIPCondition | IptablesEIP status change information, refer to the beginning of the document for the definition of Condition |
 
 ### OvnEip
 
@@ -555,6 +598,22 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | v4Ip | String | IPv4 address |
 | v6Ip | String | IPv6 address |
 
+#### OvnDnatRuleStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| vpc | String | VPC |
+| v4Eip | String | IPv4 EIP address |
+| v6Eip | String | IPv6 EIP address |
+| externalPort | String | External port |
+| v4Ip | String | IPv4 address |
+| v6Ip | String | IPv6 address |
+| internalPort | String | Internal port |
+| protocol | String | Protocol type |
+| ipName | String | IP name |
+| ready | Bool | Whether DNAT rule is configured successfully |
+| conditions | []OvnDnatRuleCondition | OVN DNAT rule status change information, refer to the beginning of the document for the definition of Condition |
+
 ### IptablesSnatRule
 
 | Property Name | Type | Description |
@@ -608,12 +667,47 @@ In each CRD definition, the Condition field in Status follows the above format, 
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| vpc | String | VPC |
-| subnet | String | Subnet |
+| vpc | String | VPC name where the VPC gateway Pod is located |
+| subnet | String | Subnet name where the VPC gateway Pod belongs |
 | externalSubnets | []String | List of external subnets |
-| lanIP | String | LAN IP address |
-| selector | []String | Node selector |
-| qosPolicy | String | QoS policy |
+| lanIp | String | Specified IP address allocated for the VPC gateway Pod |
+| selector | []String | Standard Kubernetes Selector matching information |
+| tolerations | []Toleration | Standard Kubernetes toleration information |
+| affinity | Affinity | Standard Kubernetes affinity configuration |
+| qosPolicy | String | QoS policy name |
+| bgpSpeaker | VpcBgpSpeaker | BGP speaker configuration |
+| routes | []Route | Route configuration list |
+
+##### VpcBgpSpeaker
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| enabled | Bool | Whether to enable BGP speaker |
+| asn | Uint32 | Local autonomous system number |
+| remoteAsn | Uint32 | Remote autonomous system number |
+| neighbors | []String | BGP neighbor list |
+| holdTime | Duration | BGP hold time |
+| routerId | String | BGP router ID |
+| password | String | BGP authentication password |
+| enableGracefulRestart | Bool | Whether to enable graceful restart |
+| extraArgs | []String | Additional arguments list |
+
+##### Route
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| cidr | String | Route destination CIDR |
+| nextHopIP | String | Next hop IP address |
+
+#### VpcNatGatewayStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| qosPolicy | String | QoS policy name |
+| externalSubnets | []String | List of external subnets |
+| selector | []String | Standard Kubernetes Selector matching information |
+| tolerations | []Toleration | Standard Kubernetes toleration information |
+| affinity | Affinity | Standard Kubernetes affinity configuration |
 
 ### VpcEgressGateway
 
