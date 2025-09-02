@@ -7,22 +7,31 @@ OVN/OVS 做了部分修改。用户如果使用自己的 OVN/OVS 配合 Kube-OVN
 
 未合入上游修改：
 
-- [38df6fa3f7](https://github.com/kubeovn/ovs/commit/38df6fa3f721dc53464fcff61dbc2bc79c710ab1) 调整选举 timer，避免大规模集群选举抖动。
-- [d4888c4e75](https://github.com/kubeovn/ovs/commit/d4888c4e75f2288d8ff4f04ee57538659f118f5b) 添加 fdb 更新日志。
-- [d4888c4e75](https://github.com/kubeovn/ovs/commit/403fbd0f6561c8985302734608c2de659671c563) 修复 hairpin 环境下 fdb 学习错误的问题。
-- [9a81b91368](https://github.com/kubeovn/ovs/commit/9a81b91368b27afda97657a8864b729dc2e029e2) 为 ovsdb-tool 的 join-cluster 子命令添加 Server ID 参数。
-- [62d4969877](https://github.com/kubeovn/ovn/commit/62d4969877712c26fe425698d898b440f91b44bf) 修复开启 SSL 后 OVSDB 监听地址错误的问题。
-- [0700cb90f9](https://github.com/kubeovn/ovn/commit/0700cb90f950db1fb43490545dd4fc41afa46d70) 目的地址非 Service 流量绕过 conntrack 以提高特定数据链路性能。
-- [c48049a64f](https://github.com/kubeovn/ovn/commit/c48049a64fedb1278f9158770a12751ee5bfc358) ECMP 算法由 dp_hash 调整为 hash，避免部分内核出现的哈希错误问题。
-- [64383c14a9](https://github.com/kubeovn/ovs/commit/64383c14a9c25e9e0ca53c6758d9499c60132536) 修复 Windows 下内核 Crash 问题。
-- [08a95db2ca](https://github.com/kubeovn/ovs/commit/08a95db2ca506fce4d89fdf4fafab74607b2bb9f) 支持 Windows 下的 github action 构建。
-- [680e77a190](https://github.com/kubeovn/ovs/commit/680e77a190ae7df3086bc35bb6150238e97f9020) Windows 下默认使用 tcp 监听。
-- [05e57b3227](https://github.com/kubeovn/ovn/commit/05e57b322758461c54d5cad030486c3d25942c73) 支持 Windows 编译。
-- [b3801ecb73](https://github.com/kubeovn/ovs/commit/b3801ecb732a788efd2380a7daca4e2a7726128e) 修改源路由的优先级。
-- [977e569539](https://github.com/kubeovn/ovs/commit/977e569539893460cd27b2287d6042b62079ea65) 修复 Underlay 模式下 Pod 数量过多导致 OVS 流表 resubmit 次数超过上限的问题。
-- [45a4a22161](https://github.com/kubeovn/ovn/commit/45a4a22161e42f17f21baee9106a45964dfd3a1b) ovn-nbctl：vips 为空时不删除 Load Balancer。
-- [540592b9ff](https://github.com/kubeovn/ovn/commit/540592b9fff8c5574ae605086fdaa16b718551f7) DNAT 后替换 Mac 地址为目标地址，减少额外性能开销。
-- [10972d9632](https://github.com/kubeovn/ovs/commit/10972d963208490c5fe6ff66247b86b947136da6) 修复 vswitchd ofport_usage 内存泄露。
+- [4228eab1d7](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/4228eab1d722087ba795e310eadc9e25c4513ec1.patch) 修复 vswitchd ofport_usage 内存泄露并定期修剪内存。
+- [54056ea65d](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/54056ea65dc28aa1c4c721a2a34d7913f79f8376.patch) 调整选举 timer，避免大规模集群选举抖动。
+- [6b4dcb311f](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/6b4dcb311f171d81a5d40ea51a273fc356c123db.patch) 添加 fdb 更新日志。
+- [f627b7721e](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/f627b7721ec282f2edaf798913b1559b939687f0.patch) 修复 hairpin 环境下 fdb 学习错误的问题。
+- [3f3e3a436f](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/3f3e3a436ff5eb2eaafbeeae8ea9dc0c514fe8a3.patch) 为 ovsdb-tool 的 join-cluster 子命令添加 Server ID 参数。
+- [a6cb8215a8](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/a6cb8215a80635129e4fada4c0d25c25fb746bf7.patch) 修复 QoS 内存泄露问题。
+- [d4d76ddb2e](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/d4d76ddb2e12cdd9e73bb5e008ebb9fd1b4d6ca6.patch) ovsdb-tool：添加 fix-cluster 命令。
+- [ffd2328d4a](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/ffd2328d4a55271569e2b89e54a2c18f4e186af8.patch) netdev：减少获取设备地址的 CPU 利用率。
+- [d088c5d8c2](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/d088c5d8c263552c5a31d87813991aee30ab74de.patch) ovs-router：跳过获取 kube-ipvs0 的源地址。
+- [1b31f07dc6](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/1b31f07dc60c016153fa35d936cdda0e02e58492.patch) 增加大规模集群的默认探测间隔。
+- [54b7678229](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/54b767822916606dbb78335a3197983f435b5b8a.patch) 更新 ovs-sandbox 以支持 docker run。
+- [9ee66bd91b](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/9ee66bd91be65605cffb9a490b4dba3bc13358e9.patch) 修改源路由优先级。
+- [e889d46924](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e889d46924085ca0fe38a2847da973dfe6ea100e.patch) 修复 Underlay 模式下达到 resubmit 限制的问题。
+- [f9e97031b5](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/f9e97031b56ab5747b5d73629198331a6daacdfd.patch) ovn-controller：不为 Kube-OVN 端口在 localnet 上发送 GARP。
+- [78cade0187](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/78cade01874292e2c101c39b975290ef6c812a50.patch) 添加有条件跳过 conntrack 的支持。
+- [85aa6263ad](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/85aa6263ad5b3648eb7ceec90c812328dbb7c6c0.patch) northd：访问节点本地 DNS IP 时跳过 conntrack。
+- [34dc3e3fcf](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/34dc3e3fcfacec6597293765ecd6e20fe15581f1.patch) lflow：不将 lport 之间的直接流量发送到 conntrack。
+- [a297b840c2](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/a297b840c2c9f118c7ce6133077087b5999f12dd.patch) 在逻辑交换机入口管道中将 DNAT 数据包直接输出到 lsp。
+- [03e35ed9c5](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/03e35ed9c5b4de0fa8acbc2c057cdd5957a8d605.patch) ovn-controller：使激活策略在单机箱环境下工作。
+- [e7d3ba53cd](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e7d3ba53cdcbc524bb29c54ddb07b83cc4258ed7.patch) 设置 ACL 时跳过节点本地 DNS IP 的 conntrack。
+- [9286e1fd57](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/9286e1fd578fdb8f565a0f4aa9066b538295e1ac.patch) 优先选择本地后端。
+- [e5916eb53a](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e5916eb53abc3b7d28c407c3c47566c46116090a.patch) 修复具有多个分布式网关端口的 lr-lb DNAT 问题。
+- [e4e6ea9c5f](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e4e6ea9c5f4ba080b719924e470daa8094ff38a7.patch) 支持专用的 BFD LRP。
+- [e76880e792](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e76880e792af56b2a3836098105079f5f8f1ff26.patch) northd：添加 nb 选项 version_compatibility。
+- [477695a010](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/477695a010affe56efdd66b60510fa612f8704c1.patch) northd：跳过从 localnet 端口对 lrp 地址的 arp/nd 请求。
 
 已合入上游修改：
 

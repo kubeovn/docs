@@ -1,28 +1,37 @@
 # OVS/OVN Customization
 
 Upstream OVN/OVS was originally designed with the goal of a general purpose SDN controller and data plane.
-Due to some specific usage of the Kubernetes network,Kube-OVN only focused on part of the features.
+Due to some specific usage of the Kubernetes network, Kube-OVN only focused on part of the features.
 In order to achieve better performance, stability and specific features, Kube-OVN has made some modifications to the upstream OVN/OVS.
 Users using their own OVN/OVS with Kube-OVN controllers need to be aware of the possible impact of the following changes:
 
-Did not merge into the upstream modification.
+Modification not merged into upstream:
 
-- [38df6fa3f7](https://github.com/kubeovn/ovs/commit/38df6fa3f721dc53464fcff61dbc2bc79c710ab1) Adjust the election timer to avoid large-scale cluster election jitter.
-- [d4888c4e75](https://github.com/kubeovn/ovs/commit/d4888c4e75f2288d8ff4f04ee57538659f118f5b) add fdb update logging.
-- [d4888c4e75](https://github.com/kubeovn/ovs/commit/403fbd0f6561c8985302734608c2de659671c563) fdb: fix mac learning in environments with hairpin enabled.
-- [9a81b91368](https://github.com/kubeovn/ovs/commit/9a81b91368b27afda97657a8864b729dc2e029e2) ovsdb-tool: add optional server id parameter for "join-cluster" command.
-- [0700cb90f9](https://github.com/kubeovn/ovn/commit/0700cb90f950db1fb43490545dd4fc41afa46d70) Destination non-service traffic bypasses conntrack to improve performance on a particular data path.
-- [c48049a64f](https://github.com/kubeovn/ovn/commit/c48049a64fedb1278f9158770a12751ee5bfc358) ECMP algorithm is adjusted from `dp_hash` to `hash` to avoid the hash error problem in some kernels.
-- [64383c14a9](https://github.com/kubeovn/ovs/commit/64383c14a9c25e9e0ca53c6758d9499c60132536) Fix kernel Crash issue under Windows.
-- [08a95db2ca](https://github.com/kubeovn/ovs/commit/08a95db2ca506fce4d89fdf4fafab74607b2bb9f) Support for github action builds on Windows.
-- [680e77a190](https://github.com/kubeovn/ovs/commit/680e77a190ae7df3086bc35bb6150238e97f9020) Windows uses tcp listening by default.
-- [05e57b3227](https://github.com/kubeovn/ovn/commit/05e57b322758461c54d5cad030486c3d25942c73) add support for windows.
-- [0181b68be1](https://github.com/kubeovn/ovn/commit/0181b68be18e96bc4ca68a0c3e5082da34c9dcdd) br-int controller: listen on 127.0.0.1:6653 by default.
-- [b3801ecb73](https://github.com/kubeovn/ovs/commit/b3801ecb732a788efd2380a7daca4e2a7726128e) modify src route priority.
-- [977e569539](https://github.com/kubeovn/ovs/commit/977e569539893460cd27b2287d6042b62079ea65) fix reaching resubmit limit in underlay.
-- [45a4a22161](https://github.com/kubeovn/ovn/commit/45a4a22161e42f17f21baee9106a45964dfd3a1b) ovn-nbctl: do not remove LB if vips is empty.
-- [540592b9ff](https://github.com/kubeovn/ovn/commit/540592b9fff8c5574ae605086fdaa16b718551f7) Replaces the Mac address as the destination address after DNAT to reduce additional performance overhead.
-- [10972d9632](https://github.com/kubeovn/ovs/commit/10972d963208490c5fe6ff66247b86b947136da6) Fix vswitchd ofport_usage memory leak.
+- [4228eab1d7](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/4228eab1d722087ba795e310eadc9e25c4513ec1.patch) Fix memory leak by ofport_usage and trim memory periodically.
+- [54056ea65d](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/54056ea65dc28aa1c4c721a2a34d7913f79f8376.patch) Adjust the election timer to avoid large-scale cluster election jitter.
+- [6b4dcb311f](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/6b4dcb311f171d81a5d40ea51a273fc356c123db.patch) Add fdb update logging.
+- [f627b7721e](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/f627b7721ec282f2edaf798913b1559b939687f0.patch) fdb: fix mac learning in environments with hairpin enabled.
+- [3f3e3a436f](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/3f3e3a436ff5eb2eaafbeeae8ea9dc0c514fe8a3.patch) ovsdb-tool: add optional server id parameter for "join-cluster" command.
+- [a6cb8215a8](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/a6cb8215a80635129e4fada4c0d25c25fb746bf7.patch) Fix QoS memory leak issue.
+- [d4d76ddb2e](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/d4d76ddb2e12cdd9e73bb5e008ebb9fd1b4d6ca6.patch) ovsdb-tool: add fix-cluster command.
+- [ffd2328d4a](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/ffd2328d4a55271569e2b89e54a2c18f4e186af8.patch) netdev: reduce cpu utilization for getting device addresses.
+- [d088c5d8c2](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/d088c5d8c263552c5a31d87813991aee30ab74de.patch) ovs-router: skip getting source address for kube-ipvs0.
+- [1b31f07dc6](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/1b31f07dc60c016153fa35d936cdda0e02e58492.patch) Increase the default probe interval for large cluster.
+- [54b7678229](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/54b767822916606dbb78335a3197983f435b5b8a.patch) Update ovs-sandbox for docker run.
+- [9ee66bd91b](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/9ee66bd91be65605cffb9a490b4dba3bc13358e9.patch) Modify source route priority.
+- [e889d46924](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e889d46924085ca0fe38a2847da973dfe6ea100e.patch) Fix reaching resubmit limit in underlay.
+- [f9e97031b5](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/f9e97031b56ab5747b5d73629198331a6daacdfd.patch) ovn-controller: do not send GARP on localnet for Kube-OVN ports.
+- [78cade0187](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/78cade01874292e2c101c39b975290ef6c812a50.patch) Add support for conditionally skipping conntrack.
+- [85aa6263ad](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/85aa6263ad5b3648eb7ceec90c812328dbb7c6c0.patch) northd: skip conntrack when accessing node local dns ip.
+- [34dc3e3fcf](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/34dc3e3fcfacec6597293765ecd6e20fe15581f1.patch) lflow: do not send direct traffic between lports to conntrack.
+- [a297b840c2](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/a297b840c2c9f118c7ce6133077087b5999f12dd.patch) Direct output to lsp for dnat packets in logical switch ingress pipelines.
+- [03e35ed9c5](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/03e35ed9c5b4de0fa8acbc2c057cdd5957a8d605.patch) ovn-controller: make activation strategy work for single chassis.
+- [e7d3ba53cd](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e7d3ba53cdcbc524bb29c54ddb07b83cc4258ed7.patch) Skip node local dns ip conntrack when setting acls.
+- [9286e1fd57](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/9286e1fd578fdb8f565a0f4aa9066b538295e1ac.patch) Select local backend first.
+- [e5916eb53a](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e5916eb53abc3b7d28c407c3c47566c46116090a.patch) Fix lr-lb dnat with multiple distributed gateway ports.
+- [e4e6ea9c5f](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e4e6ea9c5f4ba080b719924e470daa8094ff38a7.patch) Support dedicated BFD LRP.
+- [e76880e792](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e76880e792af56b2a3836098105079f5f8f1ff26.patch) northd: add nb option version_compatibility.
+- [477695a010](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/477695a010affe56efdd66b60510fa612f8704c1.patch) northd: skip arp/nd request for lrp addresses from localnet ports.
 
 Merged into upstream modification:
 
