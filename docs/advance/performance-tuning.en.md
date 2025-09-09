@@ -9,6 +9,15 @@ so it is recommended to use the latest version to get better default performance
 
 For more on the process and methodology of performance optimization, please watch the video [Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web){: target="_blank" }.
 
+## Common Misunderstandings about Network Performance
+
+Performance tuning and comparison is an exciting topic, and performance data comparisons under different configurations can be fascinating, but all of this may have minimal effect in real application scenarios. Below are some common misconceptions about network performance to help you better judge whether network tuning is needed.
+
+1. The latency introduced by CNI is about tens of nanoseconds per packet. If your application's request processing takes tens of milliseconds, even if CNI has no latency at all, the impact on application latency performance is minimal.
+2. Common network performance tests are packet sending tests. If one network plugin needs 10ns to process each packet while another needs 20ns, there will be a double performance difference, but for real applications with tens of milliseconds processing time, the difference is not significant.
+3. Contrary to first impressions, the bottleneck affecting network performance is usually the CPU. Better and more CPUs bring more significant performance improvements.
+4. If you need extreme network performance, it's best to use network solutions like Macvlan or SR-IOV that adopt ultra-lightweight or hardware virtualization technologies.
+
 ## Benchmarking
 
 > Because the hardware and software environments vary greatly, the performance test data provided here can only be used as a reference,
