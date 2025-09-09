@@ -220,7 +220,7 @@ cd rpm/rpmbuild/RPMS/x86_64/
 Copy the RPM to each node and install:
 
 ```bash
-rpm -i openvswitch-kmod--3.5.1-1.el7.x86_64.rpm
+rpm -i openvswitch-kmod-3.5.1-1.el7.x86_64.rpm
 ```
 
 If you have previously started Kube-OVN and the older version of the OVS module has been loaded into the kernel.
