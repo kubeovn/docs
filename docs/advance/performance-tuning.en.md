@@ -263,7 +263,7 @@ It is recommended to reboot the machine to reload the new version of the kernel 
 
 !!! warning
 
-    OpenVswitch upstream removed support for STT-type Tunnel in version 3.6 [commit](https://github.com/openvswitch/ovs/commit/19b89416203f3b3b212fb01c30c81ea1b77624eb){: target="_blank" }. This solution will no longer receive upstream support in the future.
+    Open vSwitch upstream removed support for STT tunnels in version 3.6 [commit](https://github.com/openvswitch/ovs/commit/19b89416203f3b3b212fb01c30c81ea1b77624eb){: target="_blank" }. This solution will no longer receive upstream support in the future.
 
 Common tunnel encapsulation protocols such as Geneve and Vxlan use the UDP protocol to encapsulate packets and are well supported in the kernel.
 However, when TCP packets are encapsulated using UDP, the optimization and offload features of modern operating systems and
