@@ -7,7 +7,7 @@ The community will continue to iterate on the performance.
 Some general performance optimizations have been integrated into the latest version,
 so it is recommended to use the latest version to get better default performance.
 
-For more on the process and methodology of performance optimization, please watch the video [Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web).
+For more on the process and methodology of performance optimization, please watch the video [Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web){: target="_blank" }.
 
 ## Benchmarking
 
@@ -119,7 +119,7 @@ ethtool -G eno1 tx 4096
 
 ### Optimize with tuned
 
-[tuned](https://tuned-project.org/) can use a series of preconfigured profile files to perform system optimizations for a specific scenario.
+[tuned](https://tuned-project.org/){: target="_blank" } can use a series of preconfigured profile files to perform system optimizations for a specific scenario.
 
 For latency-first scenarios:
 
@@ -208,7 +208,7 @@ yum install -y gcc kernel-devel-$(uname -r) python3 autoconf automake libtool rp
 Compile the OVS kernel module and generate the corresponding RPM:
 
 ```bash
-git clone -b branch-2.17 --depth=1 https://github.com/openvswitch/ovs.git
+git clone -b branch-3.5 --depth=1 https://github.com/openvswitch/ovs.git
 cd ovs
 curl -s  https://github.com/kubeovn/ovs/commit/2d2c83c26d4217446918f39d5cd5838e9ac27b32.patch |  git apply
 ./boot.sh
@@ -220,7 +220,7 @@ cd rpm/rpmbuild/RPMS/x86_64/
 Copy the RPM to each node and install:
 
 ```bash
-rpm -i openvswitch-kmod-2.15.2-1.el7.x86_64.rpm
+rpm -i openvswitch-kmod-3.5.1-1.el7.x86_64.rpm
 ```
 
 If you have previously started Kube-OVN and the older version of the OVS module has been loaded into the kernel.
@@ -237,7 +237,7 @@ apt install -y autoconf automake libtool gcc build-essential libssl-dev
 Compile the OVS kernel module and install:
 
 ```bash
-git clone -b branch-2.17 --depth=1 https://github.com/openvswitch/ovs.git
+git clone -b branch-3.5 --depth=1 https://github.com/openvswitch/ovs.git
 cd ovs
 curl -s  https://github.com/kubeovn/ovs/commit/2d2c83c26d4217446918f39d5cd5838e9ac27b32.patch |  git apply
 ./boot.sh
@@ -260,6 +260,10 @@ If you have previously started Kube-OVN and the older version of the OVS module 
 It is recommended to reboot the machine to reload the new version of the kernel module.
 
 ### Using STT Type Tunnel
+
+!!! warning
+
+    Open vSwitch upstream removed support for STT tunnels in version 3.6 [commit](https://github.com/openvswitch/ovs/commit/19b89416203f3b3b212fb01c30c81ea1b77624eb){: target="_blank" }. This solution will no longer receive upstream support in the future.
 
 Common tunnel encapsulation protocols such as Geneve and Vxlan use the UDP protocol to encapsulate packets and are well supported in the kernel.
 However, when TCP packets are encapsulated using UDP, the optimization and offload features of modern operating systems and
