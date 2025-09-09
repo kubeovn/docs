@@ -5,7 +5,7 @@
 
 社区会不断迭代控制面板和优化面的性能，部分通用性能优化已经集成到最新版本，建议使用最新版本获得更好的默认性能。
 
-更多关于性能优化的过程和方法论，可以观看视频分享：[Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web)。
+更多关于性能优化的过程和方法论，可以观看视频分享：[Kube-OVN 容器性能优化之旅](https://www.bilibili.com/video/BV1zS4y1T73m?share_source=copy_web){: target="_blank" }。
 
 ## 基准测试
 
@@ -113,7 +113,7 @@ ethtool -G eno1 tx 4096
 
 ### 使用 tuned 优化系统参数
 
-[tuned](https://tuned-project.org/) 可以使用一系列预置的 profile 文件保存了针对特定场景的一系列系统优化配置。
+[tuned](https://tuned-project.org/){: target="_blank" } 可以使用一系列预置的 profile 文件保存了针对特定场景的一系列系统优化配置。
 
 针对延迟优先场景：
 
@@ -195,7 +195,7 @@ yum install -y gcc kernel-devel-$(uname -r) python3 autoconf automake libtool rp
 编译 OVS 内核模块并生成对应 RPM 文件:
 
 ```bash
-git clone -b branch-2.17 --depth=1 https://github.com/openvswitch/ovs.git
+git clone -b branch-3.5 --depth=1 https://github.com/openvswitch/ovs.git
 cd ovs
 curl -s  https://github.com/kubeovn/ovs/commit/2d2c83c26d4217446918f39d5cd5838e9ac27b32.patch |  git apply
 ./boot.sh
@@ -207,7 +207,7 @@ cd rpm/rpmbuild/RPMS/x86_64/
 复制 RPM 到每个节点并进行安装：
 
 ```bash
-rpm -i openvswitch-kmod-2.15.2-1.el7.x86_64.rpm
+rpm -i openvswitch-kmod-3.5.1-1.el7.x86_64.rpm
 ```
 
 若之前已经启动过 Kube-OVN，旧版本 OVS 模块已加载至内核，建议重启机器重新加载新版内核模块。
@@ -225,7 +225,7 @@ apt install -y autoconf automake libtool gcc build-essential libssl-dev
 ```bash
 apt install -y autoconf automake libtool gcc build-essential libssl-dev
 
-git clone -b branch-2.17 --depth=1 https://github.com/openvswitch/ovs.git
+git clone -b branch-3.5 --depth=1 https://github.com/openvswitch/ovs.git
 cd ovs
 curl -s  https://github.com/kubeovn/ovs/commit/2d2c83c26d4217446918f39d5cd5838e9ac27b32.patch |  git apply
 ./boot.sh
@@ -247,6 +247,10 @@ cp debian/openvswitch-switch.init /etc/init.d/openvswitch-switch
 若之前已经启动过 Kube-OVN，旧版本 OVS 模块已加载至内核，建议重启机器重新加载新版内核模块。
 
 ### 使用 STT 类型隧道
+
+!!! warning
+
+    OpenVswitch 上游在 3.6 版本[移除对 STT 类型 Tunnel 的支持](https://github.com/openvswitch/ovs/commit/19b89416203f3b3b212fb01c30c81ea1b77624eb){: target="_blank" }，该方案未来将无法得到上游支持。
 
 常见的隧道封装协议例如 Geneve 和 Vxlan 使用 UDP 协议对数据包进行封装，在内核中有良好的支持。但是当使用 UDP 封装 TCP 数据包时，
 现代操作系统和网卡针对 TCP 协议的优化和 offload 功能将无法顺利工作，导致 TCP 的吞吐量出现显著下降。在虚拟化场景下由于 CPU 的限制，
