@@ -33,6 +33,10 @@ and consumes more CPU resources when handling large packets.
 
 ## STT
 
+!!! warning
+
+    Open vSwitch upstream removed support for STT tunnels in version 3.6 [commit](https://github.com/openvswitch/ovs/commit/19b89416203f3b3b212fb01c30c81ea1b77624eb){: target="_blank" }. This solution will no longer receive upstream support in the future.
+
 The `STT` protocol is an early tunneling protocol supported by the OVN that uses TCP-like headers to
 take advantage of the TCP offload capabilities common to modern NICs and significantly increase TCP throughput.
 The protocol also has a long header to support full OVN capabilities and large-scale datapaths.

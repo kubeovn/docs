@@ -29,6 +29,10 @@ CPU 资源。
 
 ## STT
 
+!!! warning
+
+    OpenVswitch 上游在 3.6 版本[移除对 STT 类型 Tunnel 的支持](https://github.com/openvswitch/ovs/commit/19b89416203f3b3b212fb01c30c81ea1b77624eb){: target="_blank" }，该方案未来将无法得到上游支持。
+
 `STT` 协议为 OVN 较早支持的隧道协议，该协议使用类 TCP 的头部，可以充分利用现代网卡通用的 TCP 卸载能力，大幅提升 TCP
 的吞吐量。同时该协议头部较长可支持完整的 OVN 能力和大规模的 datapath。
 
