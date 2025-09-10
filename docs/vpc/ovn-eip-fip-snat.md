@@ -1,11 +1,11 @@
 # OVN EIP FIP SNAT DNAT 支持
 
-支持任意 VPC OVN NAT 功能使用任意多个的 `provider-network vlan (external) subnet` 资源，该功能独立于[默认 VPC EIP/SNAT](../guide/eip-snat.md)功能。
+支持任意 VPC 的 OVN NAT 功能使用任意多个的 `provider-network vlan (external) subnet` 资源，该功能独立于[默认 VPC EIP/SNAT](../guide/eip-snat.md)功能。
 
 ## 两种互相独立的使用方式
 
 - `默认外部网络`：如果只需要用一个外部网络，需要在 `kube-ovn-controller` 和 `kube-ovn-cni` 中指定启动参数， 然后通过 `ovn-external-gw-config` 或者 `VPC spec enableExternal` 属性使用这个默认外部子网。
-- `CRD`：创建 `provider-network` `vlan` `subnet` 资源，然后通过 `VPC spec extraExternalSubnets` 使用任意外部子网，然后通过 `ovn-eip，ovn-dnat，ovn-fip，ovn-snat` 等 CRD 来使用。
+- `CRD`：创建 `provider-network` `vlan` `subnet` 资源，然后通过 `VPC spec extraExternalSubnets` 使用任意外部子网，然后通过 `ovn-eip`、`ovn-dnat`、`ovn-fip`、`ovn-snat` 等 CRD 来使用。
 
 ``` mermaid
 
@@ -65,7 +65,7 @@ Pod 基于分布式网关 FIP (dnat_and_snat) 出公网的大致流程，最后�
 - 基于该配置项可以对接到 provider network，vlan，subnet 的资源。
 - 基于该配置项可以将默认 VPC enable_eip_snat 功能对接到已有的 vlan，subnet 资源，同时支持公网 ip 的 ipam。
 - 如果仅使用默认 VPC 的 enable_eip_snat 模式, 且仅使用旧的基于 pod annotation 的 fip snat，那么这个配置无需配置。
-- 基于该配置可以不使用默认 VPC enable_eip_snat 流程，仅通过对应到 vlan，subnet 流程，可以兼容仅自定义 VPC 使用 eip snat 的使用场景。
+- 基于该配置可以不使用默认 VPC 的 enable_eip_snat 流程，仅通过对应的 vlan、subnet 流程，兼容仅自定义 VPC 使用 eip snat 的场景。
 
 ### 1.1 准备 underlay 公网网络
 

@@ -52,9 +52,9 @@ spec:
             - name: default
               binding:
                 name: managedtap
-        networks:
-        - name: default
-          pod: {}
+      networks:
+      - name: default
+        pod: {}
 ```
 
 通过以上步骤，就可以实现 VM 通过 DHCP 和 IPv6 RA 协议来获取对应的 IPv4/IPv6 地址。

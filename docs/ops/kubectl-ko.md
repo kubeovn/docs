@@ -106,7 +106,7 @@ Servers:
 status: ok
 ```
 
-若 `Server` 下的 `match_index` 出现较大差别，且 `last msg` 时间较长则对应 Server 可能长时间没有响应，
+若 `Server` 下的 `match_index` 出现较大差别，且 `last msg` 时间较长，则对应 Server 可能长时间没有响应，
 需要进一步查看。
 
 #### 数据库节点下线
@@ -757,7 +757,7 @@ kubectl-ko-log/
 3. 容器网络组播报文性能指标；
 4. OVN-NB, OVN-SB, OVN-Northd leader 删除恢复所需时间。
 
-参数 image 用于指定性能测试 pod 所用的镜像，默认情况下是 `kubeovn/test:v1.12.0`, 设置该参数主要是为了离线场景，将镜像拉到内网环境可能会有镜像名变化。
+参数 image 用于指定性能测试 Pod 使用的镜像，默认为 `kubeovn/test:v1.12.0`。该参数主要用于离线场景，当镜像拉取到内网环境时，可能需要修改镜像名称。
 
 ```bash
 # kubectl ko perf

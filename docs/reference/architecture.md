@@ -30,7 +30,7 @@ Kube-OVN 的组件可以大致分为三类：
 
 `ovn-central` Deployment 运行 OVN 的管理平面组件，包括 `ovn-nb`, `ovn-sb`, 和 `ovn-northd`。
 
-* `ovn-nb`：保存虚拟网络配置，并提供 API 进行虚拟网络管理。`kube-ovn-controller` 将会主要和 `ovn-nb` 进行交互配置虚拟网络。
+* `ovn-nb`：保存虚拟网络配置，并提供 API 进行虚拟网络管理。`kube-ovn-controller` 将会主要和 `ovn-nb` 交互配置虚拟网络。
 * `ovn-sb`：保存从 `ovn-nb` 的逻辑网络生成的逻辑流表，以及各个节点的实际物理网络状态。
 * `ovn-northd`：将 `ovn-nb` 的虚拟网络翻译成 `ovn-sb` 中的逻辑流表。
 
@@ -77,7 +77,7 @@ Pod，Service，Endpoint，Node，NetworkPolicy，VPC，Subnet，Vlan，Provider
 
 ### 监控，运维工具和扩展组件
 
-该部分组件主要提供监控，诊断，运维操作以及和外部进行对接，对 Kube-OVN 的核心网络能力进行扩展，并简化日常运维操作。
+该部分组件主要提供监控，诊断，运维操作以及和外部对接，对 Kube-OVN 的核心网络能力进行扩展，并简化日常运维操作。
 
 #### kube-ovn-speaker
 

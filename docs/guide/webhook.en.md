@@ -64,7 +64,7 @@ spec:
     name: qatest
 ```
 
-When using the above yaml to create a fixed address Pod, it prompts an IP address conflict:
+When using the above YAML to create a fixed address Pod, it prompts an IP address conflict:
 
 ```bash
 # kubectl apply -f pod-static.yaml

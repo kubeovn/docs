@@ -1,6 +1,6 @@
 # IP 池使用
 
-IP 池（IPPool）是比子网（Subnet）更细力度的 IPAM 管理单元。你可以通过 IP 池将子网网段细分为多个单元，每个单元绑定一个或多个命名空间（Namespace）。
+IP 池（IPPool）是比子网（Subnet）更细粒度的 IPAM 管理单元。你可以通过 IP 池将子网网段细分为多个单元，每个单元绑定一个或多个命名空间（Namespace）。
 
 ## 使用方法
 

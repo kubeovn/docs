@@ -55,7 +55,7 @@ data:
 ## 观察 OVN 和 OVS 状态确认配置生效
 
 检查 OVN-NB 状态，确认 `ovn-external` 逻辑交换机存在，并且 `ovn-cluster-ovn-external`
-逻辑路由器端口上 绑定了正确的地址和 chassis。
+逻辑路由器端口上绑定了正确的地址和 chassis。
 
 ```bash
 # kubectl ko nbctl show
@@ -118,7 +118,7 @@ spec:
     image: docker.io/library/nginx:alpine
 ```
 
-可通过 kubectl 或其他工具动态调整 Pod 所配置的 EIP 或 SNAT 规则，更改时请注意要同时删除 `ovn.kubernetes.io/routed` annotation
+可通过 kubectl 或其他工具动态调整 Pod 所配置的 EIP 或 SNAT 规则，更改时需要同时删除 `ovn.kubernetes.io/routed` annotation
 触发路由的变更：
 
 ```bash
@@ -132,6 +132,6 @@ kubectl annotate pod pod-gw ovn.kubernetes.io/routed-
 
 `kube-ovn-controller` 的部分启动参数可对 SNAT 和 EIP 功能进行高阶配置：
 
-- `--external-gateway-config-ns`: Configmap `ovn-external-gw-config` 所属 Namespace，默认为为 `kube-system`。
+- `--external-gateway-config-ns`: Configmap `ovn-external-gw-config` 所属 Namespace，默认为 `kube-system`。
 - `--external-gateway-net`: 物理网卡所桥接的网桥名，默认为 `external`。
 - `--external-gateway-vlanid`: 物理网络 Vlan Tag 号，默认为 0，即不使用 Vlan。

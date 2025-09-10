@@ -197,7 +197,7 @@ systemctl disable NetworkManager
 
 #### 配置 Device Plugin
 
-由于每个机器的 VF 数量优先，每个使用加速的 Pod 会占用 VF 资源，我们需要使用 SR-IOV Device Plugin 管理相应资源，使得调度器知道如何根据
+由于每个机器的 VF 数量有限，每个使用加速的 Pod 会占用 VF 资源，我们需要使用 SR-IOV Device Plugin 管理相应资源，使得调度器知道如何根据
 资源进行调度。
 
 创建 SR-IOV 相关 Configmap：
@@ -530,7 +530,7 @@ spec:
 ```
 
 - `v1.multus-cni.io/default-network`: 为上一步骤中 `NetworkAttachmentDefinition` 的 {namespace}/{name}。
-- `sriov.default.ovn.kubernetes.io/logical_switch`: 指定 Pod 所属的 Subnet，若希望 Pod 所属的子网为默认子网，则该行注解可省略。
+- `sriov.default.ovn.kubernetes.io/logical_switch`: 指定 Pod 所属的子网，若希望 Pod 所属的子网为默认子网，则该行注解可省略。
 
 ## Underlay 卸载
 

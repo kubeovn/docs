@@ -3,13 +3,13 @@
 Kube-OVN 支持基于单个 Pod 的两种不同类型的 QoS：
 
 - 最大带宽限制 QoS。
-- `linux-netem`，模拟设备干扰丢包等的 QoS，可用于模拟测试。
+- `linux-netem`，模拟网络丢包、延迟等现象的 QoS，可用于模拟测试。
 
 > 目前只支持 Pod 级别 QoS 不支持 Namespace 或 Subnet 级别的 QoS 限制。
 
 ## 基于最大带宽限制的 QoS
 
-该类型的 QoS 可以通过 Pod annotation 动态进行配置，可以在不中断 Pod 运行的情况下进行调整。
+该类型的 QoS 可以通过 Pod annotation 动态配置，可以在不中断 Pod 运行的情况下进行调整。
 带宽限速的单位为 `Mbit/s`。
 
 ```yaml

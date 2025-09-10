@@ -1,8 +1,8 @@
 # VIP 预留 IP
 
-VIP 即虚拟 IP， 用于预留 IP 资源。之所以设计 VIP 是因为 kube-ovn 的 IP 和 POD 在命名上直接关联，所以无法基于 IP 实现直接实现预留 IP 的功能。
+VIP 即虚拟 IP，用于预留 IP 资源。之所以设计 VIP 是因为 kube-ovn 的 IP 和 POD 在命名上直接关联，所以无法基于 IP 直接实现预留 IP 的功能。
 VIP 设计之初参考了 Openstack neutron Allowed-Address-Pairs（AAP） 的功能，可以用于 Openstack octavia 负载均衡器项目。 也可以用于提供虚拟机内部的应用（POD）IP，这点可以参考 aliyun terway 项目。
-另外，由于 neutron 有预留 IP 的功能，所以对 VIP 进行了一定扩展，使得 VIP 可以直接用于为 POD 预留 IP，但由于这种设计会导致 VIP 和 IP 的功能变得模糊，在实现上并不是一个优雅的方式，所以不推荐在生产使用。
+另外，由于 neutron 有预留 IP 的功能，所以对 VIP 进行了一定扩展，使得 VIP 可以直接用于为 POD 预留 IP，但由于这种设计会导致 VIP 和 IP 的功能变得模糊，在实现上并不是一个优雅的方式，所以不推荐在生产环境中使用。
 而且， 由于 OVN 的 Switch LB 可以提供一种以子网内部 IP 为 LB 前端 VIP 的功能，所以又对 VIP 在子网内使用 OVN Switch LB Rule 场景进行了扩展。
 总之，目前 VIP 在设计上只有三种使用场景：
 

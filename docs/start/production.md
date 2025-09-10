@@ -1,12 +1,12 @@
 # 生产就绪？
 
-Kube-OVN 是否生产就绪？如果你问出这个问题那就说明你尚未生产就绪。有的人可以轻松将 pre-v0.0.1 版本运行到上千节点的关键业务生产环境还觉得没什么压力，有的人只是在自己的开发环境部署最新版本就已经焦头烂额。生产就绪更多的是对使用者的要求而不是软件本身的标准。不要轻信各种市场营销术语，也不要相信别人的案例，他们都不会来解决你生产环境中的问题，你自己要准备好面对这一切。这篇文档将会介绍我们认为在上生产环境前的一些必要准备工作，帮助你在生产环境中更有信心且自如地使用 Kube-OVN。
+Kube-OVN 是否生产就绪？如果你问出这个问题，那就说明你尚未生产就绪。有的人可以轻松将 pre-v0.0.1 版本运行到上千节点的关键业务生产环境还觉得没什么压力，有的人只是在自己的开发环境部署最新版本就已经焦头烂额。生产就绪更多的是对使用者的要求而不是软件本身的标准。不要轻信各种市场营销术语，也不要相信别人的案例，他们都不会来解决你生产环境中的问题，你自己要准备好面对这一切。这篇文档将会介绍我们认为在上生产环境前的一些必要准备工作，帮助你在生产环境中更有信心且自如地使用 Kube-OVN。
 
 ## 下载完整制品
 
 开源软件可能会突然停止版本发布、限制使用方式、删除代码仓库、删除镜像或删除文档：
 
-- [Linkerd 停止发行稳定版本](https://linkerd.io/2024/02/21/announcing-linkerd-2.15/index.html#a-new-model-for-stable-releases){: target = "_blank" }
+- [Linkerd 停止发行稳定版本](https://linkerd.io/2024/02/21/announcing-linkerd-2.15/index.html#a-new-model-for-stable-releases){: target="_blank" }
 - [Elasticsearch 停止开源镜像发布](https://github.com/elastic/elasticsearch/issues/70840){: target = "_blank" }
 - [EMQX 社区用户生产环境仅允单节点部署](https://www.emqx.com/en/news/emqx-adopts-business-source-license){: target = "_blank" }
 - [KubeSphere 停止开源下载](https://github.com/kubesphere/kubesphere/issues/6550){: target = "_blank" }
@@ -32,7 +32,7 @@ Kube-OVN 底层的数据平面大部分由 OpenVswitch 和 OVN 实现，了解�
 
 Kube-OVN 中包含了大量功能，并且还在快速迭代。针对你使用的功能我们建议你在了解如何使用时还要了解其局限性和背后的原理，我们也会在每个功能的文档中不断完善相关内容。
 
-同时我们建议你构建一个自己所使用到功能的测试集合，在 Kube-OVN 新版本发布后可以快速验证新版本对自己的影响。如果你的功能使用场景目前没有包含在 Kube-OVN 的 E2E 测试代码中我们欢迎你能贡献相关的测试，帮助项目更好的成长。
+同时我们建议你构建一个自己所使用到功能的测试集合，在 Kube-OVN 新版本发布后可以快速验证新版本对自己的影响。如果你的功能使用场景目前没有包含在 Kube-OVN 的 E2E 测试代码中，我们欢迎你能贡献相关的测试，帮助项目更好的成长。
 
 ## 正确反馈问题
 

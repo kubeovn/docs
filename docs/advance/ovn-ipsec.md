@@ -4,7 +4,7 @@
 
 ## 加密流程
 
-kube-ovn-cni 负责将证书申请，会创建一个 certificatesigningrequest 给 kube-ovn-controller，kube-ovn-controller 会自动 approve 证书申请，然后 kube-ovn-cni 会根据证书生成 ipsec 配置文件，最后启动 ipsec 进程。
+kube-ovn-cni 负责证书申请，会创建一个 certificatesigningrequest 给 kube-ovn-controller，kube-ovn-controller 会自动 approve 证书申请，然后 kube-ovn-cni 会根据证书生成 ipsec 配置文件，最后启动 ipsec 进程。
 
 ## 配置 IPsec
 

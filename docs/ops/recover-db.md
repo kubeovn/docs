@@ -13,7 +13,7 @@ backup ovn-nb db to /root/ovnnb_db.060223191654183154.backup
 
 # kubectl ko sb backup
 tar: Removing leading `/' from member names
-backup ovn-nb db to /root/ovnsb_db.060223191654183154.backup
+backup ovn-sb db to /root/ovnsb_db.060223191654183154.backup
 ```
 
 ## 集群部分故障恢复

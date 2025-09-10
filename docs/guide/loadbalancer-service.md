@@ -257,7 +257,7 @@ spec:
 正常情况下，提供的子网地址，在集群外应该可以访问到。为了简单验证，在集群内访问 Service 的 `LoadBalancerIP:Port`，查看是否正常访问成功。
 
 ```bash
-# curl 172.18.0.11:80
+# curl 172.18.0.18:80
 <html>
 <head>
         <title>Hello World!</title>

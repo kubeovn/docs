@@ -37,7 +37,7 @@ Pods bind security-groups by adding annotations, two annotations are used:
 
 - `port_security`: Source address verification. If this function is enabled, only packets with L2/L3 addresses assigned by Kube-OVN's IPAM can be exported from the pod network adapter. After this function is disabled, any L2/L3 address can be exported.
 
-- security_groups: indicates a security group that contains a series of ACL rules
+- `security_groups`: indicates a security group that contains a series of ACL rules
   
   - When configuring a security group, the `priority` value ranges from 1 to 200, with smaller values indicating higher priority. When implementing a security group through ACLs, the security group's priority is mapped to the ACL priority. The specific mapping relationship is as follows:
   ACL priority=2300−Security group priority, therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
