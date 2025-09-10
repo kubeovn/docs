@@ -1,6 +1,6 @@
 # 虚拟机克隆
 
-KubeVirt 在 Clone 虚拟机的过程中默认会复制虚拟机实例上所有的 Label 和 Annotation，如果虚拟机使用了 Kube-OVN 的 Annotation 固定了 IP、 MAC 等网络配置可能会导致网络地址冲突。本文档将会介绍如何处理这种情况。
+KubeVirt 在 Clone 虚拟机的过程中默认会复制虚拟机实例上所有的 Label 和 Annotation，如果虚拟机使用了 Kube-OVN 的 Annotation 固定了 IP、MAC 等网络配置，可能会导致网络地址冲突。本文档将会介绍如何处理这种情况。
 
 ## 过滤 Annotation
 
@@ -71,4 +71,4 @@ spec:
   - '{"op": "remove", "path": "/spec/template/metadata/annotations/ovn.kubernetes.io~1ip_address"}'
 ```
 
-如果你希望对虚拟机克隆的 Annotation 进行更细力度的修改请参考 [KubeVirt Clone API](https://kubevirt.io/user-guide/storage/clone_api/#json-patches)。
+如果你希望对虚拟机克隆的 Annotation 进行更细粒度的修改请参考 [KubeVirt Clone API](https://kubevirt.io/user-guide/storage/clone_api/#json-patches){: target="_blank" }。

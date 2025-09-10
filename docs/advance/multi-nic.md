@@ -266,7 +266,7 @@ spec:
 - `k8s.v1.cni.cncf.io/networks`: 取值为对应的 NetworkAttachmentDefinition 的 `<namespace>/<name>`
 - `macvlan.default.kubernetes.io/logical_switch`: 取值为子网名
 
-> 注意: 通过`<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/logical_switch` 指定子网的优先级高于通过 provider 指定子网，基于 ovn 类型的 subnet 提供 ipam 同样支持创建固定 IP 的 Pod、创建使用固定 IP 的工作负载、创建默认路由为 macvlan 的 Pod，但不支持创建主网卡为 macvlan 的 Pod。
+> 注意：通过`<networkAttachmentName>.<networkAttachmentNamespace>.kubernetes.io/logical_switch` 指定子网的优先级高于通过 provider 指定子网，基于 ovn 类型的 subnet 提供 ipam 同样支持创建固定 IP 的 Pod、创建使用固定 IP 的工作负载、创建默认路由为 macvlan 的 Pod，但不支持创建主网卡为 macvlan 的 Pod。
 
 ### 附属网卡为 Kube-OVN 类型网卡
 

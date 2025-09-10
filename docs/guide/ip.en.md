@@ -162,9 +162,9 @@ spec:
 - `v4IpAddress`: Specify an IPv4 address that is within the CIDR range of the subnet.
 - `v6IpAddress`: Specify an IPv6 address that is within the CIDR range of the subnet.
 
-### [Pod use reserved IP](../guide/ip.en.md)
+### Pod Uses Reserved IP
 
-> Note: The Pod(VMS) name and namespace must be the same as the reserved IP address, otherwise the Pod(VMS) cannot use the IP address.
+> Note: The Pod (VMs) name and namespace must be the same as the reserved IP address, otherwise the Pod (VMs) cannot use the IP address.
 
 After a Pod or VM is deleted, the IP CR remains.
 

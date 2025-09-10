@@ -81,7 +81,7 @@ spec:
 
 ## 健康检查
 
-`OVN` 支持 `IPv4` 的负载平衡器服务终端的运行状况检查。
+`OVN` 支持 `IPv4` 负载平衡器服务终端的运行状况检查。
 启用运行状况检查后，负载平衡器会对服务终端的状态进行检测维护，并仅使用运行状况良好的服务终端。
 
 [[Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)](<https://www.ovn.org/support/dist-docs/ovn-nb.5.html>)

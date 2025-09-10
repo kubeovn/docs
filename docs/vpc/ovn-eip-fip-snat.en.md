@@ -1,4 +1,4 @@
-# Support OVN EIP,FIP and SNAT
+# Support OVN EIP, FIP and SNAT
 
 Support the use of any number of `provider-network vlan (external) subnet` resources by any VPC OVN NAT function, which is independent of the [default VPC EIP/SNAT](../guide/eip-snat.en.md) function.
 
@@ -685,7 +685,7 @@ apiVersion: kubeovn.io/v1
 metadata:
   name: eip-dnat
 spec:
-  externalSubnet: underlay
+  externalSubnet: external204
   type: nat
 ---
 kind: OvnDnatRule

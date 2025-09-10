@@ -20,7 +20,7 @@ IP 用于维护 Pod 或者 VirtualMachine(VM) 的 IP 地址。IP 的生命周期
 
 具体来说，这个功能是指定 Pod 或者 VM 预留 IP， 在预留 IP 的创建流程中，需要指定资源名，资源类型，命名空间，子网等必要参数。固定 IP 预留，需要指定 ip 地址，MAC 地址（如有需要）。
 
-> 注意：之前实现的 Pod 使用 vip 占用 IP 的方式弃用。（这两种功能重叠）
+> 注意：之前实现的 Pod 使用 vip 占用 IP 的方式已弃用。（这两种功能重叠）
 
 ## 一、创建预留 IP
 
@@ -165,7 +165,7 @@ spec:
 - `v4IpAddress`: 指定 IPv4 地址，该地址需在 `subnet` 的 CIDR 范围内。
 - `v6IpAddress`: 指定 IPv6 地址，该地址需在 `subnet` 的 CIDR 范围内。
 
-### [Pod 使用预留 IP](../guide/ip.md)
+### Pod 使用预留 IP
 
 > 注意: Pod 的名字以及 namespace 必须和预留 IP 的属性一致，否则 Pod 无法使用该 IP。VM 也是如此。
 

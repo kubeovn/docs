@@ -51,7 +51,7 @@ spec:
   - '{"op": "replace", "path": "/spec/template/metadata/annotations/ovn.kubernetes.io~1ip_address", "value": "10.16.0.15"}'
 ```
 
-Or if you wanto to random allocate the IP address, try:
+Or if you want to randomly allocate the IP address, try:
 
 ```yaml
 kind: VirtualMachineClone
@@ -71,4 +71,4 @@ spec:
   - '{"op": "remove", "path": "/spec/template/metadata/annotations/ovn.kubernetes.io~1ip_address"}'
 ```
 
-If you need to make more granular modifications to the annotations of a virtual machine clone, please refer to the [KubeVirt Clone API](https://kubevirt.io/user-guide/storage/clone_api/#json-patches).
+If you need to make more granular modifications to the annotations of a virtual machine clone, please refer to the [KubeVirt Clone API](https://kubevirt.io/user-guide/storage/clone_api/#json-patches){: target="_blank" }.

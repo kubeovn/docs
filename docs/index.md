@@ -11,7 +11,7 @@ OVN 和 OVS 有着悠久的历史，早在 Kubernetes 诞生前就已经出现�
 
 ## Why Kube-OVN?
 
-随着在 Kubernetes 上运行的负载以及运行的场景越来越多样化，对网络的需求也越来越多。OVN 和 OVS 作为历史悠久的网络组件，你可以在他们身上找到所有你需要的功能。
+随着在 Kubernetes 上运行的负载以及运行的场景越来越多样化，对网络的需求也越来越多。OVN 和 OVS 作为历史悠久的网络组件，你可以在它们身上找到所有你需要的功能。
 
 如果你需要在 Kubernetes 上运行 KubeVirt, 或者有多租户网络的需求，你会发现 Kube-OVN 的能力将会完美契合你的场景。Kube-OVN 将 SDN 的能力和云原生结合，提供丰富的功能，极致的性能以及良好的可运维性。
 
@@ -19,10 +19,10 @@ OVN 和 OVS 有着悠久的历史，早在 Kubernetes 诞生前就已经出现�
 
 如果你怀念 SDN 领域丰富的网络能力却在云原生领域苦苦追寻而不得，那么 Kube-OVN 将是你的最佳选择。
 
-借助 OVS/OVN 在 SDN 领域成熟的能力，Kube-OVN 将网络虚拟化的丰富功能带入云原生领域。目前已支持[子网管理](guide/subnet.md)，
-[静态 IP 分配](guide/static-ip-mac.md)，[分布式/集中式网关](guide/subnet.md#overlay)，[Underlay/Overlay 混合网络](start/underlay.md)，
-[VPC 多租户网络](vpc/vpc.md)，[跨集群互联网络](advance/with-ovn-ic.md)，[QoS 管理](guide/qos.md)，
-[多网卡管理](advance/multi-nic.md)，[ACL 网络控制](guide/subnet.md#acl)，[流量镜像](guide/mirror.md)，ARM 支持。
+借助 OVS/OVN 在 SDN 领域成熟的能力，Kube-OVN 将网络虚拟化的丰富功能带入云原生领域。目前已支持[子网管理](guide/subnet.md)、
+[静态 IP 分配](guide/static-ip-mac.md)、[分布式/集中式网关](guide/subnet.md#overlay)、[Underlay/Overlay 混合网络](start/underlay.md)、
+[VPC 多租户网络](vpc/vpc.md)、[跨集群互联网络](advance/with-ovn-ic.md)、[QoS 管理](guide/qos.md)、
+[多网卡管理](advance/multi-nic.md)、[ACL 网络控制](guide/subnet.md#acl)、[流量镜像](guide/mirror.md)、ARM 支持。
 
 **极致的性能：**
 
@@ -44,10 +44,10 @@ Kube-OVN 提供了[一键安装脚本](start/one-step-install.md)，帮助用户
 
 ## CNI 选型建议
 
-Kubernetes 社区中存在很多优秀的 CNI 项目，用户在选型时会存在困难。我们认为最佳的方法是先找到自己真正的需求，然后去调研每个项目针对这个需求的解决方案有什么区别，而不是先列出所有产品的区别再看自己需要哪个。这背后的原因有两个：
+Kubernetes 社区中存在很多优秀的 CNI 项目，用户在选型时会存在困难。我们建议先明确自身需求，再调研各项目的对应解决方案，而非先比较产品差异再决策。这背后的原因有两个：
 
-1. 每个项目 Maintainer 的主要精力都在维护自己的项目，解决自己社区的用户问题，而不是盯着看别的项目在做什么，了解其他项目背后的实现逻辑。因此 Maintainer 无法给出一个准确的对比列表，对于项目外部的人来说做这个事情只会更困难。
-2. 对于最终用户，花精力搞明白自己内部的需求是什么远比搞明白外部的两个项目有什么区别更重要。
+1. 每个项目维护者的主要精力都在维护自己的项目，解决自己社区的用户问题，而非关注其他项目的发展。因此维护者无法给出准确的对比信息，外部人员做此工作更加困难。
+2. 对于最终用户，明确自身需求比了解项目间差异更为重要。
 
 在 Kube-OVN 的项目下列出和其他 CNI 的区别并推荐 Kube-OVN 只会充满主观偏见和错误，因此这里我们只会列出**不要选择** Kube-OVN 的场景，并给出我们的推荐。
 
@@ -67,7 +67,7 @@ Kube-OVN 主要聚焦在 CNI 层面的网络能力，你需要通过组合生态
 
 选择 [ovn-kubernetes](https://ovn-kubernetes.io/)。
 
-在 OpenShift 上使用第三方 CNI 需要适配 [Cluster Network Operator](https://github.com/openshift/cluster-network-operator) 规范，Kube-OVN 目前没有这方面的工作计划。并且第三方网络插件不会获得 RedHat 官方的技术支持，而网络又是 Kubernetes 中重要的一环，大量后期的方案设计、故障排查你都需要在多个供应商之间进行协调。
+在 OpenShift 上使用第三方 CNI 需要适配 [Cluster Network Operator](https://github.com/openshift/cluster-network-operator) 规范，Kube-OVN 目前没有相关计划。此外，第三方网络插件无法获得 RedHat 官方技术支持，而网络作为 Kubernetes 的重要组件，后续的方案设计和故障排查都需要在多个供应商间协调。
 
 ### 在公有云提供的 Kubernetes（EKS/AKS/GKE 等）上运行
 

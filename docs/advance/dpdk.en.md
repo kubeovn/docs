@@ -2,7 +2,7 @@
 
 This document describes how Kube-OVN combines with OVS-DPDK to provide a DPDK-type network interface to KubeVirt's virtual machines.
 
-> Upstream KubeVirt does not currently support OVS-DPDK, users need to use the downstream patch [Vhostuser implementation](https://github.com/kubevirt/kubevirt/pull/3208)
+> Upstream KubeVirt does not currently support OVS-DPDK, users need to use the related patch [Vhostuser implementation](https://github.com/kubevirt/kubevirt/pull/3208){: target="_blank" }
 > to build KubeVirt by themselves or [KVM Device Plugin](https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md) to use OVS-DPDK.
 
 ## Prerequisites
@@ -54,7 +54,7 @@ bash install.sh --with-hybrid-dpdk
 
 Here we verify the OVS-DPDK functionality by creating a virtual machine with a vhostuser type NIC.
 
-Here we use the KVM Device Plugin to create virtual machines. For more information on how to use it, please refer to [KVM Device Plugin].(<https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md>).
+Here we use the KVM Device Plugin to create virtual machines. For more information on how to use it, please refer to [KVM Device Plugin](https://github.com/kubevirt/kubernetes-device-plugins/blob/master/docs/README.kvm.md).
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/kubevirt/kubernetes-device-plugins/master/manifests/kvm-ds.yml

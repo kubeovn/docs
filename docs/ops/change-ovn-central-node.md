@@ -1,6 +1,6 @@
 # 更换 ovn-central 节点
 
-由于 `ovn-central` 内的 `ovn-nb` 和 `ovn-sb` 分别建立了类似 etcd 的 raft 集群，因此更换 `ovn-central`
+由于 `ovn-central` 内的 `ovn-nb` 和 `ovn-sb` 分别建立了类似 etcd 的 Raft 集群，因此更换 `ovn-central`
 节点需要额外的操作，保证集群状态的正确和数据的一致。建议每次只对一个节点进行上下线处理，以避免集群进入不可用
 状态，影响集群整体网络。
 

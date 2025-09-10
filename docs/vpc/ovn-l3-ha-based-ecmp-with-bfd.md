@@ -1,6 +1,6 @@
 # OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持
 
-自定义 vpc 基于 ovn snat 后基于 ecmp 静态路由哈希到多个 gw node ovnext0 网卡出公网
+自定义 VPC 基于 OVN SNAT，通过 ECMP 静态路由哈希到多个 Gateway Node 的 ovnext0 网卡出公网。
 
 - 支持基于 bfd 的高可用
 - 仅支持 hash 负载均衡
@@ -23,11 +23,11 @@ external-subnet-->gw-node3-ovnext0--> node3-external-switch
 
 ### 1.2 默认 vpc 启用 eip_snat
 
-### 1.3 自定义 vpc 启用 eip snat fip 功能
+### 1.3 自定义 VPC 启用 eip snat fip 功能
 
-以上部分和 [ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) 完全一致，这些功能验证通过后，可以直接基于如下方式，将 vpc 切换到基于 ecmp 的 bfd 静态路由，当然也可以切回。
+以上部分和 [ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) 完全一致，这些功能验证通过后，可以直接基于如下方式，将 VPC 切换到基于 ecmp 的 bfd 静态路由，当然也可以切回。
 
-自定义 vpc 使用该功能之前，需要先提供好网关节点，至少需要提供 2 个以上网关节点，注意当前实现 ovn-eip 的名字必须和网关节点名保持一致，目前没有做该资源的自动化维护。
+自定义 VPC 使用该功能之前，需要先提供好网关节点，至少需要提供 2 个以上网关节点。注意当前实现 ovn-eip 的名字必须和网关节点名保持一致，目前没有做该资源的自动化维护。
 
 ``` yaml
 # cat gw-node-eip.yaml
@@ -102,9 +102,9 @@ spec:
 
 **使用上的注意点:**
 
-1. 自定义 vpc 下的 ecmp 只用静态 ecmp bfd 路由，vpc enableBfd 和 subnet enableEcmp 同时开启的情况下才会生效，才会自动管理静态 ecmp bfd 路由。
+1. 自定义 vpc 下的 ecmp 只使用静态 ecmp bfd 路由，vpc enableBfd 和 subnet enableEcmp 同时开启的情况下才会生效，才会自动管理静态 ecmp bfd 路由。
 2. 上述配置关闭的情况下，会自动切回常规默认静态路由。
-3. 默认 vpc 无法使用该功能，仅支持自定义 vpc，默认 vpc 有更复杂的策略路由以及 snat 设计。
+3. 默认 VPC 无法使用该功能，仅支持自定义 VPC，默认 VPC 有更复杂的策略路由以及 snat 设计。
 4. 自定义 vpc 的 subnet 的 enableEcmp 仅使用静态路由，网关类型 gatewayType 没有作用。
 5. 当关闭 EnableExternal 时，vpc 内无法通外网。
 6. 当开启 EnableExternal 时，关闭 EnableBfd 时，会基于普通默认路由上外网，不具备高可用。

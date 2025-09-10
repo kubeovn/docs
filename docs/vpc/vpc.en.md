@@ -3,7 +3,7 @@
 Kube-OVN supports multi-tenant isolation level VPC networks. Different VPC networks are independent of each other
 and can be configured separately with Subnet CIDRs, routing policies, security policies, outbound gateways, EIP, etc.
 
-> VPC is mainly used in scenarios where there requires strong isolation of multi-tenant networks
+> VPC is mainly used in scenarios where strong isolation is required for multi-tenant networks
 > and some Kubernetes networking features conflict under multi-tenant networks.
 > For example, node and pod access, NodePort functionality, network access-based health checks,
 > and DNS capabilities are not supported in multi-tenant network scenarios at this time.
@@ -421,7 +421,7 @@ spec:
 
 ### Modify the Provider of the ovn-default Logical Switch
 
-Modify the provider of ovn-default to the provider `ovn-nad.default.ovn`configured above in nad:
+Modify the provider of ovn-default to the provider `ovn-nad.default.ovn` configured above in nad:
 
 ```yaml
 apiVersion: kubeovn.io/v1

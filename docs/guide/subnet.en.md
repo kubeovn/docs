@@ -286,7 +286,7 @@ spec:
   cidrBlock: 10.10.0.0/24
 ```
 
-In some scenarios, users hope that the internal traffic of the subnet configured with ACL rules will not be affected, which can be achieved by configuring `allowEWTraffic: true`.
+In some scenarios, users want the internal traffic of the subnet configured with ACL rules to remain unaffected, which can be achieved by configuring `allowEWTraffic: true`.
 
 ## Subnet Isolation
 

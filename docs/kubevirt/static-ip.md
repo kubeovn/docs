@@ -4,9 +4,9 @@
 
 但是大部分常见 CNI 存在下面的局限性：
 
-- 无法将 IP 地址和 VM 生命周期绑定，VM 重启或者后 IP 发生变化。
-- IP 地址和 Node 绑定，VM 迁移到新的节点后无法复用之前 IP。
-- 无法支持 IP 地址配置，用户无法指定 VM 的 IP 地址。
+- 无法将 IP 地址与 VM 生命周期绑定，VM 重启或迁移后 IP 会发生变化。
+- IP 地址和 Node 绑定，VM 迁移到新的节点后无法复用之前的 IP。
+- 无法支持自定义 IP 地址配置，用户无法指定 VM 的 IP 地址。
 
 因此通常会使用 KubeVirt 的 `masquerade` 网络模式，通过 iptables 将 VM 的流量转发到宿主机网卡上，从而实现 VM 的 IP 固定，但 `masquerade` 相比 `bridge` 存在以下问题：
 

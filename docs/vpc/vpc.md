@@ -1,7 +1,7 @@
 # VPC 使用
 
 Kube-OVN 支持多租户隔离级别的 VPC 网络。不同 VPC 网络相互独立，可以分别配置 Subnet 网段，
-路由策略，安全策略，出网网关，EIP 等配置。
+路由策略，安全策略、出网网关，EIP 等配置。
 
 > VPC 主要用于有多租户网络强隔离的场景，部分 Kubernetes 网络功能在多租户网络下存在冲突。
 > 例如节点和 Pod 互访，NodePort 功能，基于网络访问的健康检查和 DNS 能力在多租户网络场景暂不支持。
@@ -401,7 +401,7 @@ Service 的 IP 地址是全局分配且不能重复。对于 VPC 的使用场景
 
 针对这类场景，Kube-OVN 提供了 `SwitchLBRule` 资源，用户可以自定义内部负载均衡的地址范围。
 
-一个 `SwitchLBRule`` 例子如下：
+一个 `SwitchLBRule` 例子如下：
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -438,7 +438,7 @@ vpc-dns-test-cjh2   10.96.0.3   53/UDP,53/TCP,9153/TCP   kube-system/slr-vpc-dns
 ## 自定义 vpc-dns
 
 由于自定义 VPC 和默认 VPC 网络相互隔离，VPC 内 Pod 无法使用默认的 coredns 服务进行域名解析。
-如果希望在自定义 VPC 内使用 coredns 解析集群内 Service 域名，可以通过 Kube-OVN 提供的 vpc-dns 资源来实现。
+如果希望在自定义 VPC 内使用 CoreDNS 解析集群内 Service 域名，可以通过 Kube-OVN 提供的 vpc-dns 资源来实现。
 
 ### 创建附加网卡
 
@@ -603,7 +603,7 @@ spec:
 ```
 
 - `vpc`：用于部署 dns 组件的 vpc 名称。
-- `subnet`：用于部署 dns 组件的子名称。
+- `subnet`：用于部署 dns 组件的子网名称。
 
 查看资源信息：
 
@@ -618,8 +618,8 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 
 ### 限制
 
-- 一个 vpc 下只会部署一个自定义 dns 组件;
-- 当一个 vpc 下配置多个 vpc-dns 资源（即同一个 vpc 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `fasle`;
+- 一个 VPC 下只会部署一个自定义 DNS 组件；
+- 当一个 VPC 下配置多个 vpc-dns 资源（即同一个 VPC 不同的 subnet），只有一个 vpc-dns 资源状态为 `true`，其他为 `false`；
 - 当 `true` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。
 
 ## 默认子网

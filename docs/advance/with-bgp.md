@@ -95,7 +95,7 @@ kubectl annotate service sample ovn.kubernetes.io/bgp-
 
 EIPs 可以由它们所在的 VPC NAT Gateway 对外发布。当在 `VpcNatGateway` 上启用 BGP 时，会向其注入一个新的 BGP Sidecar。
 
-为了启用 VPC NAT Gateway 的 BGP 功能，搜选需要创建一个 BGP Speaker Sidecar 所使用的 `NetworkAttachmentDefinition`。这个 NAD 将会和一个在默认 VPC 下的 Subnet 关联。这样 Sidecar 内的控制器可以和 Kubernetes API 通信并自动同步 EIPs 信息。
+为了启用 VPC NAT Gateway 的 BGP 功能，首先需要创建一个 BGP Speaker Sidecar 所使用的 `NetworkAttachmentDefinition`。这个 NAD 将会和一个在默认 VPC 下的 Subnet 关联。这样 Sidecar 内的控制器可以和 Kubernetes API 通信并自动同步 EIPs 信息。
 如果你使用了用户自定义 VPC 下 CoreDNS 的功能则可以复用同一个 NAD。
 
 创建 `NetworkAttachmentDefinition` 和 `Subnet` 并将 `provider` 设置为 `{nadName}.{nadNamespace}.ovn`：

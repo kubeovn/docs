@@ -98,7 +98,7 @@ spec:
           - node2
 ```
 
-**注意：ProviderNetwork 资源名称的长度不得超过 12。**
+**注意：ProviderNetwork 资源名称长度不得超过 12 个字符。**
 
 - `defaultInterface`: 为默认使用的节点网卡名称。 ProviderNetwork 创建成功后，各节点（除 excludeNodes 外）中会创建名为 br-net1（格式为 `br-NAME`）的 OVS 网桥，并将指定的节点网卡桥接至此网桥。
 - `customInterfaces`: 为可选项，可针对特定节点指定需要使用的网卡。

@@ -52,7 +52,7 @@ spec:
             - name: default
               binding:
                 name: managedtap
-        networks:
+      networks:
         - name: default
           pod: {}
 ```
