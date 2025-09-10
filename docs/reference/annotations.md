@@ -10,6 +10,7 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | -------------------------------------- | ------------------------- | ------------------------------------------------------------------------------- |
 | ovn.kubernetes.io/allocated            | `true` or `false`         | Pod 主网卡是否已被分配地址                                                      |
 | ovn.kubernetes.io/routed               | `true` or `false`         | Pod 主网卡在 OVN 内的路由是否设置完成                                           |
+| ovn.kubernetes.io/routes               | String                    | Pod 主网卡的路由信息                                                           |
 | ovn.kubernetes.io/mac_address          | String                    | Pod 主网卡所分配到的 Mac 地址，创建 Pod 时可通过该 Annotation 设置固定 Mac 地址 |
 | ovn.kubernetes.io/ip_address           | String                    | Pod 主网卡所分配到的 IP 地址，创建 Pod 时可通过该 Annotation 设置固定 IP 地址   |
 | ovn.kubernetes.io/cidr                 | String                    | Pod 主网卡所属子网的 CIDR                                                       |
@@ -19,7 +20,9 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/snat                 | String                    | Pod 访问集群外使用的 SNAT 地址                                                  |
 | ovn.kubernetes.io/eip                  | String                    | Pod 访问集群外部和被集群外部访问所使用的 EIP 地址                               |
 | ovn.kubernetes.io/vip                  | String                    | Pod 主网卡使用的预留 VIP，可通过该 Annotation 使用预先创建的 VIP 资源           |
+| ovn.kubernetes.io/aaps                 | String                    | Pod 主网卡的 AAPs (Additional Allowed Addresses Pairs) 配置                    |
 | ovn.kubernetes.io/virtualmachine       | String                    | Pod 主网卡所属的 VirtualMachineInstance                                         |
+| ovn.kubernetes.io/activation_strategy  | String                    | Pod 主网卡的激活策略                                                           |
 | ovn.kubernetes.io/logical_router       | String                    | Pod 主网卡所属的 VPC                                                            |
 | ovn.kubernetes.io/layer2_forward       | `true` or `false`         | Pod 主网卡在 OVN LSP 中是否增加 `unknown` 地址                                  |
 | ovn.kubernetes.io/port_security        | `true` or `false`         | Pod 主网卡对应端口是否开启 Port Security                                        |
@@ -28,15 +31,16 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/ingress_rate         | Int                       | Pod 主网卡流入方向限速，单位为 Mbits/s                                          |
 | ovn.kubernetes.io/egress_rate          | Int                       | Pod 主网卡流出方向限速，单位为 Mbits/s                                          |
 | ovn.kubernetes.io/security_groups      | String 列表，使用逗号分隔    | Pod 主网卡所属的 Security Group                                                 |
-| ovn.kubernetes.io/allow_live_migration | `true` or `false`         | Pod 主网卡是否允许 live migration，用于 kubevirt 场景                           |
 | ovn.kubernetes.io/default_route        | `true` or `false`         | 是否将主网卡设置为默认路由网卡                                                  |
 | ovn.kubernetes.io/provider_network     | String                    | Pod 主网卡所属的 ProviderNetwork                                                |
 | ovn.kubernetes.io/mirror               | `true` or `false`         | Pod 主网卡是否做流量镜像                                                        |
-| ovn.kubernetes.io/logical_switch       | String                    | Pod 主网卡所属 Subnet                                                           |
+| ovn.kubernetes.io/north_gateway        | String                    | Pod 主网卡的北向网关配置                                                       |
 | ovn.kubernetes.io/latency              | Int                       | Pod 主网卡注入的延迟，单位为 ms                                                 |
 | ovn.kubernetes.io/limit                | Int                       | Pod 主网卡 qdisc 队列可容纳的最大数据包数                                       |
 | ovn.kubernetes.io/loss                 | Float                     | Pod 主网卡报文丢包概率                                                          |
 | ovn.kubernetes.io/jitter               | Int                       | Pod 主网卡注入抖动延迟，单位为 ms                                             |
+| ovn.kubernetes.io/generate-hash        | `true` or `false`         | 是否为 Pod 生成哈希值                                                          |
+| ovn.kubernetes.io/attachmentprovider   | String                    | Pod 的附件提供者                                                               |
 
 ## Node Annotation
 
@@ -67,11 +71,14 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 
 ## Service Annotation
 
-| Key                             | Value                     | Description                               |
-| ------------------------------- | ------------------------- | ----------------------------------------- |
-| ovn.kubernetes.io/bgp           | `true` or `false`         | 是否对外通过 BGP 发布 Service 地址        |
-| ovn.kubernetes.io/switch_lb_vip | String                    | Service 在 Kube-OVN 中额外分配的 VIP 地址 |
-| ovn.kubernetes.io/vpc           | String                    | Service 所属的 VPC                        |
+| Key                                          | Value                     | Description                               |
+| -------------------------------------------- | ------------------------- | ----------------------------------------- |
+| ovn.kubernetes.io/bgp                        | `true` or `false`         | 是否对外通过 BGP 发布 Service 地址        |
+| ovn.kubernetes.io/switch_lb_vip              | String                    | Service 在 Kube-OVN 中额外分配的 VIP 地址 |
+| ovn.kubernetes.io/vpc                        | String                    | Service 所属的 VPC                        |
+| ovn.kubernetes.io/service_external_ip_from_subnet | `true` or `false`   | Service 外部 IP 是否从子网分配             |
+| ovn.kubernetes.io/service_health_check       | `true` or `false`         | Service 是否启用健康检查                   |
+| ovn.kubernetes.io/lb_svc_img                 | String                    | 负载均衡服务使用的镜像                     |
 
 ## Networkpolicy Annotation
 

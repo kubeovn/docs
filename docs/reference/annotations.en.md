@@ -10,6 +10,7 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 |----------------------------------------|-------------------------------------|------------------------------------------------------------------------------------------------------------------------|
 | ovn.kubernetes.io/allocated            | `true` or `false`                   | If the Pod primary interface has already been allocated an address                                                     |
 | ovn.kubernetes.io/routed               | `true` or `false`                   | If the Pod primary interface has already been allocated a route                                                        |
+| ovn.kubernetes.io/routes               | String                              | Route information for Pod primary interface                                                                           |
 | ovn.kubernetes.io/mac_address          | String                              | MAC address allocated to Pod primary interface, when creating a Pod, you can set a fixed MAC address by this Annotation |
 | ovn.kubernetes.io/ip_address           | String                              | IP address allocated to Pod primary interface, when creating a Pod, you can set a fixed IP address by this Annotation   |
 | ovn.kubernetes.io/cidr                 | String                              | Subnet CIDR that the Pod primary interface belongs to                                                                  |
@@ -19,7 +20,9 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/snat                 | String                              | SNAT address for accessing external address                                                                            |
 | ovn.kubernetes.io/eip                  | String                              | EIP address that Pod accesses external clusters and is accessed from external.                                         |
 | ovn.kubernetes.io/vip                  | String                              | VIP allocated to Pod primary interface                                                                                 |
+| ovn.kubernetes.io/aaps                 | String                              | AAPs (Additional Allowed Addresses Pairs) configuration for Pod primary interface                                      |
 | ovn.kubernetes.io/virtualmachine       | String                              | The VirtualMachineInstance that the Pod primary interface belongs to                                                   |
+| ovn.kubernetes.io/activation_strategy  | String                              | Activation strategy for Pod primary interface                                                                          |
 | ovn.kubernetes.io/logical_router       | String                              | The VPC that the Pod primary interface belongs to                                                                      |
 | ovn.kubernetes.io/layer2_forward       | `true` or `false`                   | Enable add `unknown` address to Pod primary interface in OVN NorthboundDB LSP                                          |
 | ovn.kubernetes.io/port_security        | `true` or `false`                   | Enable Pod primary interface port security                                                                             |
@@ -28,14 +31,16 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/ingress_rate         | Int                                 | Pod primary interface ingress rate limit, measured in Mbits/s                                                          |
 | ovn.kubernetes.io/egress_rate          | Int                                 | Pod primary interface egress rate limit, measured in Mbits/s                                                           |
 | ovn.kubernetes.io/security_groups      | String list, separated by comma     | The SecurityGroup that the Pod primary interface belongs to                                                            |
-| ovn.kubernetes.io/allow_live_migration | `true` or `false`                   | Allow live migration for Pod primary interface, used by KubeVirt                                                       |
 | ovn.kubernetes.io/default_route        | `true` or `false`                   | Set the default route to the Pod primary interface.                                                                    |
 | ovn.kubernetes.io/provider_network     | String                              | The ProviderNetwork that the Pod primary interface belongs to                                                          |
 | ovn.kubernetes.io/mirror               | `true` or `false`                   | Enable Pod primary interface traffic mirror                                                                            |
+| ovn.kubernetes.io/north_gateway        | String                              | North gateway configuration for Pod primary interface                                                                  |
 | ovn.kubernetes.io/latency              | Int                                 | The delay injected to the Pod primary interface card, measured in milliseconds                                         |
 | ovn.kubernetes.io/limit                | Int                                 | Maximum number of packets that the qdisc queue of the primary interface of the Pod                                     |
 | ovn.kubernetes.io/loss                 | Float                               | The probability of packet loss on the Pod primary interface                                                            |
 | ovn.kubernetes.io/jitter               | Int                                 | The jitter of packet latency on the Pod primary interface, measured in milliseconds                                    |
+| ovn.kubernetes.io/generate-hash        | `true` or `false`                   | Whether to generate hash for Pod                                                                                       |
+| ovn.kubernetes.io/attachmentprovider   | String                              | Attachment provider for Pod                                                                                            |
 
 ## Node Annotation
 
@@ -66,11 +71,14 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 
 ## Service Annotation
 
-| Key                             | Value             | Description                                               |
-| ------------------------------- | ----------------- | --------------------------------------------------------- |
-| ovn.kubernetes.io/bgp           | `true` or `false` | Enable Service address BGP advertisement                  |
-| ovn.kubernetes.io/switch_lb_vip | String            | Additional VIP addresses assigned to Service in Kube-OVN. |
-| ovn.kubernetes.io/vpc           | String            | The VPC that the Service belongs to                       |
+| Key                                          | Value             | Description                                               |
+| -------------------------------------------- | ----------------- | --------------------------------------------------------- |
+| ovn.kubernetes.io/bgp                        | `true` or `false` | Enable Service address BGP advertisement                  |
+| ovn.kubernetes.io/switch_lb_vip              | String            | Additional VIP addresses assigned to Service in Kube-OVN. |
+| ovn.kubernetes.io/vpc                        | String            | The VPC that the Service belongs to                       |
+| ovn.kubernetes.io/service_external_ip_from_subnet | `true` or `false` | Whether Service external IP is allocated from subnet    |
+| ovn.kubernetes.io/service_health_check       | `true` or `false` | Whether Service health check is enabled                   |
+| ovn.kubernetes.io/lb_svc_img                 | String            | Load balancer service image                               |
 
 ## Networkpolicy Annotation
 
