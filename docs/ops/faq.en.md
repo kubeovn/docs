@@ -54,7 +54,7 @@ From the community feedback, the problem can be solved by the `4.19.90-25.16.v21
 Pod can not access Service, and `dmesg` show errors:
 
 ```bash
-netlink：Unknown conntrack attr (type=6, max=5)
+netlink: Unknown conntrack attr (type=6, max=5)
 openvswitch: netlink: Flow actions may not be safe on all matching packets.
 ```
 

@@ -74,8 +74,8 @@ This list records the feature stages from the 1.8 release.
 | Workload with Fixed IP                           | true    | GA    | 1.8   |       |
 | StatefulSet with Fixed IP                        | true    | GA    | 1.8   |       |
 | VM with Fixed IP                                 | false   | Beta  | 1.9   |       |
-| Load Balancer Type Service in Default VPC        | false   | Alpha | 1.11  |       |
-| Load Balance in Custom VPC                       | false   | Alpha | 1.11  |       |
+| LoadBalancer Type Service in Default VPC        | false   | Alpha | 1.11  |       |
+| LoadBalancer in Custom VPC                       | false   | Alpha | 1.11  |       |
 | DNS in Custom VPC                                | false   | Alpha | 1.11  |       |
 | Underlay and Overlay Interconnection             | false   | Beta  | 1.12  |       |
 | VPC Egress Gateway                               | true    | Alpha | 1.14  |       |

@@ -1,6 +1,6 @@
 # Annotation Usage
 
-Kube-OVN uses a large number of Pod and Node Annotations for configuring functionality and transferring information. Users can refer to this document to understand the usage of each Annotation, to better troubleshooting and information retrieval.
+Kube-OVN uses a large number of Pod and Node Annotations for configuring functionality and transferring information. Users can refer to this document to understand the usage of each Annotation, for better troubleshooting and information retrieval.
 
 > Note: Some Annotations may change as the code is adjusted.
 

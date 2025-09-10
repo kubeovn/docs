@@ -3,7 +3,7 @@
 If the Join subnet CIDR created conflicts or does not meet expectations, you can use this document to modify.
 
 > After modifying the Join Subnet CIDR, the previously created Pods will not be able to access the external
-> network normally and need to wait for the rebuild completed.
+> network normally and need to wait for the rebuild to complete.
 
 ## Delete Join Subnet
 

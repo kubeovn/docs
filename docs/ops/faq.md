@@ -1,6 +1,6 @@
 # 其他常见问题
 
-为了更好的分析问题请先参考 [总体架构](../reference/architecture.md) 了解 Kube-OVN 的组件和组件之间的交互。
+为了更好地分析问题，请先参考 [总体架构](../reference/architecture.md) 了解 Kube-OVN 的组件和组件之间的交互。
 
 ## 通用排查步骤
 
@@ -13,7 +13,7 @@
     - 观察出问题节点 `kube-ovn-pinger` 日志，确认是否存在网络访问失败的情况
 2. 检查各个组件日志，判断是否有错误日志输出
     - 检查 Pod 日志，确认是否存在网络访问失败的情况
-    - 检查节点 kube-ovn-cni 日志，确认 CNI 是否存处理错误
+    - 检查节点 kube-ovn-cni 日志，确认 CNI 是否存在处理错误
     - 检查节点 ovs-ovn 日志，确认是否存在 OVS 处理错误
     - 检查 kube-ovn-controller 日志，确认是否存在控制器处理错误
     - 检查 ovn-central 日志，确认是否存在 OVN 处理错误
@@ -140,7 +140,7 @@ IpExt:
 ethtool -K eth0 tx off
 ```
 
-经社区用户反馈 CentOS 7 和麒麟操作系统都可能出现类似问题，其中麒麟操作系统在 `4.19.90-25.16.v2101` 内核后可以解决该问题。
+经社区用户反馈，CentOS 7 和麒麟操作系统都可能出现类似问题，其中麒麟操作系统在 `4.19.90-25.16.v2101` 内核后可以解决该问题。
 
 ## Pod 访问 Service 不通
 
@@ -165,7 +165,7 @@ openvswitch: netlink: Flow actions may not be safe on all matching packets.
 
 ### 现象
 
-从 v1.11.x 版本开始，1w Pod 以上的集群，如果 OVN NB 或者 SB 出现频繁选主的情况，可能原因是 Kube-OVN 周期进行了 ovsdb-server/compact 动作，影响到选主逻辑。
+从 v1.11.x 版本开始，1 万个 Pod 以上的集群，如果 OVN NB 或者 SB 出现频繁选主的情况，可能原因是 Kube-OVN 周期进行了 ovsdb-server/compact 动作，影响到选主逻辑。
 
 ### 解决方法
 

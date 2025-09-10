@@ -195,7 +195,7 @@ pod "ovs-ovn-t87zk" deleted
 ### [nbctl | sbctl] [options ...]
 
 This subcommand executes the `ovn-nbctl` and `ovn-sbctl` commands directly into the leader node of the OVN northbound or southbound database.
-For more detailed usage of this command, please refer to the official documentation of the upstream OVN [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html){: target="_blank" } 和 [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html){: target="_blank" }.
+For more detailed usage of this command, please refer to the official documentation of the upstream OVN [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html){: target="_blank" } and [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html){: target="_blank" }.
 
 ```bash
 # kubectl ko nbctl show
@@ -353,7 +353,7 @@ listening on d7176fe7b4e0_h, link-type EN10MB (Ethernet), capture size 262144 by
 ### trace [arguments ...]
 
 This command will print the OVN logical flow table and the final Openflow flow table when the Pod/node accesses an address through a specific protocol,
-so that it make locate flow table related problems during development or troubleshooting much easy.
+so that it makes locating flow table related problems during development or troubleshooting much easier.
 
 Supported commands:
 
@@ -398,7 +398,7 @@ ct_next(ct_state=new|trk)
 ...
 ```
 
-If the trace object is a virtual machine running  in Underlay network, additional parameters is needed to specify the destination Mac address.
+If the trace object is a virtual machine running in Underlay network, additional parameters is needed to specify the destination Mac address.
 
 ```bash
 kubectl ko trace default/virt-handler-7lvml 8.8.8.8 82:7c:9f:83:8c:01 icmp
@@ -759,6 +759,7 @@ This command will test some performance indicators of Kube-OVN as follows:
 2. Hostnetwork network performance indicators;
 3. Container network multicast packet performance indicators;
 4. Time required for OVN-NB, OVN-SB, and OVN-Northd leader deletion recovery.
+
 The parameter image is used to specify the image used by the performance test pod. By default, it is `kubeovn/test:v1.12.0`. This parameter is mainly set for offline scenarios, and the image name may change when the image is pulled to the intranet environment.
 
 ```bash

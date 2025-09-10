@@ -49,7 +49,7 @@ By default, the physical NIC `eth0` is used to implement the multi-interface fun
 
 ### Create Subnet
 
-The created Subnet is used to allocate LoadBalancerIP for the LoadBalancer Service, which should normally  be accessible from outside the cluster. An Underlay Subnet can be configured for address allocation.
+The created Subnet is used to allocate LoadBalancerIP for the LoadBalancer Service, which should normally be accessible from outside the cluster. An Underlay Subnet can be configured for address allocation.
 
 Refer to the following YAML to create a new subnet:
 

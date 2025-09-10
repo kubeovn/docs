@@ -26,8 +26,8 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/logical_router       | String                    | Pod 主网卡所属的 VPC                                                            |
 | ovn.kubernetes.io/layer2_forward       | `true` or `false`         | Pod 主网卡在 OVN LSP 中是否增加 `unknown` 地址                                  |
 | ovn.kubernetes.io/port_security        | `true` or `false`         | Pod 主网卡对应端口是否开启 Port Security                                        |
-| ovn.kubernetes.io/logical_switch       | String                    | Pod 主网卡所属的 Subnet                                                         |
-| ovn.kubernetes.io/vlan_id              | Int                       | Pod 主网卡所属 Subnet 的 Vlan ID                                                |
+| ovn.kubernetes.io/logical_switch       | String                    | Pod 主网卡所属的子网                                                         |
+| ovn.kubernetes.io/vlan_id              | Int                       | Pod 主网卡所属子网的 Vlan ID                                                |
 | ovn.kubernetes.io/ingress_rate         | Int                       | Pod 主网卡流入方向限速，单位为 Mbits/s                                          |
 | ovn.kubernetes.io/egress_rate          | Int                       | Pod 主网卡流出方向限速，单位为 Mbits/s                                          |
 | ovn.kubernetes.io/security_groups      | String 列表，使用逗号分隔    | Pod 主网卡所属的 Security Group                                                 |
@@ -53,7 +53,7 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/gateway          | String            | Node `ovn0` 网卡所属 `join` 子网的 Gateway 地址   |
 | ovn.kubernetes.io/chassis          | String            | Node 在 OVN-SouthBoundDB 中的 Chassis ID          |
 | ovn.kubernetes.io/port_name        | String            | Node `ovn0` 网卡在 OVN-NorthboundDB 中 LSP 的名称 |
-| ovn.kubernetes.io/logical_switch   | String            | Node `ovn0` 网卡所属 Subnet                       |
+| ovn.kubernetes.io/logical_switch   | String            | Node `ovn0` 网卡所属子网                       |
 | ovn.kubernetes.io/tunnel_interface | String            | 隧道封装使用的网卡                                |
 
 ## Namespace Annotation
@@ -61,7 +61,7 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | Key                           | Value                     | Description                          |
 | ----------------------------- | ------------------------- | ------------------------------------ |
 | ovn.kubernetes.io/cidr        | CIDR 列表，逗号分隔       | 该 Namespace 所绑定子网的 CIDR       |
-| ovn.kubernetes.io/exclude_ips | excludeIPs 列表，分号分割 | 该 Namespace 所绑定子网的 excludeIPs |
+| ovn.kubernetes.io/exclude_ips | excludeIPs 列表，分号分隔 | 该 Namespace 所绑定子网的 excludeIPs |
 
 ## Subnet Annotation
 
@@ -85,4 +85,4 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | Key                          | Value             | Description                 |
 | ---------------------------- | ----------------- | --------------------------- |
 | ovn.kubernetes.io/enable_log | `true` or `false` | 是否开启 NetworkPolicy 日志 |
-| ovn.kubernetes.io/log_acl_actions | "allow,drop,pass"其中一个或多个组合 | 打印匹配 Action ACL 的日志 |
+| ovn.kubernetes.io/log_acl_actions | "allow,drop,pass" 其中一个或多个组合 | 打印匹配 Action ACL 的日志 |

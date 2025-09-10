@@ -9,7 +9,7 @@ KubeVirt 在热迁移过程中面临如下几个挑战：
 - 迁移过程中若虚拟机 IP 发生变化则无法达到热迁移无感知的效果
 - 迁移过程中若网络发生中断，则无法达到热迁移无感知的效果
 
-Kube-OVN 通过在虚拟机迁移过程中针对上述问题进行了专门的处理，用户可以实现在网络方面无感知的热迁移，经我们测试网络的中断时间可以控制在 0.5 秒以内，且不会出现 TCP 连接中断。
+Kube-OVN 通过在虚拟机迁移过程中针对上述问题进行了专门的处理，用户可以实现在网络方面无感知的热迁移，经测试网络的中断时间可以控制在 0.5 秒以内，且不会出现 TCP 连接中断。
 
 ## 使用方式
 
@@ -79,7 +79,7 @@ Kube-OVN 通过在虚拟机迁移过程中针对上述问题进行了专门的�
 
 ## 热迁移原理
 
-Kube-OVN 在热迁移的过程中实现借鉴了来自红帽团队的[Live migration - Reducing downtime with multchassis port bindings](https://www.openvswitch.org/support/ovscon2022/slides/Live-migration-with-OVN.pdf)
+Kube-OVN 在热迁移过程中的实现借鉴了红帽团队的[Live migration - Reducing downtime with multchassis port bindings](https://www.openvswitch.org/support/ovscon2022/slides/Live-migration-with-OVN.pdf){: target="_blank" }。
 
 在热迁移过程中为了保证源虚拟机和目标虚拟机的网络一致，在迁移过程中网络中会同时存在两个相同的 IP 地址，在这个过程中需要处理网络冲突和流量混乱。具体步骤如下：
 
@@ -99,7 +99,7 @@ Kube-OVN 在热迁移的过程中实现借鉴了来自红帽团队的[Live migra
 
   ![image](../static/lm-4.png)
 
-5. KubeVirt 完成内存的同步，deactive 源 Pod，此时源 Pod 将不会处理网络流量。
+5. KubeVirt 完成内存的同步，停用源 Pod，此时源 Pod 将不会处理网络流量。
 
   ![image](../static/lm-5.png)
 

@@ -25,7 +25,7 @@ This document describes the steps to delete a worker node, if you want to change
 ## Stop kubelet and docker
 
 This step stops the `ovs-ovn` container to avoid registering information to `ovn-central`.
-Log into to the corresponding node and ruu the following commands:
+Log into the corresponding node and run the following commands:
   
 ```bash
 systemctl stop kubelet

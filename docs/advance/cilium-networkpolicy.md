@@ -122,7 +122,7 @@ PING 10.16.0.41 (10.16.0.41): 56 data bytes
 3 packets transmitted, 0 packets received, 100% packet loss
 ```
 
-test namepsace 下 Pod 的测试，访问正常:
+test namespace 下 Pod 的测试，访问正常:
 
 ```bash
 # kubectl exec -it -n test dynamic-7d8d7874f5-6dsg6 -- bash

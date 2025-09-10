@@ -1,13 +1,13 @@
 # 自定义 VPC 内部 DNS
 
-由于用户自定义 VPC 和 默认 VPC 网络相互隔离，自定 VPC 内无法访问到部署在默认 VPC 内的 coredns。
+由于用户自定义 VPC 和默认 VPC 网络相互隔离，自定义 VPC 内无法访问到部署在默认 VPC 内的 coredns。
 如果用户希望在自定义 VPC 内使用 Kubernetes 提供的集群内域名解析能力，可以参考本文档，利用 `vpc-dns` CRD 来实现。
 
 该 CRD 最终会部署一个 coredns，该 Pod 有两个网卡，一个网卡在用户自定义 VPC，另一个网卡在默认 VPC 从而实现网络互通，同时通过[自定义 VPC 内部负载均衡](./vpc-internal-lb.md)提供自定义 VPC 内的一个内部负载均衡。
 
 !!! note
 
-    该 DNS 地址**不会**自动注入到 Pod 或 VM 内，用户需要自己通过 Webhook 或者虚拟机镜像模板调整 `/etc/resolve.conf` 的内容。
+    该 DNS 地址**不会**自动注入到 Pod 或 VM 内，用户需要自己通过 Webhook 或者虚拟机镜像模板调整 `/etc/resolv.conf` 的内容。
 
 ## 部署 vpc-dns 所依赖的资源
 
@@ -149,7 +149,7 @@ spec:
 ```
 
 * `vpc` ： 用于部署 dns 组件的 vpc 名称。
-* `subnet`：用于部署 dns 组件的子名称。
+* `subnet`：用于部署 dns 组件的子网名称。
 * `replicas`: vpc dns deployment replicas
 
 查看部署资源的信息：
@@ -163,9 +163,9 @@ test-cjh2   true     cjh-vpc-1   cjh-subnet-2
 
 `ACTIVE` : `true` 部署了自定义 dns 组件，`false` 无部署。
 
-限制：一个 VPC 下只会部署一个自定义 dns 组件;
+限制：一个 VPC 下只会部署一个自定义 DNS 组件；
 
-* 当一个 VPC 下配置多个 vpc-dns 资源（即同一个 VPC 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `fasle`;
+* 当一个 VPC 下配置多个 vpc-dns 资源（即同一个 VPC 不同的 subnet），只有一个 vpc-dns 资源状态 `true`，其他为 `false`；
 * 当 `true` 的 vpc-dns 被删除掉，会获取其他 `false` 的 vpc-dns 进行部署。
 
 ## 验证部署结果

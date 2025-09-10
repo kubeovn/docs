@@ -155,7 +155,7 @@ data:
   image: docker.io/kubeovn/vpc-nat-gateway:v1.13.0
 ```
 
-Some RBAC needs to be added so that the NAT gateways can poll the Kubernetes API, apply the following configuration:  
+Configure RBAC permissions for the NAT gateway to access the Kubernetes API. Apply the following RBAC configuration:  
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1

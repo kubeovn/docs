@@ -30,7 +30,7 @@ Practice the operations in the Operations Guide in a development or testing envi
 
 ## Understand Specific Features
 
-Kube-OVN includes a wide range of features and is rapidly evolving. For the features you use, we recommend not only understanding how to use them but also their limitations and underlying principles. We are continuously improving the related content in each feature's documentation.
+Kube-OVN includes a wide range of features and is rapidly evolving. For the features you use, we recommend understanding not only how to use them but also their limitations and underlying principles. We are continuously improving the related content in each feature's documentation.
 
 We also suggest building a test suite for the features you use, so you can quickly validate the impact of new Kube-OVN releases. If your use case is not covered in Kube-OVN's end-to-end (E2E) test code, we welcome contributions to the test suite to help the project grow better.
 

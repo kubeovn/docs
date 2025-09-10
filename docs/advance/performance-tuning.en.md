@@ -36,7 +36,7 @@ Performance tuning and comparison is an exciting topic, and performance data com
 - Network: 2*10Gbps, xmit_hash_policy=layer3+4
 
 We use `qperf -t 60 <server ip> -ub -oo msg_size:1 -vu tcp_lat tcp_bw udp_lat udp_bw`
-to test bandwidth and latency of tcp/udp in 1-byte packets and the host network, respectively.
+to test the bandwidth and latency of TCP/UDP with 1-byte packets.
 
 | Type               | tcp_lat (us) | udp_lat (us) | tcp_bw (Mb/s) | udp_bw(Mb/s) |
 | ------------------ | -------------| -------------| --------------| -------------|

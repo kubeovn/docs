@@ -1,6 +1,6 @@
 # 使用 MetalLB 与 Kube-OVN Underlay 集成
 
-[MetalLB](https://metallb.universe.tf/) 是一个为 Kubernetes 集群提供负载均衡器实现的开源项目，可以为 Kubernetes 集群中的 Service 对象提供网络负载均衡功能。
+[MetalLB](https://metallb.universe.tf/){: target="_blank" } 是一个为 Kubernetes 集群提供负载均衡器实现的开源项目，可以为 Kubernetes 集群中的 Service 对象提供网络负载均衡功能。
 
 本文档介绍如何将 MetalLB 与 Kube-OVN 的 Underlay 子网模式集成。
 

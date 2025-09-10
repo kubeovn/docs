@@ -1,6 +1,6 @@
 # EIP and SNAT
 
-> This configuration is for the network under the default VPC. User-defined VPCS support two types of NAT. Please refer to:
+> This configuration is for the network under the default VPC. User-defined VPCs support two types of NAT. Please refer to:
 
 - [VPC Iptables NAT Gateway](../vpc/vpc.md)
 - [VPC OVN NAT Gateway](../vpc/ovn-eip-fip-snat.md)
@@ -47,7 +47,7 @@ data:
 
 - `enable-external-gw`: Whether to enable SNAT and EIP functions.
 - `type`: `centralized` or `distributed`, Default is `centralized` If `distributed` is used, all nodes of the cluster need to have the same name NIC to perform the gateway function.
-- `external-gw-nodes`: In `centralized`mode, The names of the node performing the gateway role, comma separated..
+- `external-gw-nodes`: In `centralized` mode, the names of the node performing the gateway role, comma separated.
 - `external-gw-nic`: The name of the NIC that performs the role of a gateway on the node.
 - `external-gw-addr`: The IP and mask of the physical network gateway.
 - `nic-ip`,`nic-mac`: The IP and Mac assigned to the logical gateway port needs to be an unoccupied IP and Mac for the physical subnet.
@@ -90,7 +90,7 @@ e7d81150-7743-4d6e-9e6f-5c688232e130
                 options: {peer=patch-br-int-to-localnet.external}
 ```
 
-## Config EIP amd SNAT on Pod
+## Config EIP and SNAT on Pod
 
 SNAT and EIP can be configured by adding the `ovn.kubernetes.io/snat` or `ovn.kubernetes.io/eip` annotation to the Pod, respectively:
 

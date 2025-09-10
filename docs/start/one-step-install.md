@@ -16,7 +16,7 @@ Kube-OVN 提供了一键安装脚本和 Charts 仓库，可以帮助你快速安
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/refs/tags/{{ variables.version }}/dist/images/install.sh
 ```
 
-如果对 master 分支的最新功能感兴趣，想使用下面的命令下载开发版本部署脚本：
+如果对 master 分支的最新功能感兴趣，请使用下面的命令下载开发版本部署脚本：
 
 ```bash
 wget https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/install.sh
@@ -31,9 +31,9 @@ REGISTRY="kubeovn"                     # 镜像仓库地址
 VERSION="{{ variables.version }}"                      # 镜像版本/Tag
 POD_CIDR="10.16.0.0/16"                # 默认子网 CIDR 不要和 SVC/NODE/JOIN CIDR 重叠
 SVC_CIDR="10.96.0.0/12"                # 需要和 apiserver 的 service-cluster-ip-range 保持一致
-JOIN_CIDR="100.64.0.0/16"              # Pod 和主机通信网络 CIDR，不要和 SVC/NODE/POD CIDR 重叠 
+JOIN_CIDR="100.64.0.0/16"              # Pod 和主机通信网络 CIDR，不要和 SVC/NODE/POD CIDR 重叠
 LABEL="node-role.kubernetes.io/master" # 部署 OVN DB 节点的标签
-IFACE=""                               # 容器网络所使用的的宿主机网卡名，如果为空则使用 Kubernetes 中的 Node IP 所在网卡
+IFACE=""                               # 容器网络所使用的宿主机网卡名，如果为空则使用 Kubernetes 中的 Node IP 所在网卡
 TUNNEL_TYPE="geneve"                   # 隧道封装协议，可选 geneve, vxlan 或 stt，stt 需要单独编译 ovs 内核模块
 ```
 
@@ -56,7 +56,7 @@ TUNNEL_TYPE="geneve"                   # 隧道封装协议，可选 geneve, vxl
 
 ## Helm Chart 安装
 
-由于 Kube-OVN 的安装，需要设置一些参数，因此使用 Helm 安装 Kube-OVN，需要按照以下步骤执行。
+由于 Kube-OVN 的安装需要设置一些参数，因此使用 Helm 安装 Kube-OVN 需要按照以下步骤执行。
 
 ### 查看节点 IP 地址
 

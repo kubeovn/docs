@@ -64,7 +64,7 @@ join 子网的 CIDR 请参考[修改 Join 子网](../ops/change-join-subnet.md)
 
 ### 查看 Join 子网
 
-> 注意：集中式子网下的 Pod 无法通过 `hostport`, 以及设置了 `externalTrafficPolicy: Local` 的 NodePort 类型 Service 进行访问，
+> 注意：集中式子网下的 Pod 无法通过 `hostport`，以及设置了 `externalTrafficPolicy: Local` 的 NodePort 类型 Service 进行访问。
 
 该子网默认名为 `join` 一般无需对该子网 CIDR 外的其他网络配置进行修改。
 
@@ -135,7 +135,7 @@ EOF
 ```
 
 - `cidrBlock`: 子网 CIDR 范围，同一个 VPC 下的不同 Subnet CIDR 不能重叠。
-- `excludeIps`: 保留地址列表，容器网络将不会自动分配列表内的地址，可用做固定 IP 地址分配段，也可在 Underlay 模式下避免和物理网络中已有设备冲突。
+- `excludeIps`: 保留地址列表，容器网络将不会自动分配列表内的地址，可用作固定 IP 地址分配段，也可在 Underlay 模式下避免和物理网络中已有设备冲突。
 - `gateway`：该子网网关地址，Overlay 模式下 Kube-OVN 会自动分配对应的逻辑网关，Underlay 模式下该地址需为底层物理网关地址。
 - `namespaces`: 绑定该子网的 Namespace 列表，绑定后 Namespace 下的 Pod 将会从当前子网分配地址。
 - `routeTable`: 关联的路由表，默认关联主路由表，路由表定义请参考[静态路由](../vpc/vpc.md#_3)
@@ -217,7 +217,7 @@ spec:
 当 `natOutgoing` 为 `true` 时，Pod 访问外部网络将会使用特定宿主机的 IP。
 
 子网示例，其中 `gatewayType` 字段为 `centralized`，`gatewayNode` 为特定机器在 Kubernetes 中的 NodeName。
-其中 `gatewayNode` 字段可以为逗号分隔的多台主机。
+其中 `gatewayNode` 字段可以认为逗号分隔的多台主机。
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -283,7 +283,7 @@ spec:
 默认情况下 Kube-OVN 创建的子网之间可以相互通信，Pod 也可以通过网关访问外部网络。
 
 如需对子网间的访问进行控制，可以在子网 CRD 中将 `private` 设置为 true，则该子网将和其他子网以及外部网络隔离，
-只能进行子网内部的通信。如需开白名单，可以通过 `allowSubnets` 进行设置。`allowSubnets` 内的网段和该子网可以双向互访。
+只能进行子网内部的通信。如需开白名单，可以通过 `allowSubnets` 设置。`allowSubnets` 内的网段和该子网可以双向互访。
 
 ### 开启访问控制的子网示例
 
@@ -330,7 +330,7 @@ spec:
 
 ## Multicast-Snoop 配置
 
-默认情况下 subnet 下的 Pod 如果发送组播报文，OVN 的默认行为是会广播组播报文到子网下所有的 Pod。如果开启 subnet 的 multicast snoop 开关，OVN 会根据 `South Database` 中的组播表 `Multicast_Group` 来进行转发，而不在进行广播。
+默认情况下 subnet 下的 Pod 如果发送组播报文，OVN 的默认行为是会广播组播报文到子网下所有的 Pod。如果开启 subnet 的 multicast snoop 开关，OVN 会根据 `South Database` 中的组播表 `Multicast_Group` 来转发，而不再进行广播。
 
 ```yaml
 apiVersion: kubeovn.io/v1

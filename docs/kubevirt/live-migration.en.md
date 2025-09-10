@@ -82,7 +82,6 @@ It can be observed that during the VM live migration process, the SSH connection
 During the live migration process, Kube-OVN implements techniques inspired by the Red Hat team's [Live migration - Reducing downtime with multi-chassis port bindings](https://www.openvswitch.org/support/ovscon2022/slides/Live-migration-with-OVN.pdf).
 
 To ensure network consistency between the source and target virtual machines during migration, the same IP address exists on the network for both the source and target VMs. This requires handling network conflicts and traffic confusion. The specific steps are as follows:
-Here's the translation:
 
 1. KubeVirt initiates the migration and creates the corresponding Pod on the target machine.
 
