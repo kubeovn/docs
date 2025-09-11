@@ -1,0 +1,604 @@
+<!doctype html><html lang=zh class=no-js> <head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=author content="Kube-OVN Team"><link href=https://kubeovn.github.io/docs/v1.13.x/vpc/ovn-eip-fip-snat/ rel=canonical><link href=../security-group/ rel=prev><link href=../ovn-l3-ha-based-ecmp-with-bfd/ rel=next><link rel=icon href=../../static/kube-ovn-icon-color.svg><meta name=generator content="mkdocs-1.6.1, mkdocs-material-9.5.44"><meta name=google-site-verification content=crXUpgbTSGNmzUyHUZey8X7EXueInswioZvm9VzdJHk><title>OVN EIP FIP SNAT 支持 - Kube-OVN 文档</title><link rel=stylesheet href=../../assets/stylesheets/main.0253249f.min.css><link rel=stylesheet href=../../assets/stylesheets/palette.06af60db.min.css><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback"><style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style><script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script><script id=__analytics>function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-X2R3RHC957"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-X2R3RHC957",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-X2R3RHC957",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script><script>"undefined"!=typeof __md_analytics&&__md_analytics()</script><meta property=og:type content=website><meta property=og:title content="OVN EIP FIP SNAT 支持 - Kube-OVN 文档"><meta property=og:description content=None><meta property=og:image content=https://kubeovn.github.io/docs/v1.13.x/assets/images/social/vpc/ovn-eip-fip-snat.png><meta property=og:image:type content=image/png><meta property=og:image:width content=1200><meta property=og:image:height content=630><meta content=https://kubeovn.github.io/docs/v1.13.x/vpc/ovn-eip-fip-snat/ property=og:url><meta name=twitter:card content=summary_large_image><meta name=twitter:title content="OVN EIP FIP SNAT 支持 - Kube-OVN 文档"><meta name=twitter:description content=None><meta name=twitter:image content=https://kubeovn.github.io/docs/v1.13.x/assets/images/social/vpc/ovn-eip-fip-snat.png></head> <body dir=ltr data-md-color-scheme=default data-md-color-primary=indigo data-md-color-accent=indigo> <input class=md-toggle data-md-toggle=drawer type=checkbox id=__drawer autocomplete=off> <input class=md-toggle data-md-toggle=search type=checkbox id=__search autocomplete=off> <label class=md-overlay for=__drawer></label> <div data-md-component=skip> <a href=#ovn-eip-fip-snat-dnat class=md-skip> 跳转至 </a> </div> <div data-md-component=announce> </div> <div data-md-color-scheme=default data-md-component=outdated hidden> <aside class="md-banner md-banner--warning"> <div class="md-banner__inner md-grid md-typeset"> You're not viewing the stable version. <a href=../../..> <strong>Click here to go to stable.</strong> </a> </div> <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script> </aside> </div> <header class="md-header md-header--shadow md-header--lifted" data-md-component=header> <nav class="md-header__inner md-grid" aria-label=页眉> <a href=../.. title="Kube-OVN 文档" class="md-header__button md-logo" aria-label="Kube-OVN 文档" data-md-component=logo> <img src=../../static/kube-ovn-icon-color.svg alt=logo> </a> <label class="md-header__button md-icon" for=__drawer> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg> </label> <div class=md-header__title data-md-component=header-title> <div class=md-header__ellipsis> <div class=md-header__topic> <span class=md-ellipsis> Kube-OVN 文档 </span> </div> <div class=md-header__topic data-md-component=header-topic> <span class=md-ellipsis> OVN EIP FIP SNAT 支持 </span> </div> </div> </div> <form class=md-header__option data-md-component=palette> <input class=md-option data-md-color-media data-md-color-scheme=default data-md-color-primary=indigo data-md-color-accent=indigo aria-label="Switch to dark mode" type=radio name=__palette id=__palette_0> <label class="md-header__button md-icon" title="Switch to dark mode" for=__palette_1 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg> </label> <input class=md-option data-md-color-media data-md-color-scheme=slate data-md-color-primary=indigo data-md-color-accent=indigo aria-label="Switch to light mode" type=radio name=__palette id=__palette_1> <label class="md-header__button md-icon" title="Switch to light mode" for=__palette_0 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg> </label> </form> <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script> <div class=md-header__option> <div class=md-select> <button class="md-header__button md-icon" aria-label=选择当前语言> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg> </button> <div class=md-select__inner> <ul class=md-select__list> <li class=md-select__item> <a href=../../en/vpc/ovn-eip-fip-snat/ hreflang=en class=md-select__link> English </a> </li> <li class=md-select__item> <a href=./ hreflang=zh class=md-select__link> 简体中文 </a> </li> </ul> </div> </div> </div> <label class="md-header__button md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg> </label> <div class=md-search data-md-component=search role=dialog> <label class=md-search__overlay for=__search></label> <div class=md-search__inner role=search> <form class=md-search__form name=search> <input type=text class=md-search__input name=query aria-label=搜索 placeholder=搜索 autocapitalize=off autocorrect=off autocomplete=off spellcheck=false data-md-component=search-query required> <label class="md-search__icon md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg> </label> <nav class=md-search__options aria-label=查找> <a href=javascript:void(0) class="md-search__icon md-icon" title=分享 aria-label=分享 data-clipboard data-clipboard-text data-md-component=search-share tabindex=-1> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg> </a> <button type=reset class="md-search__icon md-icon" title=清空当前内容 aria-label=清空当前内容 tabindex=-1> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> </button> </nav> <div class=md-search__suggest data-md-component=search-suggest></div> </form> <div class=md-search__output> <div class=md-search__scrollwrap tabindex=0 data-md-scrollfix> <div class=md-search-result data-md-component=search-result> <div class=md-search-result__meta> 正在初始化搜索引擎 </div> <ol class=md-search-result__list role=presentation></ol> </div> </div> </div> </div> </div> <div class=md-header__source> <a href=https://github.com/kubeovn/kube-ovn/ title=前往仓库 class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg> </div> <div class=md-source__repository> kubeovn/kube-ovn </div> </a> </div> </nav> <nav class=md-tabs aria-label=标签 data-md-component=tabs> <div class=md-grid> <ul class=md-tabs__list> <li class=md-tabs__item> <a href=../.. class=md-tabs__link> 主页 </a> </li> <li class=md-tabs__item> <a href=../../start/prepare/ class=md-tabs__link> 快速入门 </a> </li> <li class=md-tabs__item> <a href=../../guide/setup-options/ class=md-tabs__link> 使用指南 </a> </li> <li class=md-tabs__item> <a href=../../kubevirt/static-ip/ class=md-tabs__link> KubeVirt </a> </li> <li class="md-tabs__item md-tabs__item--active"> <a href=../vpc/ class=md-tabs__link> VPC 网络 </a> </li> <li class=md-tabs__item> <a href=../../ops/kubectl-ko/ class=md-tabs__link> 运维指南 </a> </li> <li class=md-tabs__item> <a href=../../advance/multi-nic/ class=md-tabs__link> 高级功能 </a> </li> <li class=md-tabs__item> <a href=../../reference/architecture/ class=md-tabs__link> 技术参考 </a> </li> <li class=md-tabs__item> <a href=../../contact/ class=md-tabs__link> 联系方式 </a> </li> </ul> </div> </nav> </header> <div class=md-container data-md-component=container> <main class=md-main data-md-component=main> <div class="md-main__inner md-grid"> <div class="md-sidebar md-sidebar--primary" data-md-component=sidebar data-md-type=navigation> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--primary md-nav--lifted" aria-label=导航栏 data-md-level=0> <label class=md-nav__title for=__drawer> <a href=../.. title="Kube-OVN 文档" class="md-nav__button md-logo" aria-label="Kube-OVN 文档" data-md-component=logo> <img src=../../static/kube-ovn-icon-color.svg alt=logo> </a> Kube-OVN 文档 </label> <div class=md-nav__source> <a href=https://github.com/kubeovn/kube-ovn/ title=前往仓库 class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg> </div> <div class=md-source__repository> kubeovn/kube-ovn </div> </a> </div> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../.. class=md-nav__link> <span class=md-ellipsis> 主页 </span> </a> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2> <label class=md-nav__link for=__nav_2 id=__nav_2_label tabindex=0> <span class=md-ellipsis> 快速入门 </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_2_label aria-expanded=false> <label class=md-nav__title for=__nav_2> <span class="md-nav__icon md-icon"></span> 快速入门 </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../start/prepare/ class=md-nav__link> <span class=md-ellipsis> 准备工作 </span> </a> </li> <li class=md-nav__item> <a href=../../start/one-step-install/ class=md-nav__link> <span class=md-ellipsis> 一键安装 </span> </a> </li> <li class=md-nav__item> <a href=../../start/underlay/ class=md-nav__link> <span class=md-ellipsis> Underlay 安装 </span> </a> </li> <li class=md-nav__item> <a href=../../start/talos-install/ class=md-nav__link> <span class=md-ellipsis> Talos 安装 </span> </a> </li> <li class=md-nav__item> <a href=../../start/uninstall/ class=md-nav__link> <span class=md-ellipsis> 卸载 </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_3> <label class=md-nav__link for=__nav_3 id=__nav_3_label tabindex=0> <span class=md-ellipsis> 使用指南 </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_3_label aria-expanded=false> <label class=md-nav__title for=__nav_3> <span class="md-nav__icon md-icon"></span> 使用指南 </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../guide/setup-options/ class=md-nav__link> <span class=md-ellipsis> 安装和配置选项 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/subnet/ class=md-nav__link> <span class=md-ellipsis> 子网使用 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/dual-stack/ class=md-nav__link> <span class=md-ellipsis> 双栈使用 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/static-ip-mac/ class=md-nav__link> <span class=md-ellipsis> 固定地址 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/ip/ class=md-nav__link> <span class=md-ellipsis> IP 使用 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/ippool/ class=md-nav__link> <span class=md-ellipsis> IP 池使用 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/custom-routes/ class=md-nav__link> <span class=md-ellipsis> 自定义路由 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/eip-snat/ class=md-nav__link> <span class=md-ellipsis> EIP 和 SNAT 配置 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/qos/ class=md-nav__link> <span class=md-ellipsis> 容器网络 QoS 配置 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/webhook/ class=md-nav__link> <span class=md-ellipsis> Webhook 使用 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/mirror/ class=md-nav__link> <span class=md-ellipsis> 流量镜像 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/networkpolicy-log/ class=md-nav__link> <span class=md-ellipsis> NetworkPolicy 日志 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/loadbalancer-service/ class=md-nav__link> <span class=md-ellipsis> LoadBalancer 类型 Service </span> </a> </li> <li class=md-nav__item> <a href=../../guide/prometheus-grafana/ class=md-nav__link> <span class=md-ellipsis> 配置监控和面板 </span> </a> </li> <li class=md-nav__item> <a href=../../guide/prometheus/ class=md-nav__link> <span class=md-ellipsis> 配置原生 Prometheus </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_4> <label class=md-nav__link for=__nav_4 id=__nav_4_label tabindex=0> <span class=md-ellipsis> KubeVirt </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_4_label aria-expanded=false> <label class=md-nav__title for=__nav_4> <span class="md-nav__icon md-icon"></span> KubeVirt </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../kubevirt/static-ip/ class=md-nav__link> <span class=md-ellipsis> 固定 VM IP </span> </a> </li> <li class=md-nav__item> <a href=../../kubevirt/dual-stack/ class=md-nav__link> <span class=md-ellipsis> VM 使用双栈网络 </span> </a> </li> <li class=md-nav__item> <a href=../../kubevirt/live-migration/ class=md-nav__link> <span class=md-ellipsis> 热迁移 </span> </a> </li> <li class=md-nav__item> <a href=../../kubevirt/dhcp/ class=md-nav__link> <span class=md-ellipsis> 自定义 DHCP </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_5 checked> <label class=md-nav__link for=__nav_5 id=__nav_5_label tabindex> <span class=md-ellipsis> VPC 网络 </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_5_label aria-expanded=true> <label class=md-nav__title for=__nav_5> <span class="md-nav__icon md-icon"></span> VPC 网络 </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../vpc/ class=md-nav__link> <span class=md-ellipsis> VPC 入门 </span> </a> </li> <li class=md-nav__item> <a href=../vpc-qos/ class=md-nav__link> <span class=md-ellipsis> Egress QoS 配置 </span> </a> </li> <li class=md-nav__item> <a href=../vpc-internal-lb/ class=md-nav__link> <span class=md-ellipsis> 内部负载均衡 </span> </a> </li> <li class=md-nav__item> <a href=../vpc-internal-dns/ class=md-nav__link> <span class=md-ellipsis> 内部 DNS </span> </a> </li> <li class=md-nav__item> <a href=../security-group/ class=md-nav__link> <span class=md-ellipsis> 安全组 </span> </a> </li> <li class="md-nav__item md-nav__item--active"> <input class="md-nav__toggle md-toggle" type=checkbox id=__toc> <label class="md-nav__link md-nav__link--active" for=__toc> <span class=md-ellipsis> OVN EIP FIP SNAT 支持 </span> <span class="md-nav__icon md-icon"></span> </label> <a href=./ class="md-nav__link md-nav__link--active"> <span class=md-ellipsis> OVN EIP FIP SNAT 支持 </span> </a> <nav class="md-nav md-nav--secondary" aria-label=目录> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> 目录 </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#1 class=md-nav__link> <span class=md-ellipsis> 1. 部署 </span> </a> <nav class=md-nav aria-label="1. 部署"> <ul class=md-nav__list> <li class=md-nav__item> <a href=#11-underlay class=md-nav__link> <span class=md-ellipsis> 1.1 准备 underlay 公网网络 </span> </a> </li> <li class=md-nav__item> <a href=#12-vpc-eip_snat class=md-nav__link> <span class=md-ellipsis> 1.2 默认 vpc 启用 eip_snat </span> </a> </li> <li class=md-nav__item> <a href=#13-vpc-eip-snat-fip class=md-nav__link> <span class=md-ellipsis> 1.3 自定义 vpc 启用 eip snat fip 功能 </span> </a> </li> <li class=md-nav__item> <a href=#14 class=md-nav__link> <span class=md-ellipsis> 1.4 使用额外的公网网络 </span> </a> <nav class=md-nav aria-label="1.4 使用额外的公网网络"> <ul class=md-nav__list> <li class=md-nav__item> <a href=#141-underlay class=md-nav__link> <span class=md-ellipsis> 1.4.1 准备额外 underlay 公网网络 </span> </a> </li> <li class=md-nav__item> <a href=#142-vpc class=md-nav__link> <span class=md-ellipsis> 1.4.2 自定义 vpc 配置 </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#2-ovn-eip class=md-nav__link> <span class=md-ellipsis> 2. ovn-eip </span> </a> <nav class=md-nav aria-label="2. ovn-eip"> <ul class=md-nav__list> <li class=md-nav__item> <a href=#21-ovn-fip-pod-fip class=md-nav__link> <span class=md-ellipsis> 2.1 ovn-fip 为 pod 绑定一个 fip </span> </a> </li> <li class=md-nav__item> <a href=#22-ovn-fip-vip-fip class=md-nav__link> <span class=md-ellipsis> 2.2 ovn-fip 为 vip 绑定一个 fip </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#3-ovn-snat class=md-nav__link> <span class=md-ellipsis> 3. ovn-snat </span> </a> <nav class=md-nav aria-label="3. ovn-snat"> <ul class=md-nav__list> <li class=md-nav__item> <a href=#31-ovn-snat-subnet-cidr class=md-nav__link> <span class=md-ellipsis> 3.1 ovn-snat 对应一个 subnet 的 cidr </span> </a> </li> <li class=md-nav__item> <a href=#32-ovn-snat-pod-ip class=md-nav__link> <span class=md-ellipsis> 3.2 ovn-snat 对应到一个 pod ip </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#4-ovn-dnat class=md-nav__link> <span class=md-ellipsis> 4. ovn-dnat </span> </a> <nav class=md-nav aria-label="4. ovn-dnat"> <ul class=md-nav__list> <li class=md-nav__item> <a href=#41-ovn-dnat-pod-dnat class=md-nav__link> <span class=md-ellipsis> 4.1 ovn-dnat 为 pod 绑定一个 dnat </span> </a> </li> <li class=md-nav__item> <a href=#42-ovn-dnat-vip-dnat class=md-nav__link> <span class=md-ellipsis> 4.2 ovn-dnat 为 vip 绑定一个 dnat </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=../ovn-l3-ha-based-ecmp-with-bfd/ class=md-nav__link> <span class=md-ellipsis> OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持 </span> </a> </li> <li class=md-nav__item> <a href=../vpc-peering/ class=md-nav__link> <span class=md-ellipsis> VPC 互联 </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_6> <label class=md-nav__link for=__nav_6 id=__nav_6_label tabindex=0> <span class=md-ellipsis> 运维指南 </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_6_label aria-expanded=false> <label class=md-nav__title for=__nav_6> <span class="md-nav__icon md-icon"></span> 运维指南 </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../ops/kubectl-ko/ class=md-nav__link> <span class=md-ellipsis> Kubectl 插件使用 </span> </a> </li> <li class=md-nav__item> <a href=../../ops/delete-worker-node/ class=md-nav__link> <span class=md-ellipsis> 删除工作节点 </span> </a> </li> <li class=md-nav__item> <a href=../../ops/change-ovn-central-node/ class=md-nav__link> <span class=md-ellipsis> 更换 ovn-central 节点 </span> </a> </li> <li class=md-nav__item> <a href=../../ops/recover-db/ class=md-nav__link> <span class=md-ellipsis> OVN 数据库备份和恢复 </span> </a> </li> <li class=md-nav__item> <a href=../../ops/change-default-subnet/ class=md-nav__link> <span class=md-ellipsis> 修改子网 CIDR </span> </a> </li> <li class=md-nav__item> <a href=../../ops/change-join-subnet/ class=md-nav__link> <span class=md-ellipsis> 修改 Join 子网 CIDR </span> </a> </li> <li class=md-nav__item> <a href=../../ops/from-calico/ class=md-nav__link> <span class=md-ellipsis> 卸载 Calico 安装 Kube-OVN </span> </a> </li> <li class=md-nav__item> <a href=../../ops/change-log-level/ class=md-nav__link> <span class=md-ellipsis> 调整日志等级 </span> </a> </li> <li class=md-nav__item> <a href=../../ops/faq/ class=md-nav__link> <span class=md-ellipsis> 其他常见问题 </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_7> <label class=md-nav__link for=__nav_7 id=__nav_7_label tabindex=0> <span class=md-ellipsis> 高级功能 </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_7_label aria-expanded=false> <label class=md-nav__title for=__nav_7> <span class="md-nav__icon md-icon"></span> 高级功能 </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../advance/multi-nic/ class=md-nav__link> <span class=md-ellipsis> 多网卡管理 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/performance-tuning/ class=md-nav__link> <span class=md-ellipsis> 性能调优 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/fastpath/ class=md-nav__link> <span class=md-ellipsis> 手动编译 FastPath 模块 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/accelerate-intra-node-tcp-with-ebpf/ class=md-nav__link> <span class=md-ellipsis> 使用 eBPF 加速节点内 TCP 通信 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/with-ovn-ic/ class=md-nav__link> <span class=md-ellipsis> 使用 OVN-IC 进行多集群互联 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/with-submariner/ class=md-nav__link> <span class=md-ellipsis> 使用 Submariner 进行多集群互联 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/overlay-with-route/ class=md-nav__link> <span class=md-ellipsis> Overlay 下路由方式网络打通 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/with-bgp/ class=md-nav__link> <span class=md-ellipsis> BGP 支持 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/with-cilium/ class=md-nav__link> <span class=md-ellipsis> Cilium 集成 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/cilium-networkpolicy/ class=md-nav__link> <span class=md-ellipsis> Cilium NetworkPolicy 支持 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/cilium-hubble-observe/ class=md-nav__link> <span class=md-ellipsis> Cilium 网络流量观测 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/external-gateway/ class=md-nav__link> <span class=md-ellipsis> 外部网关设置 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/vip/ class=md-nav__link> <span class=md-ellipsis> VIP 预留设置 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/offload-mellanox/ class=md-nav__link> <span class=md-ellipsis> Mellanox 网卡 Offload 支持 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/offload-corigine/ class=md-nav__link> <span class=md-ellipsis> 芯启源网卡 Offload 支持 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/offload-yunsilicon/ class=md-nav__link> <span class=md-ellipsis> 云脉芯联网卡 Offload 支持 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/offload-yusur/ class=md-nav__link> <span class=md-ellipsis> 中科驭数网卡 Offload 支持 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/windows/ class=md-nav__link> <span class=md-ellipsis> Windows 支持 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/dpdk/ class=md-nav__link> <span class=md-ellipsis> DPDK 支持 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/with-openstack/ class=md-nav__link> <span class=md-ellipsis> OpenStack 集成 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/ovn-ipsec/ class=md-nav__link> <span class=md-ellipsis> OVN IPsec 支持 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/ovn-remote-port-mirroring/ class=md-nav__link> <span class=md-ellipsis> OVN 流量镜像 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/node-local-dns/ class=md-nav__link> <span class=md-ellipsis> 节点本地 DNS 缓存和 Kube-OVN 适配 </span> </a> </li> <li class=md-nav__item> <a href=../../advance/nat-policy-rule/ class=md-nav__link> <span class=md-ellipsis> 默认 VPC NAT 策略规则 </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_8> <label class=md-nav__link for=__nav_8 id=__nav_8_label tabindex=0> <span class=md-ellipsis> 技术参考 </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_8_label aria-expanded=false> <label class=md-nav__title for=__nav_8> <span class="md-nav__icon md-icon"></span> 技术参考 </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../reference/architecture/ class=md-nav__link> <span class=md-ellipsis> 总体架构 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/roadmap/ class=md-nav__link> <span class=md-ellipsis> Roadmap </span> </a> </li> <li class=md-nav__item> <a href=../../reference/releasing/ class=md-nav__link> <span class=md-ellipsis> 版本管理 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/feature-stage/ class=md-nav__link> <span class=md-ellipsis> 功能成熟度 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/underlay-topology/ class=md-nav__link> <span class=md-ellipsis> Underlay 流量拓扑 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/iptables-rules/ class=md-nav__link> <span class=md-ellipsis> Iptables 规则 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/kube-ovn-pinger-args/ class=md-nav__link> <span class=md-ellipsis> kube-ovn-pinger 参数描述 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/dev-env/ class=md-nav__link> <span class=md-ellipsis> 开发和贡献指导 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/ovs-ovn-customized/ class=md-nav__link> <span class=md-ellipsis> 对上游 OVS/OVN 修改 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/tunnel-protocol/ class=md-nav__link> <span class=md-ellipsis> 隧道协议说明 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/metrics/ class=md-nav__link> <span class=md-ellipsis> Kube-OVN 监控指标 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/kube-ovn-api/ class=md-nav__link> <span class=md-ellipsis> Kube-OVN 接口规范 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/annotations/ class=md-nav__link> <span class=md-ellipsis> Annotation 使用说明 </span> </a> </li> <li class=md-nav__item> <a href=../../reference/document-convention/ class=md-nav__link> <span class=md-ellipsis> 文档规范 </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=../../contact/ class=md-nav__link> <span class=md-ellipsis> 联系方式 </span> </a> </li> </ul> </nav> </div> </div> </div> <div class="md-sidebar md-sidebar--secondary" data-md-component=sidebar data-md-type=toc> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--secondary" aria-label=目录> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> 目录 </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#1 class=md-nav__link> <span class=md-ellipsis> 1. 部署 </span> </a> <nav class=md-nav aria-label="1. 部署"> <ul class=md-nav__list> <li class=md-nav__item> <a href=#11-underlay class=md-nav__link> <span class=md-ellipsis> 1.1 准备 underlay 公网网络 </span> </a> </li> <li class=md-nav__item> <a href=#12-vpc-eip_snat class=md-nav__link> <span class=md-ellipsis> 1.2 默认 vpc 启用 eip_snat </span> </a> </li> <li class=md-nav__item> <a href=#13-vpc-eip-snat-fip class=md-nav__link> <span class=md-ellipsis> 1.3 自定义 vpc 启用 eip snat fip 功能 </span> </a> </li> <li class=md-nav__item> <a href=#14 class=md-nav__link> <span class=md-ellipsis> 1.4 使用额外的公网网络 </span> </a> <nav class=md-nav aria-label="1.4 使用额外的公网网络"> <ul class=md-nav__list> <li class=md-nav__item> <a href=#141-underlay class=md-nav__link> <span class=md-ellipsis> 1.4.1 准备额外 underlay 公网网络 </span> </a> </li> <li class=md-nav__item> <a href=#142-vpc class=md-nav__link> <span class=md-ellipsis> 1.4.2 自定义 vpc 配置 </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#2-ovn-eip class=md-nav__link> <span class=md-ellipsis> 2. ovn-eip </span> </a> <nav class=md-nav aria-label="2. ovn-eip"> <ul class=md-nav__list> <li class=md-nav__item> <a href=#21-ovn-fip-pod-fip class=md-nav__link> <span class=md-ellipsis> 2.1 ovn-fip 为 pod 绑定一个 fip </span> </a> </li> <li class=md-nav__item> <a href=#22-ovn-fip-vip-fip class=md-nav__link> <span class=md-ellipsis> 2.2 ovn-fip 为 vip 绑定一个 fip </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#3-ovn-snat class=md-nav__link> <span class=md-ellipsis> 3. ovn-snat </span> </a> <nav class=md-nav aria-label="3. ovn-snat"> <ul class=md-nav__list> <li class=md-nav__item> <a href=#31-ovn-snat-subnet-cidr class=md-nav__link> <span class=md-ellipsis> 3.1 ovn-snat 对应一个 subnet 的 cidr </span> </a> </li> <li class=md-nav__item> <a href=#32-ovn-snat-pod-ip class=md-nav__link> <span class=md-ellipsis> 3.2 ovn-snat 对应到一个 pod ip </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#4-ovn-dnat class=md-nav__link> <span class=md-ellipsis> 4. ovn-dnat </span> </a> <nav class=md-nav aria-label="4. ovn-dnat"> <ul class=md-nav__list> <li class=md-nav__item> <a href=#41-ovn-dnat-pod-dnat class=md-nav__link> <span class=md-ellipsis> 4.1 ovn-dnat 为 pod 绑定一个 dnat </span> </a> </li> <li class=md-nav__item> <a href=#42-ovn-dnat-vip-dnat class=md-nav__link> <span class=md-ellipsis> 4.2 ovn-dnat 为 vip 绑定一个 dnat </span> </a> </li> </ul> </nav> </li> </ul> </nav> </div> </div> </div> <div class=md-content data-md-component=content> <article class="md-content__inner md-typeset"> <script>
+  var _hmt = _hmt || [];
+  (function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?39cf121f7a1f65bb4e4fe7c0a82c6014";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script> <a href=https://github.com/kubeovn/docs/edit/master/docs/vpc/ovn-eip-fip-snat.md title=编辑此页 class="md-content__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg> </a> <a href=https://github.com/kubeovn/docs/raw/master/docs/vpc/ovn-eip-fip-snat.md title=查看本页的源代码 class="md-content__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg> </a> <h1 id=ovn-eip-fip-snat-dnat>OVN EIP FIP SNAT DNAT 支持<a class=headerlink href=#ovn-eip-fip-snat-dnat title="Permanent link">&para;</a></h1> <pre class=mermaid><code>
+graph LR
+
+pod--&gt;subnet--&gt;vpc--&gt;lrp--bind--&gt;gw-chassis--&gt;snat--&gt;lsp--&gt;external-subnet
+lrp-.-peer-.-lsp
+</code></pre> <p>Pod 基于 SNAT 出公网的大致流程，最后是经过网关节点的公网网卡。 Pod 基于 Fip 使用集中式网关，路径也类似。</p> <pre class=mermaid><code>
+graph LR
+
+
+pod--&gt;subnet--&gt;vpc--&gt;lrp--bind--&gt;local-chassis--&gt;snat--&gt;lsp--&gt;external-subnet
+
+
+lrp-.-peer-.-lsp
+</code></pre> <p>Pod 基于分布式网关 FIP (dnat_and_snat) 出公网的大致流程，最后可以基于本地节点的公网网卡出公网。</p> <p>该功能所支持的 CRD 在使用上将和 iptables nat gw 公网方案保持基本一致。</p> <ul> <li>ovn eip: 用于公网 ip 占位，从 underlay provider network vlan subnet 中分配</li> <li>ovn fip： 一对一 dnat snat，为 vpc 内的 ip 或者 vip 提供公网直接访问能力</li> <li>ovn snat：整个子网或者单个 vpc 内 ip 可以基于 snat 访问公网</li> <li>ovn dnat：基于 router lb 实现, 基于公网 ip + 端口 直接访问 vpc 内的 一组 endpoints</li> </ul> <h2 id=1>1. 部署<a class=headerlink href=#1 title="Permanent link">&para;</a></h2> <p>目前允许所有（默认以及自定义） vpc 使用同一个默认 provider vlan subnet 资源，同时自定义 vpc 支持扩展 provider vlan subnet 从而实现使用多个公网，兼容<a href=../../guide/eip-snat/ >默认 VPC EIP/SNAT</a>的场景。</p> <p>类似 neutron ovn，服务启动配置中需要指定 provider network 相关的配置，下述的启动参数也是为了兼容 VPC EIP/SNAT 的实现。</p> <p>部署阶段，根据实际情况，可能需要指定默认公网逻辑交换机。 如果实际使用中没有 vlan（使用 vlan 0），那么下述启动参数无需配置。</p> <div class=highlight><pre><span></span><code><span class=c1># 部署的时候你需要参考以上场景，根据实际情况，按需指定如下参数</span>
+<span class=c1># 1. kube-ovn-controller 启动参数需要配置：</span>
+<span class=w>          </span>-<span class=w> </span>--external-gateway-vlanid<span class=o>=</span><span class=m>204</span>
+<span class=w>          </span>-<span class=w> </span>--external-gateway-switch<span class=o>=</span>external204
+
+<span class=c1># 2. kube-ovn-cni 启动参数需要配置:</span>
+<span class=w>          </span>-<span class=w> </span>--external-gateway-switch<span class=o>=</span>external204<span class=w> </span>
+
+<span class=c1>### 以上配置都和下面的公网网络配置 vlan id 和资源名保持一致，目前仅支持指定一个 underlay 公网作为默认外部公网。</span>
+</code></pre></div> <p>该配置项的设计和使用主要考虑了如下因素：</p> <ul> <li>基于该配置项可以对接到 provider network，vlan，subnet 的资源。</li> <li>基于该配置项可以将默认 vpc enable_eip_snat 功能对接到已有的 vlan，subnet 资源，同时支持公网 ip 的 ipam。</li> <li>如果仅使用默认 vpc 的 enable_eip_snat 模式, 且仅使用旧的基于 pod annotation 的 fip snat，那么这个配置无需配置。</li> <li>基于该配置可以不使用默认 vpc enable_eip_snat 流程，仅通过对应到 vlan，subnet 流程，可以兼容仅自定义 vpc 使用 eip snat 的使用场景。</li> </ul> <h3 id=11-underlay>1.1 准备 underlay 公网网络<a class=headerlink href=#11-underlay title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=c1># 准备 provider-network， vlan， subnet</span>
+<span class=c1># cat 01-provider-network.yaml</span>
+
+apiVersion:<span class=w> </span>kubeovn.io/v1
+kind:<span class=w> </span>ProviderNetwork
+metadata:
+<span class=w>  </span>name:<span class=w> </span>external204
+spec:
+<span class=w>  </span>defaultInterface:<span class=w> </span>vlan
+
+<span class=c1># cat 02-vlan.yaml</span>
+
+apiVersion:<span class=w> </span>kubeovn.io/v1
+kind:<span class=w> </span>Vlan
+metadata:
+<span class=w>  </span>name:<span class=w> </span>vlan204
+spec:
+<span class=w>  </span>id:<span class=w> </span><span class=m>204</span>
+<span class=w>  </span>provider:<span class=w> </span>external204
+
+<span class=c1># cat 03-vlan-subnet.yaml</span>
+
+apiVersion:<span class=w> </span>kubeovn.io/v1
+kind:<span class=w> </span>Subnet
+metadata:
+<span class=w>  </span>name:<span class=w> </span>external204
+spec:
+<span class=w>  </span>protocol:<span class=w> </span>IPv4
+<span class=w>  </span>cidrBlock:<span class=w> </span><span class=m>10</span>.5.204.0/24
+<span class=w>  </span>gateway:<span class=w> </span><span class=m>10</span>.5.204.254
+<span class=w>  </span>vlan:<span class=w> </span>vlan204
+<span class=w>  </span>excludeIps:
+<span class=w>  </span>-<span class=w> </span><span class=m>10</span>.5.204.1..10.5.204.100
+</code></pre></div> <h3 id=12-vpc-eip_snat>1.2 默认 vpc 启用 eip_snat<a class=headerlink href=#12-vpc-eip_snat title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=c1># 启用默认 vpc 和上述 underlay 公网 provider subnet 互联</span>
+<span class=c1># cat 00-centralized-external-gw-no-ip.yaml</span>
+
+apiVersion:<span class=w> </span>v1
+kind:<span class=w> </span>ConfigMap
+metadata:
+<span class=w>  </span>name:<span class=w> </span>ovn-external-gw-config
+<span class=w>  </span>namespace:<span class=w> </span>kube-system
+data:
+<span class=w>  </span>enable-external-gw:<span class=w> </span><span class=s2>&quot;true&quot;</span>
+<span class=w>  </span>external-gw-nodes:<span class=w> </span><span class=s2>&quot;pc-node-1,pc-node-2,pc-node-3&quot;</span>
+<span class=w>  </span>type:<span class=w> </span><span class=s2>&quot;centralized&quot;</span><span class=w> </span>
+<span class=w>  </span>external-gw-nic:<span class=w> </span><span class=s2>&quot;vlan&quot;</span><span class=w> </span><span class=c1># 用于接入 ovs 公网网桥的网卡</span>
+<span class=w>  </span>external-gw-addr:<span class=w> </span><span class=s2>&quot;10.5.204.254/24&quot;</span><span class=w> </span><span class=c1># underlay 物理网关的 ip</span>
+</code></pre></div> <p>目前该功能已支持可以不指定 logical router port (lrp) ip 和 mac，已支持从 underlay 公网中自动分配，创建 lrp 类型的 ovn eip 资源。</p> <p>如果指定了，则相当于以指定 ip 的方式创建了一个 lrp 类型的 ovn-eip。 当然也可以提前手动创建 lrp 类型的 ovn eip。</p> <h3 id=13-vpc-eip-snat-fip>1.3 自定义 vpc 启用 eip snat fip 功能<a class=headerlink href=#13-vpc-eip-snat-fip title="Permanent link">&para;</a></h3> <p>集群一般需要多个网关 node 来实现高可用，配置如下：</p> <div class=highlight><pre><span></span><code><span class=c1># 首先通过添加标签指定 external-gw-nodes</span>
+kubectl<span class=w> </span>label<span class=w> </span>nodes<span class=w> </span>pc-node-1<span class=w> </span>pc-node-2<span class=w> </span>pc-node-3<span class=w> </span>ovn.kubernetes.io/external-gw<span class=o>=</span><span class=nb>true</span>
+</code></pre></div> <div class=highlight><pre><span></span><code><span class=c1># cat 00-ns.yml</span>
+
+apiVersion:<span class=w> </span>v1
+kind:<span class=w> </span>Namespace
+metadata:
+<span class=w>  </span>name:<span class=w> </span>vpc1
+
+<span class=c1># cat 01-vpc-ecmp-enable-external-bfd.yml</span>
+
+kind:<span class=w> </span>Vpc
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>vpc1
+spec:
+<span class=w>  </span>namespaces:
+<span class=w>  </span>-<span class=w> </span>vpc1
+<span class=w>  </span>enableExternal:<span class=w> </span><span class=nb>true</span>
+<span class=c1># vpc 启用 enableExternal 会自动创建 lrp 关联到上述指定的公网</span>
+
+<span class=c1># cat 02-subnet.yml</span>
+
+apiVersion:<span class=w> </span>kubeovn.io/v1
+kind:<span class=w> </span>Subnet
+metadata:
+<span class=w>  </span>name:<span class=w> </span>vpc1-subnet1
+spec:
+<span class=w>  </span>cidrBlock:<span class=w> </span><span class=m>192</span>.168.0.0/24
+<span class=w>  </span>default:<span class=w> </span><span class=nb>false</span>
+<span class=w>  </span>disableGatewayCheck:<span class=w> </span><span class=nb>false</span>
+<span class=w>  </span>disableInterConnection:<span class=w> </span><span class=nb>true</span>
+<span class=w>  </span>enableEcmp:<span class=w> </span><span class=nb>true</span>
+<span class=w>  </span>gatewayNode:<span class=w> </span><span class=s2>&quot;&quot;</span>
+<span class=w>  </span>gatewayType:<span class=w> </span>distributed
+<span class=w>  </span><span class=c1>#gatewayType: centralized</span>
+<span class=w>  </span>natOutgoing:<span class=w> </span><span class=nb>false</span>
+<span class=w>  </span>private:<span class=w> </span><span class=nb>false</span>
+<span class=w>  </span>protocol:<span class=w> </span>IPv4
+<span class=w>  </span>provider:<span class=w> </span>ovn
+<span class=w>  </span>vpc:<span class=w> </span>vpc1
+<span class=w>  </span>namespaces:
+<span class=w>  </span>-<span class=w> </span>vpc1
+
+<span class=c1># 这里子网和之前使用子网一样，该功能在 subnet 上没有新增属性，没有任何变更</span>
+</code></pre></div> <p>以上模板应用后，应该可以看到如下资源存在</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko nbctl show vpc1</span>
+
+router<span class=w> </span>87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f<span class=w> </span><span class=o>(</span>vpc1<span class=o>)</span>
+<span class=w>    </span>port<span class=w> </span>vpc1-vpc1-subnet1
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:ED:8E:C7&quot;</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;192.168.0.1/24&quot;</span><span class=o>]</span>
+<span class=w>    </span>port<span class=w> </span>vpc1-external204
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:EF:05:C7&quot;</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;10.5.204.105/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>gateway<span class=w> </span>chassis:<span class=w> </span><span class=o>[</span>7cedd14f-265b-42e5-ac17-e03e7a1f2342<span class=w> </span>276baccb-fe9c-4476-b41d-05872a94976d<span class=w> </span>fd9f140c-c45d-43db-a6c0-0d4f8ea298dd<span class=o>]</span>
+<span class=w>    </span>nat<span class=w> </span>21d853b0-f7b4-40bd-9a53-31d2e2745739
+<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;10.5.204.115&quot;</span>
+<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;192.168.0.0/24&quot;</span>
+<span class=w>        </span>type:<span class=w> </span><span class=s2>&quot;snat&quot;</span>
+</code></pre></div> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko nbctl lr-route-list vpc1</span>
+
+IPv4<span class=w> </span>Routes
+Route<span class=w> </span>Table<span class=w> </span>&lt;main&gt;:
+<span class=w>                </span><span class=m>0</span>.0.0.0/0<span class=w>              </span><span class=m>10</span>.5.204.254<span class=w> </span>dst-ip
+<span class=c1># 目前该路由已自动维护</span>
+</code></pre></div> <h3 id=14>1.4 使用额外的公网网络<a class=headerlink href=#14 title="Permanent link">&para;</a></h3> <h4 id=141-underlay>1.4.1 准备额外 underlay 公网网络<a class=headerlink href=#141-underlay title="Permanent link">&para;</a></h4> <p>额外的公网网络功能在启动默认 eip snat fip 功能后才会启用，若只有 1 个公网网卡，请使用默认 eip snat fip 功能</p> <div class=highlight><pre><span></span><code><span class=c1># 准备 provider-network， vlan， subnet</span>
+<span class=c1># cat 01-extra-provider-network.yaml</span>
+<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ProviderNetwork</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">extra</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>defaultInterface</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vlan</span>
+<span class=c1># cat 02-extra-vlan.yaml</span>
+<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Vlan</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vlan0</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>id</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class=w>  </span><span class=nt>provider</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">extra</span>
+<span class=c1># cat 03-extra-vlan-subnet.yaml</span>
+<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Subnet</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">extra</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">IPv4</span>
+<span class=w>  </span><span class=nt>cidrBlock</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.10.204.0/24</span>
+<span class=w>  </span><span class=nt>gateway</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.10.204.254</span>
+<span class=w>  </span><span class=nt>vlan</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vlan0</span>
+<span class=w>  </span><span class=nt>excludeIps</span><span class=p>:</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.10.204.1..10.10.204.100</span>
+</code></pre></div> <h4 id=142-vpc>1.4.2 自定义 vpc 配置<a class=headerlink href=#142-vpc title="Permanent link">&para;</a></h4> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Vpc</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc1</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>namespaces</span><span class=p>:</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc1</span>
+<span class=w>  </span><span class=nt>enableExternal</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class=w>  </span><span class=c1># 开启 enableExternal 后 vpc 会自动连接名为 external 的 ls</span>
+<span class=w>  </span><span class=nt>extraExternalSubnets</span><span class=p>:</span><span class=w> </span><span class=c1># 配置 extraExternalSubnets 支持连接多个额外的公网网络</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">extra</span>
+</code></pre></div> <p>以上模板应用后，应该可以看到如下资源存在</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko nbctl show vpc1</span>
+router<span class=w> </span>87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f<span class=w> </span><span class=o>(</span>vpc1<span class=o>)</span>
+<span class=w>    </span>port<span class=w> </span>vpc1-vpc1-subnet1
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:ED:8E:C7&quot;</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;192.168.0.1/24&quot;</span><span class=o>]</span>
+<span class=w>    </span>port<span class=w> </span>vpc1-external204
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:EF:05:C7&quot;</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;10.5.204.105/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>gateway<span class=w> </span>chassis:<span class=w> </span><span class=o>[</span>7cedd14f-265b-42e5-ac17-e03e7a1f2342<span class=w> </span>276baccb-fe9c-4476-b41d-05872a94976d<span class=w> </span>fd9f140c-c45d-43db-a6c0-0d4f8ea298dd<span class=o>]</span>
+<span class=w>    </span>port<span class=w> </span>vpc1-extra
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:EF:6A:C7&quot;</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;10.10.204.105/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>gateway<span class=w> </span>chassis:<span class=w> </span><span class=o>[</span>7cedd14f-265b-42e5-ac17-e03e7a1f2342<span class=w> </span>276baccb-fe9c-4476-b41d-05872a94976d<span class=w> </span>fd9f140c-c45d-43db-a6c0-0d4f8ea298dd<span class=o>]</span>
+</code></pre></div> <h2 id=2-ovn-eip>2. ovn-eip<a class=headerlink href=#2-ovn-eip title="Permanent link">&para;</a></h2> <p>该功能和 iptables-eip 设计和使用方式基本一致，ovn-eip 目前有三种 type</p> <ul> <li>nat: 是指 ovn dnat，fip, snat 这三种 nat 资源类型</li> <li>lrp: 软路由基于该端口和 underlay 公网互联，该 lrp 端口的 ip 可以被其他 dnat snat 复用</li> <li>lsp: 用于 ovn 基于 bfd 的 ecmp 静态路由场景，在网关节点上提供一个 ovs internal port 作为 ecmp 路由的下一跳</li> </ul> <div class=highlight><pre><span></span><code>---
+kind:<span class=w> </span>OvnEip
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>eip-static
+spec:
+<span class=w>  </span>externalSubnet:<span class=w> </span>external204
+<span class=w>  </span>type:<span class=w> </span>nat
+
+<span class=c1># 动态分配一个 eip 资源，该资源预留用于 fip 场景</span>
+</code></pre></div> <p>externalSubnet 字段可不进行配置，若未配置则会使用默认公网网络，在上述配置中默认公网网络为 external204。</p> <p>若要使用额外公网网络，则需要通过 externalSubnet 显式指定需要扩展使用的公网网络，在上述配置中扩展公网网络为 extra。</p> <h3 id=21-ovn-fip-pod-fip>2.1 ovn-fip 为 pod 绑定一个 fip<a class=headerlink href=#21-ovn-fip-pod-fip title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=c1># kubectl get po -o wide -n vpc1 vpc-1-busybox01</span>
+NAME<span class=w>              </span>READY<span class=w>   </span>STATUS<span class=w>    </span>RESTARTS<span class=w>   </span>AGE<span class=w>     </span>IP<span class=w>            </span>NODE
+vpc-1-busybox01<span class=w>   </span><span class=m>1</span>/1<span class=w>     </span>Running<span class=w>   </span><span class=m>0</span><span class=w>          </span>3d15h<span class=w>   </span><span class=m>192</span>.168.0.2<span class=w>   </span>pc-node-2
+
+<span class=c1># kubectl get ip vpc-1-busybox01.vpc1</span>
+NAME<span class=w>                   </span>V4IP<span class=w>          </span>V6IP<span class=w>   </span>MAC<span class=w>                 </span>NODE<span class=w>        </span>SUBNET
+vpc-1-busybox01.vpc1<span class=w>   </span><span class=m>192</span>.168.0.2<span class=w>          </span><span class=m>00</span>:00:00:0A:DD:27<span class=w>   </span>pc-node-2<span class=w>   </span>vpc1-subnet1
+
+---
+
+kind:<span class=w> </span>OvnEip
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>eip-static
+spec:
+<span class=w>  </span>externalSubnet:<span class=w> </span>external204
+<span class=w>  </span>type:<span class=w> </span>nat
+
+---
+kind:<span class=w> </span>OvnFip
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>eip-static
+spec:
+<span class=w>  </span>ovnEip:<span class=w> </span>eip-static
+<span class=w>  </span>ipName:<span class=w> </span>vpc-1-busybox01.vpc1<span class=w>  </span><span class=c1># 注意这里是 ip crd 的名字，具有唯一性</span>
+
+--
+<span class=c1># 或者通过传统指定 vpc 以及 内网 ip 的方式</span>
+
+kind:<span class=w> </span>OvnFip
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>eip-static
+spec:
+<span class=w>  </span>ovnEip:<span class=w> </span>eip-static
+<span class=w>  </span>vpc:<span class=w> </span>vpc1
+<span class=w>  </span>v4Ip:<span class=w> </span><span class=m>192</span>.168.0.2
+</code></pre></div> <div class=highlight><pre><span></span><code><span class=c1># kubectl get ofip</span>
+NAME<span class=w>          </span>VPC<span class=w>    </span>V4EIP<span class=w>          </span>V4IP<span class=w>          </span>READY<span class=w>   </span>IPTYPE<span class=w>   </span>IPNAME
+eip-for-vip<span class=w>   </span>vpc1<span class=w>   </span><span class=m>10</span>.5.204.106<span class=w>   </span><span class=m>192</span>.168.0.3<span class=w>   </span><span class=nb>true</span><span class=w>    </span>vip<span class=w>      </span>test-fip-vip
+eip-static<span class=w>    </span>vpc1<span class=w>   </span><span class=m>10</span>.5.204.101<span class=w>   </span><span class=m>192</span>.168.0.2<span class=w>   </span><span class=nb>true</span><span class=w>             </span>vpc-1-busybox01.vpc1
+<span class=c1># kubectl get ofip eip-static</span>
+NAME<span class=w>         </span>VPC<span class=w>    </span>V4EIP<span class=w>          </span>V4IP<span class=w>          </span>READY<span class=w>   </span>IPTYPE<span class=w>   </span>IPNAME
+eip-static<span class=w>   </span>vpc1<span class=w>   </span><span class=m>10</span>.5.204.101<span class=w>   </span><span class=m>192</span>.168.0.2<span class=w>   </span><span class=nb>true</span><span class=w>             </span>vpc-1-busybox01.vpc1
+
+<span class=o>[</span>root@pc-node-1<span class=w> </span><span class=m>03</span>-cust-vpc<span class=o>]</span><span class=c1># ping 10.5.204.101</span>
+PING<span class=w> </span><span class=m>10</span>.5.204.101<span class=w> </span><span class=o>(</span><span class=m>10</span>.5.204.101<span class=o>)</span><span class=w> </span><span class=m>56</span><span class=o>(</span><span class=m>84</span><span class=o>)</span><span class=w> </span>bytes<span class=w> </span>of<span class=w> </span>data.
+<span class=m>64</span><span class=w> </span>bytes<span class=w> </span>from<span class=w> </span><span class=m>10</span>.5.204.101:<span class=w> </span><span class=nv>icmp_seq</span><span class=o>=</span><span class=m>2</span><span class=w> </span><span class=nv>ttl</span><span class=o>=</span><span class=m>62</span><span class=w> </span><span class=nv>time</span><span class=o>=</span><span class=m>1</span>.21<span class=w> </span>ms
+<span class=m>64</span><span class=w> </span>bytes<span class=w> </span>from<span class=w> </span><span class=m>10</span>.5.204.101:<span class=w> </span><span class=nv>icmp_seq</span><span class=o>=</span><span class=m>3</span><span class=w> </span><span class=nv>ttl</span><span class=o>=</span><span class=m>62</span><span class=w> </span><span class=nv>time</span><span class=o>=</span><span class=m>0</span>.624<span class=w> </span>ms
+<span class=m>64</span><span class=w> </span>bytes<span class=w> </span>from<span class=w> </span><span class=m>10</span>.5.204.101:<span class=w> </span><span class=nv>icmp_seq</span><span class=o>=</span><span class=m>4</span><span class=w> </span><span class=nv>ttl</span><span class=o>=</span><span class=m>62</span><span class=w> </span><span class=nv>time</span><span class=o>=</span><span class=m>0</span>.368<span class=w> </span>ms
+^C
+---<span class=w> </span><span class=m>10</span>.5.204.101<span class=w> </span>ping<span class=w> </span>statistics<span class=w> </span>---
+<span class=m>4</span><span class=w> </span>packets<span class=w> </span>transmitted,<span class=w> </span><span class=m>3</span><span class=w> </span>received,<span class=w> </span><span class=m>25</span>%<span class=w> </span>packet<span class=w> </span>loss,<span class=w> </span><span class=nb>time</span><span class=w> </span>3049ms
+rtt<span class=w> </span>min/avg/max/mdev<span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>0</span>.368/0.734/1.210/0.352<span class=w> </span>ms
+<span class=o>[</span>root@pc-node-1<span class=w> </span><span class=m>03</span>-cust-vpc<span class=o>]</span><span class=c1>#</span>
+
+<span class=c1># 可以看到在 node ping 默认 vpc 下的 pod 的公网 ip 是能通的</span>
+</code></pre></div> <div class=highlight><pre><span></span><code><span class=c1># 该公网 ip 能通的关键资源主要包括以下部分</span>
+<span class=c1># kubectl ko nbctl show vpc1</span>
+router<span class=w> </span>87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f<span class=w> </span><span class=o>(</span>vpc1<span class=o>)</span>
+<span class=w>    </span>port<span class=w> </span>vpc1-vpc1-subnet1
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:ED:8E:C7&quot;</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;192.168.0.1/24&quot;</span><span class=o>]</span>
+<span class=w>    </span>port<span class=w> </span>vpc1-external204
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:EF:05:C7&quot;</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;10.5.204.105/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>gateway<span class=w> </span>chassis:<span class=w> </span><span class=o>[</span>7cedd14f-265b-42e5-ac17-e03e7a1f2342<span class=w> </span>276baccb-fe9c-4476-b41d-05872a94976d<span class=w> </span>fd9f140c-c45d-43db-a6c0-0d4f8ea298dd<span class=o>]</span>
+<span class=w>    </span>nat<span class=w> </span>813523e7-c68c-408f-bd8c-cba30cb2e4f4
+<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;10.5.204.101&quot;</span>
+<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;192.168.0.2&quot;</span>
+<span class=w>        </span>type:<span class=w> </span><span class=s2>&quot;dnat_and_snat&quot;</span>
+</code></pre></div> <h3 id=22-ovn-fip-vip-fip>2.2 ovn-fip 为 vip 绑定一个 fip<a class=headerlink href=#22-ovn-fip-vip-fip title="Permanent link">&para;</a></h3> <p>为了便于一些 vip 场景的使用，比如 kubevirt 虚拟机内部我可能会使用一些 vip 提供给 keepalived，kube-vip 等场景来使用，同时支持公网访问。</p> <p>那么可以基于 fip 绑定 vpc 内部的 vip 的方式来提供 vip 的公网能力。</p> <div class=highlight><pre><span></span><code><span class=c1># 先创建 vip，eip，再将 eip 绑定到 vip</span>
+<span class=c1># cat vip.yaml</span>
+
+apiVersion:<span class=w> </span>kubeovn.io/v1
+kind:<span class=w> </span>Vip
+metadata:
+<span class=w>  </span>name:<span class=w> </span>test-fip-vip
+spec:
+<span class=w>  </span>subnet:<span class=w> </span>vpc1-subnet1
+
+<span class=c1># cat 04-fip.yaml</span>
+
+---
+kind:<span class=w> </span>OvnEip
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>eip-for-vip
+spec:
+<span class=w>  </span>externalSubnet:<span class=w> </span>external204
+<span class=w>  </span>type:<span class=w> </span>nat
+
+---
+kind:<span class=w> </span>OvnFip
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>eip-for-vip
+spec:
+<span class=w>  </span>ovnEip:<span class=w> </span>eip-for-vip
+<span class=w>  </span>ipType:<span class=w> </span>vip<span class=w>         </span><span class=c1># 默认情况下 fip 是面向 pod ip 的，这里需要标注指定对接到 vip 资源</span>
+<span class=w>  </span>ipName:<span class=w> </span>test-fip-vip
+
+---
+<span class=c1># 或者通过传统指定 vpc 以及 内网 ip 的方式</span>
+
+kind:<span class=w> </span>OvnFip
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>eip-for-vip
+spec:
+<span class=w>  </span>ovnEip:<span class=w> </span>eip-for-vip
+<span class=w>  </span>ipType:<span class=w> </span>vip<span class=w>         </span><span class=c1># 默认情况下 fip 是面向 pod ip 的，这里需要标注指定对接到 vip 资源</span>
+<span class=w>  </span>vpc:<span class=w> </span>vpc1
+<span class=w>  </span>v4Ip:<span class=w> </span><span class=m>192</span>.168.0.3
+</code></pre></div> <div class=highlight><pre><span></span><code><span class=c1># kubectl get ofip</span>
+NAME<span class=w>          </span>VPC<span class=w>    </span>V4EIP<span class=w>          </span>V4IP<span class=w>          </span>READY<span class=w>   </span>IPTYPE<span class=w>   </span>IPNAME
+eip-for-vip<span class=w>   </span>vpc1<span class=w>   </span><span class=m>10</span>.5.204.106<span class=w>   </span><span class=m>192</span>.168.0.3<span class=w>   </span><span class=nb>true</span><span class=w>    </span>vip<span class=w>      </span>test-fip-vip
+
+
+<span class=o>[</span>root@pc-node-1<span class=w> </span>fip-vip<span class=o>]</span><span class=c1># ping  10.5.204.106</span>
+PING<span class=w> </span><span class=m>10</span>.5.204.106<span class=w> </span><span class=o>(</span><span class=m>10</span>.5.204.106<span class=o>)</span><span class=w> </span><span class=m>56</span><span class=o>(</span><span class=m>84</span><span class=o>)</span><span class=w> </span>bytes<span class=w> </span>of<span class=w> </span>data.
+<span class=m>64</span><span class=w> </span>bytes<span class=w> </span>from<span class=w> </span><span class=m>10</span>.5.204.106:<span class=w> </span><span class=nv>icmp_seq</span><span class=o>=</span><span class=m>1</span><span class=w> </span><span class=nv>ttl</span><span class=o>=</span><span class=m>62</span><span class=w> </span><span class=nv>time</span><span class=o>=</span><span class=m>0</span>.694<span class=w> </span>ms
+<span class=m>64</span><span class=w> </span>bytes<span class=w> </span>from<span class=w> </span><span class=m>10</span>.5.204.106:<span class=w> </span><span class=nv>icmp_seq</span><span class=o>=</span><span class=m>2</span><span class=w> </span><span class=nv>ttl</span><span class=o>=</span><span class=m>62</span><span class=w> </span><span class=nv>time</span><span class=o>=</span><span class=m>0</span>.436<span class=w> </span>ms
+
+<span class=c1># 在 node 上是 ping 得通的</span>
+
+
+<span class=c1># pod 内部的 ip 使用方式大致就是如下这种情况</span>
+
+<span class=o>[</span>root@pc-node-1<span class=w> </span>fip-vip<span class=o>]</span><span class=c1># kubectl -n vpc1 exec -it vpc-1-busybox03 -- bash</span>
+<span class=o>[</span>root@vpc-1-busybox03<span class=w> </span>/<span class=o>]</span><span class=c1>#</span>
+<span class=o>[</span>root@vpc-1-busybox03<span class=w> </span>/<span class=o>]</span><span class=c1>#</span>
+<span class=o>[</span>root@vpc-1-busybox03<span class=w> </span>/<span class=o>]</span><span class=c1># ip a</span>
+<span class=m>1</span>:<span class=w> </span>lo:<span class=w> </span>&lt;LOOPBACK,UP,LOWER_UP&gt;<span class=w> </span>mtu<span class=w> </span><span class=m>65536</span><span class=w> </span>qdisc<span class=w> </span>noqueue<span class=w> </span>state<span class=w> </span>UNKNOWN<span class=w> </span>group<span class=w> </span>default<span class=w> </span>qlen<span class=w> </span><span class=m>1000</span>
+<span class=w>    </span>link/loopback<span class=w> </span><span class=m>00</span>:00:00:00:00:00<span class=w> </span>brd<span class=w> </span><span class=m>00</span>:00:00:00:00:00
+<span class=w>    </span>inet<span class=w> </span><span class=m>127</span>.0.0.1/8<span class=w> </span>scope<span class=w> </span>host<span class=w> </span>lo
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=w>    </span>inet6<span class=w> </span>::1/128<span class=w> </span>scope<span class=w> </span>host
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=m>1568</span>:<span class=w> </span>eth0@if1569:<span class=w> </span>&lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;<span class=w> </span>mtu<span class=w> </span><span class=m>1500</span><span class=w> </span>qdisc<span class=w> </span>noqueue<span class=w> </span>state<span class=w> </span>UP<span class=w> </span>group<span class=w> </span>default
+<span class=w>    </span>link/ether<span class=w> </span><span class=m>00</span>:00:00:56:40:e5<span class=w> </span>brd<span class=w> </span>ff:ff:ff:ff:ff:ff<span class=w> </span>link-netnsid<span class=w> </span><span class=m>0</span>
+<span class=w>    </span>inet<span class=w> </span><span class=m>192</span>.168.0.5/24<span class=w> </span>brd<span class=w> </span><span class=m>192</span>.168.0.255<span class=w> </span>scope<span class=w> </span>global<span class=w> </span>eth0
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=w>    </span>inet<span class=w> </span><span class=m>192</span>.168.0.3/24<span class=w> </span>scope<span class=w> </span>global<span class=w> </span>secondary<span class=w> </span>eth0<span class=w>  </span><span class=c1># 可以看到 vip 的配置</span>
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=w>    </span>inet6<span class=w> </span>fe80::200:ff:fe56:40e5/64<span class=w> </span>scope<span class=w> </span>link
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+
+<span class=o>[</span>root@vpc-1-busybox03<span class=w> </span>/<span class=o>]</span><span class=c1># tcpdump -i eth0 host  192.168.0.3 -netvv</span>
+tcpdump:<span class=w> </span>listening<span class=w> </span>on<span class=w> </span>eth0,<span class=w> </span>link-type<span class=w> </span>EN10MB<span class=w> </span><span class=o>(</span>Ethernet<span class=o>)</span>,<span class=w> </span>capture<span class=w> </span>size<span class=w> </span><span class=m>262144</span><span class=w> </span>bytes
+<span class=m>00</span>:00:00:ed:8e:c7<span class=w> </span>&gt;<span class=w> </span><span class=m>00</span>:00:00:56:40:e5,<span class=w> </span>ethertype<span class=w> </span>IPv4<span class=w> </span><span class=o>(</span>0x0800<span class=o>)</span>,<span class=w> </span>length<span class=w> </span><span class=m>98</span>:<span class=w> </span><span class=o>(</span>tos<span class=w> </span>0x0,<span class=w> </span>ttl<span class=w> </span><span class=m>62</span>,<span class=w> </span>id<span class=w> </span><span class=m>44830</span>,<span class=w> </span>offset<span class=w> </span><span class=m>0</span>,<span class=w> </span>flags<span class=w> </span><span class=o>[</span>DF<span class=o>]</span>,<span class=w> </span>proto<span class=w> </span>ICMP<span class=w> </span><span class=o>(</span><span class=m>1</span><span class=o>)</span>,<span class=w> </span>length<span class=w> </span><span class=m>84</span><span class=o>)</span>
+<span class=w>    </span><span class=m>10</span>.5.32.51<span class=w> </span>&gt;<span class=w> </span><span class=m>192</span>.168.0.3:<span class=w> </span>ICMP<span class=w> </span><span class=nb>echo</span><span class=w> </span>request,<span class=w> </span>id<span class=w> </span><span class=m>177</span>,<span class=w> </span>seq<span class=w> </span><span class=m>1</span>,<span class=w> </span>length<span class=w> </span><span class=m>64</span>
+<span class=m>00</span>:00:00:56:40:e5<span class=w> </span>&gt;<span class=w> </span><span class=m>00</span>:00:00:ed:8e:c7,<span class=w> </span>ethertype<span class=w> </span>IPv4<span class=w> </span><span class=o>(</span>0x0800<span class=o>)</span>,<span class=w> </span>length<span class=w> </span><span class=m>98</span>:<span class=w> </span><span class=o>(</span>tos<span class=w> </span>0x0,<span class=w> </span>ttl<span class=w> </span><span class=m>64</span>,<span class=w> </span>id<span class=w> </span><span class=m>43962</span>,<span class=w> </span>offset<span class=w> </span><span class=m>0</span>,<span class=w> </span>flags<span class=w> </span><span class=o>[</span>none<span class=o>]</span>,<span class=w> </span>proto<span class=w> </span>ICMP<span class=w> </span><span class=o>(</span><span class=m>1</span><span class=o>)</span>,<span class=w> </span>length<span class=w> </span><span class=m>84</span><span class=o>)</span>
+<span class=w>    </span><span class=m>192</span>.168.0.3<span class=w> </span>&gt;<span class=w> </span><span class=m>10</span>.5.32.51:<span class=w> </span>ICMP<span class=w> </span><span class=nb>echo</span><span class=w> </span>reply,<span class=w> </span>id<span class=w> </span><span class=m>177</span>,<span class=w> </span>seq<span class=w> </span><span class=m>1</span>,<span class=w> </span>length<span class=w> </span><span class=m>64</span>
+
+<span class=c1># pod 内部可以抓到 fip 相关的 icmp 包</span>
+</code></pre></div> <h2 id=3-ovn-snat>3. ovn-snat<a class=headerlink href=#3-ovn-snat title="Permanent link">&para;</a></h2> <h3 id=31-ovn-snat-subnet-cidr>3.1 ovn-snat 对应一个 subnet 的 cidr<a class=headerlink href=#31-ovn-snat-subnet-cidr title="Permanent link">&para;</a></h3> <p>该功能和 iptables-snat 设计和使用方式基本一致</p> <div class=highlight><pre><span></span><code><span class=c1># cat 03-subnet-snat.yaml</span>
+
+---
+kind:<span class=w> </span>OvnEip
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>snat-for-subnet-in-vpc
+spec:
+<span class=w>  </span>externalSubnet:<span class=w> </span>external204
+<span class=w>  </span>type:<span class=w> </span>nat
+
+---
+kind:<span class=w> </span>OvnSnatRule
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>snat-for-subnet-in-vpc
+spec:
+<span class=w>  </span>ovnEip:<span class=w> </span>snat-for-subnet-in-vpc
+<span class=w>  </span>vpcSubnet:<span class=w> </span>vpc1-subnet1<span class=w> </span><span class=c1># eip 对应整个网段</span>
+
+---
+<span class=c1># 或者通过传统指定 vpc 以及 内网 subnet cidr 的方式</span>
+
+kind:<span class=w> </span>OvnSnatRule
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>snat-for-subnet-in-vpc
+spec:
+<span class=w>  </span>ovnEip:<span class=w> </span>snat-for-subnet-in-vpc
+<span class=w>  </span>vpc:<span class=w> </span>vpc1
+<span class=w>  </span>v4IpCidr:<span class=w> </span><span class=m>192</span>.168.0.0/24<span class=w> </span><span class=c1># 该字段可以是 cidr 也可以是 ip</span>
+</code></pre></div> <p>若要使用额外公网网络，则需要通过 externalSubnet 显式指定需要扩展使用的公网网络，在上述配置中扩展公网网络为 extra。</p> <h3 id=32-ovn-snat-pod-ip>3.2 ovn-snat 对应到一个 pod ip<a class=headerlink href=#32-ovn-snat-pod-ip title="Permanent link">&para;</a></h3> <p>该功能和 iptables-snat 设计和使用方式基本一致</p> <div class=highlight><pre><span></span><code><span class=c1># cat 03-pod-snat.yaml</span>
+
+---
+kind:<span class=w> </span>OvnEip
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>snat-for-pod-vpc-ip
+spec:
+<span class=w>  </span>externalSubnet:<span class=w> </span>external204
+<span class=w>  </span>type:<span class=w> </span>nat
+
+---
+kind:<span class=w> </span>OvnSnatRule
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>snat01
+spec:
+<span class=w>  </span>ovnEip:<span class=w> </span>snat-for-pod-vpc-ip
+<span class=w>  </span>ipName:<span class=w> </span>vpc-1-busybox02.vpc1<span class=w> </span><span class=c1># eip 对应单个 pod ip</span>
+
+---
+<span class=c1># 或者通过传统指定 vpc 以及 内网 ip 的方式</span>
+
+kind:<span class=w> </span>OvnSnatRule
+apiVersion:<span class=w> </span>kubeovn.io/v1
+metadata:
+<span class=w>  </span>name:<span class=w> </span>snat-for-subnet-in-vpc
+spec:
+<span class=w>  </span>ovnEip:<span class=w> </span>snat-for-subnet-in-vpc
+<span class=w>  </span>vpc:<span class=w> </span>vpc1
+<span class=w>  </span>v4IpCidr:<span class=w> </span><span class=m>192</span>.168.0.4
+</code></pre></div> <p>若要使用额外公网网络，则需要通过 externalSubnet 显式指定需要扩展使用的公网网络，在上述配置中扩展公网网络为 extra。</p> <p>以上资源创建后，可以看到 snat 公网功能依赖的如下资源。</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko nbctl show vpc1</span>
+router<span class=w> </span>87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f<span class=w> </span><span class=o>(</span>vpc1<span class=o>)</span>
+<span class=w>    </span>port<span class=w> </span>vpc1-vpc1-subnet1
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:ED:8E:C7&quot;</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;192.168.0.1/24&quot;</span><span class=o>]</span>
+<span class=w>    </span>port<span class=w> </span>vpc1-external204
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:EF:05:C7&quot;</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;10.5.204.105/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>gateway<span class=w> </span>chassis:<span class=w> </span><span class=o>[</span>7cedd14f-265b-42e5-ac17-e03e7a1f2342<span class=w> </span>276baccb-fe9c-4476-b41d-05872a94976d<span class=w> </span>fd9f140c-c45d-43db-a6c0-0d4f8ea298dd<span class=o>]</span>
+<span class=w>    </span>nat<span class=w> </span>21d853b0-f7b4-40bd-9a53-31d2e2745739
+<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;10.5.204.115&quot;</span>
+<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;192.168.0.0/24&quot;</span>
+<span class=w>        </span>type:<span class=w> </span><span class=s2>&quot;snat&quot;</span>
+<span class=w>    </span>nat<span class=w> </span>da77a11f-c523-439c-b1d1-72c664196a0f
+<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;10.5.204.116&quot;</span>
+<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;192.168.0.4&quot;</span>
+<span class=w>        </span>type:<span class=w> </span><span class=s2>&quot;snat&quot;</span>
+</code></pre></div> <div class=highlight><pre><span></span><code><span class=o>[</span>root@pc-node-1<span class=w> </span><span class=m>03</span>-cust-vpc<span class=o>]</span><span class=c1># kubectl get po -A -o wide  | grep busy</span>
+vpc1<span class=w>            </span>vpc-1-busybox01<span class=w>                                 </span><span class=m>1</span>/1<span class=w>     </span>Running<span class=w>   </span><span class=m>0</span><span class=w>                </span>3d15h<span class=w>   </span><span class=m>192</span>.168.0.2<span class=w>   </span>pc-node-2<span class=w>   </span>&lt;none&gt;<span class=w>           </span>&lt;none&gt;
+vpc1<span class=w>            </span>vpc-1-busybox02<span class=w>                                 </span><span class=m>1</span>/1<span class=w>     </span>Running<span class=w>   </span><span class=m>0</span><span class=w>                </span>17h<span class=w>     </span><span class=m>192</span>.168.0.4<span class=w>   </span>pc-node-1<span class=w>   </span>&lt;none&gt;<span class=w>           </span>&lt;none&gt;
+vpc1<span class=w>            </span>vpc-1-busybox03<span class=w>                                 </span><span class=m>1</span>/1<span class=w>     </span>Running<span class=w>   </span><span class=m>0</span><span class=w>                </span>17h<span class=w>     </span><span class=m>192</span>.168.0.5<span class=w>   </span>pc-node-1<span class=w>   </span>&lt;none&gt;<span class=w>           </span>&lt;none&gt;
+vpc1<span class=w>            </span>vpc-1-busybox04<span class=w>                                 </span><span class=m>1</span>/1<span class=w>     </span>Running<span class=w>   </span><span class=m>0</span><span class=w>                </span>17h<span class=w>     </span><span class=m>192</span>.168.0.6<span class=w>   </span>pc-node-3<span class=w>   </span>&lt;none&gt;<span class=w>           </span>&lt;none&gt;
+vpc1<span class=w>            </span>vpc-1-busybox05<span class=w>                                 </span><span class=m>1</span>/1<span class=w>     </span>Running<span class=w>   </span><span class=m>0</span><span class=w>                </span>17h<span class=w>     </span><span class=m>192</span>.168.0.7<span class=w>   </span>pc-node-1<span class=w>   </span>&lt;none&gt;<span class=w>           </span>&lt;none&gt;
+
+<span class=c1># kubectl exec -it -n vpc1            vpc-1-busybox04   bash</span>
+kubectl<span class=w> </span><span class=nb>exec</span><span class=w> </span><span class=o>[</span>POD<span class=o>]</span><span class=w> </span><span class=o>[</span>COMMAND<span class=o>]</span><span class=w> </span>is<span class=w> </span>DEPRECATED<span class=w> </span>and<span class=w> </span>will<span class=w> </span>be<span class=w> </span>removed<span class=w> </span><span class=k>in</span><span class=w> </span>a<span class=w> </span>future<span class=w> </span>version.<span class=w> </span>Use<span class=w> </span>kubectl<span class=w> </span><span class=nb>exec</span><span class=w> </span><span class=o>[</span>POD<span class=o>]</span><span class=w> </span>--<span class=w> </span><span class=o>[</span>COMMAND<span class=o>]</span><span class=w> </span>instead.
+<span class=o>[</span>root@vpc-1-busybox04<span class=w> </span>/<span class=o>]</span><span class=c1>#</span>
+<span class=o>[</span>root@vpc-1-busybox04<span class=w> </span>/<span class=o>]</span><span class=c1>#</span>
+<span class=o>[</span>root@vpc-1-busybox04<span class=w> </span>/<span class=o>]</span><span class=c1># ip a</span>
+<span class=m>1</span>:<span class=w> </span>lo:<span class=w> </span>&lt;LOOPBACK,UP,LOWER_UP&gt;<span class=w> </span>mtu<span class=w> </span><span class=m>65536</span><span class=w> </span>qdisc<span class=w> </span>noqueue<span class=w> </span>state<span class=w> </span>UNKNOWN<span class=w> </span>group<span class=w> </span>default<span class=w> </span>qlen<span class=w> </span><span class=m>1000</span>
+<span class=w>    </span>link/loopback<span class=w> </span><span class=m>00</span>:00:00:00:00:00<span class=w> </span>brd<span class=w> </span><span class=m>00</span>:00:00:00:00:00
+<span class=w>    </span>inet<span class=w> </span><span class=m>127</span>.0.0.1/8<span class=w> </span>scope<span class=w> </span>host<span class=w> </span>lo
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=w>    </span>inet6<span class=w> </span>::1/128<span class=w> </span>scope<span class=w> </span>host
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=m>17095</span>:<span class=w> </span>eth0@if17096:<span class=w> </span>&lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;<span class=w> </span>mtu<span class=w> </span><span class=m>1500</span><span class=w> </span>qdisc<span class=w> </span>noqueue<span class=w> </span>state<span class=w> </span>UP<span class=w> </span>group<span class=w> </span>default
+<span class=w>    </span>link/ether<span class=w> </span><span class=m>00</span>:00:00:76:94:55<span class=w> </span>brd<span class=w> </span>ff:ff:ff:ff:ff:ff<span class=w> </span>link-netnsid<span class=w> </span><span class=m>0</span>
+<span class=w>    </span>inet<span class=w> </span><span class=m>192</span>.168.0.6/24<span class=w> </span>brd<span class=w> </span><span class=m>192</span>.168.0.255<span class=w> </span>scope<span class=w> </span>global<span class=w> </span>eth0
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=w>    </span>inet6<span class=w> </span>fe80::200:ff:fe76:9455/64<span class=w> </span>scope<span class=w> </span>link
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=o>[</span>root@vpc-1-busybox04<span class=w> </span>/<span class=o>]</span><span class=c1># ping 223.5.5.5</span>
+PING<span class=w> </span><span class=m>223</span>.5.5.5<span class=w> </span><span class=o>(</span><span class=m>223</span>.5.5.5<span class=o>)</span><span class=w> </span><span class=m>56</span><span class=o>(</span><span class=m>84</span><span class=o>)</span><span class=w> </span>bytes<span class=w> </span>of<span class=w> </span>data.
+<span class=m>64</span><span class=w> </span>bytes<span class=w> </span>from<span class=w> </span><span class=m>223</span>.5.5.5:<span class=w> </span><span class=nv>icmp_seq</span><span class=o>=</span><span class=m>1</span><span class=w> </span><span class=nv>ttl</span><span class=o>=</span><span class=m>114</span><span class=w> </span><span class=nv>time</span><span class=o>=</span><span class=m>22</span>.2<span class=w> </span>ms
+<span class=m>64</span><span class=w> </span>bytes<span class=w> </span>from<span class=w> </span><span class=m>223</span>.5.5.5:<span class=w> </span><span class=nv>icmp_seq</span><span class=o>=</span><span class=m>2</span><span class=w> </span><span class=nv>ttl</span><span class=o>=</span><span class=m>114</span><span class=w> </span><span class=nv>time</span><span class=o>=</span><span class=m>21</span>.8<span class=w> </span>ms
+
+<span class=o>[</span>root@pc-node-1<span class=w> </span><span class=m>03</span>-cust-vpc<span class=o>]</span><span class=c1># kubectl exec -it -n vpc1            vpc-1-busybox02   bash</span>
+kubectl<span class=w> </span><span class=nb>exec</span><span class=w> </span><span class=o>[</span>POD<span class=o>]</span><span class=w> </span><span class=o>[</span>COMMAND<span class=o>]</span><span class=w> </span>is<span class=w> </span>DEPRECATED<span class=w> </span>and<span class=w> </span>will<span class=w> </span>be<span class=w> </span>removed<span class=w> </span><span class=k>in</span><span class=w> </span>a<span class=w> </span>future<span class=w> </span>version.<span class=w> </span>Use<span class=w> </span>kubectl<span class=w> </span><span class=nb>exec</span><span class=w> </span><span class=o>[</span>POD<span class=o>]</span><span class=w> </span>--<span class=w> </span><span class=o>[</span>COMMAND<span class=o>]</span><span class=w> </span>instead.
+<span class=o>[</span>root@vpc-1-busybox02<span class=w> </span>/<span class=o>]</span><span class=c1>#</span>
+<span class=o>[</span>root@vpc-1-busybox02<span class=w> </span>/<span class=o>]</span><span class=c1>#</span>
+<span class=o>[</span>root@vpc-1-busybox02<span class=w> </span>/<span class=o>]</span><span class=c1>#</span>
+<span class=o>[</span>root@vpc-1-busybox02<span class=w> </span>/<span class=o>]</span><span class=c1># ip a</span>
+<span class=m>1</span>:<span class=w> </span>lo:<span class=w> </span>&lt;LOOPBACK,UP,LOWER_UP&gt;<span class=w> </span>mtu<span class=w> </span><span class=m>65536</span><span class=w> </span>qdisc<span class=w> </span>noqueue<span class=w> </span>state<span class=w> </span>UNKNOWN<span class=w> </span>group<span class=w> </span>default<span class=w> </span>qlen<span class=w> </span><span class=m>1000</span>
+<span class=w>    </span>link/loopback<span class=w> </span><span class=m>00</span>:00:00:00:00:00<span class=w> </span>brd<span class=w> </span><span class=m>00</span>:00:00:00:00:00
+<span class=w>    </span>inet<span class=w> </span><span class=m>127</span>.0.0.1/8<span class=w> </span>scope<span class=w> </span>host<span class=w> </span>lo
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=w>    </span>inet6<span class=w> </span>::1/128<span class=w> </span>scope<span class=w> </span>host
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=m>1566</span>:<span class=w> </span>eth0@if1567:<span class=w> </span>&lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;<span class=w> </span>mtu<span class=w> </span><span class=m>1500</span><span class=w> </span>qdisc<span class=w> </span>noqueue<span class=w> </span>state<span class=w> </span>UP<span class=w> </span>group<span class=w> </span>default
+<span class=w>    </span>link/ether<span class=w> </span><span class=m>00</span>:00:00:0b:e9:d0<span class=w> </span>brd<span class=w> </span>ff:ff:ff:ff:ff:ff<span class=w> </span>link-netnsid<span class=w> </span><span class=m>0</span>
+<span class=w>    </span>inet<span class=w> </span><span class=m>192</span>.168.0.4/24<span class=w> </span>brd<span class=w> </span><span class=m>192</span>.168.0.255<span class=w> </span>scope<span class=w> </span>global<span class=w> </span>eth0
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=w>    </span>inet6<span class=w> </span>fe80::200:ff:fe0b:e9d0/64<span class=w> </span>scope<span class=w> </span>link
+<span class=w>       </span>valid_lft<span class=w> </span>forever<span class=w> </span>preferred_lft<span class=w> </span>forever
+<span class=o>[</span>root@vpc-1-busybox02<span class=w> </span>/<span class=o>]</span><span class=c1># ping 223.5.5.5</span>
+PING<span class=w> </span><span class=m>223</span>.5.5.5<span class=w> </span><span class=o>(</span><span class=m>223</span>.5.5.5<span class=o>)</span><span class=w> </span><span class=m>56</span><span class=o>(</span><span class=m>84</span><span class=o>)</span><span class=w> </span>bytes<span class=w> </span>of<span class=w> </span>data.
+<span class=m>64</span><span class=w> </span>bytes<span class=w> </span>from<span class=w> </span><span class=m>223</span>.5.5.5:<span class=w> </span><span class=nv>icmp_seq</span><span class=o>=</span><span class=m>2</span><span class=w> </span><span class=nv>ttl</span><span class=o>=</span><span class=m>114</span><span class=w> </span><span class=nv>time</span><span class=o>=</span><span class=m>22</span>.7<span class=w> </span>ms
+<span class=m>64</span><span class=w> </span>bytes<span class=w> </span>from<span class=w> </span><span class=m>223</span>.5.5.5:<span class=w> </span><span class=nv>icmp_seq</span><span class=o>=</span><span class=m>3</span><span class=w> </span><span class=nv>ttl</span><span class=o>=</span><span class=m>114</span><span class=w> </span><span class=nv>time</span><span class=o>=</span><span class=m>22</span>.6<span class=w> </span>ms
+<span class=m>64</span><span class=w> </span>bytes<span class=w> </span>from<span class=w> </span><span class=m>223</span>.5.5.5:<span class=w> </span><span class=nv>icmp_seq</span><span class=o>=</span><span class=m>4</span><span class=w> </span><span class=nv>ttl</span><span class=o>=</span><span class=m>114</span><span class=w> </span><span class=nv>time</span><span class=o>=</span><span class=m>22</span>.1<span class=w> </span>ms
+^C
+---<span class=w> </span><span class=m>223</span>.5.5.5<span class=w> </span>ping<span class=w> </span>statistics<span class=w> </span>---
+<span class=m>4</span><span class=w> </span>packets<span class=w> </span>transmitted,<span class=w> </span><span class=m>3</span><span class=w> </span>received,<span class=w> </span><span class=m>25</span>%<span class=w> </span>packet<span class=w> </span>loss,<span class=w> </span><span class=nb>time</span><span class=w> </span>3064ms
+rtt<span class=w> </span>min/avg/max/mdev<span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>22</span>.126/22.518/22.741/0.278<span class=w> </span>ms
+
+<span class=c1># 可以看到两个 pod 可以分别基于这两种 snat 资源上外网</span>
+</code></pre></div> <h2 id=4-ovn-dnat>4. ovn-dnat<a class=headerlink href=#4-ovn-dnat title="Permanent link">&para;</a></h2> <h3 id=41-ovn-dnat-pod-dnat>4.1 ovn-dnat 为 pod 绑定一个 dnat<a class=headerlink href=#41-ovn-dnat-pod-dnat title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">OvnEip</span>
+<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>externalSubnet</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">underlay</span>
+
+<span class=nn>---</span>
+<span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">OvnDnatRule</span>
+<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>ovnEip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
+<span class=w>  </span><span class=nt>ipName</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc-1-busybox01.vpc1</span><span class=w> </span><span class=c1># 注意这里是 pod ip crd 的名字，具有唯一性</span>
+<span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
+<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+
+
+<span class=nn>---</span>
+<span class=c1># 或者通过传统指定 vpc 以及 内网 ip 的方式</span>
+
+<span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">OvnDnatRule</span>
+<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>ovnEip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
+<span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
+<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+<span class=w>  </span><span class=nt>vpc</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc1</span>
+<span class=w>  </span><span class=nt>v4Ip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">192.168.0.3</span>
+</code></pre></div> <p>若要使用额外公网网络，则需要通过 externalSubnet 显式指定需要扩展使用的公网网络，在上述配置中扩展公网网络为 extra。</p> <p>OvnDnatRule 的配置与 IptablesDnatRule 类似</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl get oeip eip-dnat</span>
+NAME<span class=w>       </span>V4IP<span class=w>        </span>V6IP<span class=w>   </span>MAC<span class=w>                 </span>TYPE<span class=w>   </span>READY
+eip-dnat<span class=w>   </span><span class=m>10</span>.5.49.4<span class=w>          </span><span class=m>00</span>:00:00:4D:CE:49<span class=w>   </span>dnat<span class=w>   </span><span class=nb>true</span>
+
+<span class=c1># kubectl get odnat</span>
+NAME<span class=w>                   </span>EIP<span class=w>                    </span>PROTOCOL<span class=w>   </span>V4EIP<span class=w>        </span>V4IP<span class=w>           </span>INTERNALPORT<span class=w>   </span>EXTERNALPORT<span class=w>   </span>IPNAME<span class=w>                                </span>READY
+eip-dnat<span class=w>               </span>eip-dnat<span class=w>               </span>tcp<span class=w>        </span><span class=m>10</span>.5.49.4<span class=w>    </span><span class=m>192</span>.168.0.3<span class=w>    </span><span class=m>22</span><span class=w>             </span><span class=m>22</span><span class=w>             </span>vpc-1-busybox01.vpc1<span class=w>                  </span><span class=nb>true</span>
+</code></pre></div> <h3 id=42-ovn-dnat-vip-dnat>4.2 ovn-dnat 为 vip 绑定一个 dnat<a class=headerlink href=#42-ovn-dnat-vip-dnat title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">OvnDnatRule</span>
+<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>ipType</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vip</span><span class=w>  </span><span class=c1># 默认情况下 dnat 是面向 pod ip 的，这里需要标注指定对接到 vip 资源</span>
+<span class=w>  </span><span class=nt>ovnEip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
+<span class=w>  </span><span class=nt>ipName</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">test-dnat-vip</span>
+<span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
+<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+
+<span class=nn>---</span>
+<span class=c1># 或者通过传统指定 vpc 以及 内网 ip 的方式</span>
+
+<span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">OvnDnatRule</span>
+<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>ipType</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vip</span><span class=w>  </span><span class=c1># 默认情况下 dnat 是面向 pod ip 的，这里需要标注指定对接到 vip 资源</span>
+<span class=w>  </span><span class=nt>ovnEip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
+<span class=w>  </span><span class=nt>ipName</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">test-dnat-vip</span>
+<span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
+<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+<span class=w>  </span><span class=nt>vpc</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc1</span>
+<span class=w>  </span><span class=nt>v4Ip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">192.168.0.4</span>
+</code></pre></div> <p>OvnDnatRule 的配置与 IptablesDnatRule 类似</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl get vip test-dnat-vip</span>
+NAME<span class=w>            </span>V4IP<span class=w>          </span>PV4IP<span class=w>   </span>MAC<span class=w>                 </span>PMAC<span class=w>   </span>V6IP<span class=w>   </span>PV6IP<span class=w>   </span>SUBNET<span class=w>         </span>READY
+test-dnat-vip<span class=w>   </span><span class=m>192</span>.168.0.4<span class=w>           </span><span class=m>00</span>:00:00:D0:C0:B5<span class=w>                         </span>vpc1-subnet1<span class=w>   </span><span class=nb>true</span>
+
+<span class=c1># kubectl get oeip eip-dnat</span>
+NAME<span class=w>       </span>V4IP<span class=w>        </span>V6IP<span class=w>   </span>MAC<span class=w>                 </span>TYPE<span class=w>   </span>READY
+eip-dnat<span class=w>   </span><span class=m>10</span>.5.49.4<span class=w>          </span><span class=m>00</span>:00:00:4D:CE:49<span class=w>   </span>dnat<span class=w>   </span><span class=nb>true</span>
+
+<span class=c1># kubectl get odnat eip-dnat </span>
+NAME<span class=w>       </span>EIP<span class=w>        </span>PROTOCOL<span class=w>   </span>V4EIP<span class=w>       </span>V4IP<span class=w>          </span>INTERNALPORT<span class=w>   </span>EXTERNALPORT<span class=w>   </span>IPNAME<span class=w>          </span>READY
+eip-dnat<span class=w>   </span>eip-dnat<span class=w>   </span>tcp<span class=w>        </span><span class=m>10</span>.5.49.4<span class=w>   </span><span class=m>192</span>.168.0.4<span class=w>   </span><span class=m>22</span><span class=w>             </span><span class=m>22</span><span class=w>             </span>test-dnat-vip<span class=w>   </span><span class=nb>true</span>
+</code></pre></div> <p><a class=md-button href=https://jinshuju.net/f/lyrEow target=_blank><span class=twemoji><svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 4C5.36 4 2 6.69 2 10c0 1.89 1.08 3.56 2.78 4.66L4 17l2.5-1.5c.89.31 1.87.5 2.91.5A5.2 5.2 0 0 1 9 14c0-3.31 3.13-6 7-6 .19 0 .38 0 .56.03C15.54 5.69 12.78 4 9.5 4m-3 2.5a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m5 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1M16 9c-3.31 0-6 2.24-6 5s2.69 5 6 5c.67 0 1.31-.08 1.91-.25L20 20l-.62-1.87C20.95 17.22 22 15.71 22 14c0-2.76-2.69-5-6-5m-2 2.5a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m4 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1"/></svg></span> 微信群</a> <a class=md-button href=https://communityinviter.com/apps/kube-ovn/kube-ovn/ target=_blank><span class=twemoji><svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M6 15a2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1 2-2h2zm1 0a2 2 0 0 1 2-2 2 2 0 0 1 2 2v5a2 2 0 0 1-2 2 2 2 0 0 1-2-2zm2-8a2 2 0 0 1-2-2 2 2 0 0 1 2-2 2 2 0 0 1 2 2v2zm0 1a2 2 0 0 1 2 2 2 2 0 0 1-2 2H4a2 2 0 0 1-2-2 2 2 0 0 1 2-2zm8 2a2 2 0 0 1 2-2 2 2 0 0 1 2 2 2 2 0 0 1-2 2h-2zm-1 0a2 2 0 0 1-2 2 2 2 0 0 1-2-2V5a2 2 0 0 1 2-2 2 2 0 0 1 2 2zm-2 8a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2v-2zm0-1a2 2 0 0 1-2-2 2 2 0 0 1 2-2h5a2 2 0 0 1 2 2 2 2 0 0 1-2 2z"/></svg></span> Slack</a> <a class=md-button href=https://www.alauda.io/products/kube-ovn target=_blank><span class=twemoji><svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="m20 8-8 5-8-5V6l8 5 8-5m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"/></svg></span> Support</a></p> <aside class=md-source-file> <span class=md-source-file__fact> <span class=md-icon title=最后更新> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg> </span> <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2024年12月18日</span> </span> <span class=md-source-file__fact> <span class=md-icon title=创建日期> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg> </span> <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">2023年3月3日</span> </span> <span class=md-source-file__fact> <span class=md-icon title=贡献者> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg> </span> <span>GitHub</span> <nav> <a href=https://github.com/zbb88888 class=md-author title=@zbb88888> <img src="https://avatars.githubusercontent.com/u/7981158?v=4&size=72" alt=zbb88888> </a> <a href=https://github.com/web-flow class=md-author title=@web-flow> <img src="https://avatars.githubusercontent.com/u/19864447?v=4&size=72" alt=web-flow> </a> <a href=https://github.com/oilbeater class=md-author title=@oilbeater> <img src="https://avatars.githubusercontent.com/u/1189736?v=4&size=72" alt=oilbeater> </a> <a href=https://github.com/gemini-code-assist%5Bbot%5D class=md-author title=@gemini-code-assist[bot]> <img src="https://avatars.githubusercontent.com/in/956858?v=4&size=72" alt="GitHub user"> </a> </nav> </span> </aside> <h2 id=__comments>评论</h2> <script src=https://giscus.app/client.js data-repo=kubeovn/kube-ovn data-repo-id="MDEwOlJlcG9zaXRvcnkxNzcwNjg5NjE=" data-category=Announcements data-category-id=DIC_kwDOCo3boc4CAj60 data-mapping=pathname data-reactions-enabled=1 data-emit-metadata=0 data-input-position=bottom data-theme=light data-lang=zh-CN crossorigin=anonymous async>
+  </script> <script>
+  var palette = __md_get("__palette")
+  if (palette && typeof palette.color === "object")
+    if (palette.color.scheme === "slate") {
+      var giscus = document.querySelector("script[src*=giscus]")
+      giscus.setAttribute("data-theme", "dark")
+    }
+
+  /* Register event handlers after documented loaded */
+  document.addEventListener("DOMContentLoaded", function () {
+    var ref = document.querySelector("[data-md-component=palette]")
+    ref.addEventListener("change", function () {
+      var palette = __md_get("__palette")
+      if (palette && typeof palette.color === "object") {
+        var theme = palette.color.scheme === "slate" ? "dark" : "light"
+
+        /* Instruct Giscus to change theme */
+        var frame = document.querySelector(".giscus-frame")
+        frame.contentWindow.postMessage(
+          { giscus: { setConfig: { theme } } },
+          "https://giscus.app"
+        )
+      }
+    })
+  })
+</script> </article> </div> <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script> </div> <button type=button class="md-top md-icon" data-md-component=top hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg> 回到页面顶部 </button> </main> <footer class=md-footer> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-copyright> <div class=md-copyright__highlight> <p>The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our <a href=https://www.linuxfoundation.org/legal/trademark-usage>Trademark Usage page</a>. </p> </div> Made with <a href=https://squidfunk.github.io/mkdocs-material/ target=_blank rel=noopener> Material for MkDocs </a> </div> <div class=md-social> <a href=https://jinshuju.net/f/lyrEow target=_blank rel=noopener title=jinshuju.net class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 576 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M385.2 167.6c6.4 0 12.6.3 18.8 1.1C387.4 90.3 303.3 32 207.7 32 100.5 32 13 104.8 13 197.4c0 53.4 29.3 97.5 77.9 131.6l-19.3 58.6 68-34.1c24.4 4.8 43.8 9.7 68.2 9.7 6.2 0 12.1-.3 18.3-.8-4-12.9-6.2-26.6-6.2-40.8-.1-84.9 72.9-154 165.3-154m-104.5-52.9c14.5 0 24.2 9.7 24.2 24.4 0 14.5-9.7 24.2-24.2 24.2-14.8 0-29.3-9.7-29.3-24.2.1-14.7 14.6-24.4 29.3-24.4m-136.4 48.6c-14.5 0-29.3-9.7-29.3-24.2 0-14.8 14.8-24.4 29.3-24.4 14.8 0 24.4 9.7 24.4 24.4 0 14.6-9.6 24.2-24.4 24.2M563 319.4c0-77.9-77.9-141.3-165.4-141.3-92.7 0-165.4 63.4-165.4 141.3S305 460.7 397.6 460.7c19.3 0 38.9-5.1 58.6-9.9l53.4 29.3-14.8-48.6C534 402.1 563 363.2 563 319.4m-219.1-24.5c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.8 0 24.4 9.7 24.4 19.3 0 10-9.7 19.6-24.4 19.6m107.1 0c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.5 0 24.4 9.7 24.4 19.3.1 10-9.9 19.6-24.4 19.6"/></svg> </a> <a href=https://communityinviter.com/apps/kube-ovn/kube-ovn/ target=_blank rel=noopener title=communityinviter.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M94.12 315.1c0 25.9-21.16 47.06-47.06 47.06S0 341 0 315.1s21.16-47.06 47.06-47.06h47.06zm23.72 0c0-25.9 21.16-47.06 47.06-47.06s47.06 21.16 47.06 47.06v117.84c0 25.9-21.16 47.06-47.06 47.06s-47.06-21.16-47.06-47.06zm47.06-188.98c-25.9 0-47.06-21.16-47.06-47.06S139 32 164.9 32s47.06 21.16 47.06 47.06v47.06zm0 23.72c25.9 0 47.06 21.16 47.06 47.06s-21.16 47.06-47.06 47.06H47.06C21.16 243.96 0 222.8 0 196.9s21.16-47.06 47.06-47.06zm188.98 47.06c0-25.9 21.16-47.06 47.06-47.06S448 171 448 196.9s-21.16 47.06-47.06 47.06h-47.06zm-23.72 0c0 25.9-21.16 47.06-47.06 47.06s-47.06-21.16-47.06-47.06V79.06c0-25.9 21.16-47.06 47.06-47.06s47.06 21.16 47.06 47.06zM283.1 385.88c25.9 0 47.06 21.16 47.06 47.06S309 480 283.1 480s-47.06-21.16-47.06-47.06v-47.06zm0-23.72c-25.9 0-47.06-21.16-47.06-47.06s21.16-47.06 47.06-47.06h117.84c25.9 0 47.06 21.16 47.06 47.06s-21.16 47.06-47.06 47.06z"/></svg> </a> <a href=https://twitter.com/kubeovn target=_blank rel=noopener title=twitter.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 512 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253"/></svg> </a> <a href=https://github.com/kubeovn target=_blank rel=noopener title=github.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 496 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg> </a> <a href=https://hub.docker.com/r/kubeovn/kube-ovn target=_blank rel=noopener title=hub.docker.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 640 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M349.9 236.3h-66.1v-59.4h66.1zm0-204.3h-66.1v60.7h66.1zm78.2 144.8H362v59.4h66.1zm-156.3-72.1h-66.1v60.1h66.1zm78.1 0h-66.1v60.1h66.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1zm78.1 0h-66.1v59.4h66.1zm-78.1-72.1h-66.1v60.1h66.1z"/></svg> </a> </div> </div> </div> </footer> </div> <div class=md-dialog data-md-component=dialog> <div class="md-dialog__inner md-typeset"></div> </div> <script id=__config type=application/json>{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.action.edit", "content.action.view"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"default": "stable", "provider": "mike"}}</script> <script src=../../assets/javascripts/bundle.83f73b43.min.js></script> </body> </html>
