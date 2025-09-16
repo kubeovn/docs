@@ -31,6 +31,12 @@ kubectl apply -f https://raw.githubusercontent.com/kubeovn/dnsnameresolver/refs/
 kubectl set image deployment/coredns coredns=kubeovn/dnsnameresolver:dev -n kube-system
 ```
 
+确认 CoreDNS 是否正常启动：
+
+```bash
+kubectl get pod -n kube-system -l k8s-app=kube-dns
+```
+
 ### 启用 ANP 功能
 
 在 kube-ovn-controller 部署中添加相关参数：

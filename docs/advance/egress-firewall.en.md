@@ -29,7 +29,11 @@ Update CoreDNS with the pre-built DNSNameResolver image:
 
 ```bash
 kubectl set image deployment/coredns coredns=kubeovn/dnsnameresolver:dev -n kube-system
-kubectl delete pod -n kube-system -l k8s-app=kube-dns
+```
+
+Verify that CoreDNS is running properly:
+
+```bash
 kubectl get pod -n kube-system -l k8s-app=kube-dns
 ```
 
