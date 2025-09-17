@@ -43,13 +43,6 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.xen/advance/dpdk/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.15.x/advance/egress-firewall/</loc>
-        <lastmod>2025-09-17</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.x/advance/egress-firewall/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.xen/advance/egress-firewall/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.15.x/advance/external-gateway/</loc>
         <lastmod>2025-09-17</lastmod>
         <changefreq>daily</changefreq>
@@ -204,6 +197,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.xen/guide/dual-stack/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.15.x/guide/egress-firewall/</loc>
+        <lastmod>2025-09-17</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.x/guide/egress-firewall/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.xen/guide/egress-firewall/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.15.x/guide/eip-snat/</loc>
         <lastmod>2025-09-17</lastmod>
         <changefreq>daily</changefreq>
@@ -265,13 +265,6 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.x/guide/qos/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.xen/guide/qos/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.15.x/guide/setup-options/</loc>
-        <lastmod>2025-09-17</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.x/guide/setup-options/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.xen/guide/setup-options/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.15.x/guide/static-ip-mac/</loc>
@@ -463,6 +456,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.xen/reference/releasing/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.15.x/reference/setup-options/</loc>
+        <lastmod>2025-09-17</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.x/reference/setup-options/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.xen/reference/setup-options/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.15.x/reference/tunnel-protocol/</loc>
         <lastmod>2025-09-17</lastmod>
         <changefreq>daily</changefreq>
@@ -624,13 +624,6 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.xadvance/dpdk/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.15.x/en/advance/egress-firewall/</loc>
-        <lastmod>2025-09-17</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.x/en/advance/egress-firewall/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.xadvance/egress-firewall/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.15.x/en/advance/external-gateway/</loc>
         <lastmod>2025-09-17</lastmod>
         <changefreq>daily</changefreq>
@@ -785,6 +778,13 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.xguide/dual-stack/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.15.x/en/guide/egress-firewall/</loc>
+        <lastmod>2025-09-17</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.x/en/guide/egress-firewall/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.xguide/egress-firewall/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.15.x/en/guide/eip-snat/</loc>
         <lastmod>2025-09-17</lastmod>
         <changefreq>daily</changefreq>
@@ -846,13 +846,6 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.x/en/guide/qos/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.xguide/qos/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.15.x/en/guide/setup-options/</loc>
-        <lastmod>2025-09-17</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.x/en/guide/setup-options/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.xguide/setup-options/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.15.x/en/guide/static-ip-mac/</loc>
@@ -1042,6 +1035,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.x/en/reference/releasing/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.xreference/releasing/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.15.x/en/reference/setup-options/</loc>
+        <lastmod>2025-09-17</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.15.x/en/reference/setup-options/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.15.xreference/setup-options/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.15.x/en/reference/tunnel-protocol/</loc>
