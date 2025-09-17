@@ -92,7 +92,7 @@ spec:
   protocol: IPv4
 ```
 
-在 node 节点查看 ovn0 网卡：
+在 Node 节点查看 ovn0 网卡：
 
 ```bash
 # ifconfig ovn0
@@ -138,7 +138,7 @@ EOF
 - `excludeIps`: 保留地址列表，容器网络将不会自动分配列表内的地址，可用作固定 IP 地址分配段，也可在 Underlay 模式下避免和物理网络中已有设备冲突。
 - `gateway`：该子网网关地址，Overlay 模式下 Kube-OVN 会自动分配对应的逻辑网关，Underlay 模式下该地址需为底层物理网关地址。
 - `namespaces`: 绑定该子网的 Namespace 列表，绑定后 Namespace 下的 Pod 将会从当前子网分配地址。
-- `routeTable`: 关联的路由表，默认关联主路由表，路由表定义请参考[静态路由](../vpc/vpc.md#_3)
+- `routeTable`: 关联的路由表，可选项，默认关联主路由表，路由表定义请参考[静态路由](../vpc/vpc.md#_3)。
 
 ### 验证子网绑定生效
 
@@ -175,7 +175,7 @@ spec:
 
 ## Overlay 子网网关配置
 
-> 该功能只对 Overlay 模式子网生效，Underlay 类型子网访问外部网络需要借助底层物理网关。
+> 该功能仅对默认 VPC 下的 Overlay 类型子网生效，不适用于 Underlay 子网或自定义 VPC 内的子网。
 
 Overlay 子网下的 Pod 需要通过网关来访问集群外部网络，Kube-OVN 目前支持两种类型的网关：
 分布式网关和集中式网关，用户可以在子网中对网关的类型进行调整。
@@ -184,7 +184,7 @@ Overlay 子网下的 Pod 需要通过网关来访问集群外部网络，Kube-OV
 
 ### 分布式网关
 
-子网的默认类型网关，每个 node 会作为当前 node 上 pod 访问外部网络的网关。
+子网的默认类型网关，每个 Node 会作为当前 Node 上 Pod 访问外部网络的网关。
 数据包会通过本机的 `ovn0` 网卡流入主机网络栈，再根据主机的路由规则进行出网。
 当 `natOutgoing` 为 `true` 时，Pod 访问外部网络将会使用当前所在宿主机的 IP。
 
