@@ -179,7 +179,7 @@ If you need to bind a subnet to a Workload type resource such as Deployment or S
 
 ## Overlay Subnet Gateway Settings
 
-> This feature only takes effect for Overlay-type Subnets under the default VPC. This configuration will not work for Underlay Subnets or Subnets under custom VPCs
+> This feature applies only to Overlay subnets in the default VPC. It is not effective for Underlay subnets or subnets in custom VPCs.
 
 Pods under the Overlay Subnet need to access the external network through a gateway,
 and Kube-OVN currently supports two types of gateways:
