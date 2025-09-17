@@ -142,7 +142,7 @@ EOF
 - `excludeIps`: The address list is reserved so that the container network will not automatically assign addresses in the list, which can be used as a fixed IP address assignment segment or to avoid conflicts with existing devices in the physical network in Underlay mode.
 - `gateway`: For this subnet gateway address, Kube-OVN will automatically assign the corresponding logical gateway in Overlay mode, and the address should be the underlying physical gateway address in Underlay mode.
 - `namespaces`: Bind the list of Namespace for this Subnet. Pods under the Namespace will be assigned addresses from the current Subnet after binding.
-- `routeTable`: Associate the route table, default is main table, route table definition please defer to [Static Routes](../vpc/vpc.en.md#static-routes)
+- `routeTable`: Optional, associate the route table, default is main table. For route table definition please defer to [Static Routes](../vpc/vpc.en.md#static-routes).
 
 ### Create Pod in the Subnet
 
@@ -179,7 +179,7 @@ If you need to bind a subnet to a Workload type resource such as Deployment or S
 
 ## Overlay Subnet Gateway Settings
 
-> This feature only works for Overlay mode Subnets, Underlay type Subnets need to use the underlying physical gateway to access the external network.
+> This feature applies only to Overlay subnets in the default VPC. It is not effective for Underlay subnets or subnets in custom VPCs.
 
 Pods under the Overlay Subnet need to access the external network through a gateway,
 and Kube-OVN currently supports two types of gateways:
