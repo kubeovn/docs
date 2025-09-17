@@ -46,7 +46,7 @@ Next, you can observe the log of dropped packets in `/var/log/ovn/ovn-controller
 
 By default, after setting the `ovn.kubernetes.io/enable_log` annotation, only logs matching the drop ACL rule can be printed. If you want to view logs matching other ACL rules, it is not supported.
 
-Starting from Kube-OVN v1.13.0, a new annotation `ovn.kubernetes.io/log_acl_actions` is added to support logging that matches other ACL rules. The value of the annotation needs to be set to "allow".
+Starting from Kube-OVN v1.13.0, a new annotation `ovn.kubernetes.io/log_acl_actions` is added to support logging that matches other ACL rules. The value of the annotation needs to be set to `allow`.
 
 Add annotation `ovn.kubernetes.io/log_acl_actions` to NetworkPolicy, as shown below:
 
