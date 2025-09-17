@@ -204,13 +204,6 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.xen/guide/eip-snat/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.14.x/guide/ip/</loc>
-        <lastmod>2025-09-17</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.x/guide/ip/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.xen/guide/ip/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.14.x/guide/ippool/</loc>
         <lastmod>2025-09-17</lastmod>
         <changefreq>daily</changefreq>
@@ -244,13 +237,6 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.x/guide/prometheus-grafana/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.xen/guide/prometheus-grafana/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.14.x/guide/prometheus/</loc>
-        <lastmod>2025-09-17</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.x/guide/prometheus/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.xen/guide/prometheus/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.14.x/guide/qos/</loc>
@@ -778,13 +764,6 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.xguide/eip-snat/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.14.x/en/guide/ip/</loc>
-        <lastmod>2025-09-17</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.x/en/guide/ip/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.xguide/ip/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.14.x/en/guide/ippool/</loc>
         <lastmod>2025-09-17</lastmod>
         <changefreq>daily</changefreq>
@@ -818,13 +797,6 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.x/en/guide/prometheus-grafana/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.xguide/prometheus-grafana/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.14.x/en/guide/prometheus/</loc>
-        <lastmod>2025-09-17</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.x/en/guide/prometheus/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.xguide/prometheus/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.14.x/en/guide/qos/</loc>
