@@ -83,6 +83,6 @@ kubectl annotate networkpolicy -n kube-system default-deny-ingress ovn.kubernete
 
 Starting from v1.13.0, Kube-OVN supports the `AdminNetworkPolicy` and `BaselineAdminNetworkPolicy` functions. For an introduction to `AdminNetworkPolicy` and `BaselineAdminNetworkPolicy`, see [NetworkPolicy API](https://network-policy-api.sigs.k8s.io/).
 
-For NetworkPolicy API policies, you can also print logs that match ACL action rules by setting the `ovn.kubernetes.io/log_acl_actions` annotation. The annotation's value can be a combination of one or more of "allow,drop,pass".
+For NetworkPolicy API policies, you can also print logs that match ACL action rules by setting the `ovn.kubernetes.io/log_acl_actions` annotation. The annotation's value can be a combination of one or more of `allow,drop,pass`.
 
 Note that the `ovn.kubernetes.io/enable_log` annotation is only used when printing network policy logs. When printing cluster network policy logs, you do not need to set this annotation. You only need to set the `ovn.kubernetes.io/log_acl_actions` annotation.
