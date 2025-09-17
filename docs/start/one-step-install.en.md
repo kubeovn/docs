@@ -3,7 +3,7 @@
 Kube-OVN provides a one-click installation script and charts repo to help you quickly install a highly available,
 production-ready Kube-OVN container network with Overlay networking by default.
 
-If you need Underlay/Vlan networking as the default container network, please read [Underlay Installation](./underlay.en.md)
+If you need Underlay/Vlan networking as the default container network, please read [Underlay Installation](./underlay.en.md). For more installation and configuration details, please refer to [Installation and Configuration Options](../reference/setup-options.en.md).
 
 Before installation please read [Prerequisites](./prepare.en.md) first to make sure the environment is ready. If you want to completely remove Kube-OVN, please refer to [Uninstallation](./uninstall.en.md).
 
