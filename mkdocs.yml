@@ -22,13 +22,11 @@ nav:
       - 容器网络 QoS 配置: "guide/qos.md"
       - Egress Firewall: "guide/egress-firewall.md"
       - 双栈使用: "guide/dual-stack.md"
-      - IP 使用: "guide/ip.md"
       - Webhook 使用: "guide/webhook.md"
       - 流量镜像: "guide/mirror.md"
       - NetworkPolicy 日志: "guide/networkpolicy-log.md"
       - LoadBalancer 类型 Service: "guide/loadbalancer-service.md"
       - 配置监控和面板: "guide/prometheus-grafana.md"
-      - 配置原生 Prometheus: "guide/prometheus.md"
   - KubeVirt:
       - VM 固定 IP: "kubevirt/static-ip.md"
       - 虚拟机克隆: "kubevirt/vm-clone.md"
@@ -173,7 +171,6 @@ plugins:
             卸载: Uninstall
             安装和配置选项: Installation and Configuration Options
             固定地址: Fixed Addresses
-            IP 使用: Configure IP
             IP 池使用: Configure IPPool
             自定义路由: Custom Routes
             子网使用: Config Subnet
@@ -234,7 +231,6 @@ plugins:
             Overlay 下路由方式网络打通: Interconnection with Routes in Overlay Mode
             文档规范: Document Convention
             功能成熟度: Feature Stage
-            配置原生 Prometheus: Config Native Prometheus
             Iptables 规则: Iptables Rules
             内部负载均衡: Internal Load Balancer
             内部 DNS: Internal DNS
