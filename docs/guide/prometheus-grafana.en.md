@@ -5,8 +5,6 @@ Kube-OVN can export network control plane information and network data plane qua
 We use the CRD provided by [kube-prometheus](https://github.com/coreos/kube-prometheus) to define the corresponding Prometheus monitoring rules.
 For all monitoring metrics supported by Kube-OVN, please refer to [Kube-OVN Monitoring Metrics](../reference/metrics.en.md).
 
-If you are using native Prometheus, please refer to [Configuring Native Prometheus](./prometheus.en.md) for configuration.
-
 ## Install Prometheus Monitor
 
 Kube-OVN uses Prometheus Monitor CRD to manage the monitoring output.
