@@ -175,7 +175,7 @@ spec:
 
 ## Overlay 子网网关配置
 
-> 该功能只对默认 VPC 下的 Overlay 类型子网生效，该配置在 Underlay 子网和自定义 VPC 下不会起作用。
+> 该功能仅对默认 VPC 下的 Overlay 类型子网生效，不适用于 Underlay 子网或自定义 VPC 内的子网。
 
 Overlay 子网下的 Pod 需要通过网关来访问集群外部网络，Kube-OVN 目前支持两种类型的网关：
 分布式网关和集中式网关，用户可以在子网中对网关的类型进行调整。
