@@ -43,7 +43,7 @@ spec:
 
 默认情况下，设置 `ovn.kubernetes.io/enable_log` annotation 之后，只能打印匹配 Drop ACL 规则的日志，如果想要查看匹配其他 ACL 规则的日志，是不支持的。
 
-从 Kube-OVN v1.13.0 版本开始，新增了一个 annotation `ovn.kubernetes.io/log_acl_actions`，用于支持匹配其他 ACL 规则的日志打印。annotation 的取值，需要设置为 "allow"。
+从 Kube-OVN v1.13.0 版本开始，新增了一个 annotation `ovn.kubernetes.io/log_acl_actions`，用于支持匹配其他 ACL 规则的日志打印。annotation 的取值，需要设置为 `allow`。
 
 在 NetworkPolicy 中增加 annotation `ovn.kubernetes.io/log_acl_actions`，如下所示：
 
