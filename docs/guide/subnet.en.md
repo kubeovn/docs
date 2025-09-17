@@ -20,7 +20,7 @@ and this document will describe the common configurations and differentiated fea
 To make it easier for users to get started quickly,
 Kube-OVN has a built-in default Subnet, all Namespaces that do not explicitly declare subnet affiliation are automatically assigned IPs
 from the default subnet and the network information.
-The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](setup-options.en.md#built-in-network-settings) for more details.
+The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](../reference/setup-options.en.md#built-in-network-settings) for more details.
 To change the CIDR of the default Subnet after installation please refer to [Change Subnet CIDR](../ops/change-default-subnet.en.md).
 
 In Overlay mode, the default Subnet uses a distributed gateway and NAT translation for outbound traffic,
@@ -64,7 +64,7 @@ at each node that connect to the `join` subnet, through which the nodes and Pods
 
 All network communication between Pods and Nodes will go through the `ovn0` network interface. When a Node accesses a Pod, it enters the virtual network via the `ovn0` interface, and the virtual network then connects to the host network through the `ovn0` interface.
 
-The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](setup-options.en.md#built-in-network-settings) for more details.
+The configuration of this Subnet is specified at installation time, you can refer to [Built-in Network Settings](../reference/setup-options.en.md#built-in-network-settings) for more details.
 To change the CIDR of the Join Subnet after installation please refer to [Change Join CIDR](../ops/change-join-subnet.en.md).
 
 ### Check the Join Subnet
@@ -250,7 +250,7 @@ spec:
 - If a centralized gateway wants to specify a specific NIC of a machine for outbound networking,
 `gatewayNode` format can be changed to `kube-ovn-worker:172.18.0.2, kube-ovn-control-plane:172.18.0.3`.
 - The centralized gateway defaults to primary-backup mode, with only the primary node performing traffic forwarding.
-  If you need to switch to ECMP mode, please refer to [ECMP Settings](setup-options.en.md#centralized-gateway-ecmp-settings).
+  If you need to switch to ECMP mode, please refer to [ECMP Settings](../reference/setup-options.en.md#centralized-gateway-ecmp-settings).
 - The spec field `enableEcmp` has been added to the subnet crd definition since Kube-OVN v1.12.0 to migrate the ECMP switch to the subnet level. You can set whether to enable ECMP mode based on different subnets. The `enable-ecmp` parameter in the `kube-ovn-controller` deployment is no longer used. After the previous version is upgraded to v1.12.0, the subnet switch will automatically inherit the value of the original global switch parameter.
 
 ## Subnet ACL

@@ -14,7 +14,7 @@ Overlay 和 Underlay 的子网在使用和配置上存在一些差异，本文�
 ## 默认子网
 
 为了方便用户的快速上手使用，Kube-OVN 内置了一个默认子网，所有未显式声明子网归属的 Namespace 会自动从默认子网中分配 IP，
-并使用默认子网的网络信息。该子网的配置为安装时指定，可以参考[内置网络设置](setup-options.md#_2)，
+并使用默认子网的网络信息。该子网的配置为安装时指定，可以参考[内置网络设置](../reference/setup-options.md#_2)，
 如果要在安装后修改默认网络的 CIDR 请参考[修改默认网络](../ops/change-default-subnet.md)。
 
 在 Overlay 模式下，默认子网使用了分布式网关并对出网流量进行 NAT 转换，其行为和 Flannel 的默认行为基本一致，
@@ -59,7 +59,7 @@ spec:
 
 所有 Pods 和 Nodes 之间的网络通信都会通过 ovn0 网卡进行，Node 访问 Pod 时通过 ovn0 网卡进入虚拟网络，虚拟网络通过 ovn0 网卡进入主机网络。
 
-该子网的配置为安装时指定，可以参考[内置网络设置](setup-options.md#_2)，如果要在安装后修改。
+该子网的配置为安装时指定，可以参考[内置网络设置](../reference/setup-options.md#_2)，如果要在安装后修改。
 join 子网的 CIDR 请参考[修改 Join 子网](../ops/change-join-subnet.md)
 
 ### 查看 Join 子网
@@ -239,7 +239,7 @@ spec:
 - 集中式网关如果希望指定机器的特定网卡进行出网，`gatewayNode`
 可更改为 `kube-ovn-worker:172.18.0.2, kube-ovn-control-plane:172.18.0.3` 格式。
 - 集中式网关默认为主备模式，只有主节点进行流量转发，
-如果需要切换为 ECMP 模式，请参考[集中式网关 ECMP 开启设置](setup-options.md#ecmp)。
+如果需要切换为 ECMP 模式，请参考[集中式网关 ECMP 开启设置](../reference/setup-options.md#ecmp)。
 - 从 Kube-OVN v1.12.0 版本开始，在 subnet crd 定义中增加了 spec 字段 `enableEcmp`，将集中式子网 ECMP 开关控制迁移到子网层级，可以基于不同的子网分别设置是否开启 ECMP 模式。原有的 `kube-ovn-controller` Deployment 中的 `enable-ecmp` 参数不再使用。之前版本升级到 v1.12.0 之后，子网开关会自动继承原有的全局开关参数取值。
 
 ## 子网 ACL 设置
