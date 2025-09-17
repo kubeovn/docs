@@ -2,7 +2,7 @@
 
 Kube-OVN 提供了一键安装脚本和 Charts 仓库，可以帮助你快速安装一个高可用，生产就绪的 Kube-OVN 容器网络，默认部署为 Overlay 类型网络。
 
-如果默认网络需要搭建 Underlay/Vlan 网络，请参考 [Underlay 网络支持](./underlay.md)。
+如果默认网络需要搭建 Underlay/Vlan 网络，请参考 [Underlay 网络支持](./underlay.md)，更多安装配置请参考 [安装和配置选项](../reference/setup-options.md)。
 
 安装前请参考[准备工作](./prepare.md)确认环境配置正确。如果想完全删除 Kube-OVN 请参考[卸载](./uninstall.md)。
 

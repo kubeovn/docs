@@ -102,7 +102,7 @@ args:
 - --enable-mirror=true
 ```
 
-流量镜像的能力在默认安装中为关闭，如果需要细粒度的流量镜像或需要将流量镜像到额外的网卡请参考[容器网络流量镜像](mirror.md)。
+流量镜像的能力在默认安装中为关闭，如果需要细粒度的流量镜像或需要将流量镜像到额外的网卡请参考[容器网络流量镜像](../guide/mirror.md)。
 
 ## LB 开启设置
 
@@ -165,11 +165,11 @@ args:
 - --enable-eip-snat=false
 ```
 
-EIP 和 SNAT 的能力在默认安装中为开启。该功能的相关使用和其他可配参数请参考 [EIP 和 SNAT 配置](./eip-snat.md)。
+EIP 和 SNAT 的能力在默认安装中为开启。该功能的相关使用和其他可配参数请参考 [EIP 和 SNAT 配置](../guide/eip-snat.md)。
 
 ## Load Balancer 类型 Service 支持开启设置
 
-默认 VPC 下可通过开启该选项来支持 Load Balancer 类型 Service。该功能的相关使用和其他可配参数请参考 [LoadBalancer 类型 Service](./loadbalancer-service.md)。
+默认 VPC 下可通过开启该选项来支持 Load Balancer 类型 Service。该功能的相关使用和其他可配参数请参考 [LoadBalancer 类型 Service](../guide/loadbalancer-service.md)。
 
 该功能默认关闭，可在安装脚本中进行配置：
 
@@ -196,7 +196,7 @@ args:
 
 从 Kube-OVN v1.12.0 版本开始，在 subnet crd 定义中增加了 spec 字段 `enableEcmp`，将集中式子网 ECMP 开关控制迁移到子网层级，可以基于不同的子网分别设置是否开启 ECMP 模式。原有的 `kube-ovn-controller` Deployment 中的 `enable-ecmp` 参数不再使用。之前版本升级到 v1.12.0 之后，子网开关会自动继承原有的全局开关参数取值。
 
-集中式网关默认安装下为主备模式，更多网关相关内容请参考[子网使用](./subnet.md)。
+集中式网关默认安装下为主备模式，更多网关相关内容请参考[子网使用](../guide/subnet.md)。
 
 ## Kubevirt VM 固定地址开启设置
 
@@ -254,7 +254,7 @@ env:
 
 如果需要使用 STT 隧道需要额外编译 ovs 的内核模块，请参考[性能调优](../advance/performance-tuning.md)。
 
-不同协议在实际使用中的区别请参考[隧道协议说明](../reference/tunnel-protocol.md)。
+不同协议在实际使用中的区别请参考[隧道协议说明](tunnel-protocol.md)。
 
 ## SSL 设置
 

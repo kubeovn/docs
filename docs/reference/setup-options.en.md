@@ -102,7 +102,7 @@ args:
 ```
 
 The ability to mirror traffic is disabled in the default installation,
-if you need fine-grained traffic mirroring or need to mirror traffic to additional NICs please refer to [Traffic Mirror](mirror.en.md).
+if you need fine-grained traffic mirroring or need to mirror traffic to additional NICs please refer to [Traffic Mirror](../guide/mirror.en.md).
 
 ## LB Settings
 
@@ -167,7 +167,7 @@ args:
 - --enable-eip-snat=false
 ```
 
-EIP and SNAT is enabled by default. More information can refer to [EIP and SNAT](./eip-snat.en.md).
+EIP and SNAT is enabled by default. More information can refer to [EIP and SNAT](../guide/eip-snat.en.md).
 
 ## Centralized Gateway ECMP Settings
 
@@ -179,7 +179,7 @@ args:
 - --enable-ecmp=true 
 ```
 
-Centralized gateway default installation under the primary-backup mode, more gateway-related content please refer to [Config Subnet](./subnet.en.md).
+Centralized gateway default installation under the primary-backup mode, more gateway-related content please refer to [Config Subnet](../guide/subnet.en.md).
 
 The spec field `enableEcmp` has been added to the subnet crd definition since Kube-OVN v1.12.0 to migrate the ECMP switch to the subnet level. You can set whether to enable ECMP mode based on different subnets. The `enable-ecmp` parameter in the `kube-ovn-controller` deployment is no longer used. After the previous version is upgraded to v1.12.0, the subnet switch will automatically inherit the value of the original global switch parameter.
 

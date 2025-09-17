@@ -36,7 +36,7 @@
 | [Namespaced Subnet](../guide/subnet.md) | true  | GA    | 1.8       |           |
 | [分布式网关](../guide/subnet.md) | true  | GA    | 1.8       |           |
 | [主从模式集中式网关](../guide/subnet.md) | true  | GA    | 1.8       |           |
-| [ECMP 模式集中式网关](../guide/setup-options.md) | false | Beta  | 1.8       |           |
+| [ECMP 模式集中式网关](../reference/setup-options.md) | false | Beta  | 1.8       |           |
 | [子网 ACL](../guide/subnet.md) | true  | Alpha | 1.9       |           |
 | [子网隔离 (未来会和子网 ACL 合并)](../guide/subnet.md) | true  | Beta  | 1.8       |           |
 | [Underlay 子网](../start/underlay.md) | true  | GA    | 1.8       |           |
@@ -58,7 +58,7 @@
 | [双栈网络](../guide/dual-stack.md) | false | GA    | 1.8       |           |
 | [默认 VPC EIP/SNAT](../guide/eip-snat.md) | false | Beta  | 1.8       |           |
 | [流量镜像](../guide/mirror.md) | false | GA    | 1.8       |           |
-| [NetworkPolicy](../guide/setup-options.md) | true  | Beta  | 1.8       |           |
+| [NetworkPolicy](../reference/setup-options.md) | true  | Beta  | 1.8       |           |
 | [Webhook](../guide/webhook.md) | false | Alpha | 1.10      |           |
 | [性能调优](../advance/performance-tuning.md) | false | Beta  | 1.8       |           |
 | [Overlay 子网静态路由对外暴露](../advance/overlay-with-route.md) | false | Alpha | 1.8       |           |
