@@ -53,7 +53,6 @@
 | [自定义 VPC 安全组](../vpc/security-group.md) | true  | Alpha | 1.10      |           |
 | [容器最大带宽 QoS](../guide/qos.md) | true  | GA    | 1.8       |           |
 | [linux-netem QoS](../guide/qos.md) | true  | Alpha | 1.9       |           |
-| [Prometheus 集成](../guide/prometheus.md) | false | GA    | 1.8       |           |
 | [Grafana 集成](../guide/prometheus-grafana.md) | false | GA    | 1.8       |           |
 | [双栈网络](../guide/dual-stack.md) | false | GA    | 1.8       |           |
 | [默认 VPC EIP/SNAT](../guide/eip-snat.md) | false | Beta  | 1.8       |           |

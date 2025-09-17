@@ -5,8 +5,6 @@ Kube-OVN 可以将网络控制平面信息以及网络数据平面质量信息�
 我们使用 [kube-prometheus](https://github.com/coreos/kube-prometheus) 所提供的 CRD 来定义相应的 Prometheus 监控规则。
 用户需要预先安装 kube-prometheus 来启用相关的 CRD。Kube-OVN 所支持的全部监控指标请参考 [Kube-OVN 监控指标](../reference/metrics.md)。
 
-如果使用原生 Prometheus 请参考[配置原生 Prometheus 获取监控数据](./prometheus.md) 进行配置。
-
 ## 安装 Prometheus Monitor
 
 Kube-OVN 使用 Prometheus Monitor CRD 来管理监控输出：
