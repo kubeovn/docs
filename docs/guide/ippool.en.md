@@ -27,7 +27,7 @@ Field description:
 | :--------: | :------------------------------------- | :------------------------------------------------------------------ |
 |   subnet   | Specify the subnet to which it belongs | Required                                                            |
 |    ips     | Specify IP ranges                      | Support three formats: <IP>, <CIDR> and <IP1>..<IP2>. Support IPv6. |
-| namespaces | Specifies the bound namespaces         | Optional, once a namespace is bound to an IP pool, it will not allocate addresses from other address spaces within the subnet.  |
+| namespaces | Specifies the bound namespaces         | Optional. Pods in a bound namespace will only get IPs from the bound pool(s), not other ranges in the subnet. |
 
 ## Precautions
 
