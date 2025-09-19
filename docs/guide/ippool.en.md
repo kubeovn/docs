@@ -27,13 +27,14 @@ Field description:
 | :--------: | :------------------------------------- | :------------------------------------------------------------------ |
 |   subnet   | Specify the subnet to which it belongs | Required                                                            |
 |    ips     | Specify IP ranges                      | Support three formats: <IP>, <CIDR> and <IP1>..<IP2>. Support IPv6. |
-| namespaces | Specifies the bound namespaces         | Optional                                                            |
+| namespaces | Specifies the bound namespaces         | Optional. Pods in a bound namespace will only get IPs from the bound pool(s), not other ranges in the subnet. |
 
 ## Precautions
 
-1. To ensure compatibility with [Workload Universal IP Pool Fixed Address](./static-ip-mac.md#workload-ip-pool), the name of the IP pool cannot be an IP address;
-2. The `.spec.ips` of the IP pool can specify an IP address beyond the scope of the subnet, but the actual effective IP address is the intersection of `.spec.ips` and the CIDR of the subnet;
-3. Different IP pools of the same subnet cannot contain the same (effective) IP address;
-4. The `.spec.ips` of the IP pool can be modified dynamically;
-5. The IP pool will inherit the reserved IP of the subnet. When randomly assigning an IP address from the IP pool, the reserved IP included in the IP pool will be skipped;
+1. To ensure compatibility with [Workload Universal IP Pool Fixed Address](./static-ip-mac.md#workload-ip-pool), the name of the IP pool cannot be an IP address.
+2. The `.spec.ips` of the IP pool can specify an IP address beyond the scope of the subnet, but the actual effective IP address is the intersection of `.spec.ips` and the CIDR of the subnet.
+3. Different IP pools of the same subnet cannot contain the same (effective) IP address.
+4. The `.spec.ips` of the IP pool can be modified dynamically.
+5. The IP pool will inherit the reserved IP of the subnet. When randomly assigning an IP address from the IP pool, the reserved IP included in the IP pool will be skipped.
 6. When randomly assigning an IP address from a subnet, it will only be assigned from a range other than all IP pools in the subnet.
+7. Multiple IP pools can be bound to the same Namespace.
