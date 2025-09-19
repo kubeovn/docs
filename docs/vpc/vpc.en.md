@@ -218,6 +218,7 @@ spec:
     - "kubernetes.io/os: linux"
   externalSubnets:
     - ovn-vpc-external-network
+  noDefaultEIP: false
 ```
 
 - `vpc`: The VPC to which this VpcNatGateway belongs.
@@ -225,6 +226,7 @@ spec:
 - `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use. When configuring routing for a VPC, the  `nextHopIP` needs to be set to the `lanIp` of the current VpcNatGateway.
 - `selector`: The node selector for VpcNatGateway Pod has the same format as NodeSelector in Kubernetes.
 - `externalSubnets`: External network used by the VPC gateway, if not configured, `ovn-vpc-external-network` is used by default, and only one external network is supported in the current version.
+- `noDefaultEIP`: Whether the VPC gateway's secondary network interface binds a default EIP. Defaults to `false` to maintain compatibility with pre-v1.15 behavior patterns. In non-BGP gateway modes, it's recommended to set this to `true` to reduce Underlay address allocation.
 
 Other configurable parameters:
 

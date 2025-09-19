@@ -214,6 +214,7 @@ spec:
     - "kubernetes.io/os: linux"
   externalSubnets:
     - ovn-vpc-external-network
+  noDefaultEIP: false
 ```
 
 - `vpc`：该 VpcNatGateway 所属的 VPC。
@@ -221,11 +222,12 @@ spec:
 - `lanIp`：`subnet` 内某个未被使用的 IP，VPC 网关 Pod 最终会使用该 IP。当 VPC 配置路由需要指向当前 VpcNatGateway 时 `nextHopIP` 需要设置为这个 `lanIp`。
 - `selector`：VpcNatGateway Pod 的节点选择器，格式和 Kubernetes 中的 NodeSelector 格式相同。
 - `externalSubnets`：VPC 网关使用的外部网络，如果不配置则默认使用 `ovn-vpc-external-network`，当前版本只支持配置一个外部网络。
+- `noDefaultEIP`：VPC 网关的附属网卡是否绑定默认 EIP，默认为 `false` 兼容 v1.15 前行为模式，在非 BGP 网关模式下推荐设置为 `true` 来节省 Underlay 地址。
 
 其他可配参数：
 
-- `tolerations` : 为 VPC 网关配置容忍度，具体配置参考 [污点和容忍度](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/taint-and-toleration/)。
-- `affinity` :  为 VPC 网关 Pod 或节点配置亲和性，具体设置参考 [亲和性与反亲和性](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)。
+- `tolerations`：为 VPC 网关配置容忍度，具体配置参考 [污点和容忍度](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/taint-and-toleration/)。
+- `affinity`：为 VPC 网关 Pod 或节点配置亲和性，具体设置参考 [亲和性与反亲和性](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)。
 
 在使用 VPC-NAT-GW 时需要注意：
 
