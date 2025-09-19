@@ -27,13 +27,14 @@ spec:
 | :--------: | :----------------- | :-------------------------------------------------------- |
 |   subnet   | 指定所属子网       | 必填                                                      |
 |    ips     | 指定包含的 IP 范围 | 支持 <IP>、<CIDR> 以及 <IP1>..<IP2> 三种格式，支持 IPv6。 |
-| namespaces | 绑定命名空间       | 可选                                                      |
+| namespaces | 绑定命名空间       | 可选。绑定的命名空间下的 Pod 将只会从绑定的 IP 池中分配 IP，而不会从子网内其他范围分配。 |
 
 ## 注意事项
 
-1. 为保证与 [Workload 通用 IP Pool 固定地址](./static-ip-mac.md#workload-ip-pool) 的兼容性，IP 池的名称不能是一个 IP 地址；
-2. IP 池的 `.spec.ips` 可指定超出子网范围的 IP 地址，但实际有效的 IP 地址是 `.spec.ips` 与子网 CIDR 的交集；
-3. 同一个子网的不同 IP 池，不能包含相同的（有效）IP 地址；
-4. IP 池的 `.spec.ips` 可动态修改；
-5. IP 池会继承子网的保留 IP，从 IP 池随机分配 IP 地址时，会跳过包含在 IP 池中的保留 IP；
+1. 为保证与 [Workload 通用 IP Pool 固定地址](./static-ip-mac.md#workload-ip-pool) 的兼容性，IP 池的名称不能是一个 IP 地址。
+2. IP 池的 `.spec.ips` 可指定超出子网范围的 IP 地址，但实际有效的 IP 地址是 `.spec.ips` 与子网 CIDR 的交集。
+3. 同一个子网的不同 IP 池，不能包含相同的（有效）IP 地址。
+4. IP 池的 `.spec.ips` 可动态修改。
+5. IP 池会继承子网的保留 IP，从 IP 池随机分配 IP 地址时，会跳过包含在 IP 池中的保留 IP。
 6. 从子网随机分配 IP 地址时，只会从子网所有 IP 池以外的范围分配。
+7. 多个 IP 池可以绑定同一个 Namespace。
