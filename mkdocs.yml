@@ -20,7 +20,7 @@ nav:
       - 自定义路由: "guide/custom-routes.md"
       - EIP 和 SNAT 配置: "guide/eip-snat.md"
       - 容器网络 QoS 配置: "guide/qos.md"
-      - Egress Firewall: "guide/egress-firewall.md"
+      - 基于域名的访问控制: "guide/egress-firewall.md"
       - 双栈使用: "guide/dual-stack.md"
       - Webhook 使用: "guide/webhook.md"
       - 流量镜像: "guide/mirror.md"
@@ -240,7 +240,7 @@ plugins:
             OVN 流量镜像: OVN Remote Port Mirroring
             节点本地 DNS 缓存和 Kube-OVN 适配: Node Local DNS Cache and Kube-OVN Adaptation
             默认 VPC NAT 策略规则: Default VPC NAT Policy Rule
-            Egress Firewall: Egress Firewall
+            Egress Firewall: Domain-based Access Control
             调整日志等级: Change Log Level
             Talos 安装: Install on Talos
             版本管理: Release Management

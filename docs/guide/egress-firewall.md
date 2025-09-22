@@ -1,6 +1,20 @@
-# Egress Firewall
+# 基于域名的访问控制
 
-该功能基于 AdminNetworkPolicy (ANP) 实现出口流量的域名级别控制，允许管理员通过域名方式管理集群内 Pod 对外部服务的访问。
+Kubernetes 原生的 NetworkPolicy 只支持通过 L3 和 L4 协议对网络访问进行控制。通过 [AdminNetworkPolicy (ANP)](https://network-policy-api.sigs.k8s.io/api-overview/) 可以实现出口流量的域名级别控制，允许管理员通过域名方式管理集群内 Pod 对外部服务的访问。该功能需要配合 [DNSNameResolver](https://github.com/kubeovn/dnsnameresolver) CoreDNS 插件来使用。
+
+## 实现原理
+
+相比原生的 NetworkPolicy 可以直接使用 OVN 中的 AddressSet 记录需要进行访问控制的 IP 列表，基于域名的访问控制需要动态将域名转换成 IP 地址加入到 OVN 的 AddressSet 中，从而实现 DNS 的访问控制。
+
+实现流程：
+
+1. kube-ovn-controller 根据 AdminNetworkPolicy 里域名规则的信息生成 DNSNameResolver CR 资源。
+2. CoreDNS 在解析域名过程中和所有 DNSNameResolver CR 资源进行匹配，一旦解析记录匹配，则将域名对应的 IP 地址信息更新到 DNSNameResolver status 中。
+3. kube-ovn-controller 根据 DNSNameResolver CR 资源的 status 信息更新对应的 AddressSet。
+
+## 使用限制
+
+由于域名和 IP 的映射关系是解析时确认，因此规则的生效存在延迟，可能导致对于 Deny 规则第一次访问成功，对于 Allow 规则第一次访问失败的现象。为了避免安全泄漏的问题，我们建议对于域名的访问控制只使用 Allow 规则，配合默认的 Deny 规则，同时应用自身要有重试的机制。
 
 ## 前置条件
 

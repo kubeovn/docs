@@ -1,6 +1,20 @@
-# Egress Firewall
+# Domain-based Access Control
 
-This feature implements domain-level egress traffic control based on AdminNetworkPolicy (ANP), allowing administrators to manage cluster Pod access to external services through domain names.
+Kubernetes native NetworkPolicy only supports network access control through L3 and L4 protocols. Through [AdminNetworkPolicy (ANP)](https://network-policy-api.sigs.k8s.io/api-overview/), domain-level control of egress traffic can be achieved, allowing administrators to manage cluster Pod access to external services through domain names. This feature needs to be used in conjunction with the [DNSNameResolver](https://github.com/kubeovn/dnsnameresolver) CoreDNS plugin.
+
+## Implementation Principles
+
+Compared to native NetworkPolicy that can directly use AddressSet in OVN to record the IP list for access control, domain-based access control needs to dynamically convert domain names to IP addresses and add them to OVN's AddressSet to achieve DNS access control.
+
+Implementation process:
+
+1. kube-ovn-controller generates DNSNameResolver CR resources based on domain rule information in AdminNetworkPolicy.
+2. During DNS resolution, CoreDNS matches against all DNSNameResolver CR resources. Once a resolution record matches, it updates the corresponding IP address information of the domain name to the DNSNameResolver status.
+3. kube-ovn-controller updates the corresponding AddressSet based on the status information of DNSNameResolver CR resources.
+
+## Usage Limitations
+
+Since the mapping relationship between domain names and IPs is determined during resolution, there is a delay in rule effectiveness, which may cause the first access to succeed for Deny rules and the first access to fail for Allow rules. To avoid security leakage issues, we recommend using only Allow rules for domain-based access control, combined with default Deny rules, and applications should have retry mechanisms.
 
 ## Prerequisites
 
