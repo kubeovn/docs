@@ -34,6 +34,10 @@ Kube-OVN includes a wide range of features and is rapidly evolving. For the feat
 
 We also suggest building a test suite for the features you use, so you can quickly validate the impact of new Kube-OVN releases. If your use case is not covered in Kube-OVN's end-to-end (E2E) test code, we welcome contributions to the test suite to help the project grow better.
 
+## Building a Monitoring System
+
+Most application-side failures appear to be network issues, but in reality, only a small portion are genuine network problems. However, many undiagnosable issues are attributed to network problems, which unnecessarily increases pressure on the network side. We recommend collaborating with the application side to establish a monitoring system that integrates monitoring, logs, and alerts from both application and network sides. When failures occur, all data can be analyzed collectively to determine responsibility boundaries. In the Kube-OVN community, we've encountered cases where [OpenTelemetry](https://github.com/open-telemetry){: target = "_blank" } was used to connect application-side tracing and [DeepFlow](https://github.com/deepflowio/deepflow){: target = "_blank" } was used to integrate underlying network tracing. We also recommend exploring a suitable monitoring system based on your specific situation.
+
 ## Provide Effective Feedback
 
 Kube-OVN community maintainers cannot respond to issues 24/7 in real-time. We prefer asynchronous communication via GitHub Issues. To improve efficiency, please provide as much detail as possible about the environment where the issue occurred, reproduction steps, and your analysis. This helps us understand the problem better and avoid multiple rounds of back-and-forth.
