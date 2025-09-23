@@ -87,7 +87,7 @@ spec:
       matchLabels:
         kubernetes.io/metadata.name: kube-system
   egress:
-  - action: Deny
+  - action: Allow
     name: deny-baidu-google
     to:
     - domainNames:
@@ -110,11 +110,11 @@ spec:
 使用 kube-ovn-pinger 测试连通性：
 
 ```bash
-# 测试对被阻止域名的访问
+# 测试域名的访问
 kubectl exec -it -n kube-system kube-ovn-pinger-xxxxx -- ping baidu.com
 ```
 
-> 注意：首次访问可能成功，因为 DNS 解析和 ACL 规则应用需要时间。
+> 注意：首次访问可能失败，因为 DNS 解析和 ACL 规则应用需要时间。
 
 查看 DNSNameResolver 状态：
 
