@@ -386,13 +386,6 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.xen/reference/document-convention/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.14.x/reference/feature-stage/</loc>
-        <lastmod>2025-09-30</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.x/reference/feature-stage/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.xen/reference/feature-stage/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.14.x/reference/iptables-rules/</loc>
         <lastmod>2025-09-30</lastmod>
         <changefreq>daily</changefreq>
@@ -944,13 +937,6 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.x/en/reference/document-convention/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.xreference/document-convention/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.14.x/en/reference/feature-stage/</loc>
-        <lastmod>2025-09-30</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.14.x/en/reference/feature-stage/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.14.xreference/feature-stage/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.14.x/en/reference/iptables-rules/</loc>
