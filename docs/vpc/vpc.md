@@ -93,34 +93,22 @@ spec:
 
 运行成功后可观察两个 Pod 地址属于同一个 CIDR，但由于运行在不同的租户 VPC，两个 Pod 无法相互访问。
 
-### 自定义 VPC Pod 支持 livenessProbe 和 readinessProbe
-
-由于常规配置下自定义 VPC 下的 Pod 和节点的网络之间并不互通，所以 kubelet 发送的探测报文无法到达自定 VPC 内的 Pod。Kube-OVN 通过 TProxy 将 kubelet 发送的探测报文重定向到自定义 VPC 内的 Pod，从而实现这一功能。
-
-配置方法如下，在 DaemonSet `kube-ovn-cni` 中增加参数 `--enable-tproxy=true`：
-
-```yaml
-spec:
-  template:
-    spec:
-      containers:
-      - args:
-        - --enable-tproxy=true
-```
-
-该功能限制条件：
-
-1. 当同一个节点下出现不同 VPC 下的 Pod 具有相同的 IP，探测功能失效。
-2. 目前暂时只支持 `tcpSocket` 和 `httpGet` 两种探测方式。
-
 ## 创建 VPC 网关
-
-> 自定义 VPC 下的子网不支持默认 VPC 下的分布式网关和集中式网关。
 
 VPC 内容器访问外部网络需要通过 VPC 网关，VPC 网关可以打通物理网络和租户网络，并提供
 浮动 IP，SNAT 和 DNAT 功能。
 
 VPC 网关功能依赖 Multus-CNI 的多网卡功能，安装请参考 [multus-cni](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md){: target = "_blank" }。
+
+!!! note
+
+    自定义 VPC 下的子网不支持默认 VPC 下的分布式网关和集中式网关。
+
+    目前自定 VPC 支持三种和外网互通的方案：VPC NAT 网关，OVN 网关和 Egress Gateway。其中 VPC NAT 网关为 Kube-OVN 最早支持的出网方式，为每个 VPC NAT 网关创建一个多网卡 Pod，一个网卡接入自定义 VPC 网络，另一个网卡通过 Macvlan 接入底层物理网络，通过 Pod 内的 iptables 实现各类出网和入网操作。该方式目前支持最多的功能，被使用的时间也最长，但也存在单点故障和使用复杂的缺点。
+
+    OVN 网关使用了 OVN 内部原生支持的各类 NAT 能力实现出网和入网，可通过硬件加速提升性能，通过 OVN 内置的 BFD 实现故障切换，由于暴露的是 OVN 原生的概念，需要用户对 OVN 的适用较为熟悉。
+
+    Egress Gateway 是针对 VPC NAT 网关的单点问题的改进，实现了水平扩展和故障快速切换，但是目前只实现了出网能力，没有入网能力。
 
 ### 配置外部网络
 
@@ -640,3 +628,23 @@ spec:
 - `defaultSubnet`：VPC 下默认子网的名称。
 
 默认子网会给所有未指定子网的 Namespace 增加 `ovn.kubernetes.io/logical_switch` 注解，所有没有显式使用 `ovn.kubernetes.io/logical_switch` 注解的 Pod 都会自动从默认子网分配地址。
+
+### 自定义 VPC Pod 支持 livenessProbe 和 readinessProbe
+
+由于常规配置下自定义 VPC 下的 Pod 和节点的网络之间并不互通，所以 kubelet 发送的探测报文无法到达自定 VPC 内的 Pod。Kube-OVN 通过 TProxy 将 kubelet 发送的探测报文重定向到自定义 VPC 内的 Pod，从而实现这一功能。
+
+配置方法如下，在 DaemonSet `kube-ovn-cni` 中增加参数 `--enable-tproxy=true`：
+
+```yaml
+spec:
+  template:
+    spec:
+      containers:
+      - args:
+        - --enable-tproxy=true
+```
+
+该功能限制条件：
+
+1. 当同一个节点下出现不同 VPC 下的 Pod 具有相同的 IP，探测功能失效。
+2. 目前暂时只支持 `tcpSocket` 和 `httpGet` 两种探测方式。
