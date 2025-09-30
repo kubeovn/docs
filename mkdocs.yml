@@ -81,7 +81,6 @@ nav:
       - What's Next: "reference/next.md"
       - 安装和配置选项: "reference/setup-options.md"
       - 版本管理: "reference/releasing.md"
-      - 功能成熟度: "reference/feature-stage.md"
       - Underlay 流量拓扑: "reference/underlay-topology.md"
       - Iptables 规则: "reference/iptables-rules.md"
       - 开发和贡献指导: "reference/dev-env.md"
@@ -229,7 +228,6 @@ plugins:
             Kube-OVN 监控指标: Metrics
             Overlay 下路由方式网络打通: Interconnection with Routes in Overlay Mode
             文档规范: Document Convention
-            功能成熟度: Feature Stage
             Iptables 规则: Iptables Rules
             内部负载均衡: Internal Load Balancer
             内部 DNS: Internal DNS
