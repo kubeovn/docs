@@ -1,5 +1,15 @@
 # Support OVN EIP, FIP and SNAT
 
+!!! note
+
+    Subnets under custom VPCs do not support distributed gateways and centralized gateways under default VPCs.
+
+    Currently, custom VPCs support three solutions for external network connectivity: VPC NAT Gateway, OVN Gateway, and Egress Gateway. Among them, VPC NAT Gateway is the earliest supported egress method by Kube-OVN, creating a multi-NIC Pod for each VPC NAT Gateway, with one NIC connected to the custom VPC network and another NIC connected to the underlying physical network through Macvlan, implementing various ingress/egress operations through iptables within the Pod. This method currently supports the most features and has been used for the longest time, but it also has the disadvantages of single point of failure and complex usage.
+
+    OVN Gateway uses various NAT capabilities natively supported within OVN to implement ingress/egress, which can improve performance through hardware acceleration and achieve failover through OVN's built-in BFD. Since it exposes OVN's native concepts, users need to be fairly familiar with OVN's application.
+
+    Egress Gateway is an improvement to address the single point issue of VPC NAT Gateway, implementing horizontal scaling and fast failover, but currently only implements egress capability without ingress capability.
+
 Support the use of any number of `provider-network vlan (external) subnet` resources by any VPC OVN NAT function, which is independent of the [default VPC EIP/SNAT](../guide/eip-snat.en.md) function.
 
 ## Two independent ways of use
