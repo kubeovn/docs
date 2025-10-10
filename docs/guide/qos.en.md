@@ -128,11 +128,10 @@ iperf Done.
 
 ## linux-netem QoS
 
-Pod can use annotation below to config `linux-netem` type QoS: `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` and
-`ovn.kubernetes.io/loss`.
-
 > To install netem related modules on RHEL series operating systems, follow these instructions:
 > yum install -y kernel-modules-extra && modprobe sch_netem
+
+Pod can use the following annotations to configure `linux-netem` type QoS. Due to the implementation limitations of netem itself, the following QoS only take effect on Pod's Ingress direction traffic:
 
 - `ovn.kubernetes.io/latency`: Set the Pod traffic delay to an integer value in ms.
 - `ovn.kubernetes.io/jitter`: Set the Pod traffic jitter to an integer value in ms.

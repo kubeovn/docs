@@ -132,8 +132,7 @@ iperf Done.
 > RHEL 系列操作系统需要安装 netem 相关模块：
 > yum install -y kernel-modules-extra && modprobe sch_netem
 
-Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS： `ovn.kubernetes.io/latency`、`ovn.kubernetes.io/limit` 和
-`ovn.kubernetes.io/loss`。
+Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS，由于 netem 本身的实现限制，以下 QoS 都只对 Pod 的 Ingress 方向流量生效：
 
 - `ovn.kubernetes.io/latency`：设置 Pod 流量延迟，取值为整数，单位为 ms。
 - `ovn.kubernetes.io/jitter`：设置 Pod 流量延迟抖动，取值为整数，单位为 ms。
