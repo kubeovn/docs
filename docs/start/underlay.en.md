@@ -34,9 +34,10 @@ Vlan and security policy in the underlying network device in advance.
 
 1. For OpenStack VM environments, you need to turn off `PortSecurity` on the corresponding network port.
 2. For VMware vSwitch networks, `MAC Address Changes`, `Forged Transmits` and `Promiscuous Mode Operation` should be set to `allow`.
-3. For Hyper-V virtualization,  `MAC Address Spoofing` should be enabled in VM nic advanced features.
-4. Public clouds, such as AWS, GCE, AliCloud, etc., do not support user-defined MAC addresses, so they cannot support Underlay mode networks. In this scenario, if you want to use Underlay, it is recommended to use the VPC-CNI provided by the corresponding public cloud vendor..
-5. The network interface that is bridged into ovs can not be type of Linux Bridge.
+3. For VMware NSX-T networks, Underlay network mode is not supported.
+4. For Hyper-V virtualization,  `MAC Address Spoofing` should be enabled in VM nic advanced features.
+5. Public clouds, such as AWS, GCE, AliCloud, etc., do not support user-defined MAC addresses, so they cannot support Underlay mode networks. In this scenario, if you want to use Underlay, it is recommended to use the VPC-CNI provided by the corresponding public cloud vendor.
+6. The network interface that is bridged into ovs can not be type of Linux Bridge.
 
 For management and container networks using the same NIC, Kube-OVN will transfer the NIC's Mac address, IP address, route,
 and MTU to the corresponding OVS Bridge to support single NIC deployment of Underlay networks.
