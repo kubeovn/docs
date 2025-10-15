@@ -234,6 +234,32 @@ Routing Policies
      29000        ip4.src == $ovn.default.kube.ovn.worker_ip4         reroute                100.64.0.3
 ```
 
+### Specifying Egress Gateway IP and Deployment Nodes
+
+You can use the `externalIPs` and `nodeSelector` fields to specify the Egress IPs used by Egress Gateway Pods and the nodes they are deployed on:
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: VpcEgressGateway
+metadata:
+  name: gateway1
+  namespace: default
+spec:
+  vpc: ovn-cluster
+  replicas: 2
+  externalSubnet: macvlan1
+  policies:
+    - snat: true
+      subnets:
+        - ovn-default
+  externalIPs:
+    - 172.17.0.10
+    - 172.17.0.11
+  nodeSelector:
+    - matchLabels:
+        kubernetes.io/hostname: kube-ovn-worker
+```
+
 ### Enabling BFD-based High Availability
 
 BFD-based high availability relies on the VPC BFD LRP function, so you need to modify the VPC resource to enable BFD Port. Here is an example:
