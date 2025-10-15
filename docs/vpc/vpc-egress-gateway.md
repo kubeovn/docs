@@ -234,6 +234,32 @@ Routing Policies
      29000        ip4.src == $ovn.default.kube.ovn.worker_ip4         reroute                100.64.0.3
 ```
 
+### 指定 Egress Gateway IP 和部署节点
+
+可以通过 `externalIPs` 和 `nodeSelector` 字段选择 Egress Gateway Pods 所使用的 Egress IP 和所部署的节点：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: VpcEgressGateway
+metadata:
+  name: gateway1
+  namespace: default
+spec:
+  vpc: ovn-cluster
+  replicas: 2
+  externalSubnet: macvlan1
+  policies:
+    - snat: true
+      subnets:
+        - ovn-default
+  externalIPs:
+    - 172.17.0.10
+    - 172.17.0.11
+  nodeSelector:
+    - matchLabels:
+        kubernetes.io/hostname: kube-ovn-worker
+```
+
 ### 开启 BFD 高可用
 
 BFD 高可用依赖 VPC 的 BFD LRP 功能，因此需要先修改 VPC 资源，开启 BFD Port。示例如下：
