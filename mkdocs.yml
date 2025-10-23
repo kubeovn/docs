@@ -20,13 +20,14 @@ nav:
       - 自定义路由: "guide/custom-routes.md"
       - EIP 和 SNAT 配置: "guide/eip-snat.md"
       - 容器网络 QoS 配置: "guide/qos.md"
-      - 基于域名的访问控制: "guide/egress-firewall.md"
       - 双栈使用: "guide/dual-stack.md"
       - Webhook 使用: "guide/webhook.md"
       - 流量镜像: "guide/mirror.md"
-      - NetworkPolicy 日志: "guide/networkpolicy-log.md"
       - LoadBalancer 类型 Service: "guide/loadbalancer-service.md"
       - 配置监控和面板: "guide/prometheus-grafana.md"
+      - 安全:
+        - NetworkPolicy 使用: "guide/networkpolicy.md"
+        - 基于域名的访问控制: "guide/egress-firewall.md"
   - KubeVirt:
       - VM 固定 IP: "kubevirt/static-ip.md"
       - 虚拟机克隆: "kubevirt/vm-clone.md"
@@ -117,6 +118,7 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.top
+    - navigation.sections
     - search.highlight
     - search.share
     - search.suggest
@@ -192,7 +194,9 @@ plugins:
             OVN EIP FIP SNAT 支持: Support OVN EIP,FIP and SNAT
             OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持: Support OVN SNAT L3 HA Based ECMP and BFD Static Route
             流量镜像: Traffic Mirror
-            NetworkPolicy 日志: NetworkPolicy Logging
+            安全: Security
+            NetworkPolicy 使用: NetworkPolicy Usage
+            基于域名的访问控制: Domain-based Access Control
             Webhook 使用: Webhook
             Kubectl 插件使用: Kubectl Plugin
             删除工作节点: Deleting Work Node
@@ -238,7 +242,6 @@ plugins:
             OVN 流量镜像: OVN Remote Port Mirroring
             节点本地 DNS 缓存和 Kube-OVN 适配: Node Local DNS Cache and Kube-OVN Adaptation
             默认 VPC NAT 策略规则: Default VPC NAT Policy Rule
-            Egress Firewall: Domain-based Access Control
             调整日志等级: Change Log Level
             Talos 安装: Install on Talos
             版本管理: Release Management
