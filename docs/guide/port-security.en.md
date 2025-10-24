@@ -37,4 +37,3 @@ spec:
   - name: nginx
     image: docker.io/library/nginx:alpine
 ```
-

@@ -191,6 +191,10 @@ spec:
 和 `ovn-cluster` 逻辑路由器连接，并设置对应的路由规则实现互通。
 和逻辑网关不同，该方案只会连接 Kube-OVN 内部的 Underlay 和 Overlay 子网，其他访问外网的流量还是会通过物理网关进行转发。
 
+!!! warning
+
+    若多个不同 Vlan 下的 Underlay 存在子网地址重叠，同时接入后会导致逻辑路由器路由异常，因此当 Underlay 子网地址重叠时不能同时开启 u2o 功能。
+
 ### 指定逻辑网关 IP
 
 开启互通功能后，会随机从 subnet 内的取一个 IP 作为逻辑网关，如果需要指定 Underlay Subnet 的逻辑网关可以指定字段 `u2oInterconnectionIP`。
