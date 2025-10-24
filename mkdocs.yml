@@ -28,7 +28,7 @@ nav:
       - 安全:
         - NetworkPolicy 使用: "guide/networkpolicy.md"
         - 基于域名的访问控制: "guide/egress-firewall.md"
-cd        - 端口安全: "guide/port-security.md"
+        - 端口安全: "guide/port-security.md"
   - KubeVirt:
       - VM 固定 IP: "kubevirt/static-ip.md"
       - 虚拟机克隆: "kubevirt/vm-clone.md"
