@@ -207,6 +207,10 @@ In this case, Kube-OVN will use an additional Underlay IP to connect the Underla
 and set the corresponding routing rules to enable communication. Unlike the logical gateway,
 this solution only connects the Underlay and Overlay subnets within Kube-OVN, and other traffic accessing the Internet will still be forwarded through the physical gateway.
 
+!!! warning
+
+    If multiple Underlay subnets under different VLANs have overlapping subnet addresses, enabling u2o on them simultaneously will cause logical router routing anomalies. Therefore, when Underlay subnet addresses overlap, u2o cannot be enabled on them at the same time.
+
 ### Specify logical gateway IP
 
 After the interworking function is enabled, an IP from the subnet will be randomly selected as the logical gateway. If you need to specify the logical gateway of the Underlay Subnet, you can specify the field `u2oInterconnectionIP`.
