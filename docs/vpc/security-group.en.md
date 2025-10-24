@@ -1,6 +1,6 @@
 # SecurityGroup Usage
 
-Kube-OVN supports security groups to control network access rules for a group of Pods. It also supports port security, allowing Pods to use only the L2/L3 source addresses assigned by IPAM to prevent MAC and IP spoofing.
+Kube-OVN supports security groups to control network access rules for a group of Pods.
 
 !!! warning
 
@@ -33,31 +33,23 @@ spec:
 
 The specific meaning of each field of the SecurityGroup can be found in the [Kube-OVN API Reference](../reference/kube-ovn-api.en.md).
 
-Pods bind security-groups by adding annotations, two annotations are used:
-
-- `port_security`: Source address verification. If this function is enabled, only packets with L2/L3 addresses assigned by Kube-OVN's IPAM can be exported from the pod network adapter. After this function is disabled, any L2/L3 address can be exported.
-
-- `security_groups`: indicates a security group that contains a series of ACL rules
-  
-  - When configuring a security group, the `priority` value ranges from 1 to 200, with smaller values indicating higher priority. When implementing a security group through ACLs, the security group's priority is mapped to the ACL priority. The specific mapping relationship is as follows:
-  ACL priority=2300−Security group priority, therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
-
-> These two annotations are responsible for functions that are independent of each other.
+Pods bind security groups by adding the `ovn.kubernetes.io/security_groups` annotation:
 
 ```yaml
-    ovn.kubernetes.io/port_security: "true"
     ovn.kubernetes.io/security_groups: sg-example
 ```
 
+For port security feature, please refer to the [Port Security documentation](../guide/port-security.en.md).
+
 ## Caution
 
-- Security-groups are finally restricted by setting ACL rules, and as mentioned in the OVN documentation, if two ACL rules match with the same priority, it is uncertain which ACL will actually work. Therefore, when setting up security-group rules, you need to be careful to differentiate the priority.
-
-- When adding a security-group, it is important to know what restrictions are being added. As a CNI, Kube-OVN will perform a Pod-to-Gateway connectivity test after creating a Pod.
+- Security groups are implemented by setting ACL rules. As mentioned in the OVN documentation, if two ACL rules match with the same priority, it is uncertain which ACL will actually work. Therefore, when setting up security group rules, you need to be careful to differentiate the priority.
+- When configuring a security group, the `priority` value ranges from 1 to 200, with smaller values indicating higher priority. When implementing a security group through ACLs, the security group's priority is mapped to the ACL priority. The specific mapping relationship is as follows: ACL priority = 2300 - Security group priority, therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
+- When adding a security group, it is important to know what restrictions are being added. As a CNI, Kube-OVN will perform a Pod-to-Gateway connectivity test after creating a Pod. If the gateway is not accessible, the Pod will remain in the ContainerCreating state and cannot switch to Running state.
 
 ## Actual test
 
-Create a Pod using the following YAML, and specify the security-group in the annotation for the pod.
+Create a Pod using the following YAML, and specify the security group in the annotation for the pod.
 
 ```yaml
 apiVersion: v1
@@ -66,7 +58,6 @@ metadata:
   labels:
     app: static
   annotations:
-    ovn.kubernetes.io/port_security: 'true'
     ovn.kubernetes.io/security_groups: 'sg-example'
   name: sg-test-pod
   namespace: default
@@ -169,7 +160,6 @@ metadata:
   labels:
     app: static
   annotations:
-    ovn.kubernetes.io/port_security: 'true'
     ovn.kubernetes.io/security_groups: 'sg-gw-both'
   name: sg-gw-both
   namespace: default

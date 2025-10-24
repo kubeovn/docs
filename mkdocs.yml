@@ -28,6 +28,7 @@ nav:
       - 安全:
         - NetworkPolicy 使用: "guide/networkpolicy.md"
         - 基于域名的访问控制: "guide/egress-firewall.md"
+cd        - 端口安全: "guide/port-security.md"
   - KubeVirt:
       - VM 固定 IP: "kubevirt/static-ip.md"
       - 虚拟机克隆: "kubevirt/vm-clone.md"
@@ -197,6 +198,7 @@ plugins:
             安全: Security
             NetworkPolicy 使用: NetworkPolicy Usage
             基于域名的访问控制: Domain-based Access Control
+            端口安全: Port Security
             Webhook 使用: Webhook
             Kubectl 插件使用: Kubectl Plugin
             删除工作节点: Deleting Work Node

@@ -1,6 +1,6 @@
 # SecurityGroup 使用
 
-Kube-OVN 支持安全组来控制一组 Pod 的网络访问规则。同时支持端口安全，仅允许 Pod 使用 IPAM 分配的 L2/L3 源地址，来防止 MAC 和 IP 伪造欺骗。
+Kube-OVN 支持安全组来控制一组 Pod 的网络访问规则。
 
 !!! warning
 
@@ -33,17 +33,13 @@ spec:
 
 安全组各字段的具体含义，可以参考 [Kube-OVN 接口规范](../reference/kube-ovn-api.md)。
 
-Pod 通过添加 annotation 来绑定安全组，使用的 annotation 有两个：
-
-- `port_security`: 源地址验证。如果启用此功能，则只有由 Kube-OVN 的 IPAM 分配的 L2/L3 地址的报文可以从 Pod 网络适配器导出。禁用此功能后，任何 L2/L3 地址都可以从 Pod 发出。
-- `security_groups`： 安全组列表，包含一系列 ACL 规则。
-
-> 这两个 annotation 负责的功能是互相独立的。
+Pod 通过添加 `ovn.kubernetes.io/security_groups` annotation 来绑定安全组：
 
 ```yaml
-    ovn.kubernetes.io/port_security: "true"
     ovn.kubernetes.io/security_groups: sg-example
 ```
+
+关于端口安全（Port Security）功能的说明，请参考[端口安全文档](../guide/port-security.md)。
 
 ## 注意事项
 
@@ -62,7 +58,6 @@ metadata:
   labels:
     app: static
   annotations:
-    ovn.kubernetes.io/port_security: 'true'
     ovn.kubernetes.io/security_groups: 'sg-example'
   name: sg-test-pod
   namespace: default
@@ -165,7 +160,6 @@ metadata:
   labels:
     app: static
   annotations:
-    ovn.kubernetes.io/port_security: 'true'
     ovn.kubernetes.io/security_groups: 'sg-gw-both'
   name: sg-gw-both
   namespace: default
