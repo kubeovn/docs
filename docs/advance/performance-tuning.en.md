@@ -164,6 +164,14 @@ args:
 > In Underlay mode `kube-proxy` cannot use iptables or ipvs to control container network traffic,
 > if you want to disable the LB function, you need to confirm whether you do not need the Service function.
 
+### Skip Conntrack Processing for Specific Target Addresses
+
+In some scenarios, you may need to use OVN LB for Service forwarding, but also have traffic to specific destinations that doesn't require Service or NetworkPolicy processing. For example, Pods in Subnet A directly accessing addresses in Subnet B. To accelerate this traffic, you can configure `kube-ovn-controller` to skip conntrack processing for these destinations using the `--skip-conntrack-dst-cidrs` parameter:
+
+```yaml
+    --skip-conntrack-dst-cidrs="10.17.0.0/16,169.254.169.245/32"
+```
+
 ### FastPath Kernel Module
 
 Since the container network and the host network are on different network ns, the packets will pass through the netfilter module several times when they are transmitted across the host, which results in a CPU overhead of nearly 20%.

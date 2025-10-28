@@ -156,6 +156,14 @@ args:
 
 > Underlay 模式下 `kube-proxy` 无法使用 iptables 或 ipvs 控制容器网络流量，如需关闭 LB 功能需要确认是否不需要 Service 功能。
 
+### 特定目标地址跳过 conntrack 处理
+
+在部分场景下如果必须使用 OVN LB 来实现 Service 转发功能，但是提前知道访问特定目标地址不需要经过 Service 和 NetworkPolicy 处理，例如 Subnet A 内的 Pod 直接访问 Subnet B 的地址，中间无需网络策略也不依赖 Service。则可以通过配置 kube-ovn-controller 的 `--skip-conntrack-dst-cidrs` 参数跳过特定网段的 conntrack 处理，实现加速：
+
+```yaml
+    --skip-conntrack-dst-cidrs="10.17.0.0/16,169.254.169.245/32"
+```
+
 ### 内核 FastPath 模块
 
 由于容器网络和宿主机网络在不同的 network ns，数据包在跨宿主机传输时会多次经过 netfilter 模块，会带来近 20% 的 CPU 开销。由于大部分情况下
