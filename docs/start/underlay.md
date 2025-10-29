@@ -36,7 +36,7 @@ Kube-OVN 的 Underlay 模式和 Macvlan 工作模式十分类似，在功能和�
 不推荐单网卡部署 Underlay 网络的理由如下：
 
 对于管理网和容器网使用同一个网卡的情况下，Kube-OVN 会将网卡的 Mac 地址、IP 地址、路由以及 MTU 将转移或复制至对应的 OVS Bridge，
-以支持单网卡部署 Underlay 网络。OVS Bridge 名称格式为 `br-PROVIDER_NAME`，`PROVIDER_NAME` 为 Provider 网络名称（默认为 provider）。这种做法会导致以下潜在的风险：
+以支持单网卡部署 Underlay 网络。OVS Bridge 名称格式为 `br-PROVIDER_NAME`，`PROVIDER_NAME` 为 `ProviderNetwork` 资源的名称（默认为 provider）。这种做法会导致以下潜在的风险：
 
 1. 宿主机网卡接入 OVS Bridge 后，原宿主机的 NetworkManager 将无法继续操作该网卡，对运行时的一些动态配置，例如 DHCP 续租可能会产生影响，导致宿主机网络无法联通。
 2. 由于宿主机网络接入了 OVS Bridge，访问宿主机的流量也需要经过 OVS 处理，当 Kube-OVN 由于未知的问题错误配置了 OVS 也会导致宿主机网络无法访问，需要通过带外的方式进行修复。尽管我们已经修复了所有已知导致这个现象的问题，但是出于稳定性考虑，我们依然不推荐单网卡 Underlay 模式。
