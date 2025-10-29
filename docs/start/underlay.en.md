@@ -39,9 +39,14 @@ Vlan and security policy in the underlying network device in advance.
 5. Public clouds, such as AWS, GCE, AliCloud, etc., do not support user-defined MAC addresses, so they cannot support Underlay mode networks. In this scenario, if you want to use Underlay, it is recommended to use the VPC-CNI provided by the corresponding public cloud vendor.
 6. The network interface that is bridged into ovs can not be type of Linux Bridge.
 
-For management and container networks using the same NIC, Kube-OVN will transfer the NIC's Mac address, IP address, route,
-and MTU to the corresponding OVS Bridge to support single NIC deployment of Underlay networks.
-OVS Bridge name format is `br-PROVIDER_NAME`, `PROVIDER_NAME` is the name of `ProviderNetwork` (Default: provider).
+In production practice, although Kube-OVN Underlay mode can run on a host with a single NIC, for stability and management complexity reasons, we strongly recommend configuring a dedicated NIC for the Underlay network, and using another independent NIC for host management.
+
+The reasons for not recommending single NIC deployment of Underlay network are as follows:
+
+When the management network and container network use the same NIC, Kube-OVN will transfer or copy the NIC's Mac address, IP address, route, and MTU to the corresponding OVS Bridge to support single NIC deployment of Underlay networks. The OVS Bridge name format is `br-PROVIDER_NAME`, where `PROVIDER_NAME` is the Provider network name (default: provider). This approach may lead to the following potential risks:
+
+1. After the host NIC is connected to the OVS Bridge, the original host's NetworkManager will no longer be able to operate the NIC. Some dynamic configurations at runtime, such as DHCP renewal, may be affected, resulting in host network connectivity issues.
+2. Since the host network is connected to the OVS Bridge, traffic accessing the host also needs to be processed by OVS. When Kube-OVN incorrectly configures OVS due to unknown issues, it will also cause the host network to be inaccessible, requiring out-of-band methods for recovery. Although we have fixed all known issues that caused this phenomenon, for stability reasons, we still do not recommend single NIC Underlay mode.
 
 ## Specify Network Mode When Deploying
 
