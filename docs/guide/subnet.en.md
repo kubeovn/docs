@@ -255,7 +255,7 @@ spec:
 
 !!! note "Failover Time"
 
-    In centralized gateway ECMP mode, kube-ovn-controller actively probes node status through ping, detecting failures in 5s and completing failover within 5s~10s, during which some traffic may fail.
+    In centralized gateway ECMP mode, kube-ovn-controller actively probes node status through ping, detecting failures within 5s and completing failover within 5s-10s, during which some traffic may fail.
     
     In centralized gateway primary-backup mode, failover is based on Node Ready status, and it may take several minutes to complete failover in case of power outage.
 
