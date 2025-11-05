@@ -7,6 +7,7 @@ Kube-OVN 默认会根据 Pod 所在 Namespace 所属的子网中随机分配 IP 
 - Workload 通用 IP Pool 方式指定固定地址范围。
 - StatefulSet 固定地址。
 - KubeVirt VM 固定地址。
+- 使用 Multus 给附属网卡固定地址。
 
 ## 单个 Pod 固定 IP 和 Mac
 
@@ -121,3 +122,7 @@ spec:
 
 针对 KubeVirt 创建的 VM 实例，`kube-ovn-controller` 可以按照类似 StatefulSet Pod 的方式进行 IP 地址分配和管理。
 以达到 VM 实例在生命周期内启停，升级，迁移等操作过程中地址固定不变，更符合虚拟化用户的实际使用体验。具体操作请参考 [VM 固定 IP](../kubevirt/static-ip.md)。
+
+## 使用 Multus 给附属网卡固定地址
+
+在使用 Multus 给 Pod 配置多网卡的情况下，针对 Kube-OVN 类型的网卡可以通过特定的 annotation 来配置固定地址，对于非 Kube-OVN 的其他 CNI，Kube-OVN 也可以单独提供 IPAM 能力来使得其他 CNI 也具备固定地址的能力。具体操作请参考[多网卡管理](../advance/multi-nic.md)。
