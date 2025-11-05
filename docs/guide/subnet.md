@@ -242,6 +242,12 @@ spec:
 如果需要切换为 ECMP 模式，请参考[集中式网关 ECMP 开启设置](../reference/setup-options.md#ecmp)。
 - 从 Kube-OVN v1.12.0 版本开始，在 subnet crd 定义中增加了 spec 字段 `enableEcmp`，将集中式子网 ECMP 开关控制迁移到子网层级，可以基于不同的子网分别设置是否开启 ECMP 模式。原有的 `kube-ovn-controller` Deployment 中的 `enable-ecmp` 参数不再使用。之前版本升级到 v1.12.0 之后，子网开关会自动继承原有的全局开关参数取值。
 
+!!! note "故障切换时间"
+
+    集中式网关 ECMP 模式，kube-ovn-controller 主动通过 ping 主动探测节点状态，5s 故障发现，在 5s~10s 内完成故障切换，故障期间部分流量失败。
+    
+    集中式网关主备模式，根据 Node Ready 状态切换，在断电情况下需要数分钟完成故障切换。
+
 ## 子网 ACL 设置
 
 !!! warning

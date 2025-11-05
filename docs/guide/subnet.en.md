@@ -253,6 +253,12 @@ spec:
   If you need to switch to ECMP mode, please refer to [ECMP Settings](../reference/setup-options.en.md#centralized-gateway-ecmp-settings).
 - The spec field `enableEcmp` has been added to the subnet crd definition since Kube-OVN v1.12.0 to migrate the ECMP switch to the subnet level. You can set whether to enable ECMP mode based on different subnets. The `enable-ecmp` parameter in the `kube-ovn-controller` deployment is no longer used. After the previous version is upgraded to v1.12.0, the subnet switch will automatically inherit the value of the original global switch parameter.
 
+!!! note "Failover Time"
+
+    In centralized gateway ECMP mode, kube-ovn-controller actively probes node status through ping, detecting failures in 5s and completing failover within 5s~10s, during which some traffic may fail.
+    
+    In centralized gateway primary-backup mode, failover is based on Node Ready status, and it may take several minutes to complete failover in case of power outage.
+
 ## Subnet ACL
 
 !!! warning
