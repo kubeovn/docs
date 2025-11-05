@@ -15,7 +15,7 @@
 - `masquerade` 只支持三层流量转发，一些二层网络功能无法实现。
 - `masquerade` 流量通过 conntrack 记录转发状态，热迁移期间存在流量中断可能。
 
-Kube-OVN 支持为 KubeVirt 下 `bridge` 和 `managedTap` 网络模式下的 IP 和 VM 生命周期绑定，该 IP 地址在 VM 重启，热迁移等操作后仍然保持不变。同时也支持通过添加 annotation 的方式为 VM 配置固定 IP 地址。
+Kube-OVN 支持为 KubeVirt 下 `bridge` 和 `managedTap` 网络模式下的 IP 和 VM 生命周期绑定，该 IP 地址在 VM 重启，热迁移等操作后仍然保持不变。同时也支持通过添加 annotation 的方式为 VM 配置固定 IP 地址。对于附属网卡，Kube-OVN 可通过和 Multus 配合达到相同的固定地址的效果，具体操作请参考[多网卡管理](../advance/multi-nic.md)。
 
 ## IP 和 VM 生命周期绑定
 

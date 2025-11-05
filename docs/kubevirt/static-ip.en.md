@@ -15,7 +15,7 @@ Therefore, the `masquerade` network mode of KubeVirt is often used. It forwards 
 - **Limited to Layer 3 Traffic Forwarding**: Some Layer 2 network functionalities cannot be achieved.
 - **Potential Traffic Interruptions**: `masquerade` traffic is tracked by conntrack, which may cause traffic interruptions during live migrations.
 
-Kube-OVN supports binding IP addresses to the VM lifecycle under KubeVirt's `bridge` and `managedTap` network modes. The IP address remains unchanged after operations such as VM restarts and live migrations. It also supports configuring fixed IP addresses for VMs by adding annotations.
+Kube-OVN supports binding IP addresses to the VM lifecycle under KubeVirt's `bridge` and `managedTap` network modes. The IP address remains unchanged after operations such as VM restarts and live migrations. It also supports configuring fixed IP addresses for VMs by adding annotations. For secondary network interfaces, Kube-OVN can achieve the same fixed address effect by working with Multus. For specific operations, please refer to [Multi-NIC Management](../advance/multi-nic.en.md).
 
 ## Binding IP and VM Lifecycle
 
