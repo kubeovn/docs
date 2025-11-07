@@ -285,10 +285,9 @@ kubectl logs -n kube-system daemonset/kube-ovn-cni
 
 ## 限制
 
-1. **服务发现**：次要网络不参与 Kubernetes 服务发现
-2. **网络策略**：Kubernetes NetworkPolicy 仅适用于主接口
-3. **负载均衡**：服务负载均衡通常仅在主接口上工作
-4. **DNS**：Pod DNS 解析通过主接口进行
+1. **服务发现**：附属网卡不参与 Kubernetes 服务发现
+2. **负载均衡**：服务负载均衡通常仅在主网卡上工作
+3. **DNS**：Pod DNS 解析通过主网卡进行
 
 ## 最佳实践
 

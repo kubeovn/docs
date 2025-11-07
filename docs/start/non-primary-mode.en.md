@@ -286,9 +286,8 @@ kubectl logs -n kube-system daemonset/kube-ovn-cni
 ## Limitations
 
 1. **Service Discovery**: Secondary networks don't participate in Kubernetes service discovery
-2. **Network Policies**: Kubernetes NetworkPolicies only apply to primary interfaces
-3. **Load Balancing**: Service load balancing typically only works on primary interfaces
-4. **DNS**: Pod DNS resolution happens through the primary interface
+2. **Load Balancing**: Service load balancing typically only works on primary interfaces
+3. **DNS**: Pod DNS resolution happens through the primary interface
 
 ## Best Practices
 
