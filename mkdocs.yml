@@ -31,6 +31,7 @@ nav:
       - 虚拟机克隆: "kubevirt/vm-clone.md"
       - VM 使用双栈网络: "kubevirt/dual-stack.md"
       - 热迁移: "kubevirt/live-migration.md"
+      - 网卡热插拔: "kubevirt/hotplug.md"
       - DHCP: "kubevirt/dhcp.md"
   - VPC 网络:
       - VPC 入门: "vpc/vpc.md"
@@ -178,6 +179,7 @@ plugins:
             虚拟机克隆: Virtual Machine Clone
             VM 使用双栈网络: DualStack Network
             热迁移: Live Migration
+            网卡热插拔: Network Interface Hotplug
             DHCP: DHCP
             VPC 入门: VPC Introduction
             Egress Gateway: Egress Gateway
