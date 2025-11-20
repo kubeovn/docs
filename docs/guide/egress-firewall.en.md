@@ -98,7 +98,7 @@ spec:
 Field Description:
 
 | Field | Description |
-|-------|-------------|
+| ------- | ------------- |
 | `priority` | Policy priority, lower values have higher priority |
 | `subject` | Policy target, supports selection by namespace, Pod labels, etc. |
 | `egress` | Egress rule configuration |

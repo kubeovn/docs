@@ -381,8 +381,8 @@ Session 1
 | `enabled` | `boolean` | 是 | `false` | 是否开启 BFD Port。 | `true` |
 | `ip` | `string` | 否 | - | BFD Port 使用的 IP 地址，不可与其它地址冲突。支持 IPv6 及双栈。 | `169.255.255.255` / `fdff::1` / `169.255.255.255,fdff::1` |
 | `nodeSelector` | `object` | 是 | - | 用于选择承载 BFD Port 工作节点的标签选择器。BFD Port 会绑定一个由选择出来的节点组成的 OVN HA Chassis Group，并以 Active/Backup 的模式工作在 Active 节点上。如果未指定 nodeSelector，Kube-OVN 会自动选择至多三个节点。您可以通过 `kubectl ko nbctl list ha_chassis_group` 查看当前所有的 OVN HA Chassis Group 资源。 | - |
-| `nodeSelector.matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。| - |
-| `nodeSelector.matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。| - |
+| `nodeSelector.matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。 | - |
+| `nodeSelector.matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。 | - |
 
 #### VPC Egress Gateway
 
@@ -398,10 +398,10 @@ Spec：
 | `externalSubnet` | `string` | 否 | - | 接入外部网络的子网名称。 | `ext1` |
 | `internalIPs` | `string array` | 是 | - | 接入 VPC 网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
 | `externalIPs` | `string array` | 是 | - | 接入外部网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
-| `bfd` | `object` | 是 | - | BFD 配置。| - |
-| `policies` | `object array` | 是 | - | Egress 策略。可与 `selectors` 同时配置。| - |
-| `selectors` | `object array` | 是 | - | 通过 Namespace Selector 以及 Pod Selector 配置 Egress 策略。匹配到的 Pod 将开启 SNAT/MASQUERADE。可与 `policies` 同时配置。| - |
-| `nodeSelector` | `object array` | 是 | - | 工作负载的节点选择器，工作负载（Deployment/Pod）将运行在被选择的节点上。| - |
+| `bfd` | `object` | 是 | - | BFD 配置。 | - |
+| `policies` | `object array` | 是 | - | Egress 策略。可与 `selectors` 同时配置。 | - |
+| `selectors` | `object array` | 是 | - | 通过 Namespace Selector 以及 Pod Selector 配置 Egress 策略。匹配到的 Pod 将开启 SNAT/MASQUERADE。可与 `policies` 同时配置。 | - |
+| `nodeSelector` | `object array` | 是 | - | 工作负载的节点选择器，工作负载（Deployment/Pod）将运行在被选择的节点上。 | - |
 | `trafficPolicy` | `string` | 是 | `Cluster` | 可选值：`Cluster`/`Local`。**仅开启 BFD 时生效**。 设置为 `Local` 时，Egress 流量将优先导向同节点上的 VPC Egress Gateway 实例。若同节点上的 VPC Egress Gateway 实例出现故障，Egress 流量将导向其它实例。 | `Local` |
 
 BFD 配置：
@@ -427,18 +427,18 @@ Selectors：
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `namespaceSelector` | `object` | 是 | - | Namespace 选择器。空值时将匹配所有 Namespace。 | - |
 | `namespaceSelector.matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。 | - |
-| `namespaceSelector.matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。| - |
+| `namespaceSelector.matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。 | - |
 | `podSelector` | `object` | 是 | - | Pod 选择器。空值时将匹配所有 Pod。 | - |
-| `podSelector.matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。| - |
-| `podSelector.matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。| - |
+| `podSelector.matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。 | - |
+| `podSelector.matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。 | - |
 
 节点选择器：
 
 | 字段 | 类型 | 可选 | 默认值 | 说明 | 示例 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。| - |
-| `matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。| - |
-| `matchFields` | `object array` | 是 | - | 表达式形式的字段选择器。| - |
+| `matchLabels` | `dict/map` | 是 | - | 键值对形式的标签选择器。 | - |
+| `matchExpressions` | `object array` | 是 | - | 表达式形式的标签选择器。 | - |
+| `matchFields` | `object array` | 是 | - | 表达式形式的字段选择器。 | - |
 
 Status：
 
@@ -446,11 +446,11 @@ Status：
 | :--- | :--- | :--- | :--- |
 | `ready` | `boolean` | Gateway 是否就绪。 | `true` |
 | `phase` | `string` | Gateway 处理阶段。 | `Pending` / `Processing` / `Completed` |
-| `internalIPs` | `string array` | 接入 VPC 网络使用的 IP 地址。| - |
-| `externalIPs` | `string array` | 接入外部网络使用的 IP 地址。| - |
-| `workload` | `object` | 工作负载信息。| - |
-| `workload.apiVersion` | `string` | 工作负载 API 版本。| `apps/v1` |
-| `workload.kind` | `string` | 工作负载类型。| `Deployment` |
-| `workload.name` | `string` | 工作负载名称。| `gateway1` |
-| `workload.nodes` | `string array` | 工作负载所在的节点名称。| - |
+| `internalIPs` | `string array` | 接入 VPC 网络使用的 IP 地址。 | - |
+| `externalIPs` | `string array` | 接入外部网络使用的 IP 地址。 | - |
+| `workload` | `object` | 工作负载信息。 | - |
+| `workload.apiVersion` | `string` | 工作负载 API 版本。 | `apps/v1` |
+| `workload.kind` | `string` | 工作负载类型。 | `Deployment` |
+| `workload.name` | `string` | 工作负载名称。 | `gateway1` |
+| `workload.nodes` | `string array` | 工作负载所在的节点名称。 | - |
 | `conditions` | `object array` | - | - |

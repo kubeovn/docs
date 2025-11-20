@@ -398,7 +398,7 @@ Spec:
 | `externalSubnet` | `string` | No | - | Name of the subnet used to access the external network. | `ext1` |
 | `internalIPs` | `string array` | Yes | - | IP addresses used for accessing the VPC network. IPv4, IPv6 and dual-stack are supported. The number of IPs specified must NOT be less than `replicas`. It is recommended to set the number to `<replicas> + 1` to avoid extreme cases where the Pod is not created properly. | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
 | `externalIPs` | `string array` | Yes | - | IP addresses used for accessing the external network. IPv4, IPv6 and dual-stack are supported. The number of IPs specified must NOT be less than `replicas`. It is recommended to set the number to `<replicas> + 1` to avoid extreme cases where the Pod is not created properly. | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
-| `bfd` | `object` | Yes | - | BFD Configuration.| - |
+| `bfd` | `object` | Yes | - | BFD Configuration. | - |
 | `policies` | `object array` | Yes | - | Egress policies. Configurable when `selectors` is configured. | - |
 | `selectors` | `object array` | Yes | - | Configure Egress policies by namespace selectors and Pod selectors. SNAT/MASQUERADE will be applied to the matched Pods. Configurable when `policies` is configured. | - |
 | `nodeSelector` | `object array` | Yes | - | Node selector applied to the workload. The workload (Deployment/Pod) will run on the selected nodes. | - |
@@ -409,8 +409,8 @@ BFD Configuration:
 | Fields | Type | Optional | Default Value | Description | Example |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `enabled` | `boolean` | Yes | `false` | Whether to enable BFD. | `true` |
-| `minRX` | `integer/int32` | Yes | `1000` |  BFD minRX in milliseconds. | `500` |
-| `minTX` | `integer/int32` | Yes | `1000` | BFD minTX in milliseconds.  | `500` |
+| `minRX` | `integer/int32` | Yes | `1000` | BFD minRX in milliseconds. | `500` |
+| `minTX` | `integer/int32` | Yes | `1000` | BFD minTX in milliseconds. | `500` |
 | `multiplier` | `integer/int32` | Yes | `3` | BFD multiplier. | `1` |
 
 Egress Policies:
