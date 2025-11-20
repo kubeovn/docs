@@ -106,11 +106,11 @@ spec:
 
 其它节点会被添加如下标签：
 
-| Key                                               | Value | 描述                                                 |
+| Key | Value | 描述 |
 | ------------------------------------------------- | ----- | ---------------------------------------------------- |
-| net1.provider-network.ovn.kubernetes.io/ready     | true  | 节点中的桥接工作已完成，ProviderNetwork 在节点中可用 |
-| net1.provider-network.ovn.kubernetes.io/interface | eth1  | 节点中被桥接的网卡的名称                             |
-| net1.provider-network.ovn.kubernetes.io/mtu       | 1500  | 节点中被桥接的网卡的 MTU                             |
+| net1.provider-network.ovn.kubernetes.io/ready | true | 节点中的桥接工作已完成，ProviderNetwork 在节点中可用 |
+| net1.provider-network.ovn.kubernetes.io/interface | eth1 | 节点中被桥接的网卡的名称 |
+| net1.provider-network.ovn.kubernetes.io/mtu | 1500 | 节点中被桥接的网卡的 MTU |
 
 > 如果节点网卡上已经配置了 IP，则 IP 地址和网卡上的路由会被转移至对应的 OVS 网桥。
 
