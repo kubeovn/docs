@@ -31,7 +31,7 @@ Below is an example using the `bridge` network mode: creating a VM, performing r
     metadata:
       name: testvm
     spec:
-      runStrategy: Always 
+      runStrategy: Always
       template:
         metadata:
           labels:
@@ -97,14 +97,15 @@ kind: VirtualMachine
 metadata:
   name: testvm
 spec:
-  runStrategy: Always 
+  runStrategy: Always
   template:
     metadata:
       labels:
         kubevirt.io/size: small
         kubevirt.io/domain: testvm
       annotations:
-        ovn.kubernetes.io/ip_address: 10.16.0.15  #(1)
+        ovn.kubernetes.io/ip_address: 10.16.0.15 #(1)
+        ovn.kubernetes.io/mac_address: 00:00:00:53:6B:B6 #(2)
         kubevirt.io/allow-pod-bridge-network-live-migration: "true"
     spec:
       domain:
@@ -134,7 +135,8 @@ spec:
             userDataBase64: SGkuXG4=
 ```
 
-1. :man_raising_hand: assign the IP address here.
+1. :man_raising_hand: Specify IP address here, randomly assigned if not specified.
+2. :man_raising_hand: Specify MAC address here, randomly assigned if not specified.
 
 ## Changing VM IP
 
@@ -144,3 +146,52 @@ Follow these steps to change the VM IP:
 
 1. Modify the VM Annotation to change to the desired IP address.
 2. Run `virtctl restart <vm name>` to restart the VM and make the new IP address effective.
+
+## Specify Subnet
+
+If you don't need to specify an IP when creating a VM, but only need to specify the Subnet where the VM network resides, you can use `ovn.kubernetes.io/logical_switch`:
+
+```yaml
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: testvm
+spec:
+  runStrategy: Always
+  template:
+    metadata:
+      labels:
+        kubevirt.io/size: small
+        kubevirt.io/domain: testvm
+      annotations:
+        ovn.kubernetes.io/logical_switch: subnet1 #(1)
+        kubevirt.io/allow-pod-bridge-network-live-migration: "true"
+    spec:
+      domain:
+        devices:
+          disks:
+            - name: containerdisk
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
+          interfaces:
+          - name: default
+            bridge: {}
+        resources:
+          requests:
+            memory: 64M
+      networks:
+      - name: default
+        pod: {}
+      volumes:
+        - name: containerdisk
+          containerDisk:
+            image: quay.io/kubevirt/cirros-container-disk-demo
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            userDataBase64: SGkuXG4=
+```
+
+1. :man_raising_hand: Specify the Subnet where the VM resides here.

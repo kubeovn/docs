@@ -15,27 +15,17 @@ You can specify the IP/Mac required for the Pod by annotation when creating the 
 The `kube-ovn-controller` will skip the address random assignment phase and use the specified address directly after conflict detection, as follows:
 
 ```yaml
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
-  name: ippool
-  labels:
-    app: ippool
+  name: static-ip
+  annotations:
+    ovn.kubernetes.io/ip_address: 10.16.0.15   // for dualstack use comma to separate addresses 10.16.0.15,fd00:10:16::000E
+    ovn.kubernetes.io/mac_address: 00:00:00:53:6B:B6
 spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: ippool
-  template:
-    metadata:
-      labels:
-        app: ippool
-      annotations:
-        ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17 // for dualstack ippool use semicolon to separate addresses 10.16.0.15,fd00:10:16::000E;10.16.0.16,fd00:10:16::0
-    spec:
-      containers:
-        - name: ippool
-          image: docker.io/library/nginx:alpine
+  containers:
+  - name: static-ip
+    image: docker.io/library/nginx:alpine
 ```
 
 The following points need to be noted when using annotation.

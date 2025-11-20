@@ -31,7 +31,7 @@ kind: VirtualMachine
 metadata:
   name: testvm
 spec:
-  runStrategy: Always 
+  runStrategy: Always
   template:
     metadata:
       labels:
@@ -97,7 +97,7 @@ kind: VirtualMachine
 metadata:
   name: testvm
 spec:
-  runStrategy: Always 
+  runStrategy: Always
   template:
     metadata:
       labels:
@@ -105,6 +105,7 @@ spec:
         kubevirt.io/domain: testvm
       annotations:
         ovn.kubernetes.io/ip_address: 10.16.0.15 #(1)
+        ovn.kubernetes.io/mac_address: 00:00:00:53:6B:B6 #(2) 
         kubevirt.io/allow-pod-bridge-network-live-migration: "true"
     spec:
       domain:
@@ -134,7 +135,8 @@ spec:
             userDataBase64: SGkuXG4=
 ```
 
-1. :man_raising_hand: 在这里指定 IP 地址。
+1. :man_raising_hand: 在这里指定 IP 地址，未指定则随机分配。
+2. :man_raising_hand: 在这里指定 Mac 地址，未指定则随机分配。
 
 ## VM 更换 IP
 
@@ -144,3 +146,52 @@ Kube-OVN 目前不支持在线更换 VM IP，更换后的 IP 地址需要在 VM 
 
 1. 修改 VM Annotation，更换为所需要的 IP 地址。
 2. 运行 `virtctl restart <vm name>` 重启 VM，使新的 IP 地址生效。
+
+## 指定子网
+
+如果在创建 VM 时并不需要指定 IP，而是只需要指定 VM 网络所在子网，可以通过 `ovn.kubernetes.io/logical_switch` 来实现：
+
+```yaml
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: testvm
+spec:
+  runStrategy: Always
+  template:
+    metadata:
+      labels:
+        kubevirt.io/size: small
+        kubevirt.io/domain: testvm
+      annotations:
+        ovn.kubernetes.io/logical_switch: subnet1 #(1)
+        kubevirt.io/allow-pod-bridge-network-live-migration: "true"
+    spec:
+      domain:
+        devices:
+          disks:
+            - name: containerdisk
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
+          interfaces:
+          - name: default
+            bridge: {}
+        resources:
+          requests:
+            memory: 64M
+      networks:
+      - name: default
+        pod: {}
+      volumes:
+        - name: containerdisk
+          containerDisk:
+            image: quay.io/kubevirt/cirros-container-disk-demo
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            userDataBase64: SGkuXG4=
+```
+
+1. :man_raising_hand: 在这里指定 VM 所在子网。
