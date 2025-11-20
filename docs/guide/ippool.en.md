@@ -23,11 +23,11 @@ spec:
 
 Field description:
 
-|   Field    | Usage                                  | Comment                                                             |
+| Field | Usage | Comment |
 | :--------: | :------------------------------------- | :------------------------------------------------------------------ |
-|   subnet   | Specify the subnet to which it belongs | Required                                                            |
-|    ips     | Specify IP ranges                      | Support three formats: <IP>, <CIDR> and <IP1>..<IP2>. Support IPv6. |
-| namespaces | Specifies the bound namespaces         | Optional. Pods in a bound namespace will only get IPs from the bound pool(s), not other ranges in the subnet. |
+| subnet | Specify the subnet to which it belongs | Required |
+| ips | Specify IP ranges | Support three formats: <IP>, <CIDR> and <IP1>..<IP2>. Support IPv6. |
+| namespaces | Specifies the bound namespaces | Optional. Pods in a bound namespace will only get IPs from the bound pool(s), not other ranges in the subnet. |
 
 ## Precautions
 
