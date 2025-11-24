@@ -19,6 +19,7 @@ spec:
   - "10.16.0.220..10.16.0.230"
   namespaces:
   - ns-1
+  enableAddressSet: true
 ```
 
 Field description:
@@ -38,3 +39,4 @@ Field description:
 5. The IP pool will inherit the reserved IP of the subnet. When randomly assigning an IP address from the IP pool, the reserved IP included in the IP pool will be skipped.
 6. When randomly assigning an IP address from a subnet, it will only be assigned from a range other than all IP pools in the subnet.
 7. Multiple IP pools can be bound to the same Namespace.
+8. The `.spec.enableAddressSet` of the IP pool defaults to `false`. After setting it to `true`, an OVN NB database AddressSet object corresponding to the IP pool will be created, and all IP addresses in the IP pool will be added to the AddressSet. You can use this AddressSet object with NetworkPolicy or VPC logical router policies.
