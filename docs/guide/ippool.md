@@ -19,6 +19,7 @@ spec:
   - "10.16.0.220..10.16.0.230"
   namespaces:
   - ns-1
+  enableAddressSet: true
 ```
 
 字段说明：
@@ -38,3 +39,4 @@ spec:
 5. IP 池会继承子网的保留 IP，从 IP 池随机分配 IP 地址时，会跳过包含在 IP 池中的保留 IP。
 6. 从子网随机分配 IP 地址时，只会从子网所有 IP 池以外的范围分配。
 7. 多个 IP 池可以绑定同一个 Namespace。
+8. IP 池的 `.spec.enableAddressSet` 默认为 `false`。设置为 `true` 后，会创建一个与 IP 池对应的 OVN NB 数据库 AddressSet 对象，并将 IP 池中的所有 IP 地址添加到该 AddressSet 中。你可以在 NetworkPolicy 或 VPC 逻辑路由策略中使用该 AddressSet 对象。
