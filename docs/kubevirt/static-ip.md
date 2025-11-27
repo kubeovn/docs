@@ -87,9 +87,9 @@ virtctl migrate testvm
 
 可观察到在 bridge 模式下 VM 重启和热迁移后，IP 地址保持不变。
 
-## 指定 IP 地址
+## 指定 IP/Mac 地址
 
-对于需要指定 VM 的 IP 地址的场景，用户可以通过创建 VM 时添加 annotation 的方式为 VM 指定 IP 地址。其他使用方式和原生 KubeVirt 一致。
+对于需要指定 VM 的 IP/Mac 地址的场景，用户可以通过创建 VM 时添加 annotation 的方式为 VM 指定 IP 地址。其他使用方式和原生 KubeVirt 一致。
 
 ```yaml
 apiVersion: kubevirt.io/v1
@@ -137,6 +137,10 @@ spec:
 
 1. :man_raising_hand: 在这里指定 IP 地址，未指定则随机分配。
 2. :man_raising_hand: 在这里指定 Mac 地址，未指定则随机分配。
+
+!!! warning
+
+    KubeVirt VM API 下的 `spec.template.spec.domain.devices.interfaces.macAddress` 设置的是虚拟机内看到的 Mac 地址，直接设置该地址会导致虚拟机 Mac 地址和 Kube-OVN 自动分配的地址不一致，网络流量会被安全策略丢弃。因此请通过 annotation 的方式给虚拟机设定指定的 Mac 地址，该 Mac 地址会被自动添加到虚拟机内的网卡上。
 
 ## VM 更换 IP
 
