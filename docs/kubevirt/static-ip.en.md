@@ -87,9 +87,9 @@ Below is an example using the `bridge` network mode: creating a VM, performing r
 
 You can observe that in bridge mode, the VM's IP address remains unchanged after restarts and live migrations.
 
-## Specifying IP Address
+## Specifying IP/Mac Address
 
-For scenarios where users need to specify the VM's IP address, they can add an annotation to the VM when creating it to assign a specific IP address. Other usage methods are consistent with native KubeVirt.
+For scenarios where users need to specify the VM's IP/Mac address, they can add an annotation to the VM when creating it to assign a specific IP address. Other usage methods are consistent with native KubeVirt.
 
 ```yaml
 apiVersion: kubevirt.io/v1
@@ -137,6 +137,10 @@ spec:
 
 1. :man_raising_hand: Specify IP address here, randomly assigned if not specified.
 2. :man_raising_hand: Specify MAC address here, randomly assigned if not specified.
+
+!!! warning
+
+    The `spec.template.spec.domain.devices.interfaces.macAddress` field in the KubeVirt VM API only sets the MAC address visible inside the virtual machine. Directly setting this field will cause a mismatch between the VM's MAC address and the one automatically assigned by Kube-OVN, resulting in network traffic being dropped by security policies. Therefore, please use annotations to specify the MAC address for the virtual machine. This MAC address will be automatically added to the network interface inside the VM.
 
 ## Changing VM IP
 
