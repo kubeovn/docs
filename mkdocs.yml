@@ -64,6 +64,7 @@ nav:
       - 使用 OVN-IC 进行多集群互联: "advance/with-ovn-ic.md"
       - 使用 Submariner 进行多集群互联: "advance/with-submariner.md"
       - Overlay 下路由方式网络打通: "advance/overlay-with-route.md"
+      - Overlay 网络封装网卡选择: "advance/node-network.md"
       - BGP 支持: "advance/with-bgp.md"
       - 使用 MetalLB 与 Kube-OVN Underlay 集成: "advance/with-metallb.md"
       - Cilium 集成: "advance/with-cilium.md"
@@ -238,6 +239,7 @@ plugins:
             隧道协议说明: Tunnel Protocol Selection
             Kube-OVN 监控指标: Metrics
             Overlay 下路由方式网络打通: Interconnection with Routes in Overlay Mode
+            Overlay 网络封装网卡选择: Overlay Encapsulation NIC Selection
             文档规范: Document Convention
             Iptables 规则: Iptables Rules
             内部负载均衡: Internal Load Balancer

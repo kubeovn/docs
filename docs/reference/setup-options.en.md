@@ -72,6 +72,8 @@ This annotation will override the configuration of `iface`.
 kubectl annotate node no1 ovn.kubernetes.io/tunnel_interface=ethx
 ```
 
+To specify different encapsulation NICs for different subnets, please refer to [Overlay Encapsulation NIC Selection](../advance/node-network.md).
+
 ## Config MTU
 
 Since Overlay encapsulation requires additional space, Kube-OVN will adjust the MTU of the container NIC based on the MTU of the selected NIC when creating the container NIC.
