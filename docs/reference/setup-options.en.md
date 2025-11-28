@@ -72,7 +72,7 @@ This annotation will override the configuration of `iface`.
 kubectl annotate node no1 ovn.kubernetes.io/tunnel_interface=ethx
 ```
 
-To specify different encapsulation NICs for different subnets, please refer to [Overlay Encapsulation NIC Selection](../advance/node-network.md).
+To specify different encapsulation NICs for different subnets, please refer to [Overlay Encapsulation NIC Selection](../advance/node-network.en.md).
 
 ## Config MTU
 
