@@ -266,9 +266,8 @@ This approach is more flexible, especially useful when node names are not fixed 
 
 !!! note "gatewayNodeSelectors Usage Notes"
 
-    - If `gatewayNode` is not empty, it takes precedence over `gatewayNodeSelectors`.
+    - If `gatewayNode` is not empty, it takes precedence and `gatewayNodeSelectors` is ignored.
     - Multiple selectors are evaluated with OR logic - a node matching any selector becomes a gateway node.
-    - When using `gatewayNodeSelectors`, the NAT egress IP uses the node's Kubernetes Internal IP.
     - When node labels change, the system automatically updates the gateway node list.
 
 ```yaml

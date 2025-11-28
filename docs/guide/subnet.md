@@ -257,7 +257,6 @@ spec:
 
     - 如果 `gatewayNode` 不为空，则优先使用 `gatewayNode`，`gatewayNodeSelectors` 不会生效。
     - 多个选择器之间是 OR 的关系，节点匹配任意一个选择器即可成为网关节点。
-    - 使用 `gatewayNodeSelectors` 时，NAT 出口 IP 使用节点的 Kubernetes Internal IP。
     - 当节点标签发生变化时，系统会自动更新网关节点列表。
 
 ```yaml
