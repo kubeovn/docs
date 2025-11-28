@@ -248,6 +248,41 @@ spec:
     
     集中式网关主备模式，根据 Node Ready 状态切换，在断电情况下需要数分钟完成故障切换。
 
+#### 使用标签选择器指定网关节点
+
+除了直接指定节点名称外，还可以使用 `gatewayNodeSelectors` 通过标签选择器来动态选择网关节点。
+这种方式更加灵活，特别适用于节点名称不固定或需要根据标签动态选择网关的场景。
+
+!!! note "gatewayNodeSelectors 使用说明"
+
+    - 如果 `gatewayNode` 不为空，则优先使用 `gatewayNode`，`gatewayNodeSelectors` 不会生效。
+    - 多个选择器之间是 OR 的关系，节点匹配任意一个选择器即可成为网关节点。
+    - 使用 `gatewayNodeSelectors` 时，NAT 出口 IP 使用节点的 Kubernetes Internal IP。
+    - 当节点标签发生变化时，系统会自动更新网关节点列表。
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: centralized-selector
+spec:
+  protocol: IPv4
+  cidrBlock: 10.166.0.0/16
+  default: false
+  excludeIps:
+  - 10.166.0.1
+  gateway: 10.166.0.1
+  gatewayType: centralized
+  gatewayNodeSelectors:
+    - matchLabels:
+        role: gateway
+    - matchExpressions:
+        - key: node-type
+          operator: In
+          values: ["gateway", "egress"]
+  natOutgoing: true
+```
+
 ## 子网 ACL 设置
 
 !!! warning
