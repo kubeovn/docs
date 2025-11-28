@@ -74,6 +74,8 @@ args:
 kubectl annotate node no1 ovn.kubernetes.io/tunnel_interface=ethx
 ```
 
+如需为不同子网指定不同的封装网卡，请参考 [Overlay 网络封装网卡选择](../advance/node-network.md)。
+
 ## MTU 设置
 
 由于 Overlay 封装需要占据额外的空间，Kube-OVN 在创建容器网卡时会根据选择网卡的 MTU 进行容器网卡的 MTU 调整，
