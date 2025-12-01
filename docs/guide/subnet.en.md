@@ -259,6 +259,40 @@ spec:
     
     In centralized gateway primary-backup mode, failover is based on Node Ready status, and it may take several minutes to complete failover in case of power outage.
 
+#### Using Label Selectors to Specify Gateway Nodes
+
+In addition to specifying node names directly, you can use `gatewayNodeSelectors` to dynamically select gateway nodes using label selectors.
+This approach is more flexible, especially useful when node names are not fixed or when you need to select gateways based on labels dynamically.
+
+!!! note "gatewayNodeSelectors Usage Notes"
+
+    - If `gatewayNode` is not empty, it takes precedence and `gatewayNodeSelectors` is ignored.
+    - Multiple selectors are evaluated with OR logic - a node matching any selector becomes a gateway node.
+    - When node labels change, the system automatically updates the gateway node list.
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: centralized-selector
+spec:
+  protocol: IPv4
+  cidrBlock: 10.166.0.0/16
+  default: false
+  excludeIps:
+  - 10.166.0.1
+  gateway: 10.166.0.1
+  gatewayType: centralized
+  gatewayNodeSelectors:
+    - matchLabels:
+        role: gateway
+    - matchExpressions:
+        - key: node-type
+          operator: In
+          values: ["gateway", "egress"]
+  natOutgoing: true
+```
+
 ## Subnet ACL
 
 !!! warning
