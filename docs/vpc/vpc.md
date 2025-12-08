@@ -142,6 +142,21 @@ spec:
         "provider": "ovn-vpc-external-network.kube-system"
       }
     }'
+
+# 你可以选择无 ipam 来避免 net1 的 pod 从 kube-ovn 获取 ip
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: ovn-vpc-external-network
+  namespace: kube-system
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "macvlan",
+      "master": "eth1",
+      "mode": "bridge"
+    }'
 ```
 
 - 该 Subnet 用来管理可用的外部地址，网段内的地址将会通过 Macvlan 分配给 VPC 网关，请和网络管理员沟通给出可用的物理段 IP。
@@ -170,7 +185,7 @@ metadata:
   name: ovn-vpc-nat-config
   namespace: kube-system
 data:
-  image: 'docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}' 
+  image: 'docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}'
   nodeSelector: |
     kubernetes.io/hostname: kube-ovn-control-plane
 ---
@@ -274,7 +289,7 @@ metadata:
   name: eipd01
 spec:
   natGwDp: gw1
-  
+
 ---
 kind: IptablesDnatRule
 apiVersion: kubeovn.io/v1

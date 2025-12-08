@@ -18,7 +18,7 @@ and can be configured separately with Subnet CIDRs, routing policies, security p
 
 ## Implementation Principle
 
-In Kube-OVN, each VPC is mapped to a [Logical Router](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_TABLE){: target="_blank" } in OVN. Multiple logical routers are independent network units, and each logical router can be associated with its own [Logical Switches](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Switch_TABLE){: target="_blank" }, thereby having independent network ports and IP address spaces. Traffic from different VPCs is distinguished and isolated by different Datapath IDs when traversing tunnels, and forwarding is performed based on Datapath IDs. This ensures IP address space isolation, allowing the same IP addresses to be used in different VPCs without conflicts. For tunnel encapsulation formats, refer to [OVN Architecture Design Decisions](https://man7.org/linux/man-pages/man7/ovn-architecture.7.html#DESIGN_DECISIONS){: target="_blank" }.  
+In Kube-OVN, each VPC is mapped to a [Logical Router](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_TABLE){: target="_blank" } in OVN. Multiple logical routers are independent network units, and each logical router can be associated with its own [Logical Switches](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Switch_TABLE){: target="_blank" }, thereby having independent network ports and IP address spaces. Traffic from different VPCs is distinguished and isolated by different Datapath IDs when traversing tunnels, and forwarding is performed based on Datapath IDs. This ensures IP address space isolation, allowing the same IP addresses to be used in different VPCs without conflicts. For tunnel encapsulation formats, refer to [OVN Architecture Design Decisions](https://man7.org/linux/man-pages/man7/ovn-architecture.7.html#DESIGN_DECISIONS){: target="_blank" }.
 
 ## Creating Custom VPCs
 
@@ -144,6 +144,21 @@ spec:
         "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
         "provider": "ovn-vpc-external-network.kube-system"
       }
+    }'
+
+# you can choose no ipam to avoid pod net1 getting ip from kube-ovn
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: ovn-vpc-external-network
+  namespace: kube-system
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "macvlan",
+      "master": "eth1",
+      "mode": "bridge"
     }'
 ```
 
