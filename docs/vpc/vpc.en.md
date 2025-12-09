@@ -146,7 +146,8 @@ spec:
       }
     }'
 
-# you can choose no ipam to avoid pod net1 getting ip from kube-ovn
+You can also avoid having the VPC gateway's net1 NIC obtain an IP address from Kube-OVN by not specifying the ipam field:
+
 ---
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition

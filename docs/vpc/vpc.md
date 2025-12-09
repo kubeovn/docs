@@ -143,7 +143,7 @@ spec:
       }
     }'
 
-# 你可以选择无 ipam 来避免 net1 的 pod 从 kube-ovn 获取 ip
+你也可以通过不指定 `ipam` 字段，来避免 VPC 网关的 net1 网卡从 Kube-OVN 获取 IP 地址：
 ---
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
