@@ -21,7 +21,7 @@ External services can access the Pod directly through the EIP, and the Pod will 
 
 ## Advanced Configuration
 
-> To support this feature, if you need to directly specify a default external subnet name, you may need to set startup arguments for kube-ovn-controller.
+> To support this feature, if you need to directly specify a default external subnet name, you may need to set the startup parameters of `kube-ovn-controller`.
 Some args of `kube-ovn-controller` allow for advanced configuration of SNAT and EIP:
 
 - `--external-gateway-config-ns`: The Namespace of Configmap `ovn-external-gw-config`, default is `kube-system`.
@@ -61,7 +61,7 @@ data:
 - `external-gw-nic`: The name of the NIC that performs the role of a gateway on the node.
 - `external-gw-addr`: The IP and mask of the physical network gateway.
 - `nic-ip`,`nic-mac`: The IP and Mac assigned to the logical gateway port needs to be an unoccupied IP and Mac for the physical subnet.
-- `external-gw-switch`: Reuse the name of an existing underlay subnet logical switch. If you are using the default external of `--external-gateway-net`, then this value is omitted. But if you want to reuse an existing underlay subnet CR, then you can just configure `external-gw-switch: "your-subnet-name"`, and the others can be left unconfigured, because the network has already been maintained through the underlay subnet.
+- `external-gw-switch`: Reuse the existing underlay subnet logical switch name. If you are using the non-CRD mode `--external-gateway-net` specified external, then you do not need to configure it. But if you want to reuse the existing underlay subnet CR, then you can just configure external-gw-switch: "your-subnet-name", and the others can be left unconfigured, because the network has been maintained through the underlay subnet.
 
 ## Confirm the Configuration Take Effect
 

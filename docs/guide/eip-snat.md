@@ -29,6 +29,8 @@ Kube-OVN 支持利用 OVN 中的 L3 Gateway 功能来实现 Pod 级别的 SNAT �
 - `--external-gateway-net`: 物理网卡所桥接的网桥名，默认为 `external`。
 - `--external-gateway-vlanid`: 物理网络 Vlan Tag 号，默认为 0，即不使用 Vlan。
 
+以上这些固定参数，只能维护一个默认的 external subnet，而且不是基于 subnet CRD 的形式，如果你需要以 CRD 的形式维护多个 external subnet，请参考[VPC OVN NAT 网关](../vpc/ovn-eip-fip-snat.md)。
+
 ## 准备工作
 
 - 为了使用 OVN 的 L3 Gateway 能力，必须将一个单独的网卡接入 OVS 网桥中进行 Overlay 和 Underlay 网络的打通，
@@ -62,7 +64,7 @@ data:
 - `external-gw-nic`: 节点上承担网关作用的网卡名。
 - `external-gw-addr`: 物理网络网关的 IP 和掩码。
 - `nic-ip`,`nic-mac`: 分配给逻辑网关端口的 IP 和 Mac，需为物理段未被占用的 IP 和 Mac。
-- `external-gw-switch`: 复用已有的 underlay subnet 逻辑交换机名称，如果使用的是`--external-gateway-net`默认的 external，那么该值是缺省的。但如果你想复用已有的 underlay subnet CR， 那么你可以只配置 external-gw-switch: "your-subnet-name"，其他的都可以不用配置，因为网络已经通过 underlay subnet 维护好了。
+- `external-gw-switch`: 复用已有的 underlay subnet 逻辑交换机名称，如果使用的是非 CRD 模式的`--external-gateway-net`指定的 external，那么不需要配置。但如果你想复用已有的 underlay subnet CR， 那么你可以只配置 external-gw-switch: "your-subnet-name"，其他的都可以不用配置，因为网络已经通过 underlay subnet 维护好了。
 
 ## 观察 OVN 和 OVS 状态确认配置生效
 
