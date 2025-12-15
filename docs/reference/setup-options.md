@@ -106,8 +106,7 @@ args:
 
 ## LB 开启设置
 
-Kube-OVN 使用 OVN 中的 L2 LB 来实现 Service 转发，在 Overlay 场景中，用户可以选择使用 `kube-proxy` 来完成 Service 流量转发,
-在这种情况下可以关闭 Kube-OVN 的 LB 功能以达到控制面和数据面更好的性能。
+在 Underlay 的场景中，kube-proxy 无法截获容器网络流量，因此无法实现 Service 转发的功能。在这种情况下可以通过开启 OVN 内置的 L2 LB 的能力来实现 ClusterIP 的转发能力。在无需 Service 转发能力的场景下可以通过关闭 LB 能力来获得更好的性能。需要注意的事该功能只实现了容器网络的 ClusterIP 转发能力，无法替代 kube-proxy 的全部能力，不能替代 kube-proxy。
 
 该功能可以在安装脚本中进行配置：
 

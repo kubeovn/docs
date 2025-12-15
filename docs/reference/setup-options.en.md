@@ -106,9 +106,7 @@ if you need fine-grained traffic mirroring or need to mirror traffic to addition
 
 ## LB Settings
 
-Kube-OVN uses L2 LB in OVN to implement service forwarding.
-In Overlay scenarios, users can choose to use `kube-proxy` for service traffic forwarding,
-in which case the LB function of Kube-OVN can be disabled to achieve better performance on the control plane and data plane.
+In Underlay scenarios, `kube-proxy` cannot intercept container network traffic, so it cannot implement Service forwarding functionality. In this case, you can enable OVN's built-in L2 LB capability to implement ClusterIP forwarding. In scenarios where Service forwarding capability is not needed, you can disable the LB capability to achieve better performance. Note that this feature only implements ClusterIP forwarding for container networks and cannot replace all capabilities of `kube-proxy`, so it cannot replace `kube-proxy`.
 
 This feature can be configured in the installation script:
 
