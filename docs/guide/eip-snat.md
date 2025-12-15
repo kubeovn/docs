@@ -19,6 +19,18 @@ Kube-OVN 支持利用 OVN 中的 L3 Gateway 功能来实现 Pod 级别的 SNAT �
 
 ![](../static/eip-snat.png)
 
+## 高级配置
+
+> 为了支持该功能，如果你需要直接指定定一个默认的 external subnet 名，你可能需要设置 `kube-ovn-controller` 的启动参数。
+
+`kube-ovn-controller` 的部分启动参数可对 SNAT 和 EIP 功能进行高阶配置：
+
+- `--external-gateway-config-ns`: Configmap `ovn-external-gw-config` 所属 Namespace，默认为 `kube-system`。
+- `--external-gateway-net`: 物理网卡所桥接的网桥名，默认为 `external`。
+- `--external-gateway-vlanid`: 物理网络 Vlan Tag 号，默认为 0，即不使用 Vlan。
+
+以上这些固定参数，只能维护一个默认的 external subnet，而且不是基于 subnet CRD 的形式，如果你需要以 CRD 的形式维护多个 external subnet，请参考[VPC OVN NAT 网关](../vpc/ovn-eip-fip-snat.md)。
+
 ## 准备工作
 
 - 为了使用 OVN 的 L3 Gateway 能力，必须将一个单独的网卡接入 OVS 网桥中进行 Overlay 和 Underlay 网络的打通，
@@ -38,6 +50,7 @@ metadata:
   namespace: kube-system
 data:
   enable-external-gw: "true"
+  # external-gw-switch: "external"
   external-gw-nodes: "kube-ovn-worker"
   external-gw-nic: "eth1"
   external-gw-addr: "172.56.0.1/16"
@@ -51,6 +64,7 @@ data:
 - `external-gw-nic`: 节点上承担网关作用的网卡名。
 - `external-gw-addr`: 物理网络网关的 IP 和掩码。
 - `nic-ip`,`nic-mac`: 分配给逻辑网关端口的 IP 和 Mac，需为物理段未被占用的 IP 和 Mac。
+- `external-gw-switch`: 复用已有的 underlay subnet 逻辑交换机名称，如果使用的是非 CRD 模式的`--external-gateway-net`指定的 external，那么不需要配置。但如果你想复用已有的 underlay subnet CR， 那么你可以只配置 external-gw-switch: "your-subnet-name"，其他的都可以不用配置，因为网络已经通过 underlay subnet 维护好了。
 
 ## 观察 OVN 和 OVS 状态确认配置生效
 
@@ -127,11 +141,3 @@ kubectl annotate pod pod-gw ovn.kubernetes.io/routed-
 ```
 
 当 EIP 或 SNAT 规则生效后，`ovn.kubernetes.io/routed` annotation 会被重新添加。
-
-## 高级配置
-
-`kube-ovn-controller` 的部分启动参数可对 SNAT 和 EIP 功能进行高阶配置：
-
-- `--external-gateway-config-ns`: Configmap `ovn-external-gw-config` 所属 Namespace，默认为 `kube-system`。
-- `--external-gateway-net`: 物理网卡所桥接的网桥名，默认为 `external`。
-- `--external-gateway-vlanid`: 物理网络 Vlan Tag 号，默认为 0，即不使用 Vlan。
