@@ -90,6 +90,10 @@ spec:
 - `provider`: The current NetworkAttachmentDefinition's `<name>. <namespace>` , Kube-OVN will use this information to find the corresponding Subnet resource.
 - `master`: the host's physical network card
 
+!!! info
+
+    The `provider` here and `ProviderNetwork` in Underlay are two different concepts and are not directly related. Due to early naming, this may cause confusion, please distinguish them.
+
 #### Create a Kube-OVN Subnet
 
 Create a Kube-OVN Subnet, set the corresponding `cidrBlock` and `exclude_ips`, the `provider` should be set to the `<name>. <namespace>` of corresponding NetworkAttachmentDefinition.

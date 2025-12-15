@@ -90,6 +90,10 @@ spec:
 - `provider`: 当前 NetworkAttachmentDefinition 的 `<name>.<namespace>` , Kube-OVN 将会使用这些信息找到对应的 Subnet 资源。
 - `master`: 宿主机的物理网卡
 
+!!! info
+
+    这里的 `provider` 和 Underlay 中的 `ProviderNetwork` 是两个不同的概念，并没有直接关联。由于早期命名的原因可能会造成误解，请注意区分。
+
 #### 创建一个 Kube-OVN Subnet
 
 创建一个 Kube-OVN Subnet, 设置对应的 `cidrBlock` 和 `exclude_ips`，`provider` 应该设置为对应的 NetworkAttachmentDefinition 的 `<name>.<namespace>`，
