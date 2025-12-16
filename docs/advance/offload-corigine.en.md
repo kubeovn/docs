@@ -4,7 +4,7 @@ Kube-OVN uses OVS for traffic forwarding in the final data plane, and the associ
 tunnel encapsulation and other functions are CPU-intensive, which consumes a lot of CPU resources and leads to higher latency and lower throughput under heavy traffic.
 Corigine Agilio CX series SmartNIC can offload OVS-related operations to the hardware.
 This technology can shorten the data path without modifying the OVS control plane, avoiding the use of host CPU resources,
-which dramatically reduce latency and significantly increase the throughput.
+which dramatically reduces latency and significantly increases the throughput.
 
 ![](../static/hw-offload.png)
 

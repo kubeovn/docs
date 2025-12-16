@@ -4,7 +4,7 @@ Kube-OVN uses OVS for traffic forwarding in the final data plane, and the associ
 tunnel encapsulation and other functions are CPU-intensive, which consumes a lot of CPU resources and leads to higher latency and lower throughput under heavy traffic.
 Mellanox Accelerated Switching And Packet Processing (ASAP²) technology offloads OVS-related operations to an eSwitch within the eSwitch in the hardware.
 This technology can shorten the data path without modifying the OVS control plane, avoiding the use of host CPU resources,
-which dramatically reduce latency and significantly increase the throughput.
+which dramatically reduces latency and significantly increases the throughput.
 
 ![](../static/hw-offload.png)
 
@@ -95,7 +95,7 @@ Check the number of available VFs:
 127
 ```
 
-Create VFs and do not exceeding the number found above:
+Create VFs and do not exceed the number found above:
 
 ```bash
 # echo '4' > /sys/class/net/enp132s0f0np0/device/sriov_numvfs

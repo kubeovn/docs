@@ -1,9 +1,9 @@
 # Custom VPC Internal Load Balancer
 
 The Service provided by Kubernetes can be used for load balancing within the cluster.
-However, there are several issues with using Service as internal load balancing in customize VPC mode:
+However, there are several issues with using Service as internal load balancing in custom VPC mode:
 
-1. The Service IP range is a cluster resource, shared by all customize VPCs, and cannot overlap.
+1. The Service IP range is a cluster resource, shared by all custom VPCs, and cannot overlap.
 2. Users cannot set internal load balancing IP addresses according to their own preferences.
 
 To address the above issues, Kube-OVN introduced the `SwitchLBRule` CRD in 1.11, allowing users to set internal load balancing rules within customize VPCs.

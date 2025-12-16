@@ -37,7 +37,7 @@ Vlan and security policy in the underlying network device in advance.
 3. For VMware NSX-T networks, Underlay network mode is not supported.
 4. For Hyper-V virtualization,  `MAC Address Spoofing` should be enabled in VM nic advanced features.
 5. Public clouds, such as AWS, GCE, AliCloud, etc., do not support user-defined MAC addresses, so they cannot support Underlay mode networks. In this scenario, if you want to use Underlay, it is recommended to use the VPC-CNI provided by the corresponding public cloud vendor.
-6. The network interface that is bridged into ovs can not be type of Linux Bridge.
+6. The network interface that is bridged into ovs cannot be type of Linux Bridge.
 
 In production practice, although Kube-OVN Underlay mode can run on a host with a single NIC, for stability and management complexity reasons, we strongly recommend configuring a dedicated NIC for the Underlay network, and using another independent NIC for host management.
 

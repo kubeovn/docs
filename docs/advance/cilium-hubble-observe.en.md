@@ -1,6 +1,6 @@
 # Cilium Network Traffic Observation
 
-Kube-OVN supports Cilium integration, please refer to [Cilium integration](with-cilium.md) for details.
+Kube-OVN supports Cilium integration, please refer to [Cilium integration](with-cilium.en.md) for details.
 
 Cilium provides rich network traffic observation capabilities, and the flow observability is provided by Hubble. Hubble can observe the traffic across nodes, clusters, and even multi-cluster scenarios.
 

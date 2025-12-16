@@ -23,7 +23,7 @@ The components of Kube-OVN can be broadly divided into three categories.
 
 This type of component comes from the OVN/OVS community with specific modifications for Kube-OVN usage scenarios.
 OVN/OVS itself is a mature SDN system for managing virtual machines and containers,
-and we strongly recommend that users interested in the Kube-OVN implementation read [ovn-architecture(7)](https://www.mankier.com/7/ovn-architecture){ :target="_blank" } first
+and we strongly recommend that users interested in the Kube-OVN implementation read [ovn-architecture(7)](https://www.mankier.com/7/ovn-architecture){: target="_blank" } first
 to understand what OVN is and how to integrate with it.
 Kube-OVN uses the northbound interface of OVN to create and coordinate virtual networks and map the network concepts into Kubernetes.
 

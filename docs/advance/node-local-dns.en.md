@@ -2,11 +2,11 @@
 
 NodeLocal DNSCache improves cluster DNS performance by running DNS cache as a DaemonSet on cluster nodes. This function can also be adapted to Kube-OVN.
 
-## Nodelocal DNSCache deployment
+## NodeLocal DNSCache Deployment
 
-### Deploy Kubernetes NodeLocal DNScache
+### Deploy Kubernetes NodeLocal DNSCache
 
-This step refers to Kubernetes official website configuration [nodelocaldnscache](https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/nodelocaldns/).
+This step refers to Kubernetes official website configuration [nodelocaldnscache](https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/).
 
 Deploy with the following script:
 
@@ -27,7 +27,7 @@ Modify the kubelet configuration file on each node, modify the clusterDNS field 
 
 ### Kube-OVN corresponding DNS configuration
 
-After deploying the Nodelocal DNScache component of Kubernetes, Kube-OVN needs to make the following modifications:
+After deploying the NodeLocal DNSCache component of Kubernetes, Kube-OVN needs to make the following modifications:
 
 #### Underlay subnet enable U2O switch
 
@@ -45,7 +45,7 @@ Add field to spec.template.spec.containers.args `--node-local-dns-ip=169.254.20.
 
 The reason for this step is to let the Pod regenerate `/etc/resolv.conf` so that the nameserver points to the local DNS IP. If the nameserver of the Pod is not rebuilt, it will still use the DNS ClusterIP of the cluster. At the same time, if the u2o switch is turned on, the Pod needs to be rebuilt to regenerate the Pod gateway.
 
-## Validator local DNS cache function
+## Validate Local DNS Cache Function
 
 After the above configuration is completed, you can find the Pod verification as follows. You can see that the Pod's DNS server points to the local 169.254.20.10 and successfully resolves the domain name:
 

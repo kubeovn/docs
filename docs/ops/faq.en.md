@@ -47,11 +47,11 @@ ethtool -K eth0 tx off
 
 From the community feedback, the problem can be solved by the `4.19.90-25.16.v2101` kernel.
 
-## Pod can not Access Service
+## Pod cannot Access Service
 
 ### Behavior
 
-Pod can not access Service, and `dmesg` show errors:
+Pod cannot access Service, and `dmesg` show errors:
 
 ```bash
 netlink: Unknown conntrack attr (type=6, max=5)

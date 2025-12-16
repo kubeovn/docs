@@ -101,7 +101,7 @@ but the two Pods cannot access each other because they are running on different 
 
 Pod access to the external network within the VPC requires a VPC gateway, which bridges the physical and tenant networks and provides floating IP, SNAT and DNAT capabilities.
 
-The VPC gateway function relies on Multus-CNI function, please refer to [multus-cni](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md){: target = "_blank" }.
+The VPC gateway function relies on Multus-CNI function, please refer to [multus-cni](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md){: target="_blank" }.
 
 !!! note
 
@@ -366,7 +366,7 @@ spec:
 
 Traffic matched by static routes can be controlled at a finer granularity by policy routing.
 Policy routing provides more precise matching rules, priority control and more forwarding actions.
-This feature brings the OVN internal logical router policy function directly to the outside world, for more information on its use, please refer to [Logical Router Policy](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE){: target = "_blank" }.
+This feature brings the OVN internal logical router policy function directly to the outside world, for more information on its use, please refer to [Logical Router Policy](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE){: target="_blank" }.
 
 An example of policy routes:
 
