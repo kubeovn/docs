@@ -378,7 +378,7 @@ spec:
 - `policy`: Supports destination routing `policyDst` and source routing `policySrc`.
 - When there are overlapping routing rules, the rule with the longer CIDR mask has higher priority,
   and if the mask length is the same, the destination route has a higher priority over the source route.
-- `routeTable`: You can store the route in specific table, default is main table. Associate with subnet please defer to [Create Custom Subnets](../guide/subnet.en.md/#create-custom-subnets)
+- `routeTable`: You can store the route in a specific table, the default is the main table. Associate with subnet please refer to [Create Custom Subnets](../guide/subnet.en.md/#create-custom-subnets)
 
 ### Policy Routes
 
