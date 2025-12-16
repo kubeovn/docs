@@ -68,5 +68,5 @@ When using the above YAML to create a fixed address Pod, it prompts an IP addres
 
 ```bash
 # kubectl apply -f pod-static.yaml
-Error from server (annotation ip address 10.16.0.15 is conflict with ip crd static-7584848b74-fw9dm.default 10.16.0.15): error when creating "pod-static.yaml": admission webhook "pod-ip-validaing.kube-ovn.io" denied the request: annotation ip address 10.16.0.15 is conflict with ip crd static-7584848b74-fw9dm.default 10.16.0.15
+Error from server (annotation ip address 10.16.0.15 is conflict with IP CRD static-7584848b74-fw9dm.default 10.16.0.15): error when creating "pod-static.yaml": admission webhook "pod-ip-validaing.kube-ovn.io" denied the request: annotation ip address 10.16.0.15 is conflict with IP CRD static-7584848b74-fw9dm.default 10.16.0.15
 ```

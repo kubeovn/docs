@@ -60,7 +60,7 @@ spec:
 
 In the Kubernetes network specification, it is required that Nodes can communicate directly with all Pods.
 To achieve this in Overlay network mode, Kube-OVN creates a `join` Subnet and creates a virtual NIC `ovn0`
-at each node that connect to the `join` subnet, through which the nodes and Pods can communicate with each other.
+at each node that connects to the `join` subnet, through which the nodes and Pods can communicate with each other.
 
 All network communication between Pods and Nodes will go through the `ovn0` network interface. When a Node accesses a Pod, it enters the virtual network via the `ovn0` interface, and the virtual network then connects to the host network through the `ovn0` interface.
 
@@ -142,7 +142,7 @@ EOF
 - `excludeIps`: The address list is reserved so that the container network will not automatically assign addresses in the list, which can be used as a fixed IP address assignment segment or to avoid conflicts with existing devices in the physical network in Underlay mode.
 - `gateway`: For this subnet gateway address, Kube-OVN will automatically assign the corresponding logical gateway in Overlay mode, and the address should be the underlying physical gateway address in Underlay mode.
 - `namespaces`: Bind the list of Namespace for this Subnet. Pods under the Namespace will be assigned addresses from the current Subnet after binding.
-- `routeTable`: Optional, associate the route table, default is main table. For route table definition please defer to [Static Routes](../vpc/vpc.en.md#static-routes).
+- `routeTable`: Optional, associate the route table, the default is the main table. For route table definition please refer to [Static Routes](../vpc/vpc.en.md#static-routes).
 
 ### Create Pod in the Subnet
 
@@ -186,13 +186,13 @@ and Kube-OVN currently supports two types of gateways:
 distributed gateway and centralized gateway which can be changed in the Subnet spec.
 
 Both types of gateways support the `natOutgoing` setting,
-which allows the user to choose whether snat is required when the Pod accesses the external network.
+which allows the user to choose whether SNAT is required when the Pod accesses the external network.
 
 ### Distributed Gateway
 
 The default type of gateway for the Subnet, each node will act as a gateway for the pod on the current node to access the external network.
-The packets from container will flow into the host network stack from the local `ovn0` NIC,
-and then forwarding the network according to the host's routing rules.
+The packets from containers will flow into the host network stack from the local `ovn0` NIC,
+and are then forwarded according to the host's routing rules.
 When `natOutgoing` is `true`, the Pod will use the IP of the current host when accessing the external network.
 
 ![](../static/distributed-gateway.png)
@@ -223,9 +223,9 @@ spec:
 
 If you want traffic within the Subnet to access the external network using a fixed IP for security operations such as auditing and whitelisting,
 you can set the gateway type in the Subnet to centralized.
-In centralized gateway mode, packets from Pods accessing the external network are first routed to the `ovn0` NIC of a specific nodes,
+In centralized gateway mode, packets from Pods accessing the external network are first routed to the `ovn0` NIC of specific nodes,
 and then outbound through the host's routing rules.
-When `natOutgoing` is `true`, the Pod will use the IP of a specific nodes when accessing the external network.
+When `natOutgoing` is `true`, the Pod will use the IP of specific nodes when accessing the external network.
 
 The centralized gateway example is as follows, where the `gatewayType` field is `centralized`
 and `gatewayNode` is the NodeName of the particular machine in Kubernetes.
@@ -251,7 +251,7 @@ spec:
 `gatewayNode` format can be changed to `kube-ovn-worker:172.18.0.2, kube-ovn-control-plane:172.18.0.3`.
 - The centralized gateway defaults to primary-backup mode, with only the primary node performing traffic forwarding.
   If you need to switch to ECMP mode, please refer to [ECMP Settings](../reference/setup-options.en.md#centralized-gateway-ecmp-settings).
-- The spec field `enableEcmp` has been added to the subnet crd definition since Kube-OVN v1.12.0 to migrate the ECMP switch to the subnet level. You can set whether to enable ECMP mode based on different subnets. The `enable-ecmp` parameter in the `kube-ovn-controller` deployment is no longer used. After the previous version is upgraded to v1.12.0, the subnet switch will automatically inherit the value of the original global switch parameter.
+- The spec field `enableEcmp` has been added to the subnet CRD definition since Kube-OVN v1.12.0 to migrate the ECMP switch to the subnet level. You can set whether to enable ECMP mode based on different subnets. The `enable-ecmp` parameter in the `kube-ovn-controller` deployment is no longer used. After the previous version is upgraded to v1.12.0, the subnet switch will automatically inherit the value of the original global switch parameter.
 
 !!! note "Failover Time"
 
@@ -268,7 +268,7 @@ spec:
 For scenarios with fine-grained ACL control, Subnet of Kube-OVN provides ACL to enable fine-grained rules.
 
 The ACL rules in Subnet are the same as the ACL rules in OVN, and you can refer to [ovn-nb ACL Table](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE){: target = "_blank" } for more details.
-The supported filed in `match` can refer to [ovn-sb Logical Flow Table](https://man7.org/linux/man-pages/man5/ovn-sb.5.html#Logical_Flow_TABLE){: target = "_blank" }.
+The supported field in `match` can refer to [ovn-sb Logical Flow Table](https://man7.org/linux/man-pages/man5/ovn-sb.5.html#Logical_Flow_TABLE){: target = "_blank" }.
 
 Example of an ACL rule that allows Pods with IP address `10.10.0.2` to access all addresses,
 but does not allow other addresses to access itself, is as follows:
@@ -336,7 +336,7 @@ spec:
 
 By default `kube-ovn-cni` will request the gateway using ICMP or ARP protocol after starting the
 Pod and wait for the return to verify that the network is working properly.
-Some Underlay environment gateways cannot respond to ICMP requests, or scenarios that do not require external connectivity, the checking can be disabled .
+Some Underlay environment gateways cannot respond to ICMP requests, or in scenarios that do not require external connectivity, the checking can be disabled.
 
 ```yaml
 apiVersion: kubeovn.io/v1
