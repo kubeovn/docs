@@ -1,6 +1,6 @@
 # Offload with YUSUR
 
-Kube-OVN uses OVS for traffic forwarding in the final data plane, and the associated flow table matching, tunnel encapsulation and other functions are CPU-intensive, which consumes a lot of CPU resources and leads to higher latency and lower throughput under heavy traffic.YUSUR CONFLUX-22OOE series SmartNIC can offload OVS-related operations to the hardware. This technology can shorten the data path without modifying the OVS control plane, avoiding the use of host CPU resources, which dramatically reduce latency and significantly increase the throughput.
+Kube-OVN uses OVS for traffic forwarding in the final data plane, and the associated flow table matching, tunnel encapsulation and other functions are CPU-intensive, which consumes a lot of CPU resources and leads to higher latency and lower throughput under heavy traffic. YUSUR CONFLUX-22OOE series SmartNIC can offload OVS-related operations to the hardware. This technology can shorten the data path without modifying the OVS control plane, avoiding the use of host CPU resources, which dramatically reduces latency and significantly increases the throughput.
 
 !!! note
 
@@ -9,7 +9,7 @@ Kube-OVN uses OVS for traffic forwarding in the final data plane, and the associ
 ## Prerequisites
 
 - YUSUR CONFLUX-22OOE series SmartNIC.
-- ensure hados(Heterogeneous Agile Developing & Operating System) installed.
+- Ensure hados (Heterogeneous Agile Developing & Operating System) is installed.
 - Enable SR-IOV in BIOS.
 
 ## Installation Guide
@@ -31,7 +31,7 @@ cat /sys/bus/pci/devices/0000\:00\:0a.0/sriov_totalvfs
 256
 ```
 
-3. Create VFs and do not exceeding the number found above:
+3. Create VFs and do not exceed the number found above:
 
 ```bash
 echo 7 > /sys/bus/pci/devices/0000\:00\:0a.0/sriov_numvfs

@@ -3,7 +3,7 @@
 [Submariner](https://submariner.io/) is an open source networking component that connects multiple Kubernetes cluster Pod and Service
 networks which can help Kube-OVN interconnect multiple clusters.
 
-Compared to [OVN-IC](./with-ovn-ic.md), Submariner can connect Kube-OVN and non-Kube-OVN cluster networks, and
+Compared to [OVN-IC](./with-ovn-ic.en.md), Submariner can connect Kube-OVN and non-Kube-OVN cluster networks, and
 Submariner can provide cross-cluster capability for services. However, Submariner currently only enables the default subnets to be connected,
 and cannot selectively connect multiple subnets.
 
@@ -21,7 +21,7 @@ export PATH=$PATH:~/.local/bin
 echo export PATH=\$PATH:~/.local/bin >> ~/.profile
 ```
 
-Change `kubeconfig` context to the cluster that need to deploy `submariner-broker`:
+Change `kubeconfig` context to the cluster that needs to deploy `submariner-broker`:
 
 ```bash
 subctl deploy-broker

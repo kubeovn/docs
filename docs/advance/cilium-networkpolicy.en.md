@@ -1,8 +1,8 @@
 # Cilium NetworkPolicy Support
 
-Kube-OVN currently supports integration with Cilium, and the specific operation can refer to [Cilium integration](with-cilium.md).
+Kube-OVN currently supports integration with Cilium, and the specific operation can refer to [Cilium integration](with-cilium.en.md).
 
-After integrating Cilium, you can use Cilium's excellent network policy capabilities to control the access of Pods in the cluster.The following documents provide integration verification of Cilium L3 and L4 network policy capabilities.
+After integrating Cilium, you can use Cilium's excellent network policy capabilities to control Pod access in the cluster. The following documents provide integration verification of Cilium L3 and L4 network policy capabilities.
 
 ## Verification Steps
 

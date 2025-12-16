@@ -6,7 +6,7 @@ This feature provides ability to mirror the traffic of the specified Pod and dir
 
 ## Install Multus-CNI
 
-Install Multus-CNI by referring the [Multus-CNI Document](https://github.com/k8snetworkplumbingwg/multus-cni).
+Install Multus-CNI by referring to the [Multus-CNI Document](https://github.com/k8snetworkplumbingwg/multus-cni).
 
 ## Create NetworkAttachmentDefinition
 
@@ -32,7 +32,7 @@ Format of the `provider` field is `<NAME>.<NAMESPACE>.ovn`.
 
 ## Create Underlay Network
 
-The mirrored traffic is encapsulated before transmition, so MTU of the network used to transmit the traffic should be greater than the mirrored LSP/Pod. Here we are using an underlay network.
+The mirrored traffic is encapsulated before transmission, so MTU of the network used to transmit the traffic should be greater than the mirrored LSP/Pod. Here we are using an underlay network.
 
 Create the following underlay network:
 
@@ -91,7 +91,7 @@ spec:
       privileged: true
 ```
 
-After the Pod has been created, checkout the IP addresses:
+After the Pod has been created, check the IP addresses:
 
 ```bash
 $ kubectl get ips | grep pod1

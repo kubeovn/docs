@@ -301,8 +301,8 @@ spec:
 
 For scenarios with fine-grained ACL control, Subnet of Kube-OVN provides ACL to enable fine-grained rules.
 
-The ACL rules in Subnet are the same as the ACL rules in OVN, and you can refer to [ovn-nb ACL Table](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE){: target = "_blank" } for more details.
-The supported field in `match` can refer to [ovn-sb Logical Flow Table](https://man7.org/linux/man-pages/man5/ovn-sb.5.html#Logical_Flow_TABLE){: target = "_blank" }.
+The ACL rules in Subnet are the same as the ACL rules in OVN, and you can refer to [ovn-nb ACL Table](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE){: target="_blank" } for more details.
+The supported field in `match` can refer to [ovn-sb Logical Flow Table](https://man7.org/linux/man-pages/man5/ovn-sb.5.html#Logical_Flow_TABLE){: target="_blank" }.
 
 Example of an ACL rule that allows Pods with IP address `10.10.0.2` to access all addresses,
 but does not allow other addresses to access itself, is as follows:

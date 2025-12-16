@@ -1,4 +1,4 @@
-# Delete Work Node
+# Delete Worker Node
 
 If the node is simply removed from Kubernetes, the `ovn-controller` process running in `ovs-ovn` on the node will periodically
 connect to `ovn-central` to register relevant network information.
@@ -83,7 +83,7 @@ Chassis "6a29de7e-d731-4eaf-bacd-2f239ee52b28"
 
 ## Delete the Chassis Manually
 
-Use the uuid find above to delete the chassis:
+Use the uuid found above to delete the chassis:
 
 ```bash
 # kubectl ko sbctl chassis-del b0564934-5a0d-4804-a4c0-476c93596a17

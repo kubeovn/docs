@@ -13,7 +13,7 @@ external-subnet-->gw-node2-ovnext0--> node2-external-switch
 external-subnet-->gw-node3-ovnext0--> node3-external-switch
 ```
 
-This functions basically the same as [ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md) .
+This function is basically the same as [ovn-eip-fip-snat.en.md](./ovn-eip-fip-snat.en.md).
 
 As for the different parts, which will be specified in the following sections, mainly including the creation of ovn-eip of lsp type and the automatic maintenance of bfd as well as ecmp static routes based on vpc enable_bfd.
 
@@ -25,7 +25,7 @@ As for the different parts, which will be specified in the following sections, m
 
 ### 1.3 Custom vpc enable eip snat fip function
 
-The above section is exactly the same with [ovn-eip-fip-snat.md](./ovn-eip-fip-snat.md).
+The above section is exactly the same as [ovn-eip-fip-snat.en.md](./ovn-eip-fip-snat.en.md).
 
 After these functions are verified, the vpc can be switched directly to the ecmp-based bfd static route based on the following way, or of course, switched directly back.
 

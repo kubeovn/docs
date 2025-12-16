@@ -11,7 +11,7 @@ Multi-nic management:
 
 Here's an illustration of the network interfaces attached to a pod, as provisioned by [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni). The diagram shows the pod with three interfaces: eth0, net0 and net1. eth0 connects kubernetes cluster network to connect with kubernetes server/services (e.g. kubernetes api-server, kubelet and so on). net0 and net1 are additional network attachments and connect to other networks by using other CNI plugins (e.g. vlan/vxlan/ptp).
 
-![multu-cni-multi-nic](../static/multus-pod-image.svg)
+![multus-cni-multi-nic](../static/multus-pod-image.svg)
 
 IPAM:
 
@@ -52,7 +52,7 @@ However, `kube-ovn-controller` needs to centrally retrieve the `provider` inform
 
 ### Install Kube-OVN and Multus
 
-Please refer [One-Click Installation](../start/one-step-install.md) and [Multus how to use](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/how-to-use.md) to install Kube-OVN and Multus-CNI.
+Please refer to [One-Click Installation](../start/one-step-install.en.md) and [Multus how to use](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/how-to-use.md) to install Kube-OVN and Multus-CNI.
 
 ### Provide IPAM for other types of CNI
 

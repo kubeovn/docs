@@ -6,19 +6,19 @@ Is Kube-OVN production ready? If you're asking this question, it means you are n
 
 Open-source software may suddenly stop releasing versions, restrict usage, delete code repositories, remove images, or delete documentation:
 
-- [Linkerd stops releasing stable versions](https://linkerd.io/2024/02/21/announcing-linkerd-2.15/index.html#a-new-model-for-stable-releases){: target = "_blank" }
-- [Elasticsearch stops releasing open-source images](https://github.com/elastic/elasticsearch/issues/70840){: target = "_blank" }
-- [EMQX restricts community users to single-node deployments in production](https://www.emqx.com/en/news/emqx-adopts-business-source-license){: target = "_blank" }
-- [KubeSphere stops open-source downloads](https://github.com/kubesphere/kubesphere/issues/6550){: target = "_blank" }
+- [Linkerd stops releasing stable versions](https://linkerd.io/2024/02/21/announcing-linkerd-2.15/index.html#a-new-model-for-stable-releases){: target="_blank" }
+- [Elasticsearch stops releasing open-source images](https://github.com/elastic/elasticsearch/issues/70840){: target="_blank" }
+- [EMQX restricts community users to single-node deployments in production](https://www.emqx.com/en/news/emqx-adopts-business-source-license){: target="_blank" }
+- [KubeSphere stops open-source downloads](https://github.com/kubesphere/kubesphere/issues/6550){: target="_blank" }
 
-You need a complete offline copy of the code, images, and documentation, and you must ensure you can rebuild the images in your own environment. Use the [backup script](https://github.com/kubeovn/kube-ovn/blob/master/hack/backup.sh){: target = "_blank" } to download the code, images, and documentation for the corresponding version. Refer to the [Development and Contribution Guide](../reference/dev-env.md) to learn how to build images from the code.
+You need a complete offline copy of the code, images, and documentation, and you must ensure you can rebuild the images in your own environment. Use the [backup script](https://github.com/kubeovn/kube-ovn/blob/master/hack/backup.sh){: target="_blank" } to download the code, images, and documentation for the corresponding version. Refer to the [Development and Contribution Guide](../reference/dev-env.md) to learn how to build images from the code.
 
 ## Learn OpenVswitch/OVN
 
 Kube-OVN's underlying data plane is largely implemented by OpenVswitch and OVN. Understanding the underlying principles will give you more confidence in handling complex issues.
 
-- [OVN Reference Documentation](https://docs.ovn.org/en/latest/ref/index.html){: target = "_blank" }
-- [OpenVswitch Reference Documentation](https://www.openvswitch.org/support/dist-docs/){: target = "_blank" }
+- [OVN Reference Documentation](https://docs.ovn.org/en/latest/ref/index.html){: target="_blank" }
+- [OpenVswitch Reference Documentation](https://www.openvswitch.org/support/dist-docs/){: target="_blank" }
 
 We highly recommend reading the ovn-architecture document. For other documents, a general understanding of the framework is sufficient; you can delve into details as needed during actual use.
 
@@ -36,7 +36,7 @@ We also suggest building a test suite for the features you use, so you can quick
 
 ## Building a Monitoring System
 
-Most application-side failures appear to be network issues, but in reality, only a small portion are genuine network problems. However, many undiagnosable issues are attributed to network problems, which unnecessarily increases pressure on the network side. We recommend collaborating with the application side to establish a monitoring system that integrates monitoring, logs, and alerts from both application and network sides. When failures occur, all data can be analyzed collectively to determine responsibility boundaries. In the Kube-OVN community, we've encountered cases where [OpenTelemetry](https://github.com/open-telemetry){: target = "_blank" } was used to connect application-side tracing and [DeepFlow](https://github.com/deepflowio/deepflow){: target = "_blank" } was used to integrate underlying network tracing. We also recommend exploring a suitable monitoring system based on your specific situation.
+Most application-side failures appear to be network issues, but in reality, only a small portion are genuine network problems. However, many undiagnosable issues are attributed to network problems, which unnecessarily increases pressure on the network side. We recommend collaborating with the application side to establish a monitoring system that integrates monitoring, logs, and alerts from both application and network sides. When failures occur, all data can be analyzed collectively to determine responsibility boundaries. In the Kube-OVN community, we've encountered cases where [OpenTelemetry](https://github.com/open-telemetry){: target="_blank" } was used to connect application-side tracing and [DeepFlow](https://github.com/deepflowio/deepflow){: target="_blank" } was used to integrate underlying network tracing. We also recommend exploring a suitable monitoring system based on your specific situation.
 
 ## Provide Effective Feedback
 

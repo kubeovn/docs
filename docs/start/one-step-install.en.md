@@ -46,7 +46,7 @@ You can also use regular expression to match NIC names, such as `IFACE=enp6s0f0,
 
 `bash install.sh`
 
-Wait Kube-OVN ready.
+Wait for Kube-OVN to be ready.
 
 ### Upgrade
 

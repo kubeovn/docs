@@ -23,7 +23,7 @@ containers:
   - --default-cidr=10.16.0.0/16
   - --default-gateway=10.16.0.1
   - --default-gateway-check=true
-  - --enable-lb-svc=true                  // parameter is set to true
+  - --enable-lb-svc=true                  # parameter is set to true
 ```
 
 ### Create NetworkAttachmentDefinition CRD Resource
@@ -40,7 +40,7 @@ spec:
   config: '{
       "cniVersion": "0.3.0",
       "type": "macvlan",
-      "master": "eth0",                            //Physical network card, configure according to the actual situation
+      "master": "eth0",                            # Physical network card, configure according to the actual situation
       "mode": "bridge"
     }'
 ```
@@ -60,7 +60,7 @@ metadata:
   name: attach-subnet
 spec:
   protocol: IPv4
-  provider: lb-svc-attachment.kube-system          //The provider format is fixed and consists of the Name.Namespace of the net-attach-def resource created in the previous step
+  provider: lb-svc-attachment.kube-system          # The provider format is fixed and consists of the Name.Namespace of the net-attach-def resource created in the previous step
   cidrBlock: 172.18.0.0/16
   gateway: 172.18.0.1
   excludeIps:

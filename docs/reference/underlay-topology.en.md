@@ -10,13 +10,13 @@ Internal logical switches exchange packets directly, without access to the exter
 
 ## Pods in Different Nodes and Same Subnet
 
-Packets enter the physic switch via the node NIC and are exchanged by the physic switch.
+Packets enter the physical switch via the node NIC and are exchanged by the physical switch.
 
 ![](../static/underlay-traffic-2.png)
 
 ## Pods in Same Node and Different Subnets
 
-Packets enter the physic network via the node NIC and are exchanged and routed and forwarded by physic switches and routers.
+Packets enter the physical network via the node NIC and are exchanged and routed and forwarded by physical switches and routers.
 
 ![](../static/underlay-traffic-3.png)
 
@@ -24,13 +24,13 @@ Packets enter the physic network via the node NIC and are exchanged and routed a
 
 ## Pods in Different Nodes and Different Subnets
 
-Packets enter the physic network via the node NIC and are exchanged and routed and forwarded by physic switches and routers.
+Packets enter the physical network via the node NIC and are exchanged and routed and forwarded by physical switches and routers.
 
 ![](../static/underlay-traffic-4.png)
 
 ## Access to External
 
-Packets enter the physic network via the node NIC and are exchanged and routed and forwarded by physic switches and routers.
+Packets enter the physical network via the node NIC and are exchanged and routed and forwarded by physical switches and routers.
 
 ![](../static/underlay-traffic-5.png)
 
@@ -52,8 +52,8 @@ the destination address and the MAC address of the gateway as the destination MA
 After the network packet enters the logical switch, load balancing will intercept and DNAT the network packet to modify
 the destination IP and port to the IP and port of one of the Endpoint corresponding to the Service.
 Since the logical switch does not modify the Layer 2 destination MAC address of the network packet,
-the network packet will still be delivered to the physic gateway after entering the physic switch,
-and the physic gateway will be required to forward the network packet.
+the network packet will still be delivered to the physical gateway after entering the physical switch,
+and the physical gateway will be required to forward the network packet.
 
 ### Service Backend is the Same Node and Same Subnet Pod
 

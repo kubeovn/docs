@@ -48,9 +48,9 @@ OVN status metrics:
 | Gauge | failed_req_count | The number of failed requests to OVS stack. |
 | Gauge | log_file_size | The size of a log file associated with an OVS component. |
 | Gauge | db_file_size | The size of a database file associated with an OVS component. |
-| Gauge | datapath | Represents an existing datapath. This metrics is always 1. |
+| Gauge | datapath | Represents an existing datapath. This metric is always 1. |
 | Gauge | dp_total | Represents total number of datapaths on the system. |
-| Gauge | dp_if | Represents an existing datapath interface. This metrics is always 1. |
+| Gauge | dp_if | Represents an existing datapath interface. This metric is always 1. |
 | Gauge | dp_if_total | Represents the number of ports connected to the datapath. |
 | Gauge | dp_flows_total | The number of flows in a datapath. |
 | Gauge | dp_flows_lookup_hit | The number of incoming packets in a datapath matching existing flows in the datapath. |
@@ -58,8 +58,8 @@ OVN status metrics:
 | Gauge | dp_flows_lookup_lost | The number of incoming packets in a datapath destined for userspace process but subsequently dropped before reaching userspace. |
 | Gauge | dp_masks_hit | The total number of masks visited for matching incoming packets. |
 | Gauge | dp_masks_total | The number of masks in a datapath. |
-| Gauge | dp_masks_hit_ratio | The average number of masks visited per packet. It is the ration between hit and total number of packets processed by a datapath. |
-| Gauge | interface | Represents OVS interface. This is the primary metric for all other interface metrics. This metrics is always 1. |
+| Gauge | dp_masks_hit_ratio | The average number of masks visited per packet. It is the ratio between hit and total number of packets processed by a datapath. |
+| Gauge | interface | Represents OVS interface. This is the primary metric for all other interface metrics. This metric is always 1. |
 | Gauge | interface_admin_state | The administrative state of the physical network link of OVS interface. The values are: down(0), up(1), other(2). |
 | Gauge | interface_link_state | The state of the physical network link of OVS interface. The values are: down(0), up(1), other(2). |
 | Gauge | interface_mac_in_use | The MAC address in use by OVS interface. |

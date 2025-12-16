@@ -27,7 +27,7 @@ lrp-.-peer-.-lsp
 
 ```
 
-The pod access the public network based on the snat
+The pod accesses the public network based on SNAT
 
 Pod uses a centralized gateway based on Fip, and the path is similar.
 
@@ -43,7 +43,7 @@ lrp-.-peer-.-lsp
 
 ```
 
-Pod is based on the general flow of distributed gateway FIP (dnat_and_snat) to exit the public network. Finally, POD can exit the public network based on the public network NIC of the local node.
+Pod is based on the general flow of distributed gateway FIP (dnat_and_snat) to exit the public network. Finally, the Pod can exit the public network based on the public network NIC of the local node.
 
 The CRD supported by this function is basically the same as the iptables nat gw public network solution.
 
@@ -57,7 +57,7 @@ The CRD supported by this function is basically the same as the iptables nat gw 
 If the user selects the `default external network` mode for use:
 
 During the deployment phase, you may need to specify a default public network logical switch based on actual conditions.
-If no vlan is in use (vlan 0), the following startup vlan id do not need to be configured.
+If no vlan is in use (vlan 0), the following startup vlan id does not need to be configured.
 
 ```bash
 # When deploying you need to refer to the above scenario and specify the following parameters as needed according to the actual situation
@@ -77,7 +77,7 @@ The design and use of this configuration item takes into account the following f
 - Based on this configuration item can be docked to the provider network, vlan, subnet resources.
 - Based on this configuration item, the default VPC enable_eip_snat function can be docked to the existing vlan, subnet resources, while supporting the ipam
 - If only the default VPC's enable_eip_snat mode is used with the old pod annotation based eip fip snat, then the following configuration is not required.
-- Based on this configuration you can not use the default VPC enable_eip_snat process, only by corresponding to vlan, subnet process, can be compatible with only custom VPC use eip snat usage scenarios.
+- Based on this configuration you cannot use the default VPC enable_eip_snat process, only by corresponding to vlan, subnet process, can be compatible with only custom VPC use eip snat usage scenarios.
 
 The neutron ovn mode also has a certain static file configuration designation that is, for now, generally consistent.
 
