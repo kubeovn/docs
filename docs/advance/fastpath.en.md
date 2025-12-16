@@ -35,7 +35,7 @@ cp ../Makefile .
 make all
 ```
 
-## Instal the Kernel Module
+## Install the Kernel Module
 
 Copy `kube_ovn_fastpath.ko` to each node that needs performance optimization, and run the following command:
 

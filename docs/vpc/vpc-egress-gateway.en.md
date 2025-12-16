@@ -41,7 +41,7 @@ OVN uses the BFD protocol to probe multiple Egress Gateway instances. When an Eg
 
 ## Requirements
 
-The VPC Egress Gateway is the same as the VPC NAT Gateway in that it requires [Multus-CNI](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md){: target = "_blank" }.
+The VPC Egress Gateway is the same as the VPC NAT Gateway in that it requires [Multus-CNI](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/quickstart.md){: target="_blank" }.
 
 > No ConfigMap needs to be configured to use VPC Egress Gateway.
 

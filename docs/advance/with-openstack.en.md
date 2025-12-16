@@ -7,7 +7,7 @@ or shared underlying OVN to connect the OpenStack and Kubernetes networks.
 
 ## Cluster Interconnection
 
-This pattern is similar to [Cluster Inter-Connection with OVN-IC](./with-ovn-ic.md) to connect two Kubernetes cluster networks,
+This pattern is similar to [Cluster Inter-Connection with OVN-IC](./with-ovn-ic.en.md) to connect two Kubernetes cluster networks,
 except that the two ends of the cluster are replaced with OpenStack and Kubernetes.
 
 ### Prerequisites
