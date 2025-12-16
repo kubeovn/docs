@@ -9,7 +9,7 @@
 
 - If the user only needs to use the OVN NAT function for subnets under the default VPC and uses it through the pod annotation method, please refer to the current documentation.
 
-For maintaining EIP and NAT, please refer to the OVN-SNAT CRD [VPC OVN NAT Gateway](../vpc/ovn-eip-fip-snat.en.md).
+To maintain EIP and NAT, please refer to the OVN-SNAT CRD [VPC OVN NAT Gateway](../vpc/ovn-eip-fip-snat.en.md).
 
 - If the subnets under any VPC of the user need to use the Iptables NAT function, please refer to [VPC Iptables NAT Gateway](../vpc/vpc.en.md).
 
