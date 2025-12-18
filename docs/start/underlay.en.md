@@ -109,7 +109,7 @@ spec:
 
 **Note: The length of the ProviderNetwork resource name must not exceed 12.**
 
-- `defaultInterface`: The default node NIC name. When the ProviderNetwork is successfully created, an OVS bridge named br-net1 (in the format `br-NAME`) is created in each node (except excludeNodes) and the specified node NIC is bridged to this bridge.
+- `defaultInterface`: The default node NIC name. The NIC can be a physical NIC, a Bond NIC, or a Vlan sub-interface. When the ProviderNetwork is successfully created, an OVS bridge named br-net1 (in the format `br-NAME`) is created in each node (except excludeNodes) and the specified node NIC is bridged to this bridge.
 - `customInterfaces`: Optionally, you can specify the NIC to be used for a specific node.
 - `excludeNodes`: Optional, to specify nodes that do not bridge the NIC. Nodes in this list will be added with the `net1.provider-network.ovn.kubernetes.io/exclude=true` tag.
 
