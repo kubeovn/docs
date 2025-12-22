@@ -121,6 +121,7 @@ spec:
 - `customInterfaces`: Optionally, you can specify the NIC to be used for a specific node.
 - `nodeSelector`: Optional, used to select nodes for creating OVS bridges based on node labels. Supports both `matchLabels` and `matchExpressions` selection methods.
 - `excludeNodes`: Optional, to specify nodes that do not bridge the NIC. Nodes in this list will be added with the `net1.provider-network.ovn.kubernetes.io/exclude=true` tag.  **Note: Once `nodeSelector` is used, `excludeNodes` will no longer take effect. It is recommended to use only `nodeSelector`.**
+- `autoCreateVlanSubinterfaces`: Optional, default is `false`. When set to `true`, the system automatically creates VLAN sub-interfaces on the specified physical interface, supporting `<interface>.<vlanid>` format interface naming.
 
 Other nodes will be added with the following tags:
 
@@ -131,6 +132,31 @@ Other nodes will be added with the following tags:
 | net1.provider-network.ovn.kubernetes.io/mtu       | 1500  | MTU of bridged NIC in node                                  |
 
 > If an IP has been configured on the node NIC, the IP address and the route on the NIC are transferred to the corresponding OVS bridge.
+
+### Auto-create VLAN Sub-interfaces
+
+When `autoCreateVlanSubinterfaces: true` is enabled in ProviderNetwork, the system automatically creates and manages VLAN sub-interfaces, simplifying network configuration in multi-VLAN environments.
+
+#### Configuration Example
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: ProviderNetwork
+metadata:
+  name: vlan-provider
+spec:
+  defaultInterface: eth0.341
+  autoCreateVlanSubinterfaces: true
+  customInterfaces:
+    - interface: eth2.341
+      nodes:
+        - worker-node-1
+        - worker-node-2
+```
+
+#### Feature Description
+
+The system automatically creates VLAN sub-interfaces in `<interface>.<vlanid>` format without manual configuration. Suitable for multi-VLAN environments and large-scale deployments, significantly simplifying network management. Related sub-interfaces are automatically cleaned up when ProviderNetwork is deleted.
 
 ### Create VLAN
 

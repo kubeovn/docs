@@ -101,7 +101,7 @@ Kube-OVN provides NetworkPolicy logging functionality to help administrators qui
     
     It is recommended to disable logging by default in production environments and only enable it dynamically when troubleshooting issues.
     
-    OVN upstream already supports [ACL Log Meter](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE) to limit the rate of ACL log generation, and Kube-OVN will support this feature in future versions.
+    You can use the `ovn.kubernetes.io/acl_log_meter_rate` annotation to limit the rate of ACL log generation to avoid performance issues caused by excessive logs.
 
 ### Enable Logging
 
@@ -172,6 +172,35 @@ View logs for allowed traffic:
 # tail -f /var/log/ovn/ovn-controller.log
 2024-08-14T09:27:49.590Z|00004|acl_log(ovn_pinctrl0)|INFO|name="np/allow-from-client.default/ingress/IPv4/0", verdict=allow, severity=info, direction=to-lport: icmp,vlan_tci=0x0000,dl_src=96:7b:b0:2f:a0:1a,dl_dst=a6:e5:1b:c2:1b:f8,nw_src=10.16.0.7,nw_dst=10.16.0.12,nw_tos=0,nw_ecn=0,nw_ttl=64,nw_frag=no,icmp_type=8,icmp_code=0
 ```
+
+### Rate Limiting Logs
+
+To avoid performance issues caused by excessive logs, you can limit the log output rate using the `ovn.kubernetes.io/acl_log_meter_rate` annotation:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-client
+  namespace: default
+  annotations:
+    ovn.kubernetes.io/enable_log: "true"
+    ovn.kubernetes.io/log_acl_actions: "allow"
+    ovn.kubernetes.io/acl_log_meter_rate: "100"
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: client
+```
+
+The value of `ovn.kubernetes.io/acl_log_meter_rate` represents the maximum number of log entries allowed per second, measured in logs per second. For example, setting it to `100` means at most 100 log entries will be output per second.
 
 ### Disable Logging
 

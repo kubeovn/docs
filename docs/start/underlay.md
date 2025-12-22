@@ -112,6 +112,7 @@ spec:
 - `customInterfaces`: 为可选项，可针对特定节点指定需要使用的网卡。
 - `nodeSelector`: 可选项，用于基于节点标签选择需要创建 OVS 网桥的节点。支持 `matchLabels` 和 `matchExpressions` 两种选择方式。
 - `excludeNodes`: 可选项，用于指定不桥接网卡的节点。该列表中的节点会被添加 `net1.provider-network.ovn.kubernetes.io/exclude=true` 标签。**注意：一旦使用了 `nodeSelector`，`excludeNodes` 将不再生效，推荐只使用 `nodeSelector`。**
+- `autoCreateVlanSubinterfaces`: 可选项，默认为 `false`。设置为 `true` 时，系统会自动在指定的物理接口上创建 VLAN 子接口，支持 `<interface>.<vlanid>` 格式的接口命名。
 
 其它节点会被添加如下标签：
 
@@ -122,6 +123,31 @@ spec:
 | net1.provider-network.ovn.kubernetes.io/mtu | 1500 | 节点中被桥接的网卡的 MTU |
 
 > 如果节点网卡上已经配置了 IP，则 IP 地址和网卡上的路由会被转移至对应的 OVS 网桥。
+
+### 自动创建 VLAN 子接口
+
+当 ProviderNetwork 中启用 `autoCreateVlanSubinterfaces: true` 时，系统会自动创建 VLAN 子接口，简化多 VLAN 环境下的网络配置。
+
+#### 配置示例
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: ProviderNetwork
+metadata:
+  name: vlan-provider
+spec:
+  defaultInterface: eth0.341
+  autoCreateVlanSubinterfaces: true
+  customInterfaces:
+    - interface: eth2.341
+      nodes:
+        - worker-node-1
+        - worker-node-2
+```
+
+#### 功能说明
+
+系统会自动创建 `<interface>.<vlanid>` 格式的 VLAN 子接口，无需手动配置。适用于多 VLAN 环境和大规模部署，可以显著简化网络管理。删除 ProviderNetwork 时会自动清理相关接口。
 
 ### 创建 VLAN
 
