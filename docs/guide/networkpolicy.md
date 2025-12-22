@@ -101,7 +101,7 @@ Kube-OVN 提供了 NetworkPolicy 日志功能，可以帮助管理员快速定�
     
     建议在生产环境中默认关闭日志功能，仅在需要排查问题时动态开启。
     
-    OVN 上游已支持 [ACL Log Meter](https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE) 用于限制 ACL 日志生成速度，Kube-OVN 将在未来版本中支持该特性。
+    可以通过 `ovn.kubernetes.io/acl_log_meter_rate` annotation 来限制 ACL 日志生成速度，避免日志过多导致的性能问题。
 
 ### 启用日志记录
 
@@ -172,6 +172,35 @@ spec:
 # tail -f /var/log/ovn/ovn-controller.log
 2024-08-14T09:27:49.590Z|00004|acl_log(ovn_pinctrl0)|INFO|name="np/allow-from-client.default/ingress/IPv4/0", verdict=allow, severity=info, direction=to-lport: icmp,vlan_tci=0x0000,dl_src=96:7b:b0:2f:a0:1a,dl_dst=a6:e5:1b:c2:1b:f8,nw_src=10.16.0.7,nw_dst=10.16.0.12,nw_tos=0,nw_ecn=0,nw_ttl=64,nw_frag=no,icmp_type=8,icmp_code=0
 ```
+
+### 限制日志速率
+
+为了避免日志过多导致的性能问题，可以通过 `ovn.kubernetes.io/acl_log_meter_rate` annotation 来限制日志输出速率：
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-client
+  namespace: default
+  annotations:
+    ovn.kubernetes.io/enable_log: "true"
+    ovn.kubernetes.io/log_acl_actions: "allow"
+    ovn.kubernetes.io/acl_log_meter_rate: "100"
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: client
+```
+
+`ovn.kubernetes.io/acl_log_meter_rate` 的值表示每秒允许输出的日志条数，单位为条/秒。例如设置为 `100` 表示每秒最多输出 100 条日志。
 
 ### 关闭日志记录
 
