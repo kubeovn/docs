@@ -106,7 +106,7 @@ corigine.com/agilio_sriov<span class=w>  </span><span class=m>0</span><span clas
 <span class=w>        </span><span class=s>}</span>
 <span class=w>    </span><span class=s>]</span>
 <span class=s>}&#39;</span>
-</code></pre></div> <ul> <li><code>provider</code>: 格式为当前 <code>NetworkAttachmentDefinition</code> 的 {name}.{namespace}.ovn。</li> </ul> <h2 id=kube-ovn>Kube-OVN 中开启卸载模式<a class=headerlink href=#kube-ovn title="Permanent link">&para;</a></h2> <p>下载安装脚本：</p> <div class=highlight><pre><span></span><code>wget<span class=w> </span>https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.14/dist/images/install.sh
+</code></pre></div> <ul> <li><code>provider</code>: 格式为当前 <code>NetworkAttachmentDefinition</code> 的 {name}.{namespace}.ovn。</li> </ul> <h2 id=kube-ovn>Kube-OVN 中开启卸载模式<a class=headerlink href=#kube-ovn title="Permanent link">&para;</a></h2> <p>下载安装脚本：</p> <div class=highlight><pre><span></span><code>wget<span class=w> </span>https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.15/dist/images/install.sh
 </code></pre></div> <p>修改相关参数，<code>IFACE</code> 需要为物理网卡名，该网卡需要有可路由 IP：</p> <div class=highlight><pre><span></span><code><span class=nv>ENABLE_MIRROR</span><span class=o>=</span><span class=si>${</span><span class=nv>ENABLE_MIRROR</span><span class=k>:-</span><span class=nv>false</span><span class=si>}</span>
 <span class=nv>HW_OFFLOAD</span><span class=o>=</span><span class=si>${</span><span class=nv>HW_OFFLOAD</span><span class=k>:-</span><span class=nv>true</span><span class=si>}</span>
 <span class=nv>ENABLE_LB</span><span class=o>=</span><span class=si>${</span><span class=nv>ENABLE_LB</span><span class=k>:-</span><span class=nv>false</span><span class=si>}</span>

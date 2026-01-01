@@ -1,7 +1,7 @@
 [
   {
     "version": "v1.15.x",
-    "title": "v1.15.x (dev)",
+    "title": "v1.15.x (stable)",
     "aliases": [
       "dev"
     ]
@@ -10,8 +10,8 @@
     "version": "v1.14.x",
     "title": "v1.14.x ",
     "aliases": [
-      "stable",
-      "current"
+      "current",
+      "stable"
     ]
   },
   {
