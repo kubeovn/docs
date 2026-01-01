@@ -295,7 +295,7 @@ extra:
       link: https://hub.docker.com/r/kubeovn/kube-ovn
   variables:
     version: v1.15.0
-    branch: release-1.14
+    branch: release-1.15
 copyright:
   <p>The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation,
   please see our <a href="https://www.linuxfoundation.org/legal/trademark-usage">Trademark Usage page</a>.
