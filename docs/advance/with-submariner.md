@@ -12,6 +12,15 @@
 
 ## 部署 Submariner
 
+!!! note
+
+    Submariner 自 v0.22.0 后使用 nftables 作为默认的转发后端，会和 Kube-OVN 规则产生冲突，请先在所有需要集群互联的集群执行下列命令，再安装 Submariner：
+
+    ```bash
+    kubectl create namespace submariner-operator
+    kubectl create configmap submariner-global --namespace=submariner-operator --from-literal=use-nftables=false
+    ```
+
 下载 `subctl` 二进制文件，并部署到相应路径：
 
 ```bash
