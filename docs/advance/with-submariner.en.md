@@ -13,6 +13,15 @@ and cannot selectively connect multiple subnets.
 
 ## Install Submariner
 
+!!! note
+
+    Submariner uses nftables as the default forwarding backend since v0.22.0, which will conflict with Kube-OVN rules. Please execute the following commands in all clusters that need cluster interconnection before installing Submariner:
+
+    ```bash
+    kubectl create namespace submariner-operator
+    kubectl create configmap submariner-global --namespace=submariner-operator --from-literal=use-nftables=false
+    ```
+
 Download the `subctl` binary and deploy it to the appropriate path:
 
 ```bash
@@ -42,6 +51,23 @@ Switch `kubeconfig` to `cluster1` to register the cluster to the broker, and reg
 subctl  join broker-info.subm --clusterid  cluster1 --clustercidr 100.68.0.0/16,11.16.0.0/16  --natt=false --cable-driver vxlan --health-check=false
 kubectl label nodes cluster1 submariner.io/gateway=true
 ```
+
+If no new `gateway` or `routeagent` pods appear after executing the `join` command, please add the following permissions to the `submariner-operator` clusterrole:
+
+```yaml
+- apiGroups:
+  - "apps"
+  resources:
+  - daemonsets
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+```
+
+For multi-node clusters, you need to change the gateway configuration of the default `subnet` `ovn-default` to `centralized`. The `gateway` nodes configured for submariner need to be exactly the same as the `subnet` nodes.
 
 Next, you can start Pods in each of the two clusters and try to access each other using IPs.
 
