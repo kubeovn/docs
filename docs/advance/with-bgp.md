@@ -210,6 +210,7 @@ kubectl annotate eip sample ovn.kubernetes.io/bgp=true
 - `graceful-restart-deferral-time`: BGP Graceful restart deferral time 可参考 RFC4724 4.1。
 - `passivemode`: Speaker 运行在 passive 模式，不主动连接 peer。
 - `ebgp-multihop`: ebgp ttl 默认值为 1。
+- `nat-gw-mode`: 仅发布 VPC NAT Gateway 的 EIP，禁用 Pod IP/Service/Subnet 路由通告，默认为 `false`。该参数通常用于在 NAT 网关内部运行的 BGP speaker sidecar 场景。
 
 ## BGP routes debug
 

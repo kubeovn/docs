@@ -1,9 +1,9 @@
 # BGP Support
 
-Kube-OVN supports broadcasting the IP address of Pods/Subnets/Services/EIPs to the outside world via the BGP protocol.  
+Kube-OVN supports broadcasting the IP address of Pods/Subnets/Services/EIPs to the outside world via the BGP protocol.
 
 To use this feature on Pods/Subnets/Services, you need to install `kube-ovn-speaker` on specific (or all) nodes and
-add the corresponding annotation to the Pod or Subnet that needs to be exposed to the outside world.  
+add the corresponding annotation to the Pod or Subnet that needs to be exposed to the outside world.
 Kube-OVN also supports broadcasting the IP address of services of type `ClusterIP` via the same annotation.
 
 To use this feature on EIPs, you need to create your NAT Gateway with special parameters to enable the BGP speaker sidecar.
@@ -102,7 +102,7 @@ The speakers will all start announcing the `ClusterIP` of that service to the ou
 
 ## Publishing EIPs
 
-EIPs can be announced by the NAT gateways to which they are attached.  
+EIPs can be announced by the NAT gateways to which they are attached.
 There are 2 announcement modes:
 
 - **ARP**: the NAT gateway uses ARP to advertise the EIPs attached to itself, this mode is always enabled
@@ -110,7 +110,7 @@ There are 2 announcement modes:
 
 When BGP is enabled on a `VpcNatGateway` a new BGP speaker sidecar gets injected to it. When the gateway is in BGP mode, the behaviour becomes cumulative with the **ARP** mode. This means that EIPs will be announced by **BGP** but also keep being advertised using traditional **ARP**.
 
-To add BGP capabilities to NAT gateways, we first need to create a new `NetworkAttachmentDefinition` that can be attached to our BGP speaker sidecars. This NAD will reference a provider shared by a `Subnet` in the default VPC (in which the Kubernetes API is running).  
+To add BGP capabilities to NAT gateways, we first need to create a new `NetworkAttachmentDefinition` that can be attached to our BGP speaker sidecars. This NAD will reference a provider shared by a `Subnet` in the default VPC (in which the Kubernetes API is running).
 This will enable the sidecar to reach the K8S API, automatically detecting new EIPs added to the gateway. This operation only needs to be done once.  All the NAT gateways will use this provider from now on. This is the same principle used for the CoreDNS in a custom VPC, which means you can reuse that NAD if you've already done that setup before.
 
 Create a `NetworkAttachmentDefinition` and a `Subnet` with the same `provider`.
@@ -155,7 +155,7 @@ data:
   image: docker.io/kubeovn/vpc-nat-gateway:v1.13.0
 ```
 
-Configure RBAC permissions for the NAT gateway to access the Kubernetes API. Apply the following RBAC configuration:  
+Configure RBAC permissions for the NAT gateway to access the Kubernetes API. Apply the following RBAC configuration:
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -280,6 +280,7 @@ is handled by a daemon such as `kube-proxy`. The annotation for Services only su
 - `graceful-restart-deferral-time`: BGP Graceful restart deferral time refer to RFC4724 4.1.
 - `passivemode`: The Speaker runs in Passive mode and does not actively connect to the peer.
 - `ebgp-multihop`: The TTL value of EBGP Peer, default is 1.
+- `nat-gw-mode`: Only announce EIPs from inside a NAT gateway, Pod IP/Service/Subnet announcements will be disabled, default is `false`. This parameter is typically used for the BGP speaker sidecar running inside a VPC NAT Gateway.
 
 ## BGP routes debug
 
