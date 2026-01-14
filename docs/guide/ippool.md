@@ -1,6 +1,6 @@
 # IP 池使用
 
-IP 池（IPPool）是比子网（Subnet）更细粒度的 IPAM 管理单元。你可以通过 IP 池将子网网段细分为多个单元，每个单元绑定一个或多个命名空间（Namespace）。
+IP 池（IPPool）是比子网（Subnet）更细粒度的 IPAM 管理单元。你可以通过 IP 池将子网网段细分为多个单元，每个单元绑定到特定的命名空间（Namespace）或者 Workload 之上。
 
 ## 使用方法
 
@@ -22,6 +22,32 @@ spec:
   enableAddressSet: true
 ```
 
+绑定到特定 Workload：
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ippool
+  labels:
+    app: ippool
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ippool
+  template:
+    metadata:
+      labels:
+        app: ippool
+      annotations:
+        ovn.kubernetes.io/ip_pool: pool-1
+    spec:
+      containers:
+      - name: ippool
+        image: docker.io/library/nginx:alpine
+```
+
 字段说明：
 
 | 名称 | 用途 | 备注 |
@@ -29,6 +55,7 @@ spec:
 | subnet | 指定所属子网 | 必填 |
 | ips | 指定包含的 IP 范围 | 支持 <IP>、<CIDR> 以及 <IP1>..<IP2> 三种格式，支持 IPv6。 |
 | namespaces | 绑定命名空间 | 可选。绑定的命名空间下的 Pod 将只会从绑定的 IP 池中分配 IP，而不会从子网内其他范围分配。 |
+| enableAddressSet | 是否自动创建同名的 AddressSet | 默认 false，设置为 true 后 ACL 和策略路由可以使用对应 AddressSet 进行策略控制 |
 
 ## 注意事项
 

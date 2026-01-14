@@ -22,6 +22,32 @@ spec:
   enableAddressSet: true
 ```
 
+Bind to a specific Workload:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ippool
+  labels:
+    app: ippool
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ippool
+  template:
+    metadata:
+      labels:
+        app: ippool
+      annotations:
+        ovn.kubernetes.io/ip_pool: pool-1
+    spec:
+      containers:
+      - name: ippool
+        image: docker.io/library/nginx:alpine
+```
+
 Field description:
 
 | Field | Usage | Comment |
@@ -29,6 +55,7 @@ Field description:
 | subnet | Specify the subnet to which it belongs | Required |
 | ips | Specify IP ranges | Support three formats: <IP>, <CIDR> and <IP1>..<IP2>. Support IPv6. |
 | namespaces | Specifies the bound namespaces | Optional. Pods in a bound namespace will only get IPs from the bound pool(s), not other ranges in the subnet. |
+| enableAddressSet | Whether to automatically create an AddressSet with the same name | Default false. When set to true, ACL and policy routing can use the corresponding AddressSet for policy control |
 
 ## Precautions
 
