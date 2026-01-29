@@ -280,7 +280,7 @@ spec:
   externalSubnet: ovn-vpc-external-network
 ```
 
-- `externalSubnet`: The name of the external network on which the EIP is located. If not specified, it defaults to `ovn-vpc-external-network`. If specified, it must be one of the `externalSubnets` of the VPC gateway.
+- `externalSubnet`: The name of the external network on which the EIP is located. If not specified, it defaults to `ovn-vpc-external-network`. The external network of IptablesEIP is completely independent of the VpcNatGateway's `externalSubnets`. EIP can use any valid external subnet without needing to match the gateway's external network.
 
 ### Create DNAT Rules
 

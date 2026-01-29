@@ -276,7 +276,7 @@ spec:
   externalSubnet: ovn-vpc-external-network
 ```
 
-- `externalSubnet`：EIP 所在外部网络名称，如果不指定则默认为 `ovn-vpc-external-network`，如果指定则必须为所在 VPC 网关的 `externalSubnets` 中的一个。
+- `externalSubnet`：EIP 所在外部网络名称，如果不指定则默认为 `ovn-vpc-external-network`。IptablesEIP 的外部网络和 VpcNatGateway 的 `externalSubnets` 是完全独立的，EIP 可以使用任意有效的外部子网，无需和网关的外部网络保持一致。
 
 ### 创建 DNAT 规则
 
