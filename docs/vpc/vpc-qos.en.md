@@ -2,6 +2,23 @@
 
 Kube-OVN supports using QoSPolicy CRD to limit the traffic rate of custom VPC.
 
+## Priority Description
+
+The `priority` field in QoSPolicy is used to control the priority of traffic matching. **The smaller the value, the higher the priority**. When multiple QoS rules may match the same traffic, the rule with higher priority (smaller value) will be matched and applied first.
+
+Priority setting recommendations:
+
+| Scenario | Recommended Priority | Description |
+| -------- | -------------------- | ----------- |
+| EIP QoS | 1 | Highest priority, for precisely matching traffic of specific EIP |
+| NATGW specific traffic QoS | 2 | for matching specific IP traffic on NATGW |
+| NATGW net1 NIC QoS | 3 | Lowest priority, as a fallback policy to limit entire NIC traffic |
+
+Additional recommendations:
+
+- QoS rules with `shared=false` should have higher priority than rules with `shared=true`, because non-shared rules are usually used for more precise traffic control
+- EIP-level QoS priority should be higher than NATGW-level QoS
+
 ## EIP QoS
 
 Limit the speed of EIP to 1Mbps and the priority to 1, and `shared=false` here means that this QoSPolicy can only be used for this EIP and support dynamically modifying QoSPolicy to change QoS rules.
@@ -172,4 +189,4 @@ qos-natgw-example   true     NATGW
 
 ## Limitations
 
-* QoSPolicy can only be deleted when it is not in use. Therefore, before deleting the QoSPolicy, please check the EIP and NATGW that have enabled QoS, and remove their `spec.qosPolicy` configuration.
+- QoSPolicy can only be deleted when it is not in use. Therefore, before deleting the QoSPolicy, please check the EIP and NATGW that have enabled QoS, and remove their `spec.qosPolicy` configuration.
