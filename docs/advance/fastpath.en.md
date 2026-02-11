@@ -12,10 +12,16 @@ git clone --depth=1 https://github.com/kubeovn/kube-ovn.git
 
 ## Install Dependencies
 
-Here is an example of CentOS dependencies to download:
+For RPM-based OS (CentOS, RHEL):
 
 ```bash
 yum install -y kernel-devel-$(uname -r) gcc elfutils-libelf-devel
+```
+
+For DEB-based OS (Ubuntu, Debian):
+
+```bash
+apt install -y linux-headers-$(uname -r) build-essential
 ```
 
 ## Compile the Module
@@ -23,15 +29,14 @@ yum install -y kernel-devel-$(uname -r) gcc elfutils-libelf-devel
 For the 3.x kernel:
 
 ```bash
-cd kube-ovn/fastpath
+cd kube-ovn/fastpath/3.x
 make all
 ```
 
-For the 4.x kernel:
+For the 4.x ~ 6.x kernel:
 
 ```bash
-cd kube-ovn/fastpath/4.18
-cp ../Makefile .
+cd kube-ovn/fastpath/4.x-6.x
 make all
 ```
 
