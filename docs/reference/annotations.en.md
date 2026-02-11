@@ -13,6 +13,8 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/routes | String | Route information for Pod primary interface |
 | ovn.kubernetes.io/mac_address | String | MAC address allocated to Pod primary interface, when creating a Pod, you can set a fixed MAC address by this Annotation |
 | ovn.kubernetes.io/ip_address | String | IP address allocated to Pod primary interface, when creating a Pod, you can set a fixed IP address by this Annotation |
+| \<nadName\>.\<nadNamespace\>.kubernetes.io/ip_address.\<interfaceName\> | String | Per-interface fixed IP when multiple interfaces attach to the same switch; interfaceName must match the attachment's interface in Multus. ovn.kubernetes.io/ip_address remains as fallback if unset |
+| \<nadName\>.\<nadNamespace\>.kubernetes.io/mac_address.\<interfaceName\> | String | Per-interface fixed MAC when multiple interfaces attach to the same switch; interfaceName must match the attachment's interface in Multus |
 | ovn.kubernetes.io/cidr | String | Subnet CIDR that the Pod primary interface belongs to |
 | ovn.kubernetes.io/gateway | String | Subnet Gateway address that the Pod primary interface belongs to |
 | ovn.kubernetes.io/ip_pool | IP list, separated by comma | Pod primary interface will choose address from this list, used for workload fix address |
