@@ -4,6 +4,7 @@ By default, Kube-OVN randomly assigns IPs and Macs based on the Subnet to which 
 For workloads that require fixed addresses, Kube-OVN provides multiple methods of fixing addresses depending on the scenario.
 
 - Single Pod fixed IP/Mac.
+- Per-interface static IP/MAC when multiple interfaces attach to the same switch.
 - Workload IP Pool to specify fixed addresses.
 - StatefulSet fixed address.
 - KubeVirt VM fixed address.
@@ -33,6 +34,35 @@ The following points need to be noted when using annotation.
 1. The IP/Mac used cannot conflict with an existing IP/Mac.
 2. The IP must be in the CIDR range of the Subnet it belongs to.
 3. You can specify only IP or Mac. When you specify only one, the other one will be assigned randomly.
+
+## Per-Interface Static IP/MAC on the Same Switch
+
+When a Pod or VM has multiple interfaces attached to the **same logical switch** (e.g. same NAD attached multiple times), you can assign a different static IP/MAC to each interface. Specify a distinct `interface` name for each attachment in Multus `k8s.v1.cni.cncf.io/networks`, then use the per-interface annotations:
+
+- `<nadName>.<nadNamespace>.kubernetes.io/ip_address.<interfaceName>`: static IP for that interface
+- `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>`: static MAC for that interface
+
+`<nadName>` and `<nadNamespace>` are the NetworkAttachmentDefinition name and namespace; `<interfaceName>` must match the `interface` value for that attachment in Multus. The flat annotations `ovn.kubernetes.io/ip_address` and `ovn.kubernetes.io/mac_address` remain as fallback when per-interface annotations are not used (e.g. primary or single interface).
+
+Example: same NAD attached twice to the same subnet, with a fixed IP/MAC per interface:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-if-static
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[{"name": "attachnet", "namespace": "default", "interface": "net1"}, {"name": "attachnet", "namespace": "default", "interface": "net2"}]'
+    attachnet.default.kubernetes.io/ip_address.net1: 172.17.0.100
+    attachnet.default.kubernetes.io/mac_address.net1: 00:00:00:53:6B:B1
+    attachnet.default.kubernetes.io/ip_address.net2: 172.17.0.101
+    attachnet.default.kubernetes.io/mac_address.net2: 00:00:00:53:6B:B2
+spec:
+  containers:
+  - name: multi-if-static
+    image: docker.io/library/nginx:alpine
+```
 
 ## Workload IP Pool
 

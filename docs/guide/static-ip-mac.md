@@ -4,6 +4,7 @@ Kube-OVN 默认会根据 Pod 所在 Namespace 所属的子网中随机分配 IP 
 针对工作负载需要固定地址的情况，Kube-OVN 根据不同的场景，提供了多种固定地址的方法：
 
 - 单个 Pod 固定 IP/Mac。
+- 同一交换机下多网卡分别固定 IP/MAC（多网卡接入同一子网时按网卡指定）。
 - Workload 通用 IP Pool 方式指定固定地址范围。
 - StatefulSet 固定地址。
 - KubeVirt VM 固定地址。
@@ -33,6 +34,35 @@ spec:
 1. 所使用的 IP/Mac 不能和已有的 IP/Mac 冲突。
 2. IP 必须在所属子网的 CIDR 内。
 3. 可以只指定 IP 或 Mac，只指定一个时，另一个会随机分配。
+
+## 同一交换机下多网卡分别固定 IP/MAC
+
+当 Pod 或 VM 通过 Multus 挂载了多个网卡且这些网卡接入**同一逻辑交换机**时，可为每个网卡分别指定静态 IP/MAC。需在 Multus 的 `k8s.v1.cni.cncf.io/networks` 中为每个挂载指定不同的 `interface` 名称，再使用按网卡区分的 annotation：
+
+- `<nadName>.<nadNamespace>.kubernetes.io/ip_address.<interfaceName>`：指定该网卡的静态 IP
+- `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>`：指定该网卡的静态 MAC
+
+其中 `<nadName>`、`<nadNamespace>` 为 NetworkAttachmentDefinition 的名称与命名空间，`<interfaceName>` 须与 Multus 中该挂载的 `interface` 一致。未使用上述按网卡 annotation 时，仍可使用扁平 annotation `ovn.kubernetes.io/ip_address` / `ovn.kubernetes.io/mac_address` 作为回退（作用于主网卡或单网卡场景）。
+
+示例：同一 NAD 挂载两次到同一子网，两个网卡分别固定 IP/MAC：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-if-static
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[{"name": "attachnet", "namespace": "default", "interface": "net1"}, {"name": "attachnet", "namespace": "default", "interface": "net2"}]'
+    attachnet.default.kubernetes.io/ip_address.net1: 172.17.0.100
+    attachnet.default.kubernetes.io/mac_address.net1: 00:00:00:53:6B:B1
+    attachnet.default.kubernetes.io/ip_address.net2: 172.17.0.101
+    attachnet.default.kubernetes.io/mac_address.net2: 00:00:00:53:6B:B2
+spec:
+  containers:
+  - name: multi-if-static
+    image: docker.io/library/nginx:alpine
+```
 
 ## Workload 通用 IP Pool 固定地址
 

@@ -13,6 +13,8 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/routes | String | Pod 主网卡的路由信息 |
 | ovn.kubernetes.io/mac_address | String | Pod 主网卡所分配到的 Mac 地址，创建 Pod 时可通过该 Annotation 设置固定 Mac 地址 |
 | ovn.kubernetes.io/ip_address | String | Pod 主网卡所分配到的 IP 地址，创建 Pod 时可通过该 Annotation 设置固定 IP 地址 |
+| \<nadName\>.\<nadNamespace\>.kubernetes.io/ip_address.\<interfaceName\> | String | 同一交换机下多网卡时，按网卡指定该接口的固定 IP（interfaceName 与 Multus 中该挂载的 interface 一致）。未设置时仍可使用 ovn.kubernetes.io/ip_address 作为回退 |
+| \<nadName\>.\<nadNamespace\>.kubernetes.io/mac_address.\<interfaceName\> | String | 同一交换机下多网卡时，按网卡指定该接口的固定 MAC（interfaceName 与 Multus 中该挂载的 interface 一致） |
 | ovn.kubernetes.io/cidr | String | Pod 主网卡所属子网的 CIDR |
 | ovn.kubernetes.io/gateway | String | Pod 主网卡所属子网的 Gateway 地址 |
 | ovn.kubernetes.io/ip_pool | IP 列表，逗号间隔 | Pod 主网卡地址将从列表中选择，适用于 Workload 固定 IP 场景 |

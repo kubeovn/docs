@@ -342,6 +342,10 @@ spec:
     image: docker.io/library/alpine:edge
 ```
 
+##### Per-Interface Static IP/MAC on the Same Switch
+
+When the same NetworkAttachmentDefinition is attached multiple times to the same logical switch (multiple interfaces on the same subnet), use a distinct `interface` for each attachment in `k8s.v1.cni.cncf.io/networks` and the per-interface annotations: `<nadName>.<nadNamespace>.kubernetes.io/ip_address.<interfaceName>` and `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>`. See [Fixed Addresses - Per-Interface Static IP/MAC on the Same Switch](../guide/static-ip-mac.en.md#per-interface-static-ipmac-on-the-same-switch).
+
 ##### Configure Custom Routes for Attached NICs
 
 For Pods with Kube-OVN attached network cards, custom routes can be configured through the `<networkAttachmentName>.<networkAttachmentNamespace>.ovn.kubernetes.io/routes` annotation:

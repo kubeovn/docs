@@ -89,7 +89,7 @@ You can observe that in bridge mode, the VM's IP address remains unchanged after
 
 ## Specifying IP/Mac Address
 
-For scenarios where users need to specify the VM's IP/Mac address, they can add an annotation to the VM when creating it to assign a specific IP address. Other usage methods are consistent with native KubeVirt.
+For scenarios where users need to specify the VM's IP/Mac address, they can add an annotation to the VM when creating it to assign a specific IP address. Other usage methods are consistent with native KubeVirt. When a VM has multiple interfaces on the same logical switch, you can assign a static IP/MAC per interface using `<nadName>.<nadNamespace>.kubernetes.io/ip_address.<interfaceName>` and `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>`. See [Fixed Addresses - Per-Interface Static IP/MAC on the Same Switch](../guide/static-ip-mac.en.md#per-interface-static-ipmac-on-the-same-switch).
 
 ```yaml
 apiVersion: kubevirt.io/v1

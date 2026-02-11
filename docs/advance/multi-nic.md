@@ -341,6 +341,10 @@ spec:
     image: docker.io/library/alpine:edge
 ```
 
+##### 同一交换机下多网卡分别固定 IP/MAC
+
+当同一 NetworkAttachmentDefinition 被多次挂载且接入同一逻辑交换机时（多块网卡同属一个子网），需为每个网卡分别指定静态 IP/MAC。在 `k8s.v1.cni.cncf.io/networks` 中为每次挂载指定不同的 `interface`，再使用按网卡区分的 annotation：`<nadName>.<nadNamespace>.kubernetes.io/ip_address.<interfaceName>` 与 `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>`。详见[固定地址 - 同一交换机下多网卡分别固定 IP/MAC](../guide/static-ip-mac.md#同一交换机下多网卡分别固定-ipmac)。
+
 ##### 为附属网卡配置自定义路由
 
 对于附属网卡为 Kube-OVN 类型的 Pod，可以通过 `<networkAttachmentName>.<networkAttachmentNamespace>.ovn.kubernetes.io/routes` annotation 来配置自定义路由：

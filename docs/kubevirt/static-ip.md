@@ -89,7 +89,7 @@ virtctl migrate testvm
 
 ## 指定 IP/Mac 地址
 
-对于需要指定 VM 的 IP/Mac 地址的场景，用户可以通过创建 VM 时添加 annotation 的方式为 VM 指定 IP 地址。其他使用方式和原生 KubeVirt 一致。
+对于需要指定 VM 的 IP/Mac 地址的场景，用户可以通过创建 VM 时添加 annotation 的方式为 VM 指定 IP 地址。其他使用方式和原生 KubeVirt 一致。若 VM 有多块网卡接入同一逻辑交换机，可为每块网卡分别指定静态 IP/MAC，使用 `<nadName>.<nadNamespace>.kubernetes.io/ip_address.<interfaceName>` 与 `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>`，详见[固定地址 - 同一交换机下多网卡分别固定 IP/MAC](../guide/static-ip-mac.md#同一交换机下多网卡分别固定-ipmac)。
 
 ```yaml
 apiVersion: kubevirt.io/v1
