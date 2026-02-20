@@ -28,6 +28,7 @@ nav:
       - 配置监控和面板: "guide/prometheus-grafana.md"
       - 安全:
         - NetworkPolicy 使用: "guide/networkpolicy.md"
+        - 多网络 NetworkPolicy 使用: "guide/multi-network-policy.md"
         - 基于域名的访问控制: "guide/egress-firewall.md"
         - 端口安全: "guide/port-security.md"
   - KubeVirt:
@@ -202,6 +203,7 @@ plugins:
             流量镜像: Traffic Mirror
             安全: Security
             NetworkPolicy 使用: NetworkPolicy Usage
+            多网络 NetworkPolicy 使用: Multi-network NetworkPolicy Usage
             基于域名的访问控制: Domain-based Access Control
             端口安全: Port Security
             Webhook 使用: Webhook

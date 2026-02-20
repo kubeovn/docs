@@ -234,3 +234,7 @@ spec:
 ```
 
 You can also globally configure the default enforcement mode using the `--network-policy-enforcement` parameter when starting the Kube-OVN controller.
+
+## See also
+
+- [Multi-network NetworkPolicy](./multi-network-policy.en.md)
