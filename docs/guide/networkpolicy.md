@@ -234,3 +234,7 @@ spec:
 ```
 
 也可以在 Kube-OVN 控制器启动时通过参数 `--network-policy-enforcement` 全局配置默认的执行模式。
+
+## 另请参阅
+
+- [多网络 NetworkPolicy](./multi-network-policy.md)
