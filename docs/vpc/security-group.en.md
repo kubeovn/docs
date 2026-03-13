@@ -41,10 +41,118 @@ Pods bind security groups by adding the `ovn.kubernetes.io/security_groups` anno
 
 For port security feature, please refer to the [Port Security documentation](../guide/port-security.en.md).
 
+## Tiered Security Groups
+
+Security groups support multi-tier ACL processing via the optional `tier` field. This allows you to stack multiple security groups to perform hierarchical ACL evaluation.
+
+- **`tier`**: An integer value of `0` or `1` (default `0`). Rules in tier `0` are evaluated first. If a rule in tier `0` matches with `policy: pass`, ACL processing continues to tier `1`.
+- **`policy: pass`**: A policy action (in addition to `allow` and `deny`) that forwards packet evaluation to the next tier instead of making a final decision. The `pass` policy cannot be used when the security group tier is set to the maximum value (`1`), since there is no subsequent tier to pass to.
+
+This enables use cases such as a broad tier-0 security group that passes certain traffic to a more specific tier-1 security group for further filtering.
+
+### Tiered SecurityGroup Example
+
+Create two security groups, one for each tier:
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: SecurityGroup
+metadata:
+  name: sg-tier0
+spec:
+  tier: 0
+  allowSameGroupTraffic: true
+  ingressRules:
+  - ipVersion: ipv4
+    policy: pass
+    priority: 1
+    protocol: tcp
+    remoteAddress: 10.16.0.0/16
+    remoteType: address
+  - ipVersion: ipv4
+    policy: deny
+    priority: 2
+    protocol: all
+    remoteAddress: 0.0.0.0/0
+    remoteType: address
+---
+apiVersion: kubeovn.io/v1
+kind: SecurityGroup
+metadata:
+  name: sg-tier1
+spec:
+  tier: 1
+  allowSameGroupTraffic: true
+  ingressRules:
+  - ipVersion: ipv4
+    policy: allow
+    priority: 1
+    protocol: tcp
+    remoteAddress: 10.16.0.0/16
+    remoteType: address
+    portRangeMin: 80
+    portRangeMax: 443
+```
+
+In this example, `sg-tier0` passes all TCP traffic from `10.16.0.0/16` to tier 1 and denies everything else. `sg-tier1` then only allows TCP traffic on ports 80–443 from that same range.
+
+To apply both security groups to a Pod, list them as a comma-separated value in the annotation:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: web
+  annotations:
+    ovn.kubernetes.io/security_groups: 'sg-tier0,sg-tier1'
+  name: multi-tier-pod
+  namespace: default
+spec:
+  nodeName: kube-ovn-worker
+  containers:
+  - image: docker.io/library/nginx:alpine
+    imagePullPolicy: IfNotPresent
+    name: nginx
+```
+
+## Local Address and Source Port Filtering
+
+Security group rules support optional `localAddress` and source port range fields for more granular matching:
+
+- **`localAddress`**: A local IP address or CIDR to match against. This allows rules to apply only when the local (source for egress, destination for ingress) address matches.
+- **`sourcePortRangeMin`** / **`sourcePortRangeMax`**: Define a source port range (1–65535) to match against. These are only applicable for TCP and UDP protocols.
+
+### Local Address Filtering Example
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: SecurityGroup
+metadata:
+  name: sg-local-filter
+spec:
+  allowSameGroupTraffic: true
+  ingressRules:
+  - ipVersion: ipv4
+    policy: allow
+    priority: 1
+    protocol: tcp
+    remoteAddress: 10.16.0.0/16
+    remoteType: address
+    portRangeMin: 8080
+    portRangeMax: 8080
+    localAddress: 10.16.0.100
+    sourcePortRangeMin: 1024
+    sourcePortRangeMax: 65535
+```
+
+This rule allows inbound TCP traffic to `10.16.0.100` on port 8080 from `10.16.0.0/16` with source ports in the range 1024–65535.
+
 ## Caution
 
 - Security groups are implemented by setting ACL rules. As mentioned in the OVN documentation, if two ACL rules match with the same priority, it is uncertain which ACL will actually work. Therefore, when setting up security group rules, you need to be careful to differentiate the priority.
-- When configuring a security group, the `priority` value ranges from 1 to 200, with smaller values indicating higher priority. When implementing a security group through ACLs, the security group's priority is mapped to the ACL priority. The specific mapping relationship is as follows: ACL priority = 2300 - Security group priority, therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
+- When configuring a security group, the `priority` value ranges from 1 to 16384, with smaller values indicating higher priority. When implementing a security group through ACLs, the security group's priority is mapped to the ACL priority. Therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
+- The `tier` field accepts values `0` or `1`. The `policy: pass` action is only valid in tier `0`; using it in tier `1` will result in a validation error.
 - When adding a security group, it is important to know what restrictions are being added. As a CNI, Kube-OVN will perform a Pod-to-Gateway connectivity test after creating a Pod. If the gateway is not accessible, the Pod will remain in the ContainerCreating state and cannot switch to Running state.
 
 ## Actual test
