@@ -48,6 +48,8 @@ Security groups support multi-tier ACL processing via the optional `tier` field.
 - **`tier`**: An integer value of `0` or `1` (default `0`). Rules in tier `0` are evaluated first. If a rule in tier `0` matches with `policy: pass`, ACL processing continues to tier `1`.
 - **`policy: pass`**: A policy action (in addition to `allow` and `deny`) that forwards packet evaluation to the next tier instead of making a final decision. The `pass` policy cannot be used when the security group tier is set to the maximum value (`1`), since there is no subsequent tier to pass to.
 
+If traffic is passed to a higher tier but does not match any rule in that tier, it is dropped by default.
+
 This enables use cases such as a broad tier-0 security group that passes certain traffic to a more specific tier-1 security group for further filtering.
 
 ### Tiered SecurityGroup Example
@@ -151,7 +153,7 @@ This rule allows inbound TCP traffic to `10.16.0.100` on port 8080 from `10.16.0
 ## Caution
 
 - Security groups are implemented by setting ACL rules. As mentioned in the OVN documentation, if two ACL rules match with the same priority, it is uncertain which ACL will actually work. Therefore, when setting up security group rules, you need to be careful to differentiate the priority.
-- When configuring a security group, the `priority` value ranges from 1 to 16384, with smaller values indicating higher priority. When implementing a security group through ACLs, the security group's priority is mapped to the ACL priority. Therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
+- When configuring a security group, the `priority` value ranges from 1 to 16384, with smaller values indicating higher priority. When implementing a security group through ACLs, the security group's priority is mapped to the ACL priority using the following formula: `ACL priority = 18484 - SecurityGroup priority`. Therefore, it is essential to distinguish between the priorities of security groups and subnet ACLs.
 - The `tier` field accepts values `0` or `1`. The `policy: pass` action is only valid in tier `0`; using it in tier `1` will result in a validation error.
 - When adding a security group, it is important to know what restrictions are being added. As a CNI, Kube-OVN will perform a Pod-to-Gateway connectivity test after creating a Pod. If the gateway is not accessible, the Pod will remain in the ContainerCreating state and cannot switch to Running state.
 
