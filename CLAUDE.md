@@ -43,26 +43,30 @@ python3 scripts/check-chinese-punctuation.py --fix
 These rules are enforced by CI linting:
 
 ### Punctuation
+
 - Chinese docs: use Chinese punctuation (。，？！；：)
 - English docs: use English punctuation only (CI runs `scripts/check-chinese-punctuation.py` to enforce this)
-- **Mandatory spacing:** insert a space between Chinese characters and English/numbers (e.g., `安装 Kube-OVN` not `安装Kube-OVN`). This is enforced by markdownlint search-replace rules in `.markdownlint.json`.
+- **Mandatory spacing:** insert a space between Chinese characters and English/numbers (e.g., `安装 Kube-OVN` not `安装 Kube-OVN`). This is enforced by markdownlint search-replace rules in `.markdownlint.json`.
 
 ### Code Blocks
+
 - Always specify language: ` ```yaml `, ` ```bash `, etc.
 - Commands with output: prefix executed commands with `#` to distinguish from output
 - Commands without output: no `#` prefix needed
 
 ### Links
+
 - Internal links: use relative `.md` paths (e.g., `./prepare.md`)
 - External links: add `{: target="_blank" }` attribute
 
 ### Formatting
+
 - Separate logical blocks (headings, text, code) with exactly one blank line
 - Sentences in Chinese docs end with `。`; example introductions use `：`
 
 ## Architecture
 
-```
+```text
 docs/              # All documentation content
   advance/         # Advanced features
   guide/           # User guide
@@ -81,6 +85,7 @@ mkdocs.yml         # Main site configuration (nav, plugins, i18n, theme)
 ## CI Pipeline
 
 PRs run two checks (`.github/workflows/lint.yml`):
+
 1. **Markdown lint** — markdownlint-cli with custom search-replace rules for Chinese-English spacing
 2. **Chinese punctuation check** — ensures `.en.md` files have no Chinese punctuation
 3. **Build validation** — `mkdocs build -s` must succeed
