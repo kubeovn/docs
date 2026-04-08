@@ -41,6 +41,7 @@ nav:
   - VPC 网络:
       - VPC 入门: "vpc/vpc.md"
       - Egress Gateway: "vpc/vpc-egress-gateway.md"
+      - Egress Gateway BGP/EVPN: "vpc/vpc-egress-gateway-bgp-evpn.md"
       - Egress QoS 配置: "vpc/vpc-qos.md"
       - 内部负载均衡: "vpc/vpc-internal-lb.md"
       - 内部 DNS: "vpc/vpc-internal-dns.md"
@@ -191,6 +192,7 @@ plugins:
             DHCP: DHCP
             VPC 入门: VPC Introduction
             Egress Gateway: Egress Gateway
+            Egress Gateway BGP/EVPN: Egress Gateway BGP/EVPN
             Egress QoS 配置: Egress QoS Configuration
             VPC 使用: Config VPC
             VPC QoS 配置: VPC QoS
