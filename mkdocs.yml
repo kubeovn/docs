@@ -277,7 +277,7 @@ plugins:
   - to-pdf:
       author: Kube-OVN Team
       copyright: 2025 Kube-OVN Team
-      cover_subtitle: v1.15.0
+      cover_subtitle: v1.16.0
       enabled_if_env: ENABLE_PDF_EXPORT
 extra:
   analytics:
@@ -299,7 +299,7 @@ extra:
       link: https://hub.docker.com/r/kubeovn/kube-ovn
   variables:
     version: v1.16.0
-    branch: release-1.15
+    branch: release-1.16
 copyright:
   <p>The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation,
   please see our <a href="https://www.linuxfoundation.org/legal/trademark-usage">Trademark Usage page</a>.
