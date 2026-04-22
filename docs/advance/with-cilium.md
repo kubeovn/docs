@@ -101,7 +101,7 @@ helm install cilium cilium/cilium --version 1.11.6 \
     --set tunnel=disabled \
     --set enableIPv4Masquerade=false \
     --set devices="eth+ ovn0 genev_sys_6081 vxlan_sys_4789" \
-    --set enableIdentityMark=false 
+    --set enableIdentityMark=false
 ```
 
 确认 Cilium 安装成功：
@@ -123,4 +123,45 @@ Cluster Pods:     8/11 managed by Cilium
 Image versions    cilium             quay.io/cilium/cilium:v1.10.5@sha256:0612218e28288db360c63677c09fafa2d17edda4f13867bcabf87056046b33bb: 2
                   cilium-operator    quay.io/cilium/operator-generic:v1.10.5@sha256:2d2f730f219d489ff0702923bf24c0002cd93eb4b47ba344375566202f56d972: 2
 
+```
+
+## 在 Cilium 环境下使用 Kube-OVN NAT 网关
+
+Cilium 会对其管理的网络接口（包括 NAT 网关 Pod 的默认网卡）的出向流量进行安全校验。
+由于 NAT 网关负责对 VPC 内 Pod 的流量执行 SNAT/DNAT 转发，其发出的大多数报文源 IP 并非 Pod 自身的 IP。
+
+Cilium 通过 **SIP**（Source IP）源地址校验机制来阻止这类行为——若报文源地址与 Pod IP 不匹配，流量将被丢弃（在 Hubble 中可见 **DROPPED**）。
+
+该机制有助于防止集群内 IP 欺骗，但会导致 NAT 网关功能失效。
+
+### 按命名空间/Pod 粒度控制（推荐，Cilium ≥ 1.20）
+
+Cilium 1.20 起（[cilium/cilium#43505](https://github.com/cilium/cilium/pull/43505){: target="_blank" }），
+支持通过**双层 annotation** 在 Pod 粒度关闭 SIP 校验：
+
+1. **集群管理员**在命名空间上添加授权 annotation：
+
+    ```bash
+    kubectl annotate namespace <nat-gateway-namespace> \
+      config.cilium.io/delegate-source-ip-verification=true
+    ```
+
+2. NAT 网关 Pod 声明关闭 SIP 校验的 annotation：
+
+    ```yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      annotations:
+        config.cilium.io/disable-source-ip-verification: "true"
+    ```
+
+这种方式仅对特定 NAT 网关 Pod 生效，可避免集群层面的安全降级，推荐优先采用。
+
+### 全局关闭（Cilium < 1.20）
+
+对于旧版本 Cilium，可在 Helm Chart 中通过设置 `enableSourceIPVerification` 为 `false` 全局关闭 SIP 校验：
+
+```yaml
+enableSourceIPVerification: false
 ```

@@ -136,7 +136,36 @@ Cilium runs **SIP** (Source IP) address validation to prevent that. If the sourc
 the Pod, the traffic is visibly dropped (can be seen on Hubble as **DROPPED** traffic).
 
 This feature of Cilium is useful to enhance the network security of the cluster and prevent IP spoofing but it breaks NAT gateways.
-To fix this problem, SIP address validation **needs to be disabled on Cilium** in its Helm Chart by setting the `enableSourceIPVerification` value to `false`:
+
+### Per-namespace/pod annotation (recommended, Cilium ≥ 1.20)
+
+Starting from Cilium 1.20 ([cilium/cilium#43505](https://github.com/cilium/cilium/pull/43505){: target="_blank" }),
+SIP verification can be disabled at **per-pod granularity** using a two-layer annotation model:
+
+1. A **cluster administrator** annotates the Namespace to delegate the permission:
+
+    ```bash
+    kubectl annotate namespace <nat-gateway-namespace> \
+      config.cilium.io/delegate-source-ip-verification=true
+    ```
+
+2. The NAT gateway Pod declares the annotation to opt out of SIP verification:
+
+    ```yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      annotations:
+        config.cilium.io/disable-source-ip-verification: "true"
+    ```
+
+This approach is preferred because it limits the scope to only the specific NAT gateway pods,
+avoiding a cluster-wide security regression.
+
+### Global disable (Cilium < 1.20)
+
+For older Cilium versions, SIP address validation can be disabled globally in the Helm Chart
+by setting the `enableSourceIPVerification` value to `false`:
 
 ```yaml
 enableSourceIPVerification: false
