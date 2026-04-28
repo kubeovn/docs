@@ -97,7 +97,7 @@ OVN 自身状态监控指标：
 |Gauge|pinger_internal_dns_healthy|kube-ovn-pinger 可以解析内部域名。|
 |Gauge|pinger_internal_dns_unhealthy|kube-ovn-pinger 无法解析内部域名。|
 |Histogram|pinger_internal_dns_latency_ms|kube-ovn-pinger 解析内部域名延迟。|
-|Gauge|pinger_external_dns_health|kube-ovn-pinger 可以解析外部域名。|
+|Gauge|pinger_external_dns_healthy|kube-ovn-pinger 可以解析外部域名。|
 |Gauge|pinger_external_dns_unhealthy|kube-ovn-pinger 无法解析外部域名。|
 |Histogram|pinger_external_dns_latency_ms|kube-ovn-pinger 解析外部域名延迟。|
 |Histogram|pinger_pod_ping_latency_ms|kube-ovn-pinger ping Pod 延迟。|

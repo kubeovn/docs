@@ -27,7 +27,7 @@ spec:
   sessionAffinity: ClientIP
   namespace: default
   selector:
-    - app:nginx
+    - app: nginx
   ports:
   - name: dns
     port: 8888
@@ -74,7 +74,7 @@ spec:
 
 - `sessionAffinity` 和 `port` 使用方式同 Kubernetes Service。
 - `vip`：自定义负载均衡的 IP 地址。
-- `namespace`：`selector` 所选择 Pod 所在命名空间。
+- `namespace`：负载均衡后端所在命名空间。
 - `endpoints`：负载均衡后端 IP 列表。
 
 如果同时配置了 `selector` 和 `endpoints`, 会自动忽略 `selector` 配置。
@@ -112,7 +112,7 @@ spec:
   sessionAffinity: ClientIP
   namespace: default
   selector:
-    - app:nginx
+    - app: nginx
   ports:
   - name: dns
     port: 8888

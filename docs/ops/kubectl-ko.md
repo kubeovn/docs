@@ -757,7 +757,7 @@ kubectl-ko-log/
 3. 容器网络组播报文性能指标；
 4. OVN-NB, OVN-SB, OVN-Northd leader 删除恢复所需时间。
 
-参数 image 用于指定性能测试 Pod 使用的镜像，默认为 `kubeovn/test:v1.12.0`。该参数主要用于离线场景，当镜像拉取到内网环境时，可能需要修改镜像名称。
+参数 image 用于指定性能测试 Pod 使用的镜像，默认为 `docker.io/kubeovn/test:v1.13.0`。该参数主要用于离线场景，当镜像拉取到内网环境时，可能需要修改镜像名称。
 
 ```bash
 # kubectl ko perf
