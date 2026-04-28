@@ -10,4 +10,4 @@ mkdocs-git-committers-plugin-2==2.5.0
 cairocffi==1.7.1
 cairosvg==2.9.0
 defusedxml==0.7.1
-mkdocs-to-pdf==0.10.1
+mkdocs-to-pdf==0.11.2
