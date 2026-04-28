@@ -193,7 +193,7 @@ kubectl annotate eip sample ovn.kubernetes.io/bgp=true
 
 默认的发布策略为 `Cluster`，可以通过 Pod/Subnet 的 annotation `ovn.kubernetes.io/bgp` 来进行更改：
 
-- `ovn.kubernetes.io/bgp=cluster` 或 `ovn.kubernetes.io/bgp=yes` 将会使用 `Cluster` 策略。
+- `ovn.kubernetes.io/bgp=cluster` 或 `ovn.kubernetes.io/bgp=true` 将会使用 `Cluster` 策略。
 - `ovn.kubernetes.io/bgp=local` 将会使用 `Local` 策略。
 
 > 注意：由于 Service 的流量最终是由 `kube-proxy` 进行处理，`ClusterIP` 类型 Service 对外发布路由只支持 `Cluster` 策略。

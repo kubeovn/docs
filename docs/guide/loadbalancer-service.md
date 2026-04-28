@@ -338,7 +338,7 @@ Chain POSTROUTING (policy ACCEPT 0 packets, 0 bytes)
 ```yaml
 apiVersion: v1
 data:
-  image: docker.io/kubeovn/vpc-nat-gateway:v1.14.0
+  image: docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}
   nodeSelector: |
     kubernetes.io/hostname: kube-ovn-control-plane
     kubernetes.io/os: linux

@@ -175,7 +175,7 @@ spec:
 
 ### 开启 VPC 网关功能
 
-VPC 网关功能需要通过 `kube-system` 命名空间下的 `ovn-vpc-nat-gw-config` 配置开启，其中 `nodeSelector` 可以指定网关部署所在的节点：
+VPC 网关功能需要通过 `kube-system` 命名空间下的 `ovn-vpc-nat-gw-config` 配置开启。同时，`ovn-vpc-nat-config` ConfigMap 中可以配置 `image`（网关 Pod 所使用的镜像）以及 `nodeSelector`（注意：此 `nodeSelector` 仅用于 `LoadBalancer` 类型 Service 的 lb-svc 部署，VpcNATGateway Pod 的调度由 `VpcNatGateway.spec.selector` 字段决定）：
 
 ```yaml
 ---
@@ -462,34 +462,6 @@ spec:
     }'
 ```
 
-### 修改 ovn-default 逻辑交换机的 provider
-
-修改 ovn-default 的 provider，为上面 nad 配置的 provider `ovn-nad.default.ovn`：
-
-```yaml
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: ovn-default
-spec:
-  cidrBlock: 10.16.0.0/16
-  default: true
-  disableGatewayCheck: false
-  disableInterConnection: false
-  enableDHCP: false
-  enableIPv6RA: false
-  excludeIps:
-  - 10.16.0.1
-  gateway: 10.16.0.1
-  gatewayType: distributed
-  logicalGateway: false
-  natOutgoing: true
-  private: false
-  protocol: IPv4
-  provider: ovn-nad.default.ovn
-  vpc: ovn-cluster
-```
-
 ### 配置 vpc-dns 的 ConfigMap
 
 在 kube-system 命名空间下创建 configmap，配置 vpc-dns 使用参数，用于后面启动 vpc-dns 功能：
@@ -509,7 +481,6 @@ data:
 
 - `enable-vpc-dns`：（可缺省）`true` 启用功能，`false` 关闭功能。默认 `true`。
 - `coredns-image`：（可省略）：dns 部署镜像。默认为集群 coredns 部署版本。
-- `coredns-template`：（可省略）：dns 部署模板所在的 URL。默认：当前版本仓库里的 `yamls/coredns-template.yaml`。
 - `coredns-vip`：为 coredns 提供 lb 服务的 vip。
 - `nad-name`：配置的 `network-attachment-definitions` 资源名称。
 - `nad-provider`：使用的 provider 名称。

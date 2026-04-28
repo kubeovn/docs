@@ -126,7 +126,6 @@ data:
 * `enable-vpc-dns`: enable vpc dns feature, true as default
 * `coredns-image`: dns deployment image. Defaults to the clustered coredns deployment version
 * `coredns-vip`: the vip that provides lb services for coredns.
-* `coredns-template`: the URL where the coredns deployment template is located. defaults to the current version of the ovn directory. `coredns-template.yaml` default is `https://raw.githubusercontent.com/kubeovn/kube-ovn/<kube-ovn version>/yamls/coredns-template.yaml`.
 * `nad-name`: configured network-attachment-definitions Resource name.
 * `nad-provider`: the name of the provider to use.
 * `k8s-service-host`: the ip used for coredns to access the k8s apiserver service, defaults to the apiserver address within the cluster.

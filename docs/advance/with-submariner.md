@@ -66,7 +66,19 @@ kubectl label nodes cluster1 submariner.io/gateway=true
   - update
 ```
 
-对于多节点的集群，需要将默认的 `subnet` `ovn-default` 的网关配置改为 `centralized`。为 submariner 配置的 `gateway` 节点需要和 `subnet` 节点完全相同。
+对于多节点的集群，需要将默认的 `subnet` `ovn-default` 的网关配置改为 `centralized`，并显式指定 `gatewayNode`（集中式网关必填，否则子网无法生效）：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: ovn-default
+spec:
+  gatewayType: centralized
+  gatewayNode: "node1,node2"   # 与 submariner 配置的 gateway 节点完全相同，多个节点用逗号分隔
+```
+
+为 submariner 配置的 `gateway` 节点需要和 `gatewayNode` 字段中列出的节点完全相同。
 
 接下来可以在两个集群内分别启动 Pod 并尝试使用 IP 进行相互访问。
 

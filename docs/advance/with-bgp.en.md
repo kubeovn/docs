@@ -262,7 +262,7 @@ If a Pod you're trying to announce lands on a node with no speaker on it, its IP
 
 The default policy used is `Cluster`. Policies can be overridden for each Pod/Subnet using the `ovn.kubernetes.io/bgp` annotation:
 
-- `ovn.kubernetes.io/bgp=cluster` or the default `ovn.kubernetes.io/bgp=yes` will use policy `Cluster`
+- `ovn.kubernetes.io/bgp=cluster` or the default `ovn.kubernetes.io/bgp=true` will use policy `Cluster`
 - `ovn.kubernetes.io/bgp=local` will use policy `Local`
 
 NOTE: Announcement of Services of type `ClusterIP` doesn't support any policy other than `Cluster` as routing to the actual pod

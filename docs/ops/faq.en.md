@@ -73,7 +73,7 @@ Starting from the v1.11.x version, in a cluster with 1w Pod or more, if OVN NB o
 
 ### Solution
 
-You can configure the environment variables for ovn-central as follows and turn off compact:
+To mitigate this issue, since v1.13 `ENABLE_COMPACT` is set to `false` by default (see `dist/images/install.sh` and `start-db.sh`), and no manual configuration is required. If your cluster was upgraded from an earlier version, please make sure the environment variable on the ovn-central container is not explicitly set to `true`:
 
 ```yaml
 - name: ENABLE_COMPACT

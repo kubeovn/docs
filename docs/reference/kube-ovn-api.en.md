@@ -101,13 +101,13 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | Property Name | Type | Description |
 | --- | --- | --- |
 | conditions | []SubnetCondition | Subnet status change information, refer to the beginning of the document for the definition of Condition |
-| v4availableIPs | Float64 | Number of available IPv4 IPs |
+| v4availableIPs | BigInt | Number of available IPv4 IPs (big integer; supports counts that exceed float64 precision under large IPv6 ranges) |
 | v4availableIPrange | String | The available range of IPv4 addresses on the subnet |
-| v4usingIPs | Float64 | Number of used IPv4 IPs |
+| v4usingIPs | BigInt | Number of used IPv4 IPs |
 | v4usingIPrange | String | Used IPv4 address ranges on the subnet |
-| v6availableIPs | Float64 | Number of available IPv6 IPs |
+| v6availableIPs | BigInt | Number of available IPv6 IPs |
 | v6availableIPrange | String | The available range of IPv6 addresses on the subnet |
-| v6usingIPs | Float64 | Number of used IPv6 IPs |
+| v6usingIPs | BigInt | Number of used IPv6 IPs |
 | v6usingIPrange | String | Used IPv6 address ranges on the subnet |
 | activateGateway | String | The currently working gateway node in centralized subnet of master-backup mode |
 | dhcpV4OptionsUUID | String | The DHCP_Options record identifier associated with the lsp dhcpv4_options on the subnet |
@@ -723,15 +723,170 @@ In each CRD definition, the Condition field in Status follows the above format, 
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| vpc | String | VPC |
-| replicas | Int32 | Number of replicas |
-| prefix | String | Name prefix |
-| image | String | Container image |
-| internalSubnet | String | Internal subnet |
-| externalSubnet | String | External subnet |
-| internalIPs | []String | List of internal IPs |
-| externalIPs | []String | List of external IPs |
-| trafficPolicy | String | Traffic policy |
+| vpc | String | Optional. The VPC the gateway belongs to. The default VPC is used when unspecified |
+| bgpConf | String | Optional. Name of a cluster-scoped `BgpConf` resource used to advertise egress routes |
+| evpnConf | String | Optional. Name of a cluster-scoped `EvpnConf` resource used in EVPN scenarios |
+| replicas | Int32 | Number of gateway replicas. Defaults to 1 |
+| prefix | String | Optional. Name prefix for the workload. The final name is `<prefix><veg-name>` |
+| image | String | Optional. Image used by the workload. Falls back to the kube-ovn-controller default when unspecified |
+| internalSubnet | String | Optional. Internal subnet. Falls back to the VPC default subnet when unspecified |
+| externalSubnet | String | Required. Name of the external subnet |
+| internalIPs | []String | Optional. List of internal IPs (must be no fewer than the replica count; in dual-stack mode, each entry takes the form `v4,v6`) |
+| externalIPs | []String | Optional. List of external IPs (must be no fewer than the replica count; in dual-stack mode, each entry takes the form `v4,v6`) |
+| selectors | []VpcEgressGatewaySelector | Namespace/Pod selectors that pick the traffic sources handled by this gateway |
+| trafficPolicy | String | Optional. Traffic policy, `Cluster` (default) or `Local`; only effective for the default VPC |
+| bfd | VpcEgressGatewayBFDConfig | BFD configuration |
+| policies | []VpcEgressGatewayPolicy | List of egress policies, with at least one entry |
+| nodeSelector | []VpcEgressGatewayNodeSelector | Optional. Node selector for the workload |
+| tolerations | []Toleration | Optional. Standard Kubernetes tolerations |
+| resources | ResourceRequirements | Optional. Container resource limits; the controller uses defaults when unspecified |
+| bandwidth | BandwidthLimit | Optional. Per-replica ingress/egress bandwidth limit (in Mbps) |
+
+##### VpcEgressGatewaySelector
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| namespaceSelector | LabelSelector | Namespace label selector |
+| podSelector | LabelSelector | Pod label selector |
+
+##### VpcEgressGatewayBFDConfig
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| enabled | Boolean | Whether to enable BFD (also requires `.spec.bfd.enabled=true` on the VPC). Defaults to false |
+| minRX | Int32 | Minimum BFD receive interval (ms). Defaults to 1000 |
+| minTX | Int32 | Minimum BFD transmit interval (ms). Defaults to 1000 |
+| multiplier | Int32 | BFD detection multiplier. Defaults to 3 |
+
+##### VpcEgressGatewayPolicy
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| snat | Boolean | Whether to apply SNAT/MASQUERADE to matched egress traffic. Defaults to false |
+| ipBlocks | []String | List of CIDRs to match |
+| subnets | []String | List of subnet names to match |
+
+##### VpcEgressGatewayNodeSelector
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| matchLabels | map[String]String | Label match map |
+| matchExpressions | []NodeSelectorRequirement | Label match expressions |
+| matchFields | []NodeSelectorRequirement | Field match expressions |
+
+##### BandwidthLimit
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ingress | Int64 | Ingress bandwidth limit, in Mbps |
+| egress | Int64 | Egress bandwidth limit, in Mbps |
+
+#### VpcEgressGatewayStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| replicas | Int32 | Current replica count (used by the scale subresource) |
+| labelSelector | String | Workload selector for the gateway (used by the scale subresource) |
+| ready | Boolean | Whether the gateway is ready |
+| phase | String | Current phase, one of `Pending`, `Processing`, or `Completed` |
+| internalIPs | []String | Internal IPs actually in use |
+| externalIPs | []String | External IPs actually in use |
+| conditions | []Condition | Latest observations of the current state transitions |
+| workload | VpcEgressWorkload | Information about the associated workload |
+
+##### VpcEgressWorkload
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| apiVersion | String | API version of the workload |
+| kind | String | Workload kind, e.g. `Deployment` |
+| name | String | Workload name |
+| nodes | []String | Nodes currently hosting the workload |
+
+### BgpConf
+
+A cluster-scoped resource referenced by `VpcEgressGateway.spec.bgpConf` to advertise egress prefixes.
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `BgpConf` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | BgpConfSpec | BgpConf specific configuration information |
+
+#### BgpConfSpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| localASN | UInt32 | Local BGP AS number |
+| peerASN | UInt32 | Peer BGP AS number |
+| routerId | String | Optional. BGP Router ID |
+| neighbours | []String | List of BGP neighbour IP addresses |
+| password | String | Optional. TCP MD5 authentication password |
+| holdTime | Duration | Optional. BGP hold time |
+| keepaliveTime | Duration | Optional. BGP keepalive interval |
+| connectTime | Duration | Optional. BGP connect interval |
+| ebgpMultiHop | Boolean | Optional. Whether to enable eBGP MultiHop |
+| gracefulRestart | Boolean | Optional. Whether to enable BGP Graceful Restart |
+
+### EvpnConf
+
+A cluster-scoped resource referenced by `VpcEgressGateway.spec.evpnConf` to declare the VNI and Route Targets for EVPN scenarios.
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `EvpnConf` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | EvpnConfSpec | EvpnConf specific configuration information |
+
+#### EvpnConfSpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| vni | UInt32 | EVPN VNI |
+| routeTargets | []String | List of Route Targets |
+
+### DNSNameResolver
+
+A cluster-scoped resource used by ANP/CNP domain-name matching when `enable-dns-name-resolver` is enabled. It stores DNS resolution results.
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
+| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `DNSNameResolver` |
+| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
+| spec | DNSNameResolverSpec | DNSNameResolver specific configuration information |
+| status | DNSNameResolverStatus | DNSNameResolver status information |
+
+#### DNSNameResolverSpec
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| name | String | The DNS name to resolve (a regular name or a wildcard name starting with `*.`). Immutable after creation |
+
+#### DNSNameResolverStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| resolvedNames | []DNSNameResolverResolvedName | Actual resolved DNS names and the IP details for each |
+
+##### DNSNameResolverResolvedName
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| dnsName | String | The actual DNS name resolved |
+| resolvedAddresses | []DNSNameResolverResolvedAddress | Resolved IP addresses, with TTL and most recent lookup time |
+| conditions | []Condition | Status conditions; the known type `Degraded` indicates the most recent resolution failed |
+| resolutionFailures | Int32 | Number of consecutive resolution failures; reset to zero after a successful lookup. The entry is removed once it exceeds 5 and all TTLs have expired |
+
+##### DNSNameResolverResolvedAddress
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ip | String | The resolved IP address |
+| ttlSeconds | Int32 | TTL in seconds; the entry expires after `lastLookupTime + ttlSeconds` |
+| lastLookupTime | Time | Timestamp of the most recent successful resolution |
 
 ### VpcDns
 

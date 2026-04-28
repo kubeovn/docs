@@ -43,6 +43,14 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/jitter | Int | The jitter of packet latency on the Pod primary interface, measured in milliseconds |
 | ovn.kubernetes.io/generate-hash | `true` or `false` | Whether to generate hash for Pod |
 | ovn.kubernetes.io/attachmentprovider | String | Attachment provider for Pod |
+| ovn.kubernetes.io/ingress_burst | Int | Ingress burst limit for the Pod primary interface |
+| ovn.kubernetes.io/vpc_nat_gw | String | Identifier for the VPC NAT Gateway Pod, written by the controller |
+| ovn.kubernetes.io/vpc_nat_gw_init | `true` or `false` | Whether the in-Pod initialization of the VPC NAT Gateway has finished |
+| ovn.kubernetes.io/vpc_nat_gw_container_restarted | `true` or `false` | Whether the main container of the VPC NAT Gateway has been restarted, used to trigger rule re-application |
+| ovn.kubernetes.io/vpc_nat_gw_activated | `true` or `false` | Whether the VPC NAT Gateway has been activated and is taking traffic |
+| \<provider\>.kubernetes.io/ip_pool | IP list, separated by comma | IP pool for the specified provider in multi-NIC scenarios |
+| \<provider\>.kubernetes.io/dhcp-v4-options | String | DHCPv4 options for the specified provider in multi-NIC scenarios |
+| \<provider\>.kubernetes.io/port_security | `true` or `false` | Port security toggle for the specified provider in multi-NIC scenarios |
 
 ## Node Annotation
 
@@ -57,6 +65,7 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/port_name | String | The LSP name in OVN-NorthboundDB that the node `ovn0` interface belongs to |
 | ovn.kubernetes.io/logical_switch | String | Subnet that the node `ovn0` interface belongs to |
 | ovn.kubernetes.io/tunnel_interface | String | Network interface used for tunnel encapsulation |
+| ovn.kubernetes.io/node_networks | String | List of NetworkAttachmentDefinitions on the node that provide attachment networks for Pods |
 
 ## Namespace Annotation
 
@@ -70,12 +79,13 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | Key | Value | Description |
 | ----------------------- | ---------------------------- | ----------------------------------------- |
 | ovn.kubernetes.io/bgp | `true`, `cluster`, `local` | Enable Subnet address BGP advertisement |
+| ovn.kubernetes.io/vpc | String | The VPC the Subnet belongs to (maintained by the controller; useful for filtering by VPC) |
 
 ## Service Annotation
 
 | Key | Value | Description |
 | -------------------------------------------- | ----------------- | --------------------------------------------------------- |
-| ovn.kubernetes.io/bgp | `true` or `false` | Enable Service address BGP advertisement |
+| ovn.kubernetes.io/bgp | `true`, `cluster`, `local` | Enable Service address BGP advertisement (only ClusterIP Services are affected; values are consistent with Pod/Subnet) |
 | ovn.kubernetes.io/switch_lb_vip | String | Additional VIP addresses assigned to Service in Kube-OVN. |
 | ovn.kubernetes.io/vpc | String | The VPC that the Service belongs to |
 | ovn.kubernetes.io/service_external_ip_from_subnet | `true` or `false` | Whether Service external IP is allocated from subnet |
@@ -89,3 +99,5 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/enable_log | `true` or `false` | Enable NetworkPolicy log |
 | ovn.kubernetes.io/log_acl_actions | One or more combinations of "allow,drop,pass" | Print ACL logs that match ACL action |
 | ovn.kubernetes.io/acl_log_meter_rate | Int | Rate limit for NetworkPolicy log output, in logs per second |
+| ovn.kubernetes.io/network_policy_enforcement | `standard` or `lax` | Enforcement mode for an individual NetworkPolicy, overriding the controller default |
+| ovn.kubernetes.io/network_policy_for | String | The multi-NIC provider (in the form `<nadName>.<nadNamespace>.ovn`) that this NetworkPolicy applies to |

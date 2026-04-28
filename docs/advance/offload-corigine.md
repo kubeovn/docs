@@ -114,10 +114,10 @@ data:
     }
 ```
 
-参考 [SR-IOV 文档](https://github.com/intel/sriov-network-device-plugin)进行部署:
+参考 [SR-IOV Network Device Plugin 文档](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin)进行部署（项目自 intel/sriov-network-device-plugin 迁移至 k8snetworkplumbingwg）：
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/intel/sriov-network-device-plugin/master/deployments/k8s-v1.16/sriovdp-daemonset.yaml
+kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-device-plugin/master/deployments/sriovdp-daemonset.yaml
 ```
 
 检查 SR-IOV 资源是否已经注册到 Kubernetes Node 中：

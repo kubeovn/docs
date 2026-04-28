@@ -61,11 +61,20 @@ helm install kube-ovn ./charts/kube-ovn \
 
 ### 手动安装
 
-在 kube-ovn-controller deployment 中添加以下标志：
+在 `kube-ovn-controller` Deployment 与 `kube-ovn-cni` DaemonSet 中均需添加以下标志（两者都需打开，否则 Pod 网络分配仍会按主网络模式执行）：
 
 ```yaml
+# kube-ovn-controller Deployment
 containers:
 - name: kube-ovn-controller
+  args:
+  - --non-primary-cni-mode=true
+```
+
+```yaml
+# kube-ovn-cni DaemonSet
+containers:
+- name: kube-ovn-cni
   args:
   - --non-primary-cni-mode=true
 ```

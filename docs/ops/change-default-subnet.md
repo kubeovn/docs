@@ -19,7 +19,7 @@ kubectl edit subnet test-subnet
 以子网绑定 `test` Namespace 为例：
 
 ```bash
-for pod in $(kubectl get pod --no-headers -n "$ns" --field-selector spec.restartPolicy=Always -o custom-columns=NAME:.metadata.name,HOST:spec.hostNetwork | awk '{if ($2!="true") print $1}'); do
+for pod in $(kubectl get pod --no-headers -n test --field-selector spec.restartPolicy=Always -o custom-columns=NAME:.metadata.name,HOST:spec.hostNetwork | awk '{if ($2!="true") print $1}'); do
   kubectl delete pod "$pod" -n test --ignore-not-found
 done
 ```

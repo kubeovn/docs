@@ -267,6 +267,143 @@ ENABLE_SSL=true
 
 SSL 功能默认安装下为关闭模式。
 
+## 跳过 conntrack 的目的 CIDR 列表
+
+针对部分需要绕过 conntrack 处理的目的网段（例如已通过其他方式做 NAT/会话保持的旁路流量），可在安装脚本或 `kube-ovn-controller` 启动参数中配置跳过列表，多个 CIDR 以逗号分隔：
+
+```bash
+SKIP_CONNTRACK_DST_CIDRS="10.10.0.0/16,fd00:10::/64"
+```
+
+```yaml
+args:
+- --skip-conntrack-dst-cidrs=10.10.0.0/16,fd00:10::/64
+```
+
+默认为空。
+
+## 启用 OVN IPSec
+
+启用后 Kube-OVN 会通过 OVN 内置的 IPSec 能力对节点间的 Geneve/Vxlan/STT 隧道进行加密，并自动签发证书。
+
+```bash
+ENABLE_OVN_IPSEC=true
+```
+
+控制器与 daemon 均需要打开该开关：
+
+```yaml
+args:
+- --enable-ovn-ipsec=true
+```
+
+详细配置参考 [OVN IPSec](../advance/ovn-ipsec.md)。
+
+## AdminNetworkPolicy / DNS 名称解析支持
+
+启用 AdminNetworkPolicy（ANP/CNP）以及基于 DNS 名称的访问控制（依赖 `DNSNameResolver` CRD）：
+
+```bash
+ENABLE_ANP=true
+ENABLE_DNS_NAME_RESOLVER=true
+```
+
+```yaml
+args:
+- --enable-anp=true
+- --enable-dns-name-resolver=true
+```
+
+详细使用见[基于域名的访问控制](../guide/egress-firewall.md)。
+
+## VPC NAT Gateway 总开关
+
+控制是否启用 VPC NAT Gateway 相关 controller。默认开启：
+
+```bash
+ENABLE_NAT_GW=true
+```
+
+或在 `ovn-vpc-nat-gw-config` ConfigMap 中通过 `enable-vpc-nat-gw` 字段控制运行时开关。
+
+## ovn-northd 线程数
+
+针对大规模集群，可调整 `ovn-northd` 处理线程数以加速增量计算：
+
+```bash
+OVN_NORTHD_N_THREADS=4
+```
+
+默认 1。需结合节点 CPU 资源评估。
+
+## NetworkPolicy 执行模式
+
+Kube-OVN 支持 `standard`/`lax` 两种 NetworkPolicy 执行模式，可通过下列方式全局配置默认值：
+
+```bash
+NP_ENFORCEMENT=standard
+```
+
+```yaml
+args:
+- --np-enforcement=standard
+```
+
+也可在单条 NetworkPolicy 上通过 `ovn.kubernetes.io/network_policy_enforcement` annotation 覆盖。详见 [NetworkPolicy 支持](../guide/networkpolicy.md)。
+
+## VXLAN 关闭 TX checksum offload
+
+部分网卡 VXLAN 隧道封装存在 checksum offload 兼容问题，可关闭：
+
+```bash
+SET_VXLAN_TX_OFF=true
+```
+
+```yaml
+args:
+- --set-vxlan-tx-off=true
+```
+
+## KubeVirt 实时迁移优化
+
+启用后控制器会针对 KubeVirt 实时迁移过程优化端口绑定切换，减少迁移瞬时丢包。默认开启：
+
+```bash
+ENABLE_LIVE_MIGRATION_OPTIMIZE=true
+```
+
+## OVN LB 偏好本地 endpoint
+
+启用后 OVN 内置 LoadBalancer 会偏好同节点的 endpoint，配合 `externalTrafficPolicy=Local` 使用：
+
+```bash
+ENABLE_OVN_LB_PREFER_LOCAL=true
+```
+
+```yaml
+args:
+- --enable-ovn-lb-prefer-local=true
+```
+
+## 外部网关 ConfigMap 命名空间
+
+集中式外部网关相关 ConfigMap（如 `external-gw-config`）默认在 `kube-system`。可通过下列参数迁移到其他命名空间：
+
+```bash
+EXTERNAL_GATEWAY_CONFIG_NS=kube-system
+```
+
+## Non-Primary CNI 模式
+
+在该模式下 Kube-OVN 仅作为 attachment network 提供方，不再分配 Pod 主网络 IP，主网络由其他 CNI 负责。controller 与 daemon 均需要打开此开关：
+
+```yaml
+args:
+- --non-primary-cni-mode=true
+```
+
+或通过 Helm `cni_conf.NON_PRIMARY_CNI=true`（chart v1）/`cni.nonPrimaryCNI=true`（chart v2）配置。详见 [Non-Primary CNI 模式](../start/non-primary-mode.md)。
+
 ## 绑定本地 ip
 
 kube-ovn-controller/kube-ovn-cni/kube-ovn-monitor 这些服务支持绑定本地 ip，该功能设计原因主要是因为某些场景下出于安全考虑不允许服务绑定 0.0.0.0 （比如该服务部署在某个对外网关上，外部用户可以直接通过公网 ip 并指定端口去访问到该服务），该功能默认是打开的，由安装脚本中如下参数控制：

@@ -92,7 +92,7 @@ kubectl describe node node1 | grep yusur
 
 ## 安装 Multus-CNI
 
-安装 Multus-CNI，负责为 Kube-OCN 传递选定 SRIOV 设备的 Device ID：
+安装 Multus-CNI，负责为 Kube-OVN 传递选定 SRIOV 设备的 Device ID：
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v4.0.2/deployments/multus-daemonset-thick.yml
@@ -127,7 +127,7 @@ spec:
             }
         }
     ]
-}
+}'
 ```
 
 - `provider`: 格式为当前 NetworkAttachmentDefinition 的 `{name}.{namespace}.ovn`。
@@ -137,7 +137,7 @@ spec:
 1. 下载 安装脚本
 
 ```bash
-wget https://github.com/kubeovn/kube-ovn/blob/release-1.12/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.12/dist/images/install.sh
 ```
 
 2. 修改相关参数，IFACE 需要为物理网卡名，该网卡需要有可路由 IP：

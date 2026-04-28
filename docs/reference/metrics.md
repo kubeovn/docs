@@ -46,8 +46,8 @@ OVN 自身状态监控指标：
 |Gauge|ovs_status|OVS 健康状态， (1) 为正常，(0) 为异常。|
 |Gauge|ovs_info|OVS 基础信息，值为 (1)，标签中包含对应信息。|
 |Gauge|failed_req_count|OVS 失败请求数量。|
-|Gauge|log_file_size|OVS 组件日志文件大小。|
-|Gauge|db_file_size|OVS 组件数据库文件大小。|
+|Gauge|log_file_size_bytes|OVS 组件日志文件大小（字节）。|
+|Gauge|db_file_size_bytes|OVS 组件数据库文件大小（字节）。|
 |Gauge|datapath|Datapath 基础信息，值为 (1)，标签中包含对应信息。|
 |Gauge|dp_total|当前 OVS 中 datapath 数量。|
 |Gauge|dp_if|Datapath 接口基础信息，值为 (1)，标签中包含对应信息。|
@@ -107,7 +107,7 @@ OVN 自身状态监控指标：
 |Gauge|pinger_node_ping_lost_total|kube-ovn-pinger ping Node 丢包。|
 |Gauge|pinger_node_ping_count_total|kube-ovn-pinger ping Node 数量。|
 |Histogram|pinger_external_ping_latency_ms|kube-ovn-pinger ping 外部地址 延迟。|
-|Gauge|pinger_external_lost_total|kube-ovn-pinger ping 外部丢包数量。|
+|Gauge|pinger_external_ping_lost_total|kube-ovn-pinger ping 外部丢包数量。|
 
 ## kube-ovn-controller
 

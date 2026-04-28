@@ -61,11 +61,20 @@ helm install kube-ovn ./charts/kube-ovn \
 
 ### Manual Installation
 
-Add the following flag to the kube-ovn-controller deployment:
+The following flag must be added to both the `kube-ovn-controller` Deployment and the `kube-ovn-cni` DaemonSet (both must be enabled, otherwise pod network allocation will still follow the primary network mode):
 
 ```yaml
+# kube-ovn-controller Deployment
 containers:
 - name: kube-ovn-controller
+  args:
+  - --non-primary-cni-mode=true
+```
+
+```yaml
+# kube-ovn-cni DaemonSet
+containers:
+- name: kube-ovn-cni
   args:
   - --non-primary-cni-mode=true
 ```

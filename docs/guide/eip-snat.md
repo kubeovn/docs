@@ -37,6 +37,7 @@ metadata:
   name: ovn-external-gw-config
   namespace: kube-system
 data:
+  type: "centralized"
   enable-external-gw: "true"
   external-gw-nodes: "kube-ovn-worker"
   external-gw-nic: "eth1"

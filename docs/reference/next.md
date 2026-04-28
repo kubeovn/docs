@@ -4,6 +4,11 @@ This document lists the features merged into the master branch for the next mino
 
 ## Post-v1.16.0
 
+- QoS: support configurable ingress/egress burst limits via per-NIC annotations (`ovn.kubernetes.io/ingress_burst`). [#6628](https://github.com/kubeovn/kube-ovn/pull/6628)
+- VPC NAT Gateway: allow placing the NAT gateway StatefulSet and its iptables-EIP custom resources in a user-specified namespace. [#6595](https://github.com/kubeovn/kube-ovn/pull/6595)
+- iptables-EIP: surface the bound external subnet in the `kubectl get iptables-eip` printer. [#6672](https://github.com/kubeovn/kube-ovn/pull/6672)
+- Helm Chart (kube-ovn-v2): ship PrometheusRule and Grafana dashboards out of the box. [#6630](https://github.com/kubeovn/kube-ovn/pull/6630)
+
 ## Post-v1.15.0
 
 - NetworkPolicy now supports provider-scoped policies for multi-network pods using the `ovn.kubernetes.io/policy-for` annotation. [#6223](https://github.com/kubeovn/kube-ovn/pull/6223)

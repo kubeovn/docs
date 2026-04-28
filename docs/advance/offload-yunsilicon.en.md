@@ -22,7 +22,7 @@ Yunsilicon metaScale SmartNICs provide a drop-in accelerator for OVS which can s
 1. Download the install script:
 
 ```bash
-wget https://github.com/yunsilicon/kube-ovn/blob/release-1.11/dist/images/install.sh
+wget https://raw.githubusercontent.com/yunsilicon/kube-ovn/release-1.11/dist/images/install.sh
 ```
 
 2. Configure node

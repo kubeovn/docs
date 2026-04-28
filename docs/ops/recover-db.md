@@ -106,12 +106,29 @@ kubectl scale deployment -n kube-system ovn-central --replicas=0
 如果第一个节点数据库文件已损坏，从其他机器 `/etc/origin/ovn` 下复制文件到第一台机器 ，
 执行下列命令生成数据库文件备份。
 
+如果节点上仍可以使用 `docker`：
+
 ```bash
 docker run -it -v /etc/origin/ovn:/etc/ovn kubeovn/kube-ovn:{{ variables.version }} bash
 cd /etc/ovn/
 ovsdb-tool cluster-to-standalone ovnnb_db_standalone.db ovnnb_db.db
 ovsdb-tool cluster-to-standalone ovnsb_db_standalone.db ovnsb_db.db
 ```
+
+若节点使用 containerd（无 docker），可以借助 `ctr` 直接拉取并运行：
+
+```bash
+ctr -n k8s.io image pull docker.io/kubeovn/kube-ovn:{{ variables.version }}
+ctr -n k8s.io run --rm -t \
+  --mount type=bind,src=/etc/origin/ovn,dst=/etc/ovn,options=rbind:rw \
+  docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-recover bash
+cd /etc/ovn/
+ovsdb-tool cluster-to-standalone ovnnb_db_standalone.db ovnnb_db.db
+ovsdb-tool cluster-to-standalone ovnsb_db_standalone.db ovnsb_db.db
+exit
+```
+
+或直接在 `ovn-central` Pod 内执行 `ovsdb-tool cluster-to-standalone`，再 `kubectl cp` 拷出备份文件。
 
 ### 删除每个 ovn-central 节点上的数据库文件
 

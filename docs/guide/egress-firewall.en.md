@@ -39,10 +39,10 @@ kubectl apply -f https://raw.githubusercontent.com/kubeovn/dnsnameresolver/refs/
 
 ### Deploy CoreDNS Image
 
-Update CoreDNS with the pre-built DNSNameResolver image:
+Update CoreDNS with the pre-built DNSNameResolver image (in production, pin to a specific version tag instead of using `dev`; see [kubeovn/dnsnameresolver releases](https://github.com/kubeovn/dnsnameresolver/releases) for the latest available versions):
 
 ```bash
-kubectl set image deployment/coredns coredns=kubeovn/dnsnameresolver:dev -n kube-system
+kubectl set image deployment/coredns coredns=kubeovn/dnsnameresolver:<release-tag> -n kube-system
 ```
 
 Verify that CoreDNS is running properly:

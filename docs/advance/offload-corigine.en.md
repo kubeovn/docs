@@ -116,10 +116,10 @@ data:
     }
 ```
 
-Please read the [SR-IOV device plugin](https://github.com/intel/sriov-network-device-plugin) to deploy:
+Please read the [SR-IOV Network Device Plugin documentation](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin) to deploy (the project has been migrated from `intel/sriov-network-device-plugin` to `k8snetworkplumbingwg`):
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/intel/sriov-network-device-plugin/master/deployments/k8s-v1.16/sriovdp-daemonset.yaml
+kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-device-plugin/master/deployments/sriovdp-daemonset.yaml
 ```
 
 Check if SR-IOV resources have been registered to Kubernetes Node:
