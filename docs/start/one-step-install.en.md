@@ -33,7 +33,7 @@ VERSION="{{ variables.version }}"                      # Image Tag
 POD_CIDR="10.16.0.0/16"                # Default subnet CIDR don't overlay with SVC/NODE/JOIN CIDR
 SVC_CIDR="10.96.0.0/12"                # Be consistent with apiserver's service-cluster-ip-range
 JOIN_CIDR="100.64.0.0/16"              # Pod/Host communication Subnet CIDR, don't overlay with SVC/NODE/POD CIDR
-LABEL="node-role.kubernetes.io/master" # The node label to deploy OVN DB
+LABEL="node-role.kubernetes.io/control-plane" # The node label to deploy OVN DB
 IFACE=""                               # The name of the host NIC used by the container network, or if empty use the NIC that host Node IP in Kubernetes
 TUNNEL_TYPE="geneve"                   # Tunnel protocol, available options: geneve, vxlan or stt. stt requires compilation of ovs kernel module
 ```

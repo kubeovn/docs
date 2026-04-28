@@ -122,8 +122,8 @@ spec:
 触发路由的变更：
 
 ```bash
-kubectl annotate pod pod-gw ovn.kubernetes.io/eip=172.56.0.221 --overwrite
-kubectl annotate pod pod-gw ovn.kubernetes.io/routed-
+kubectl annotate pod pod-eip ovn.kubernetes.io/eip=172.56.0.221 --overwrite
+kubectl annotate pod pod-eip ovn.kubernetes.io/routed-
 ```
 
 当 EIP 或 SNAT 规则生效后，`ovn.kubernetes.io/routed` annotation 会被重新添加。

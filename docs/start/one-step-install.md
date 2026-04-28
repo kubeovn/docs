@@ -32,7 +32,7 @@ VERSION="{{ variables.version }}"                      # 镜像版本/Tag
 POD_CIDR="10.16.0.0/16"                # 默认子网 CIDR 不要和 SVC/NODE/JOIN CIDR 重叠
 SVC_CIDR="10.96.0.0/12"                # 需要和 apiserver 的 service-cluster-ip-range 保持一致
 JOIN_CIDR="100.64.0.0/16"              # Pod 和主机通信网络 CIDR，不要和 SVC/NODE/POD CIDR 重叠
-LABEL="node-role.kubernetes.io/master" # 部署 OVN DB 节点的标签
+LABEL="node-role.kubernetes.io/control-plane" # 部署 OVN DB 节点的标签
 IFACE=""                               # 容器网络所使用的宿主机网卡名，如果为空则使用 Kubernetes 中的 Node IP 所在网卡
 TUNNEL_TYPE="geneve"                   # 隧道封装协议，可选 geneve, vxlan 或 stt，stt 需要单独编译 ovs 内核模块
 ```

@@ -33,7 +33,7 @@ Kube-OVN 为 NetworkPolicy 使用的 ACL 优先级范围：
 
 - Ingress Allow 规则：优先级 2001
 - Egress Allow 规则：优先级 2001
-- Default Deny 规则：优先级 1000
+- Default Deny 规则：优先级 2000
 
 通过这种方式，Kube-OVN 能够高效地实现 Kubernetes NetworkPolicy 的语义，并充分利用 OVN 的分布式 ACL 能力。
 

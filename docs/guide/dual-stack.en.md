@@ -48,7 +48,6 @@ metadata:
     ovn.kubernetes.io/ip_address: 10.16.0.9,fd00:10:16::9
     ovn.kubernetes.io/logical_switch: ovn-default
     ovn.kubernetes.io/mac_address: 00:00:00:14:88:09
-    ovn.kubernetes.io/network_types: geneve
     ovn.kubernetes.io/routed: "true"
 ...
 podIP: 10.16.0.9

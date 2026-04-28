@@ -122,8 +122,8 @@ The EIP or SNAT rules configured by the Pod can be dynamically adjusted via kube
 remember to remove the `ovn.kubernetes.io/routed` annotation to trigger the routing change.
 
 ```bash
-kubectl annotate pod pod-gw ovn.kubernetes.io/eip=172.56.0.221 --overwrite
-kubectl annotate pod pod-gw ovn.kubernetes.io/routed-
+kubectl annotate pod pod-eip ovn.kubernetes.io/eip=172.56.0.221 --overwrite
+kubectl annotate pod pod-eip ovn.kubernetes.io/routed-
 ```
 
 When the EIP or SNAT takes effect, the `ovn.kubernetes.io/routed` annotation will be added back.

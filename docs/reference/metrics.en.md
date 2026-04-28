@@ -97,7 +97,7 @@ Network quality related metrics:
 | Gauge | pinger_internal_dns_healthy | If the internal dns request is unhealthy on this node |
 | Gauge | pinger_internal_dns_unhealthy | If the internal dns request is unhealthy on this node |
 | Histogram | pinger_internal_dns_latency_ms | The latency ms histogram the node request internal dns |
-| Gauge | pinger_external_dns_health | If the external dns request is healthy on this node |
+| Gauge | pinger_external_dns_healthy | If the external dns request is healthy on this node |
 | Gauge | pinger_external_dns_unhealthy | If the external dns request is unhealthy on this node |
 | Histogram | pinger_external_dns_latency_ms | The latency ms histogram the node request external dns |
 | Histogram | pinger_pod_ping_latency_ms | The latency ms histogram for pod peer ping |

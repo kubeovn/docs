@@ -42,12 +42,6 @@ Examples:
 
 - `<nad-name>.<nad-namespace>.ovn`
 
-## Service ClusterIP behavior
-
-When policy peers are resolved to addresses, Service ClusterIP is included only if the selected provider belongs to the **default VPC**.
-
-For providers in custom VPCs, Service ClusterIP is not added.
-
 ## Example
 
 Assume pods have these interfaces:

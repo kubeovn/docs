@@ -120,7 +120,7 @@ Deployment        cilium-operator    Desired: 2, Ready: 2/2, Available: 2/2
 Containers:       cilium             Running: 2
                   cilium-operator    Running: 2
 Cluster Pods:     8/11 managed by Cilium
-Image versions    cilium             quay.io/cilium/cilium:v1.10.5@sha256:0612218e28288db360c63677c09fafa2d17edda4f13867bcabf87056046b33bb: 2
-                  cilium-operator    quay.io/cilium/operator-generic:v1.10.5@sha256:2d2f730f219d489ff0702923bf24c0002cd93eb4b47ba344375566202f56d972: 2
+Image versions    cilium             quay.io/cilium/cilium:v1.11.6: 2
+                  cilium-operator    quay.io/cilium/operator-generic:v1.11.6: 2
 
 ```

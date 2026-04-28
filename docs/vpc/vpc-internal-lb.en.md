@@ -27,7 +27,7 @@ spec:
   sessionAffinity: ClientIP
   namespace: default
   selector:
-    - app:nginx
+    - app: nginx
   ports:
   - name: dns
     port: 8888
@@ -133,7 +133,7 @@ spec:
   sessionAffinity: ClientIP
   namespace: default
   selector:
-    - app:nginx
+    - app: nginx
   ports:
   - name: dns
     port: 8888

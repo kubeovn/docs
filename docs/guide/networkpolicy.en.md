@@ -33,7 +33,7 @@ ACL priority ranges used by Kube-OVN for NetworkPolicy:
 
 - Ingress Allow rules: Priority 2001
 - Egress Allow rules: Priority 2001
-- Default Deny rules: Priority 1000
+- Default Deny rules: Priority 2000
 
 Through this approach, Kube-OVN can efficiently implement Kubernetes NetworkPolicy semantics and fully leverage OVN's distributed ACL capabilities.
 

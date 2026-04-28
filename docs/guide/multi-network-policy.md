@@ -42,12 +42,6 @@ metadata:
 
 - `<nad-name>.<nad-namespace>.ovn`
 
-## Service ClusterIP 行为
-
-在解析策略 peer 地址时，仅当选中的 Provider 所属子网位于**默认 VPC**时，才会将 Service ClusterIP 加入地址集。
-
-如果 Provider 位于自定义 VPC，则不会加入 Service ClusterIP。
-
 ## 示例
 
 假设 Pod 有以下接口：
