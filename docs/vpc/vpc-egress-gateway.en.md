@@ -192,7 +192,7 @@ tcpdump: listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot leng
     172.17.0.1 > 10.16.0.9: ICMP echo reply, id 37989, seq 0, length 64
 ```
 
-Routing policies (static routes for custom VPCs) are automatically created on the OVN Logical Router:
+Routing policies are automatically created on the OVN Logical Router:
 
 ```shell
 $ kubectl ko nbctl lr-policy-list ovn-cluster
@@ -332,11 +332,10 @@ NAME                       READY   STATUS    RESTARTS   AGE     IP            NO
 gateway2-fcc6b8b87-8lgvx   1/1     Running   0          2m18s   192.168.0.3   kube-ovn-worker2   <none>           <none>
 gateway2-fcc6b8b87-wmww6   1/1     Running   0          2m18s   192.168.0.2   kube-ovn-worker    <none>           <none>
 
-$ kubectl ko nbctl lr-route-list vpc1
-IPv4 Routes
-Route Table <main>:
-           192.168.0.0/24               192.168.0.2 src-ip ecmp ecmp-symmetric-reply bfd
-           192.168.0.0/24               192.168.0.3 src-ip ecmp ecmp-symmetric-reply bfd
+$ kubectl ko nbctl lr-policy-list vpc1
+Routing Policies
+     29100                       ip4.src == 192.168.0.0/24         reroute                192.168.0.2, 192.168.0.3
+     29090                       ip4.src == 192.168.0.0/24            drop
 
 $ kubectl ko nbctl list bfd
 _uuid               : 223ede10-9169-4c7d-9524-a546e24bfab5
