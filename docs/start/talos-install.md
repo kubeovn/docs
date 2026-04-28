@@ -28,7 +28,7 @@ helm install kubeovn kubeovn/kube-ovn --wait \
     --set cni_conf.MOUNT_LOCAL_BIN_DIR=false \
     --set networking.NETWORK_TYPE=vlan \
     --set networking.vlan.VLAN_INTERFACE_NAME=enp0s5f1 \
-    --set networking.vlan.VLAN_ID=0 \
+    --set networking.vlan.VLAN_ID=0 \    # VLAN_ID=0 表示不打 VLAN tag，对应 untagged 物理网卡；chart 默认值为 100
     --set networking.NET_STACK=ipv4 \
     --set-json networking.EXCLUDE_IPS='"172.99.99.11..172.99.99.99"' \
     --set-json ipv4.POD_CIDR='"172.99.99.0/24"' \

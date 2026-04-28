@@ -129,7 +129,7 @@ spec:
             }
         }
     ]
-}
+}'
 ```
 
 - `provider`: the format should be `{name}.{namespace}.ovn` of related NetworkAttachmentDefinition.
@@ -139,7 +139,7 @@ spec:
 1. Download the scripts:
 
 ```bash
-wget https://github.com/kubeovn/kube-ovn/blob/release-1.12/dist/images/install.sh
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.12/dist/images/install.sh
 ```
 
 Change the related options, `IFACE` should be the physic NIC and has an IP:

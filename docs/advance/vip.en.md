@@ -74,7 +74,7 @@ static-vip01   10.16.0.121           00:00:00:F0:DB:26                         o
 
 ### 1.3 Pod Uses VIP to enable AAP
 
-Pod can use annotation to specify VIP to enable AAP function. labels must meet the condition of node selector in VIP.
+Pod can use annotation to specify VIP to enable AAP function. The Pod's labels must satisfy the conditions of the `selector` label selector in the VIP.
 
 Pod annotation supports specifying multiple VIPs. The configuration format is: `ovn.kubernetes.io/aaps: vip-aap,vip-aap2,vip-aap3`
 
@@ -97,7 +97,7 @@ spec:
 VIP also supports the assignment of fixed and random addresses, as described above.
 
 - `namespace`: In AAP scenarios, a VIP needs to specify a namespace explicitly. Only resources in the same namespace can enable the AAP function.
-- `selector`: In the AAP scenario, the node selector used to select the Pod attached to the VIP has the same format as the NodeSelector format in Kubernetes.
+- `selector`: In the AAP scenario, this is the label selector used to pick the Pods that the VIP attaches to (it targets Pods within the `namespace`, not nodes). Each entry is written as a `key: value` string (note the space after the colon), and multiple entries are combined with AND semantics.
 
 Query the Port corresponding to the VIP:
 

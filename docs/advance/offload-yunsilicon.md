@@ -21,7 +21,7 @@ Kube-OVN 在最终的数据平面使用 OVS 来完成流量转发，相关的流
 1. 下载 安装脚本
 
 ```bash
-wget https://github.com/yunsilicon/kube-ovn/blob/release-1.11/dist/images/install.sh
+wget https://raw.githubusercontent.com/yunsilicon/kube-ovn/release-1.11/dist/images/install.sh
 ```
 
 2. 配置节点

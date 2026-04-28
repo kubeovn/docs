@@ -226,14 +226,14 @@ metadata:
   name: example-policy
   namespace: default
   annotations:
-    ovn.kubernetes.io/enforcement: "lax"
+    ovn.kubernetes.io/network_policy_enforcement: "lax"
 spec:
   podSelector: {}
   policyTypes:
   - Ingress
 ```
 
-也可以在 Kube-OVN 控制器启动时通过参数 `--network-policy-enforcement` 全局配置默认的执行模式。
+也可以在 Kube-OVN 控制器启动时通过参数 `--np-enforcement` 全局配置默认的执行模式。
 
 ## 另请参阅
 

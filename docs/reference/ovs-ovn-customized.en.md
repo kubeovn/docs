@@ -32,6 +32,11 @@ Modification not merged into upstream:
 - [e4e6ea9c5f](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e4e6ea9c5f4ba080b719924e470daa8094ff38a7.patch) Support dedicated BFD LRP.
 - [e76880e792](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e76880e792af56b2a3836098105079f5f8f1ff26.patch) northd: add nb option version_compatibility.
 - [477695a010](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/477695a010affe56efdd66b60510fa612f8704c1.patch) northd: skip arp/nd request for lrp addresses from localnet ports.
+- [2209d9a335](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/2209d9a335e584f28efe5477c933810cd4ee21d5.patch) Fix ovn-controller handling under large-scale LSP scenarios.
+- [52b727b331](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/52b727b3315463668669ff423ce8bfa129861162.patch) Optimize data-structure performance to reduce ovn-northd incremental computation time.
+- [53b9837f7f](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/53b9837f7fe89cd63af735b039b8c26107d6579d.patch) Fix forwarding issues when LB and ACL interact.
+- [737d9f932e](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/737d9f932edada5a91f315b5f382daada8dee952.patch) Fix session affinity issues in multi-gateway scenarios.
+- [sbrec-delete-null-check](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/sbrec-delete-null-check.patch) Fix null pointer access in ovn-controller during sbrec deletion.
 
 Merged into upstream modification:
 

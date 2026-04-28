@@ -110,12 +110,29 @@ Select the first node in the `ovn-central` environment variable `NODE_IPS` to re
 If the database file of the first node is corrupted, copy the file from the other machine `/etc/origin/ovn` to
 the first machine. Run the following command to generate a database file backup.
 
+If `docker` is still available on the node:
+
 ```bash
 docker run -it -v /etc/origin/ovn:/etc/ovn kubeovn/kube-ovn:{{ variables.version }} bash
 cd /etc/ovn/
 ovsdb-tool cluster-to-standalone ovnnb_db_standalone.db ovnnb_db.db
 ovsdb-tool cluster-to-standalone ovnsb_db_standalone.db ovnsb_db.db
 ```
+
+If the node uses containerd (without docker), you can pull and run the image directly via `ctr`:
+
+```bash
+ctr -n k8s.io image pull docker.io/kubeovn/kube-ovn:{{ variables.version }}
+ctr -n k8s.io run --rm -t \
+  --mount type=bind,src=/etc/origin/ovn,dst=/etc/ovn,options=rbind:rw \
+  docker.io/kubeovn/kube-ovn:{{ variables.version }} ovn-recover bash
+cd /etc/ovn/
+ovsdb-tool cluster-to-standalone ovnnb_db_standalone.db ovnnb_db.db
+ovsdb-tool cluster-to-standalone ovnsb_db_standalone.db ovnsb_db.db
+exit
+```
+
+Alternatively, you can run `ovsdb-tool cluster-to-standalone` directly inside the `ovn-central` Pod, and then use `kubectl cp` to copy the backup files out.
 
 ### Delete the Database Files on All ovn-central Nodes
 

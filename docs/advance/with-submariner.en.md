@@ -67,7 +67,19 @@ If no new `gateway` or `routeagent` pods appear after executing the `join` comma
   - update
 ```
 
-For multi-node clusters, you need to change the gateway configuration of the default `subnet` `ovn-default` to `centralized`. The `gateway` nodes configured for submariner need to be exactly the same as the `subnet` nodes.
+For multi-node clusters, you need to change the gateway configuration of the default `subnet` `ovn-default` to `centralized`, and explicitly specify `gatewayNode` (this field is required for centralized gateways; otherwise the subnet will not work):
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: ovn-default
+spec:
+  gatewayType: centralized
+  gatewayNode: "node1,node2"   # Must match exactly the gateway nodes configured for submariner; separate multiple nodes with commas
+```
+
+The `gateway` nodes configured for submariner need to be exactly the same as those listed in the `gatewayNode` field.
 
 Next, you can start Pods in each of the two clusters and try to access each other using IPs.
 

@@ -28,7 +28,7 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/insta
 Open the script using the editor and change the following variables to the expected:
 
 ```bash
-REGISTRY="kubeovn"                     # Image Repo 
+REGISTRY="docker.io/kubeovn"           # Image Repo 
 VERSION="{{ variables.version }}"                      # Image Tag
 POD_CIDR="10.16.0.0/16"                # Default subnet CIDR don't overlay with SVC/NODE/JOIN CIDR
 SVC_CIDR="10.96.0.0/12"                # Be consistent with apiserver's service-cluster-ip-range

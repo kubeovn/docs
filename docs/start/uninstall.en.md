@@ -32,8 +32,9 @@ rm -rf /var/run/openvswitch
 rm -rf /var/run/ovn
 rm -rf /etc/origin/openvswitch/
 rm -rf /etc/origin/ovn/
-rm -rf /etc/cni/net.d/00-kube-ovn.conflist
 rm -rf /etc/cni/net.d/01-kube-ovn.conflist
+# For backward compatibility with older installations (before v1.10 the default file name was 00-kube-ovn.conflist):
+rm -rf /etc/cni/net.d/00-kube-ovn.conflist
 rm -rf /var/log/openvswitch
 rm -rf /var/log/ovn
 rm -fr /var/log/kube-ovn

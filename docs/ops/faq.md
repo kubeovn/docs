@@ -35,7 +35,7 @@ Pod 无法进入 Running 状态，kubectl describe Pod 提示事件 `duplicate I
 2. 检查 kube-ovn-controller 日志，过滤冲突 IP 的申请和释放过程
 3. 观察是否存在 kube-ovn-controller 重启或者切主过程导致 IP 回收错误
 4. `kubectl ko nbctl show` 观察 OVN 数据库中实际分配端口和 IP 情况
-5. 若 OVN 数据库中信息和实际 Kubernetes 信息不一致，存在残留 IP 端口，需要手动通过 `kubectl ko nbctl del-port <port>` 进行清理
+5. 若 OVN 数据库中信息和实际 Kubernetes 信息不一致，存在残留 IP 端口，需要手动通过 `kubectl ko nbctl lsp-del <port>` 进行清理
 
 ## Pod 创建失败，事件提示 ping gateway failed
 
@@ -169,7 +169,7 @@ openvswitch: netlink: Flow actions may not be safe on all matching packets.
 
 ### 解决方法
 
-可以给 ovn-central 配置环境变量如下，关闭 compact：
+为缓解该问题，自 v1.13 起 `ENABLE_COMPACT` 已默认置为 `false`（参见 `dist/images/install.sh` 与 `start-db.sh`），无需再手动配置。如果集群是从更早版本升级而来，请确认 ovn-central 容器的环境变量未显式设置为 `true`：
 
 ```yaml
 - name: ENABLE_COMPACT

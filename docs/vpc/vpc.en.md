@@ -180,7 +180,7 @@ Vlan and security policy in the underlying network device in advance.
 
 ### Enabling the VPC Gateway
 
-The VPC gateway functionality can be enabled by configuring the `ovn-vpc-nat-gw-config` in the `kube-system` namespace. The `nodeSelector` can be used to specify the node where the gateway is deployed:
+The VPC gateway functionality is enabled by configuring `ovn-vpc-nat-gw-config` in the `kube-system` namespace. In addition, the `ovn-vpc-nat-config` ConfigMap can configure `image` (the image used by the gateway Pod) and `nodeSelector` (note: this `nodeSelector` is only used for the lb-svc deployment of `LoadBalancer` type Services; the scheduling of VpcNATGateway Pods is determined by the `VpcNatGateway.spec.selector` field):
 
 ```yaml
 ---
@@ -465,34 +465,6 @@ spec:
     }'
 ```
 
-### Modify the Provider of the ovn-default Logical Switch
-
-Modify the provider of ovn-default to the provider `ovn-nad.default.ovn` configured above in nad:
-
-```yaml
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: ovn-default
-spec:
-  cidrBlock: 10.16.0.0/16
-  default: true
-  disableGatewayCheck: false
-  disableInterConnection: false
-  enableDHCP: false
-  enableIPv6RA: false
-  excludeIps:
-  - 10.16.0.1
-  gateway: 10.16.0.1
-  gatewayType: distributed
-  logicalGateway: false
-  natOutgoing: true
-  private: false
-  protocol: IPv4
-  provider: ovn-nad.default.ovn
-  vpc: ovn-cluster
-```
-
 ### Modify the vpc-dns ConfigMap
 
 Create a ConfigMap in the kube-system namespace, configure the vpc-dns parameters to be used for the subsequent vpc-dns feature activation:
@@ -512,7 +484,6 @@ data:
 
 - `enable-vpc-dns`: (optional) `true` to enable the feature, `false` to disable the feature. Default `true`.
 - `coredns-image`: (optional): DNS deployment image. Default is the cluster coredns deployment version.
-- `coredns-template`: (optional): URL of the DNS deployment template. Default: `yamls/coredns-template.yaml` in the current version repository.
 - `coredns-vip`: VIP providing LB service for coredns.
 - `nad-name`: Name of the configured `network-attachment-definitions` resource.
 - `nad-provider`: Name of the used provider.

@@ -78,7 +78,7 @@ static-vip01   10.16.0.121           00:00:00:F0:DB:26                         o
 
 ### 1.3 Pod 使用 VIP 开启 AAP
 
-Pod 可以使用 annotation 指定 VIP 开启 AAP 功能，labels 需要满足 VIP 中节点选择器的条件。
+Pod 可以使用 annotation 指定 VIP 开启 AAP 功能，Pod 的 labels 需要满足 VIP 中 `selector` 标签选择器的条件。
 
 Pod annotation 支持指定多个 VIP，配置格式为：ovn.kubernetes.io/aaps: vip-aap,vip-aap2,vip-aap3
 
@@ -101,7 +101,7 @@ spec:
 VIP 同样支持固定地址和随机地址的分配，分配方式如上文所述。
 
 - `namespace`: AAP 场景下，VIP 需显式地指定命名空间，VIP 仅允许相同命名空间的资源开启 AAP 功能。
-- `selector`: AAP 场景下，用于选择 VIP 所附属的 Pod 的节点选择器，格式和 Kubernetes 中的 NodeSelector 格式相同。
+- `selector`: AAP 场景下，用于选择 VIP 所附属的 Pod 的标签选择器（作用对象为 `namespace` 内的 Pod，而非节点）。每一项以 `key: value` 的字符串形式书写（注意冒号后有空格），多项之间为 AND 关系。
 
 创建成功后查询该 VIP 对应的 Port：
 

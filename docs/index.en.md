@@ -22,10 +22,12 @@ Kube-OVN should be your best choice.
 Leveraging the proven capabilities of OVS/OVN in the SDN,
 Kube-OVN brings the rich capabilities of network virtualization to the cloud-native space.
 It currently supports [Subnet Management](guide/subnet.en.md), [Static IP Allocation](guide/static-ip-mac.en.md),
-[Distributed/Centralized Gateways](guide/subnet.en.md#overlay-subnet-gateway-settings), [Underlay/Overlay Hybrid Networks](start/underlay.en.md),
-[VPC Multi-Tenant Networks](vpc/vpc.en.md), [Cross-Cluster Interconnect](advance/with-ovn-ic.en.md), [QoS Management](guide/qos.en.md),
-[Multi-NIC Management](advance/multi-nic.en.md), [ACL](guide/subnet.en.md#subnet-acl), [Traffic Mirroring](guide/mirror.en.md),
-ARM Support, and many more.
+[Distributed/Centralized Gateways](guide/subnet.en.md), [Underlay/Overlay Hybrid Networks](start/underlay.en.md),
+[VPC Multi-Tenant Networks](vpc/vpc.en.md), [VPC EIP/FIP/SNAT](vpc/ovn-eip-fip-snat.en.md), [VPC Security Groups](vpc/security-group.en.md),
+[VPC L3 ECMP HA](vpc/ovn-l3-ha-based-ecmp-with-bfd.en.md), [Cross-Cluster Interconnect](advance/with-ovn-ic.en.md),
+[KubeVirt Live Migration](kubevirt/live-migration.en.md), [Non-Primary CNI Mode](start/non-primary-mode.en.md), [BGP Route Advertisement](advance/with-bgp.en.md),
+[OVN IPSec](advance/ovn-ipsec.en.md), [QoS Management](guide/qos.en.md), [Multi-NIC Management](advance/multi-nic.en.md),
+[ACL](guide/subnet.en.md), [Traffic Mirroring](guide/mirror.en.md), and dual-architecture support for both ARM and x86.
 
 **Extreme Performance:**
 
@@ -36,8 +38,8 @@ In the data plane, through a series of carefully optimized flow and kernel optim
 and with emerging technologies such as [eBPF](advance/with-cilium.en.md), [DPDK](advance/dpdk.en.md) and [SmartNIC Offload](advance/offload-mellanox.en.md),
 Kube-OVN can approximate or exceed host network performance in terms of latency and throughput.
 
-In the control plane, Kube-OVN can support large-scale clusters of thousands of nodes and tens of thousands of Pods
-through the tailoring of OVN upstream flow tables and the use and tuning of various caching techniques.
+In the control plane, through the tailoring of OVN upstream flow tables and the use and tuning of various caching techniques,
+Kube-OVN has been validated in production to support clusters with thousands of nodes and Pods at the scale of hundreds of thousands.
 
 In addition, Kube-OVN is continuously optimizing the usage of resources such as CPU and memory
 to accommodate resource-limited scenarios such as the edge.

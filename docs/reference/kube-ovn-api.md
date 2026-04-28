@@ -101,13 +101,13 @@
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
 | conditions | []SubnetCondition | 子网状态变化信息，具体字段参考文档开头 Condition 定义 |
-| v4availableIPs | Float64 | 子网现在可用的 IPv4 IP 地址数量 |
+| v4availableIPs | BigInt | 子网现在可用的 IPv4 IP 地址数量（大整数，支持 IPv6 大网段下超过 float64 精度的计数） |
 | v4availableIPrange | String | 子网现在可用的 IPv4 地址范围 |
-| v4usingIPs | Float64 | 子网现在已用的 IPv4 IP 地址数量 |
+| v4usingIPs | BigInt | 子网现在已用的 IPv4 IP 地址数量 |
 | v4usingIPrange | String | 子网现在已用的 IPv4 地址范围 |
-| v6availableIPs | Float64 | 子网现在可用的 IPv6 IP 地址数量 |
+| v6availableIPs | BigInt | 子网现在可用的 IPv6 IP 地址数量 |
 | v6availableIPrange | String | 子网现在可用的 IPv6 地址范围 |
-| v6usingIPs | Float64 | 子网现在已用的 IPv6 IP 地址数量 |
+| v6usingIPs | BigInt | 子网现在已用的 IPv6 IP 地址数量 |
 | v6usingIPrange | String | 子网现在已用的 IPv6 地址范围 |
 | activateGateway | String | 集中式子网，主备模式下当前正在工作的网关节点 |
 | dhcpV4OptionsUUID | String | 子网下 lsp dhcpv4_options 关联的 DHCP_Options 记录标识 |
@@ -723,15 +723,170 @@
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
-| vpc | String | 所属 VPC |
-| replicas | Int32 | 副本数量 |
-| prefix | String | 名称前缀 |
-| image | String | 容器镜像 |
-| internalSubnet | String | 内部子网 |
-| externalSubnet | String | 外部子网 |
-| internalIPs | []String | 内部 IP 列表 |
-| externalIPs | []String | 外部 IP 列表 |
-| trafficPolicy | String | 流量策略 |
+| vpc | String | 可选，所属 VPC，未指定时使用默认 VPC |
+| bgpConf | String | 可选，引用集群级 `BgpConf` 资源名称，用于公布出口路由 |
+| evpnConf | String | 可选，引用集群级 `EvpnConf` 资源名称，用于 EVPN 场景 |
+| replicas | Int32 | 网关副本数量，默认 1 |
+| prefix | String | 可选，工作负载名称前缀，最终名称为 `<prefix><veg-name>` |
+| image | String | 可选，工作负载使用的镜像，未指定时使用 kube-ovn-controller 默认镜像 |
+| internalSubnet | String | 可选，内部子网，未指定时使用 VPC 默认子网 |
+| externalSubnet | String | 必填，外部子网名称 |
+| internalIPs | []String | 可选，内部 IP 列表（数量不少于副本数；双栈时元素为 `v4,v6` 形式） |
+| externalIPs | []String | 可选，外部 IP 列表（数量不少于副本数；双栈时元素为 `v4,v6` 形式） |
+| selectors | []VpcEgressGatewaySelector | 命名空间/Pod 选择器，用于选择由该网关承载的流量来源 |
+| trafficPolicy | String | 可选，流量策略，`Cluster`（默认）或 `Local`，仅默认 VPC 生效 |
+| bfd | VpcEgressGatewayBFDConfig | BFD 配置 |
+| policies | []VpcEgressGatewayPolicy | 出向策略列表，至少一项 |
+| nodeSelector | []VpcEgressGatewayNodeSelector | 可选，工作负载节点选择器 |
+| tolerations | []Toleration | 可选，标准 Kubernetes 容忍配置 |
+| resources | ResourceRequirements | 可选，容器资源限制；未指定时控制器使用默认值 |
+| bandwidth | BandwidthLimit | 可选，每个网关实例的入向/出向带宽限速（Mbps） |
+
+##### VpcEgressGatewaySelector
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| namespaceSelector | LabelSelector | 命名空间标签选择器 |
+| podSelector | LabelSelector | Pod 标签选择器 |
+
+##### VpcEgressGatewayBFDConfig
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| enabled | Boolean | 是否启用 BFD（同时要求 VPC 的 `.spec.bfd.enabled=true`），默认 false |
+| minRX | Int32 | BFD 最小接收间隔（ms），默认 1000 |
+| minTX | Int32 | BFD 最小发送间隔（ms），默认 1000 |
+| multiplier | Int32 | BFD 检测倍数，默认 3 |
+
+##### VpcEgressGatewayPolicy
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| snat | Boolean | 是否对匹配出向流量做 SNAT/MASQUERADE，默认 false |
+| ipBlocks | []String | 匹配的 CIDR 列表 |
+| subnets | []String | 匹配的子网名称列表 |
+
+##### VpcEgressGatewayNodeSelector
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| matchLabels | map[String]String | 标签匹配映射 |
+| matchExpressions | []NodeSelectorRequirement | 标签匹配表达式 |
+| matchFields | []NodeSelectorRequirement | 字段匹配表达式 |
+
+##### BandwidthLimit
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ingress | Int64 | 入向带宽限速，单位 Mbps |
+| egress | Int64 | 出向带宽限速，单位 Mbps |
+
+#### VpcEgressGatewayStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| replicas | Int32 | 当前副本数（用于 scale 子资源） |
+| labelSelector | String | 网关工作负载选择器（用于 scale 子资源） |
+| ready | Boolean | 网关是否就绪 |
+| phase | String | 当前阶段，可为 `Pending`、`Processing` 或 `Completed` |
+| internalIPs | []String | 实际占用的内部 IP 列表 |
+| externalIPs | []String | 实际占用的外部 IP 列表 |
+| conditions | []Condition | 当前状态变化的最新观察 |
+| workload | VpcEgressWorkload | 关联工作负载信息 |
+
+##### VpcEgressWorkload
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| apiVersion | String | 工作负载 API 版本 |
+| kind | String | 工作负载类型，例如 `Deployment` |
+| name | String | 工作负载名称 |
+| nodes | []String | 当前承载工作负载的节点列表 |
+
+### BgpConf
+
+集群级（cluster-scoped）资源，被 `VpcEgressGateway.spec.bgpConf` 引用，用于宣告出口前缀。
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| apiVersion | String | 标准 Kubernetes 版本信息字段，所有自定义资源该值均为 kubeovn.io/v1 |
+| kind | String | 标准 Kubernetes 资源类型字段，本资源所有实例该值均为 `BgpConf` |
+| metadata | ObjectMeta | 标准 Kubernetes 资源元数据信息 |
+| spec | BgpConfSpec | BgpConf 具体配置信息字段 |
+
+#### BgpConfSpec
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| localASN | UInt32 | 本端 BGP AS Number |
+| peerASN | UInt32 | 对端 BGP AS Number |
+| routerId | String | 可选，BGP Router ID |
+| neighbours | []String | BGP 邻居 IP 列表 |
+| password | String | 可选，TCP MD5 鉴权口令 |
+| holdTime | Duration | 可选，BGP Hold time |
+| keepaliveTime | Duration | 可选，BGP Keepalive 间隔 |
+| connectTime | Duration | 可选，BGP Connect 间隔 |
+| ebgpMultiHop | Boolean | 可选，是否启用 eBGP MultiHop |
+| gracefulRestart | Boolean | 可选，是否启用 BGP Graceful Restart |
+
+### EvpnConf
+
+集群级（cluster-scoped）资源，被 `VpcEgressGateway.spec.evpnConf` 引用，用于在 EVPN 场景下声明 VNI 与 Route Target。
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| apiVersion | String | 标准 Kubernetes 版本信息字段，所有自定义资源该值均为 kubeovn.io/v1 |
+| kind | String | 标准 Kubernetes 资源类型字段，本资源所有实例该值均为 `EvpnConf` |
+| metadata | ObjectMeta | 标准 Kubernetes 资源元数据信息 |
+| spec | EvpnConfSpec | EvpnConf 具体配置信息字段 |
+
+#### EvpnConfSpec
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| vni | UInt32 | EVPN VNI |
+| routeTargets | []String | Route Target 列表 |
+
+### DNSNameResolver
+
+集群级（cluster-scoped）资源，由 `enable-dns-name-resolver` 启用的 ANP/CNP 域名匹配场景使用，存储 DNS 解析结果。
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| apiVersion | String | 标准 Kubernetes 版本信息字段，所有自定义资源该值均为 kubeovn.io/v1 |
+| kind | String | 标准 Kubernetes 资源类型字段，本资源所有实例该值均为 `DNSNameResolver` |
+| metadata | ObjectMeta | 标准 Kubernetes 资源元数据信息 |
+| spec | DNSNameResolverSpec | DNSNameResolver 具体配置信息字段 |
+| status | DNSNameResolverStatus | DNSNameResolver 状态信息字段 |
+
+#### DNSNameResolverSpec
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| name | String | 需要解析的 DNS 名称（普通名称或以 `*.` 开头的通配名称），创建后不可变 |
+
+#### DNSNameResolverStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| resolvedNames | []DNSNameResolverResolvedName | 实际解析得到的 DNS 名称及其 IP 详情 |
+
+##### DNSNameResolverResolvedName
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| dnsName | String | 解析得到的实际 DNS 名称 |
+| resolvedAddresses | []DNSNameResolverResolvedAddress | 解析到的 IP、TTL 与最近解析时间 |
+| conditions | []Condition | 状态条件，已知类型 `Degraded` 表示最近一次解析失败 |
+| resolutionFailures | Int32 | 连续解析失败次数，成功后清零，超过 5 次且 TTL 全部过期后会被移除 |
+
+##### DNSNameResolverResolvedAddress
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ip | String | 解析到的 IP 地址 |
+| ttlSeconds | Int32 | TTL 秒数；`lastLookupTime + ttlSeconds` 之后失效 |
+| lastLookupTime | Time | 最近一次成功解析的时间戳 |
 
 ### VpcDns
 

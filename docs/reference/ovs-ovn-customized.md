@@ -32,6 +32,11 @@ OVN/OVS 做了部分修改。用户如果使用自己的 OVN/OVS 配合 Kube-OVN
 - [e4e6ea9c5f](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e4e6ea9c5f4ba080b719924e470daa8094ff38a7.patch) 支持专用的 BFD LRP。
 - [e76880e792](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/e76880e792af56b2a3836098105079f5f8f1ff26.patch) northd：添加 nb 选项 version_compatibility。
 - [477695a010](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/477695a010affe56efdd66b60510fa612f8704c1.patch) northd：跳过从 localnet 端口对 lrp 地址的 arp/nd 请求。
+- [2209d9a335](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/2209d9a335e584f28efe5477c933810cd4ee21d5.patch) 修复 ovn-controller 在大规模 LSP 场景下的处理。
+- [52b727b331](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/52b727b3315463668669ff423ce8bfa129861162.patch) 优化数据结构性能，降低 ovn-northd 增量计算耗时。
+- [53b9837f7f](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/53b9837f7fe89cd63af735b039b8c26107d6579d.patch) 修复 LB 与 ACL 联动场景下的转发问题。
+- [737d9f932e](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/737d9f932edada5a91f315b5f382daada8dee952.patch) 修复多 GW 场景下的会话粘滞问题。
+- [sbrec-delete-null-check](https://github.com/kubeovn/kube-ovn/blob/master/dist/images/patches/sbrec-delete-null-check.patch) 修复 ovn-controller 在 sbrec 删除场景下空指针访问。
 
 已合入上游修改：
 

@@ -46,8 +46,8 @@ OVN status metrics:
 | Gauge | ovs_status | OVS Health Status. The values are: health(1), unhealthy(0). |
 | Gauge | ovs_info | This metric provides basic information about OVS. It is always set to 1. |
 | Gauge | failed_req_count | The number of failed requests to OVS stack. |
-| Gauge | log_file_size | The size of a log file associated with an OVS component. |
-| Gauge | db_file_size | The size of a database file associated with an OVS component. |
+| Gauge | log_file_size_bytes | The size (in bytes) of a log file associated with an OVS component. |
+| Gauge | db_file_size_bytes | The size (in bytes) of a database file associated with an OVS component. |
 | Gauge | datapath | Represents an existing datapath. This metric is always 1. |
 | Gauge | dp_total | Represents total number of datapaths on the system. |
 | Gauge | dp_if | Represents an existing datapath interface. This metric is always 1. |
@@ -107,7 +107,7 @@ Network quality related metrics:
 | Gauge | pinger_node_ping_lost_total | The lost count for pod ping node |
 | Gauge | pinger_node_ping_count_total | The total count for pod ping node |
 | Histogram | pinger_external_ping_latency_ms | The latency ms histogram for pod ping external address |
-| Gauge | pinger_external_lost_total | The lost count for pod ping external address |
+| Gauge | pinger_external_ping_lost_total | The lost count for pod ping external address |
 
 ## kube-ovn-controller
 

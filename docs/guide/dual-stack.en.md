@@ -25,11 +25,11 @@ spec:
   gateway: 10.16.0.1,fd00:10:16::1
 ```
 
-If you need to use a dual stack for the default subnet during installation, you need to change the following parameters in the installation script:
+If you need to use a dual stack for the default subnet during installation, you need to change the following parameters in the installation script (the default IPv6 mask under dual-stack in `install.sh` is `/112`, which more easily avoids common ULA ranges; `/64` is also allowed if preferred, but make sure it does not collide with node or Service CIDRs):
 
 ```bash
-POD_CIDR="10.16.0.0/16,fd00:10:16::/64"
-JOIN_CIDR="100.64.0.0/16,fd00:100:64::/64"
+POD_CIDR="10.16.0.0/16,fd00:10:16::/112"
+JOIN_CIDR="100.64.0.0/16,fd00:100:64::/112"
 ```
 
 ## Check Pod Address

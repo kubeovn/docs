@@ -27,7 +27,7 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/images/insta
 使用编辑器打开脚本，并修改下列变量为预期值：
 
 ```bash
-REGISTRY="kubeovn"                     # 镜像仓库地址
+REGISTRY="docker.io/kubeovn"           # 镜像仓库地址
 VERSION="{{ variables.version }}"                      # 镜像版本/Tag
 POD_CIDR="10.16.0.0/16"                # 默认子网 CIDR 不要和 SVC/NODE/JOIN CIDR 重叠
 SVC_CIDR="10.96.0.0/12"                # 需要和 apiserver 的 service-cluster-ip-range 保持一致

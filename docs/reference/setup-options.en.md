@@ -256,3 +256,140 @@ ENABLE_SSL=true
 ```
 
 The SSL is disabled by default.
+
+## Conntrack-skip Destination CIDR List
+
+For destinations that need to bypass conntrack processing (for example, side traffic that already has NAT or session affinity handled elsewhere), a skip list can be configured in the installation script or as a `kube-ovn-controller` flag. Multiple CIDRs are comma-separated:
+
+```bash
+SKIP_CONNTRACK_DST_CIDRS="10.10.0.0/16,fd00:10::/64"
+```
+
+```yaml
+args:
+- --skip-conntrack-dst-cidrs=10.10.0.0/16,fd00:10::/64
+```
+
+Empty by default.
+
+## Enable OVN IPSec
+
+Once enabled, Kube-OVN encrypts the inter-node Geneve/Vxlan/STT tunnels via OVN's built-in IPSec capability and issues certificates automatically.
+
+```bash
+ENABLE_OVN_IPSEC=true
+```
+
+This switch must be turned on for both the controller and the daemon:
+
+```yaml
+args:
+- --enable-ovn-ipsec=true
+```
+
+For details, see [OVN IPSec](../advance/ovn-ipsec.en.md).
+
+## AdminNetworkPolicy / DNS Name Resolver Support
+
+Enable AdminNetworkPolicy (ANP/CNP) and DNS-name-based access control (which depends on the `DNSNameResolver` CRD):
+
+```bash
+ENABLE_ANP=true
+ENABLE_DNS_NAME_RESOLVER=true
+```
+
+```yaml
+args:
+- --enable-anp=true
+- --enable-dns-name-resolver=true
+```
+
+For usage, see [Domain-name-based Access Control](../guide/egress-firewall.en.md).
+
+## VPC NAT Gateway Master Switch
+
+Controls whether the VPC NAT Gateway controllers are enabled. Enabled by default:
+
+```bash
+ENABLE_NAT_GW=true
+```
+
+The runtime switch can also be controlled via the `enable-vpc-nat-gw` field in the `ovn-vpc-nat-gw-config` ConfigMap.
+
+## ovn-northd Thread Count
+
+For large-scale clusters, the number of `ovn-northd` worker threads can be tuned to speed up incremental computation:
+
+```bash
+OVN_NORTHD_N_THREADS=4
+```
+
+Defaults to 1. Choose a value based on the available node CPU resources.
+
+## NetworkPolicy Enforcement Mode
+
+Kube-OVN supports two NetworkPolicy enforcement modes, `standard` and `lax`. The global default can be configured as follows:
+
+```bash
+NP_ENFORCEMENT=standard
+```
+
+```yaml
+args:
+- --np-enforcement=standard
+```
+
+The mode can also be overridden on individual NetworkPolicies via the `ovn.kubernetes.io/network_policy_enforcement` annotation. See [NetworkPolicy Support](../guide/networkpolicy.en.md) for details.
+
+## Disable VXLAN TX Checksum Offload
+
+Some NICs have compatibility issues with checksum offload during VXLAN tunnel encapsulation, which can be disabled:
+
+```bash
+SET_VXLAN_TX_OFF=true
+```
+
+```yaml
+args:
+- --set-vxlan-tx-off=true
+```
+
+## KubeVirt Live Migration Optimization
+
+Once enabled, the controller optimizes port-binding switches during KubeVirt live migration to reduce transient packet loss. Enabled by default:
+
+```bash
+ENABLE_LIVE_MIGRATION_OPTIMIZE=true
+```
+
+## OVN LB Prefer Local Endpoint
+
+Once enabled, the OVN built-in LoadBalancer prefers endpoints on the same node, intended to be used together with `externalTrafficPolicy=Local`:
+
+```bash
+ENABLE_OVN_LB_PREFER_LOCAL=true
+```
+
+```yaml
+args:
+- --enable-ovn-lb-prefer-local=true
+```
+
+## External Gateway ConfigMap Namespace
+
+ConfigMaps related to the centralized external gateway (such as `external-gw-config`) live in `kube-system` by default. They can be moved to a different namespace via:
+
+```bash
+EXTERNAL_GATEWAY_CONFIG_NS=kube-system
+```
+
+## Non-Primary CNI Mode
+
+In this mode, Kube-OVN only acts as an attachment network provider and no longer allocates the Pod primary-network IP; the primary network is delegated to another CNI. Both the controller and the daemon must enable this switch:
+
+```yaml
+args:
+- --non-primary-cni-mode=true
+```
+
+It can also be configured via Helm with `cni_conf.NON_PRIMARY_CNI=true` (chart v1) or `cni.nonPrimaryCNI=true` (chart v2). See [Non-Primary CNI Mode](../start/non-primary-mode.en.md) for details.

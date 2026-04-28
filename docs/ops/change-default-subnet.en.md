@@ -20,7 +20,7 @@ kubectl edit subnet test-subnet
 Take the subnet binding `test` Namespace as example:
 
 ```bash
-for pod in $(kubectl get pod --no-headers -n "$ns" --field-selector spec.restartPolicy=Always -o custom-columns=NAME:.metadata.name,HOST:spec.hostNetwork | awk '{if ($2!="true") print $1}'); do
+for pod in $(kubectl get pod --no-headers -n test --field-selector spec.restartPolicy=Always -o custom-columns=NAME:.metadata.name,HOST:spec.hostNetwork | awk '{if ($2!="true") print $1}'); do
   kubectl delete pod "$pod" -n test --ignore-not-found
 done
 ```

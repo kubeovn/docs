@@ -39,10 +39,10 @@ kubectl apply -f https://raw.githubusercontent.com/kubeovn/dnsnameresolver/refs/
 
 ### 部署 CoreDNS 镜像
 
-使用预构建的 DNSNameResolver 镜像更新 CoreDNS：
+使用预构建的 DNSNameResolver 镜像更新 CoreDNS（生产环境请固定到具体版本 tag，不要使用 `dev`，最新可用版本参见 [kubeovn/dnsnameresolver releases](https://github.com/kubeovn/dnsnameresolver/releases)）：
 
 ```bash
-kubectl set image deployment/coredns coredns=kubeovn/dnsnameresolver:dev -n kube-system
+kubectl set image deployment/coredns coredns=kubeovn/dnsnameresolver:<release-tag> -n kube-system
 ```
 
 确认 CoreDNS 是否正常启动：
