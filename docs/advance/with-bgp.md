@@ -33,6 +33,8 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/y
 - --neighbor-ipv6-address=2409:AB00:AB00:2000::AFB:8AFE
 - --neighbor-as=65030
 - --cluster-as=65000
+# 可选：设置源 IP 白名单，确保下一跳地址在白名单内
+# - --allowed-source-addresses=10.32.32.2,10.32.32.3,10.32.32.4,10.32.32.5
 ```
 
 如果你有一对交换机：
@@ -43,11 +45,14 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/y
 - --neighbor-ipv6-address=2409:AB00:AB00:2000::AFB:8AFC,2409:AB00:AB00:2000::AFB:8AFD
 - --neighbor-as=65030
 - --cluster-as=65000
+# 可选：设置源 IP 白名单，确保下一跳地址在白名单内
+# - --allowed-source-addresses=10.32.32.2,10.32.32.3,10.32.32.4,10.32.32.5
 ```
 
 - `neighbor-address`: BGP Peer 的地址，通常为路由器网关地址。
 - `neighbor-as`: BGP Peer 的 AS 号。
 - `cluster-as`: 容器网络的 AS 号。
+- `allowed-source-addresses`: Speaker 节点允许使用的源 IP 白名单，多个地址用逗号分隔。设置后，Speaker 会通过 `ip route get` 查找到达 BGP Peer 的路由，并验证路由选择的源 IP 是否在白名单内。如果不在白名单中，Speaker 将拒绝启动。该选项用于确保在 ECMP 环境中使用正确的源 IP 发布路由，避免因源 IP 不匹配导致的回程流量黑洞。
 
 部署 yaml:
 
@@ -210,6 +215,94 @@ kubectl annotate eip sample ovn.kubernetes.io/bgp=true
 - `graceful-restart-deferral-time`: BGP Graceful restart deferral time 可参考 RFC4724 4.1。
 - `passivemode`: Speaker 运行在 passive 模式，不主动连接 peer。
 - `ebgp-multihop`: ebgp ttl 默认值为 1。
+- `allowed-source-addresses`: 源 IP 白名单，多个地址用逗号分隔。Speaker 启动时通过 `ip route get` 查找到达 BGP Peer 的路由，验证内核选择的源 IP 是否在白名单内，不在则拒绝启动。用于 ECMP 环境下确保使用正确的源 IP 发布路由。
+
+## BFD 快速故障检测
+
+当 BGP 与上游交换机配合使用时，可以部署 BFD（Bidirectional Forwarding Detection）来实现链路故障的快速检测，配合 BGP ECMP 实现秒级故障切换。
+
+Kube-OVN 提供了基于 [openbfdd](https://github.com/authmillenon/openbfdd) 的 BFD DaemonSet，用于在 BGP 节点上与交换机网关建立 BFD 会话。默认配置下故障检测时间为 `BFD_MULTI * max(BFD_MIN_TX, BFD_MIN_RX) = 3 * 1000ms = 3 秒`，可通过调整参数实现更快或更保守的检测。
+
+> 注意：OVN 自身也支持 BFD，可以在逻辑路由器端口上通过 `enableBfd` 选项启用。OVN BFD 由 kube-ovn controller 自动管理，与 openbfdd 是独立的两套机制。本节介绍的是基于 openbfdd 的主机层面 BFD。
+
+DaemonSet 使用 `hostNetwork: true` 模式部署，每个 Pod 包含三个容器：
+
+- **init-peer**: 初始化容器，通过 `ip route get` 发现到网关的本地源 IP，并验证是否在白名单内，将结果写入共享 Volume。
+- **bfdd**: openbfdd 守护进程，使用 init 容器发现的本地 IP 与交换机网关建立 BFD 会话。启动时通过 `start-bfdd.sh` 脚本初始化，`bfdd-prestart.sh` 作为 startupProbe 验证会话参数。
+- **reconcile**: 对账循环容器，每 5 秒检查一次 BFD 会话状态，如果发现网关 peer 缺失则自动添加。
+
+下载对应的 yaml：
+
+```bash
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/yamls/bfdd-daemonset.yaml
+```
+
+修改 `GATEWAY_ADDRESS` 和 `ALLOWED_SOURCE_ADDRESSES` 以匹配实际网络环境，其中白名单应与 Speaker 的 `--allowed-source-addresses` 参数保持一致：
+
+```yaml
+env:
+  - name: GATEWAY_ADDRESS
+    value: "10.32.32.1"                            # 交换机网关地址
+  - name: ALLOWED_SOURCE_ADDRESSES
+    value: "10.32.32.2,10.32.32.3,10.32.32.4,10.32.32.5"  # 源 IP 白名单
+  - name: BFD_MIN_TX
+    value: "1000"                                  # 最小发送间隔（毫秒）
+  - name: BFD_MIN_RX
+    value: "1000"                                  # 最小接收间隔（毫秒）
+  - name: BFD_MULTI
+    value: "3"                                     # 检测倍数
+```
+
+部署 DaemonSet：
+
+```bash
+kubectl apply -f bfdd-daemonset.yaml
+```
+
+### BFD 调试
+
+```bash
+# 查看 BFD daemon 状态
+bfdd-control status
+
+# 查看特定 BFD 会话（remote=网关, local=本机源 IP）
+bfdd-control status remote <gateway-ip> local <local-ip>
+
+# 添加 BFD 对端
+bfdd-control allow <gateway-ip>
+
+# 调整会话参数
+bfdd-control session new set mintx <ms> ms   # 设置最小发送间隔
+bfdd-control session new set minrx <ms> ms   # 设置最小接收间隔
+bfdd-control session new set multi <n>       # 设置检测倍数
+
+# 禁用命令日志（减少噪音）
+bfdd-control log type command no
+
+# 查看 init 容器发现的本地 IP
+cat /bfdd-peer/local-ip
+
+# 查看 reconcile sidecar 日志
+kubectl logs -n kube-system ds/openbfdd -c reconcile
+
+# 查看 init 容器日志
+kubectl logs -n kube-system ds/openbfdd -c init-peer
+```
+
+### OVN 层面 BFD 调试
+
+OVN 自身也支持 BFD（由 kube-ovn controller 管理），可以通过以下命令查看：
+
+```bash
+# 列出 OVN BFD 条目
+kubectl ko nbctl list bfd
+
+# 按逻辑路由器端口查找 BFD
+kubectl ko nbctl find bfd logical_port=<lrp-name>
+
+# 删除 OVN BFD 条目
+kubectl ko nbctl destroy bfd <uuid>
+```
 
 ## BGP routes debug
 

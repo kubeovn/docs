@@ -39,6 +39,8 @@ If you only have one switch:
 - --neighbor-ipv6-address=2409:AB00:AB00:2000::AFB:8AFE
 - --neighbor-as=65030
 - --cluster-as=65000
+# Optional: set --allowed-source-addresses to make sure nexthop in the allowed-source-addresses is valid.
+# - --allowed-source-addresses=10.32.32.2,10.32.32.3,10.32.32.4,10.32.32.5
 ```
 
 If you have a pair of switches:
@@ -49,11 +51,14 @@ If you have a pair of switches:
 - --neighbor-ipv6-address=2409:AB00:AB00:2000::AFB:8AFC,2409:AB00:AB00:2000::AFB:8AFD
 - --neighbor-as=65030
 - --cluster-as=65000
+# Optional: set --allowed-source-addresses to make sure nexthop in the allowed-source-addresses is valid.
+# - --allowed-source-addresses=10.32.32.2,10.32.32.3,10.32.32.4,10.32.32.5
 ```
 
 - `neighbor-address`: The address of the BGP Peer, usually the router gateway address.
 - `neighbor-as`: The AS number of the BGP Peer.
 - `cluster-as`: The AS number of the container network.
+- `allowed-source-addresses`: Comma-separated whitelist of source IPs allowed on the speaker node. When set, the speaker performs an `ip route get` lookup to the BGP peer and validates that the selected source IP is in the whitelist. If it doesn't match, the speaker refuses to start. This ensures the correct source IP is used when publishing routes in ECMP environments, preventing return traffic blackholes caused by source IP mismatches.
 
 Apply the YAML:
 
@@ -280,6 +285,94 @@ is handled by a daemon such as `kube-proxy`. The annotation for Services only su
 - `graceful-restart-deferral-time`: BGP Graceful restart deferral time refer to RFC4724 4.1.
 - `passivemode`: The Speaker runs in Passive mode and does not actively connect to the peer.
 - `ebgp-multihop`: The TTL value of EBGP Peer, default is 1.
+- `allowed-source-addresses`: Comma-separated whitelist of source IPs. On startup, the speaker performs an `ip route get` lookup to the BGP peer and validates the kernel-selected source IP against the whitelist. If it doesn't match, the speaker refuses to start. Used in ECMP environments to ensure the correct source IP is used for route publishing.
+
+## BFD Fast Failure Detection
+
+When BGP peers with upstream switches, BFD (Bidirectional Forwarding Detection) can be deployed for rapid link failure detection, enabling sub-second failover when combined with BGP ECMP.
+
+Kube-OVN provides an [openbfdd](https://github.com/authmillenon/openbfdd)-based BFD DaemonSet that establishes BFD sessions between BGP nodes and switch gateways. With the default configuration, failure detection time is `BFD_MULTI * max(BFD_MIN_TX, BFD_MIN_RX) = 3 * 1000ms = 3 seconds`. Tune the parameters for faster or more conservative detection.
+
+> Note: OVN itself also supports BFD, which can be enabled on logical router ports via the `enableBfd` option. OVN BFD is managed automatically by the kube-ovn controller and is a separate mechanism from openbfdd. This section covers host-level BFD based on openbfdd.
+
+The DaemonSet uses `hostNetwork: true` and contains three containers per pod:
+
+- **init-peer**: Init container that discovers the local source IP to the gateway via `ip route get`, validates it against the whitelist, and writes the result to a shared volume.
+- **bfdd**: The openbfdd daemon that uses the local IP discovered by the init container to establish a BFD session with the switch gateway. Initialized via `start-bfdd.sh` at startup; `bfdd-prestart.sh` serves as a startupProbe to validate session parameters.
+- **reconcile**: Reconciliation loop container that checks the BFD session every 5 seconds and automatically re-adds the gateway peer if missing.
+
+Download the corresponding YAML:
+
+```bash
+wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/yamls/bfdd-daemonset.yaml
+```
+
+Edit `GATEWAY_ADDRESS` and `ALLOWED_SOURCE_ADDRESSES` to match your network. The whitelist should match the speaker's `--allowed-source-addresses` parameter:
+
+```yaml
+env:
+  - name: GATEWAY_ADDRESS
+    value: "10.32.32.1"                            # Switch gateway address
+  - name: ALLOWED_SOURCE_ADDRESSES
+    value: "10.32.32.2,10.32.32.3,10.32.32.4,10.32.32.5"  # Source IP whitelist
+  - name: BFD_MIN_TX
+    value: "1000"                                  # Minimum transmit interval (ms)
+  - name: BFD_MIN_RX
+    value: "1000"                                  # Minimum receive interval (ms)
+  - name: BFD_MULTI
+    value: "3"                                     # Detection multiplier
+```
+
+Deploy the DaemonSet:
+
+```bash
+kubectl apply -f bfdd-daemonset.yaml
+```
+
+### BFD Debugging
+
+```bash
+# Check daemon status
+bfdd-control status
+
+# Check specific BFD session (remote=gateway, local=our source IP)
+bfdd-control status remote <gateway-ip> local <local-ip>
+
+# Add a BFD peer
+bfdd-control allow <gateway-ip>
+
+# Tune session parameters
+bfdd-control session new set mintx <ms> ms   # Set minimum transmit interval
+bfdd-control session new set minrx <ms> ms   # Set minimum receive interval
+bfdd-control session new set multi <n>       # Set detection multiplier
+
+# Disable command logging (reduces noise)
+bfdd-control log type command no
+
+# View local IP discovered by init container
+cat /bfdd-peer/local-ip
+
+# Check reconcile sidecar logs
+kubectl logs -n kube-system ds/openbfdd -c reconcile
+
+# Check init container logs
+kubectl logs -n kube-system ds/openbfdd -c init-peer
+```
+
+### OVN-level BFD Debugging
+
+OVN itself also supports BFD (managed by the kube-ovn controller). Use the following commands:
+
+```bash
+# List OVN BFD entries
+kubectl ko nbctl list bfd
+
+# Find BFD by logical router port
+kubectl ko nbctl find bfd logical_port=<lrp-name>
+
+# Delete OVN BFD entry by UUID
+kubectl ko nbctl destroy bfd <uuid>
+```
 
 ## BGP routes debug
 
