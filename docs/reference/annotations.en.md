@@ -13,6 +13,7 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/routes | String | Route information for Pod primary interface |
 | ovn.kubernetes.io/mac_address | String | MAC address allocated to Pod primary interface, when creating a Pod, you can set a fixed MAC address by this Annotation |
 | ovn.kubernetes.io/ip_address | String | IP address allocated to Pod primary interface, when creating a Pod, you can set a fixed IP address by this Annotation |
+| ovn.kubernetes.io/ip_family | `ipv4` or `ipv6` | Select a single IP family for the Pod primary interface in a dual-stack subnet. If unset, dual-stack allocation is kept |
 | \<nadName\>.\<nadNamespace\>.kubernetes.io/ip_address.\<interfaceName\> | String | Per-interface fixed IP when multiple interfaces attach to the same switch; interfaceName must match the attachment's interface in Multus. ovn.kubernetes.io/ip_address remains as fallback if unset |
 | \<nadName\>.\<nadNamespace\>.kubernetes.io/mac_address.\<interfaceName\> | String | Per-interface fixed MAC when multiple interfaces attach to the same switch; interfaceName must match the attachment's interface in Multus |
 | ovn.kubernetes.io/cidr | String | Subnet CIDR that the Pod primary interface belongs to |
@@ -49,6 +50,7 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/vpc_nat_gw_container_restarted | `true` or `false` | Whether the main container of the VPC NAT Gateway has been restarted, used to trigger rule re-application |
 | ovn.kubernetes.io/vpc_nat_gw_activated | `true` or `false` | Whether the VPC NAT Gateway has been activated and is taking traffic |
 | \<provider\>.kubernetes.io/ip_pool | IP list, separated by comma | IP pool for the specified provider in multi-NIC scenarios |
+| \<provider\>.kubernetes.io/ip_family | `ipv4` or `ipv6` | Select a single IP family for the specified provider interface in a dual-stack subnet |
 | \<provider\>.kubernetes.io/dhcp-v4-options | String | DHCPv4 options for the specified provider in multi-NIC scenarios |
 | \<provider\>.kubernetes.io/port_security | `true` or `false` | Port security toggle for the specified provider in multi-NIC scenarios |
 
