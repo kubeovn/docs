@@ -55,3 +55,63 @@ podIP: 10.16.0.9
   - ip: 10.16.0.9
   - ip: fd00:10:16::9
 ```
+
+## Select IP Family for a Single Pod or NIC
+
+In a dual-stack subnet, if a Pod or one of its NICs only needs an IPv4 or IPv6 address, set the `ip_family` annotation when creating the Pod.
+When this annotation is not set, Kube-OVN keeps the default dual-stack allocation behavior.
+The following examples assume that the target Pod or NIC uses a dual-stack Subnet.
+
+Use `ovn.kubernetes.io/ip_family` for the default network:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ipv4-only
+  annotations:
+    ovn.kubernetes.io/ip_family: ipv4
+spec:
+  containers:
+  - name: nginx
+    image: docker.io/library/nginx:alpine
+```
+
+The supported values are `ipv4` and `ipv6`. This feature only selects one address family from a dual-stack subnet and does not change the protocol type of the subnet.
+If `ipv6` is requested from an IPv4-only subnet, or `ipv4` is requested from an IPv6-only subnet, Kube-OVN will not allocate an address for the Pod.
+
+For a secondary NIC added through Multus, use `<provider>.kubernetes.io/ip_family`. The `<provider>` must match the provider in the corresponding NetworkAttachmentDefinition or Subnet:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: attach-ipv6-only
+  annotations:
+    k8s.v1.cni.cncf.io/networks: default/attachnet
+    attachnet.default.ovn.kubernetes.io/ip_family: ipv6
+spec:
+  containers:
+  - name: nginx
+    image: docker.io/library/nginx:alpine
+```
+
+When the same NetworkAttachmentDefinition is attached multiple times with different `interface` names, Kube-OVN reads the annotation from the provider name that includes the interface name.
+For example, `net1` gets IPv4 only and `net2` gets IPv6 only:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: attach-mixed-family
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[{"name": "attachnet", "namespace": "default", "interface": "net1"}, {"name": "attachnet", "namespace": "default", "interface": "net2"}]'
+    attachnet.default.ovn.net1.kubernetes.io/ip_family: ipv4
+    attachnet.default.ovn.net2.kubernetes.io/ip_family: ipv6
+spec:
+  containers:
+  - name: nginx
+    image: docker.io/library/nginx:alpine
+```
+
+If a static IP is also set, for example with `ovn.kubernetes.io/ip_address`, `<provider>.kubernetes.io/ip_address`, or `<nadName>.<nadNamespace>.kubernetes.io/ip_address.<interfaceName>` for same-NAD multi-interface Pods, the static IP address family must match `ip_family`.
