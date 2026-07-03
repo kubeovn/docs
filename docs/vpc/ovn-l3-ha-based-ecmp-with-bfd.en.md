@@ -77,7 +77,7 @@ spec:
   - vpc1
   enableExternal: true
   enableBfd: true # bfd switch can be switched at will
-  #enableBfd: false 
+  #enableBfd: false
 
 
 # cat 02-subnet.yml
@@ -243,29 +243,6 @@ PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
 catch outgoing packets within the ovnext ns of a gateway node
 
 ```bash
-# tcpdump -i ovnext0 host 223.5.5.5 -netvv
-dropped privs to tcpdump
-tcpdump: listening on ovnext0, link-type EN10MB (Ethernet), capture size 262144 bytes
-^C
-0 packets captured
-0 packets received by filter
-0 packets dropped by kernel
-[root@pc-node-1 ~]# exit
-[root@pc-node-1 ~]# ssh pc-node-2
-Last login: Thu Feb 23 09:21:08 2023 from 10.5.32.51
-[root@pc-node-2 ~]# ip netns exec ovnext bash
-[root@pc-node-2 ~]# tcpdump -i ovnext0 host 223.5.5.5 -netvv
-dropped privs to tcpdump
-tcpdump: listening on ovnext0, link-type EN10MB (Ethernet), capture size 262144 bytes
-^C
-0 packets captured
-0 packets received by filter
-0 packets dropped by kernel
-[root@pc-node-2 ~]# exit
-[root@pc-node-2 ~]# logout
-Connection to pc-node-2 closed.
-[root@pc-node-1 ~]# ssh pc-node-3
-Last login: Thu Feb 23 08:32:41 2023 from 10.5.32.51
 [root@pc-node-3 ~]#  ip netns exec ovnext bash
 [root@pc-node-3 ~]# tcpdump -i ovnext0 host 223.5.5.5 -netvv
 dropped privs to tcpdump

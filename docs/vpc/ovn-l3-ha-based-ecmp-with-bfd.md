@@ -74,7 +74,7 @@ spec:
   - vpc1
   enableExternal: true
   enableBfd: true # bfd 开关可以随意切换，开表示启用 bfd ecmp 路由
-  #enableBfd: false 
+  #enableBfd: false
 
 
 # cat 02-subnet.yml
@@ -119,7 +119,6 @@ vpc1          true             true        true      ["vpc1-subnet1"]           
 
 # 默认 vpc 未支持 ENABLEBFD
 # 自定义 vpc 已支持且已启用
-
 
 # 1. 创建了 bfd 会话
 # k ko nbctl list bfd
@@ -199,10 +198,6 @@ route_table         : ""
 
 ``` bash
 # 同时在网关节点都应该具备以下资源
-
-[root@pc-node-1 ~]# ip netns exec ovnext bash ip a
-/usr/sbin/ip: /usr/sbin/ip: cannot execute binary file
-[root@pc-node-1 ~]#
 [root@pc-node-1 ~]# ip netns exec ovnext ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -224,15 +219,12 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.5.204.0      0.0.0.0         255.255.255.0   U     0      0        0 ovnext0
 
 ## 注意以上内容和一个 internal port unerlay 公网 pod 内部的 ns 大致是一致的，这里只是在网关节点上单独维护了一个 ns
-
 [root@pc-node-1 ~]# ip netns exec ovnext bfdd-control status
 There are 1 sessions:
 Session 1
  id=1 local=10.5.204.108 (p) remote=10.5.204.122 state=Up
 
 ## 这里即是 lrp bfd 会话的另一端，也是 lrp ecmp 的下一跳的其中一个
-
-
 [root@pc-node-1 ~]# ip netns exec ovnext ping -c1 223.5.5.5
 PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
 64 bytes from 223.5.5.5: icmp_seq=1 ttl=115 time=21.6 ms
@@ -243,29 +235,6 @@ PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
 可以在某一个网关节点的 ovnext ns 内抓到出去的包
 
 ```bash
-# tcpdump -i ovnext0 host 223.5.5.5 -netvv
-dropped privs to tcpdump
-tcpdump: listening on ovnext0, link-type EN10MB (Ethernet), capture size 262144 bytes
-^C
-0 packets captured
-0 packets received by filter
-0 packets dropped by kernel
-[root@pc-node-1 ~]# exit
-[root@pc-node-1 ~]# ssh pc-node-2
-Last login: Thu Feb 23 09:21:08 2023 from 10.5.32.51
-[root@pc-node-2 ~]# ip netns exec ovnext bash
-[root@pc-node-2 ~]# tcpdump -i ovnext0 host 223.5.5.5 -netvv
-dropped privs to tcpdump
-tcpdump: listening on ovnext0, link-type EN10MB (Ethernet), capture size 262144 bytes
-^C
-0 packets captured
-0 packets received by filter
-0 packets dropped by kernel
-[root@pc-node-2 ~]# exit
-[root@pc-node-2 ~]# logout
-Connection to pc-node-2 closed.
-[root@pc-node-1 ~]# ssh pc-node-3
-Last login: Thu Feb 23 08:32:41 2023 from 10.5.32.51
 [root@pc-node-3 ~]#  ip netns exec ovnext bash
 [root@pc-node-3 ~]# tcpdump -i ovnext0 host 223.5.5.5 -netvv
 dropped privs to tcpdump
