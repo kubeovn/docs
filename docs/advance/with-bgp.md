@@ -216,14 +216,114 @@ kubectl annotate eip sample ovn.kubernetes.io/bgp=true
 - `passivemode`: Speaker 运行在 passive 模式，不主动连接 peer。
 - `ebgp-multihop`: ebgp ttl 默认值为 1。
 - `allowed-source-addresses`: 源 IP 白名单，多个地址用逗号分隔。Speaker 启动时通过 `ip route get` 查找到达 BGP Peer 的路由，验证内核选择的源 IP 是否在白名单内，不在则拒绝启动。用于 ECMP 环境下确保使用正确的源 IP 发布路由。
+- `enable-bfd`: 启用 `kube-ovn-speaker` 内置 BFD（双向转发检测）快速故障检测，默认为 `false`。详见下文“方案一：`kube-ovn-speaker` 内置 BFD”。
+- `bfd-min-tx`: `kube-ovn-speaker` 内置 BFD 的最小发送间隔，单位为毫秒，默认 `1000`（1 秒）。
+- `bfd-min-rx`: `kube-ovn-speaker` 内置 BFD 的最小接收间隔，单位为毫秒，默认 `1000`（1 秒）。
+- `bfd-detection-multiplier`: `kube-ovn-speaker` 内置 BFD 的检测倍数，默认 `3`。故障检测时间 = `bfd-min-rx * bfd-detection-multiplier`。
 
 ## BFD 快速故障检测
 
 当 BGP 与上游交换机配合使用时，可以部署 BFD（Bidirectional Forwarding Detection）来实现链路故障的快速检测，配合 BGP ECMP 实现秒级故障切换。
 
-Kube-OVN 提供了基于 [openbfdd](https://github.com/authmillenon/openbfdd) 的 BFD DaemonSet，用于在 BGP 节点上与交换机网关建立 BFD 会话。默认配置下故障检测时间为 `BFD_MULTI * max(BFD_MIN_TX, BFD_MIN_RX) = 3 * 1000ms = 3 秒`，可通过调整参数实现更快或更保守的检测。
+在 Kube-OVN 场景中，BFD 相关能力可以分为两个场景：
 
-> 注意：OVN 自身也支持 BFD，可以在逻辑路由器端口上通过 `enableBfd` 选项启用。OVN BFD 由 kube-ovn controller 自动管理，与 openbfdd 是独立的两套机制。本节介绍的是基于 openbfdd 的主机层面 BFD。
+- **场景一：宿主机 host network 层面**。用于在 Kubernetes Node 的 host network 上与物理三层交换机之间的链路建立 BFD 会话，并配合 BGP ECMP 实现高可用和负载分担。
+- **场景二：VPC 内部**。对应 `OVN logical router BFD`，由 `VPC` CRD 相关配置控制，作用于 VPC 逻辑路由器层面，由 kube-ovn controller 自动管理，用于对 VPC 内可达链路启用 BFD。
+
+结构概览：
+
+```mermaid
+flowchart TD
+    A[BFD 相关能力] --> B[场景一: 宿主机 host network]
+    A --> C[场景二: VPC 内部]
+    B --> D[方案一: kube-ovn-speaker 内置 BFD]
+    B --> E[方案二: openbfdd 独立进程]
+    C --> F[OVN logical router BFD]
+```
+
+本文后续内容聚焦宿主机 host network 场景。在这一场景下，目前有两种集成方式：
+
+- **方案一：`kube-ovn-speaker` 内置 BFD**。直接通过 `kube-ovn-speaker` 启动参数启用，由 GoBGP 原生 BFD 实现维护会话，在 node host network 层面与物理三层交换机建立 BFD。
+- **方案二：独立部署 `openbfdd`**。在主机侧额外部署 BFD DaemonSet，以独立进程方式在 node host network 层面与物理三层交换机建立 BFD。
+
+> 注意：三者本质上使用的都是 BFD 机制，作用目标都是做快速故障检测，只是作用的网络隔离域和建链对象不同。`OVN logical router BFD` 作用于 VPC 内部可达链路；本文介绍的两种集成方式作用于宿主机 host network 场景，面向物理机网卡与物理三层交换机之间的链路，并配合 BGP ECMP 实现高可用和负载分担。
+
+### 方案一：`kube-ovn-speaker` 内置 BFD
+
+`kube-ovn-speaker` 通过 GoBGP 原生 BFD 实现（[RFC 5880](https://datatracker.ietf.org/doc/html/rfc5880) / [RFC 5881](https://datatracker.ietf.org/doc/html/rfc5881)）支持快速故障检测。
+如果你希望直接在现有 BGP Speaker 进程内开启 BFD，而不额外部署独立守护进程，可以使用该方案。该方案运行在 `kube-ovn-speaker` 的 GoBGP 层面，用于在 node host network 上与物理三层交换机建立 BFD 会话。
+
+#### 启用方式
+
+在 `kube-ovn-speaker` 的启动参数中添加 BFD 相关配置：
+
+```yaml
+args:
+  - --enable-bfd=true
+  # 可选参数，以下为默认值
+  - --bfd-min-tx=1000
+  - --bfd-min-rx=1000
+  - --bfd-detection-multiplier=3
+```
+
+默认参数下，故障检测时间为 `1000ms × 3 = 3 秒`。
+
+如需更快的故障检测（例如 300ms），可以这样配置：
+
+```yaml
+args:
+  - --enable-bfd=true
+  - --bfd-min-tx=100
+  - --bfd-min-rx=100
+  - --bfd-detection-multiplier=3
+```
+
+#### 前置条件
+
+- **对端路由器必须同时启用 BFD**。BFD 是双向协议，仅在一端启用无法建立 BFD 会话。
+- 防火墙需放行 UDP 端口 `3784`（BFD 控制报文）。
+- 建议保守设置 BFD 定时器，过于激进的定时器可能在 CPU 压力或网络抖动时导致不必要的 BGP 重置。
+
+#### 状态验证
+
+通过 `gobgp` 命令查看 BFD 会话状态（建议使用 JSON 输出）：
+
+```bash
+gobgp -j neighbor <peer-address> | jq '{bfd_config: .bfd, bfd_state: .state.bfd_state}'
+```
+
+输出示例：
+
+```json
+{
+  "bfd_config": {
+    "enabled": true,
+    "port": 3784,
+    "desired_minimum_tx_interval": 1000000,
+    "required_minimum_receive": 1000000,
+    "detection_multiplier": 3
+  },
+  "bfd_state": {
+    "session_state": 1,
+    "bfd_async": {
+      "transmitted_packets": 100,
+      "received_packets": 99
+    }
+  }
+}
+```
+
+其中 `session_state` 的值：`1` = UP，`2` = DOWN，`3` = ADMIN_DOWN，`4` = INIT。
+
+#### 故障行为
+
+当 BFD 会话检测到对端不可达时，GoBGP 会立即对对应的 BGP 邻居执行硬重置（hard reset），通知消息为 `BFD is down`。
+BGP 会话断开后，路由将被撤回，上游路由器可以快速切换到备用路径。
+
+### 方案二：独立部署 `openbfdd`
+
+如果你希望在主机侧独立维护 BFD 会话，而不是直接依赖 `kube-ovn-speaker` 内置实现，可以使用基于 [openbfdd](https://github.com/authmillenon/openbfdd) 的 BFD DaemonSet。
+该方案以独立进程方式运行在 node host network 层面，用于在 BGP 节点上与物理三层交换机网关建立 BFD 会话。默认配置下故障检测时间为 `BFD_MULTI * max(BFD_MIN_TX, BFD_MIN_RX) = 3 * 1000ms = 3 秒`，可通过调整参数实现更快或更保守的检测。
 
 DaemonSet 使用 `hostNetwork: true` 模式部署，每个 Pod 包含三个容器：
 
@@ -259,7 +359,7 @@ env:
 kubectl apply -f bfdd-daemonset.yaml
 ```
 
-### BFD 调试
+#### BFD 调试
 
 ```bash
 # 查看 BFD daemon 状态
@@ -291,7 +391,7 @@ kubectl logs -n kube-system ds/openbfdd -c init-peer
 
 ### OVN 层面 BFD 调试
 
-OVN 自身也支持 BFD（由 kube-ovn controller 管理），可以通过以下命令查看：
+OVN 自身也支持 BFD（由 kube-ovn controller 管理），这与前面两种方案不同。可以通过以下命令查看：
 
 ```bash
 # 列出 OVN BFD 条目
