@@ -1,9 +1,9 @@
 # BGP Support
 
-Kube-OVN supports broadcasting the IP address of Pods/Subnets/Services/EIPs to the outside world via the BGP protocol.  
+Kube-OVN supports broadcasting the IP address of Pods/Subnets/Services/EIPs to the outside world via the BGP protocol.
 
 To use this feature on Pods/Subnets/Services, you need to install `kube-ovn-speaker` on specific (or all) nodes and
-add the corresponding annotation to the Pod or Subnet that needs to be exposed to the outside world.  
+add the corresponding annotation to the Pod or Subnet that needs to be exposed to the outside world.
 Kube-OVN also supports broadcasting the IP address of services of type `ClusterIP` via the same annotation.
 
 To use this feature on EIPs, you need to create your NAT Gateway with special parameters to enable the BGP speaker sidecar.
@@ -107,7 +107,7 @@ The speakers will all start announcing the `ClusterIP` of that service to the ou
 
 ## Publishing EIPs
 
-EIPs can be announced by the NAT gateways to which they are attached.  
+EIPs can be announced by the NAT gateways to which they are attached.
 There are 2 announcement modes:
 
 - **ARP**: the NAT gateway uses ARP to advertise the EIPs attached to itself, this mode is always enabled
@@ -115,7 +115,7 @@ There are 2 announcement modes:
 
 When BGP is enabled on a `VpcNatGateway` a new BGP speaker sidecar gets injected to it. When the gateway is in BGP mode, the behaviour becomes cumulative with the **ARP** mode. This means that EIPs will be announced by **BGP** but also keep being advertised using traditional **ARP**.
 
-To add BGP capabilities to NAT gateways, we first need to create a new `NetworkAttachmentDefinition` that can be attached to our BGP speaker sidecars. This NAD will reference a provider shared by a `Subnet` in the default VPC (in which the Kubernetes API is running).  
+To add BGP capabilities to NAT gateways, we first need to create a new `NetworkAttachmentDefinition` that can be attached to our BGP speaker sidecars. This NAD will reference a provider shared by a `Subnet` in the default VPC (in which the Kubernetes API is running).
 This will enable the sidecar to reach the K8S API, automatically detecting new EIPs added to the gateway. This operation only needs to be done once.  All the NAT gateways will use this provider from now on. This is the same principle used for the CoreDNS in a custom VPC, which means you can reuse that NAD if you've already done that setup before.
 
 Create a `NetworkAttachmentDefinition` and a `Subnet` with the same `provider`.
@@ -160,7 +160,7 @@ data:
   image: docker.io/kubeovn/vpc-nat-gateway:v1.13.0
 ```
 
-Configure RBAC permissions for the NAT gateway to access the Kubernetes API. Apply the following RBAC configuration:  
+Configure RBAC permissions for the NAT gateway to access the Kubernetes API. Apply the following RBAC configuration:
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -286,14 +286,114 @@ is handled by a daemon such as `kube-proxy`. The annotation for Services only su
 - `passivemode`: The Speaker runs in Passive mode and does not actively connect to the peer.
 - `ebgp-multihop`: The TTL value of EBGP Peer, default is 1.
 - `allowed-source-addresses`: Comma-separated whitelist of source IPs. On startup, the speaker performs an `ip route get` lookup to the BGP peer and validates the kernel-selected source IP against the whitelist. If it doesn't match, the speaker refuses to start. Used in ECMP environments to ensure the correct source IP is used for route publishing.
+- `enable-bfd`: Enable the built-in BFD (Bidirectional Forwarding Detection) support in `kube-ovn-speaker`, default is `false`. See "Option 1: Built-in BFD in `kube-ovn-speaker`" below.
+- `bfd-min-tx`: Minimum transmit interval for the built-in BFD in `kube-ovn-speaker`, in milliseconds. Default is `1000` (1 second).
+- `bfd-min-rx`: Minimum receive interval for the built-in BFD in `kube-ovn-speaker`, in milliseconds. Default is `1000` (1 second).
+- `bfd-detection-multiplier`: Detection multiplier for the built-in BFD in `kube-ovn-speaker`, default is `3`. Failure detection time = `bfd-min-rx * bfd-detection-multiplier`.
 
 ## BFD Fast Failure Detection
 
 When BGP peers with upstream switches, BFD (Bidirectional Forwarding Detection) can be deployed for rapid link failure detection, enabling sub-second failover when combined with BGP ECMP.
 
-Kube-OVN provides an [openbfdd](https://github.com/authmillenon/openbfdd)-based BFD DaemonSet that establishes BFD sessions between BGP nodes and switch gateways. With the default configuration, failure detection time is `BFD_MULTI * max(BFD_MIN_TX, BFD_MIN_RX) = 3 * 1000ms = 3 seconds`. Tune the parameters for faster or more conservative detection.
+In Kube-OVN environments, BFD-related capabilities can be understood in two scenarios:
 
-> Note: OVN itself also supports BFD, which can be enabled on logical router ports via the `enableBfd` option. OVN BFD is managed automatically by the kube-ovn controller and is a separate mechanism from openbfdd. This section covers host-level BFD based on openbfdd.
+- **Scenario 1: Node host-network layer**. This is used to establish BFD sessions on the links between the Kubernetes node host network and physical L3 switches, together with BGP ECMP for high availability and load sharing.
+- **Scenario 2: Inside the VPC**. This corresponds to `OVN logical router BFD`, which is controlled by `VPC` CRD-related configuration, works at the VPC logical-router layer, and is managed automatically by the kube-ovn controller to enable BFD on links reachable inside the VPC.
+
+Overview:
+
+```mermaid
+flowchart TD
+    A[BFD-related capabilities] --> B[Scenario 1: Node host-network]
+    A --> C[Scenario 2: Inside the VPC]
+    B --> D[Option 1: Built-in BFD in kube-ovn-speaker]
+    B --> E[Option 2: openbfdd as an independent process]
+    C --> F[OVN logical router BFD]
+```
+
+The rest of this section focuses on the node host-network scenario. In this scenario, there are currently two integration options:
+
+- **Option 1: Built-in BFD in `kube-ovn-speaker`**. BFD sessions are maintained directly by GoBGP inside the speaker process, and are used to establish BFD on the node host network with physical L3 switches.
+- **Option 2: Independent `openbfdd` deployment**. A separate process-based BFD DaemonSet is deployed to establish BFD on the node host network with physical L3 switches.
+
+> Note: all three cases use the same BFD mechanism for fast failure detection. The difference is the network isolation domain and the link on which BFD is established. `OVN logical router BFD` works on links reachable inside the VPC; the two integration options described in this section work in the node host-network scenario, on the links between physical NICs and physical L3 switches, together with BGP ECMP for high availability and load sharing.
+
+### Option 1: Built-in BFD in `kube-ovn-speaker`
+
+`kube-ovn-speaker` supports fast failure detection through GoBGP's native BFD implementation ([RFC 5880](https://datatracker.ietf.org/doc/html/rfc5880) / [RFC 5881](https://datatracker.ietf.org/doc/html/rfc5881)).
+Use this option when you want to enable BFD directly in the existing BGP speaker process without deploying an additional standalone daemon. This option runs inside the GoBGP layer of `kube-ovn-speaker` and is used to establish BFD sessions on the node host network with physical L3 switches.
+
+#### Enabling BFD
+
+Add BFD-related arguments to the `kube-ovn-speaker` startup parameters:
+
+```yaml
+args:
+  - --enable-bfd=true
+  # Optional parameters, the following are default values
+  - --bfd-min-tx=1000
+  - --bfd-min-rx=1000
+  - --bfd-detection-multiplier=3
+```
+
+With the default parameters, the failure detection time is `1000ms × 3 = 3 seconds`.
+
+For faster failure detection, for example 300ms:
+
+```yaml
+args:
+  - --enable-bfd=true
+  - --bfd-min-tx=100
+  - --bfd-min-rx=100
+  - --bfd-detection-multiplier=3
+```
+
+#### Prerequisites
+
+- **The remote router must also have BFD enabled.** BFD is a bidirectional protocol; enabling it on only one side will not establish a BFD session.
+- Firewalls must allow UDP port `3784` for BFD control packets.
+- It is recommended to use conservative BFD timers. Overly aggressive timers may cause unnecessary BGP resets under CPU pressure or network jitter.
+
+#### Verifying BFD Status
+
+Use the `gobgp` command to check the BFD session status. JSON output is recommended:
+
+```bash
+gobgp -j neighbor <peer-address> | jq '{bfd_config: .bfd, bfd_state: .state.bfd_state}'
+```
+
+Example output:
+
+```json
+{
+  "bfd_config": {
+    "enabled": true,
+    "port": 3784,
+    "desired_minimum_tx_interval": 1000000,
+    "required_minimum_receive": 1000000,
+    "detection_multiplier": 3
+  },
+  "bfd_state": {
+    "session_state": 1,
+    "bfd_async": {
+      "transmitted_packets": 100,
+      "received_packets": 99
+    }
+  }
+}
+```
+
+The `session_state` values are: `1` = UP, `2` = DOWN, `3` = ADMIN_DOWN, `4` = INIT.
+
+#### Failure Behavior
+
+When a BFD session detects that the remote peer is unreachable, GoBGP immediately performs a hard reset of the corresponding BGP peer with the communication string `BFD is down`.
+Once the BGP session is torn down, routes are withdrawn, and the upstream router can quickly fail over to an alternate path.
+
+### Option 2: Independent `openbfdd` Deployment
+
+If you prefer to maintain BFD sessions independently on the host, rather than relying on the built-in implementation of `kube-ovn-speaker`, you can use the [openbfdd](https://github.com/authmillenon/openbfdd)-based BFD DaemonSet.
+This option runs as an independent process on the node host network and establishes BFD sessions between BGP nodes and physical L3 switch gateways. With the default configuration, the failure detection time is `BFD_MULTI * max(BFD_MIN_TX, BFD_MIN_RX) = 3 * 1000ms = 3 seconds`. Tune the parameters for faster or more conservative detection.
 
 The DaemonSet uses `hostNetwork: true` and contains three containers per pod:
 
@@ -329,7 +429,7 @@ Deploy the DaemonSet:
 kubectl apply -f bfdd-daemonset.yaml
 ```
 
-### BFD Debugging
+#### BFD Debugging
 
 ```bash
 # Check daemon status
@@ -361,7 +461,7 @@ kubectl logs -n kube-system ds/openbfdd -c init-peer
 
 ### OVN-level BFD Debugging
 
-OVN itself also supports BFD (managed by the kube-ovn controller). Use the following commands:
+OVN itself also supports BFD (managed by the kube-ovn controller), which is different from the two approaches above. Use the following commands:
 
 ```bash
 # List OVN BFD entries
