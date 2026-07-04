@@ -37,10 +37,11 @@ metadata:
   name: lb-svc-attachment
   namespace: kube-system
 spec:
+  # master corresponds to the node's physical NIC; adjust based on the actual environment (e.g., eth0 / ens192 / bond0)
   config: '{
       "cniVersion": "0.3.0",
       "type": "macvlan",
-      "master": "eth0",                            # Physical network card, configure according to the actual situation
+      "master": "eth0",
       "mode": "bridge"
     }'
 ```
