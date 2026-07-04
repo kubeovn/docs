@@ -150,7 +150,7 @@ round-trip min/avg/max = 0.223/1.028/2.558 ms
   - fromEndpoints:
     - matchLabels:
         app: dynamic
-        k8s:io.kubernetes.pod.namespace: default    // 控制其他 Namespace 下的 Pod 访问
+        k8s:io.kubernetes.pod.namespace: default    # 控制其他 Namespace 下的 Pod 访问
 ```
 
 查看修改后的 `CiliumNetworkPolicy` 资源信息:
