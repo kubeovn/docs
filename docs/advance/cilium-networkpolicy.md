@@ -84,7 +84,7 @@ dynamic-7d8d7874f5-6dsg6       1/1     Running   0          7h20m   10.16.0.2   
 dynamic-7d8d7874f5-tjgtp       1/1     Running   0          7h46m   10.16.0.42   kube-ovn-worker          <none>           <none>            app=dynamic,pod-template-hash=7d8d7874f5
 label-test1-77b6764857-swq4k   1/1     Running   0          3h43m   10.16.0.12   kube-ovn-worker          <none>           <none>            app=test1,pod-template-hash=77b6764857
 
-// 以下为测试访问目的 Pod
+# 以下为测试访问目的 Pod
 test-54c98bc466-mft5s          1/1     Running   0          8h      10.16.0.41   kube-ovn-worker          <none>           <none>            app=test,pod-template-hash=54c98bc466
 ```
 
