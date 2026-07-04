@@ -149,7 +149,7 @@ Refer to the document, modify the `CiliumNetworkPolicy` resource, and add namesp
   - fromEndpoints:
     - matchLabels:
         app: dynamic
-        k8s:io.kubernetes.pod.namespace: default    // control the Pod access in other namespace
+        k8s:io.kubernetes.pod.namespace: default    # control the Pod access in other namespace
         
 ```
 
