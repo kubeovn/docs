@@ -20,7 +20,7 @@ kind: Pod
 metadata:
   name: static-ip
   annotations:
-    ovn.kubernetes.io/ip_address: 10.16.0.15   // for dualstack use comma to separate addresses 10.16.0.15,fd00:10:16::000E
+    ovn.kubernetes.io/ip_address: 10.16.0.15   # for dualstack use comma to separate addresses 10.16.0.15,fd00:10:16::000E
     ovn.kubernetes.io/mac_address: 00:00:00:53:6B:B6
 spec:
   containers:
@@ -62,7 +62,7 @@ spec:
       labels:
         app: starter-backend
       annotations:
-        ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17 // for dualstack ippool use semicolon to separate addresses 10.16.0.15,fd00:10:16::000E;10.16.0.16,fd00:10:16::000F;10.16.0.17,fd00:10:16::0010
+        ovn.kubernetes.io/ip_pool: 10.16.0.15,10.16.0.16,10.16.0.17 # for dualstack ippool use semicolon to separate addresses 10.16.0.15,fd00:10:16::000E;10.16.0.16,fd00:10:16::000F;10.16.0.17,fd00:10:16::0010
     spec:
       containers:
       - name: backend

@@ -23,7 +23,7 @@ containers:
   - --default-cidr=10.16.0.0/16
   - --default-gateway=10.16.0.1
   - --default-gateway-check=true
-  - --enable-lb-svc=true                  // 参数设置为 true
+  - --enable-lb-svc=true                  # 参数设置为 true
 ```
 
 ### 创建 NetworkAttachmentDefinition CRD 资源
@@ -37,10 +37,11 @@ metadata:
   name: lb-svc-attachment
   namespace: kube-system
 spec:
+  # master 对应节点物理网卡，需按实际环境修改（如 eth0 / ens192 / bond0）
   config: '{
       "cniVersion": "0.3.0",
       "type": "macvlan",
-      "master": "eth0",                         //物理网卡，根据实际情况配置
+      "master": "eth0",
       "mode": "bridge"
     }'
 ```
