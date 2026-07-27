@@ -57,7 +57,7 @@ When using this script to upgrade Kube-OVN, please pay attention to the followin
 
 ## Helm Chart Installation
 
-Since the installation of Kube-OVN requires setting some parameters, to install Kube-OVN using Helm, you need to follow the steps below.
+You do not need to run the installation script before using Helm. The Helm chart provides a complete installation method for Kube-OVN. Before installing, review and configure the required Helm values for your cluster, then follow the steps below.
 
 ### View the node IP address
 
