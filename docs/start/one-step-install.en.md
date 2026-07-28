@@ -102,14 +102,21 @@ Update Complete. ⎈Happy Helming!⎈
 # helm search repo kubeovn
 NAME                    CHART VERSION   APP VERSION     DESCRIPTION
 kubeovn/kube-ovn        {{ variables.version }}        {{ variables.version }}         Helm chart for Kube-OVN
+kubeovn/kube-ovn-v2     {{ variables.version }}        {{ variables.version }}         Helm chart for Kube-OVN
 ```
+
+> Notice: The `kube-ovn` Helm chart has been deprecated. Please use the `kube-ovn-v2` Helm chart instead.
 
 ### Install Kube-OVN with Helm
 
 You can refer to the variable definitions in the `values.yaml` file for available parameters.
 
 ```bash
-# helm install kube-ovn kubeovn/kube-ovn --wait -n kube-system --version {{ variables.version }}
+# helm install kube-ovn oci://ghcr.io/kubeovn/charts/kube-ovn-v2 \
+  --wait \
+  --namespace kube-system \
+  --version {{ variables.version }}
+
 NAME: kube-ovn
 LAST DEPLOYED: Thu Apr 24 08:30:13 2025
 NAMESPACE: kube-system
