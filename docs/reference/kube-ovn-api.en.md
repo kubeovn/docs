@@ -732,6 +732,14 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | internalIPs | []String | List of internal IPs |
 | externalIPs | []String | List of external IPs |
 | trafficPolicy | String | Traffic policy |
+| bandwidth | BandwidthLimit | Optional. Per-replica ingress/egress bandwidth limit, expressed as integer Mbps or a supported bit-rate quantity |
+
+##### BandwidthLimit
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ingress | Int64 or String | Limit for traffic entering the VPC from the external network. Integers and numeric strings are Mbps; quantities use `M`, `Mi`, `G`, or `Gi` bits per second |
+| egress | Int64 or String | Limit for traffic leaving the VPC for the external network. Integers and numeric strings are Mbps; quantities use `M`, `Mi`, `G`, or `Gi` bits per second |
 
 ### VpcDns
 

@@ -732,6 +732,14 @@
 | internalIPs | []String | 内部 IP 列表 |
 | externalIPs | []String | 外部 IP 列表 |
 | trafficPolicy | String | 流量策略 |
+| bandwidth | BandwidthLimit | 可选，每个网关副本的入向/出向带宽限制，可使用整数 Mbps 或支持的 bit-rate quantity |
+
+##### BandwidthLimit
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ingress | Int64 或 String | 从外部网络进入 VPC 的流量限制；整数和纯数字字符串的单位为 Mbps，quantity 使用 `M`、`Mi`、`G` 或 `Gi` bit/s |
+| egress | Int64 或 String | 从 VPC 发往外部网络的流量限制；整数和纯数字字符串的单位为 Mbps，quantity 使用 `M`、`Mi`、`G` 或 `Gi` bit/s |
 
 ### VpcDns
 
