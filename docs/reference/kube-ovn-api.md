@@ -740,7 +740,7 @@
 | nodeSelector | []VpcEgressGatewayNodeSelector | 可选，工作负载节点选择器 |
 | tolerations | []Toleration | 可选，标准 Kubernetes 容忍配置 |
 | resources | ResourceRequirements | 可选，容器资源限制；未指定时控制器使用默认值 |
-| bandwidth | BandwidthLimit | 可选，每个网关实例的入向/出向带宽限速（Mbps） |
+| bandwidth | BandwidthLimit | 可选，每个网关副本的入向/出向带宽限制，可使用整数 Mbps 或支持的 bit-rate quantity |
 
 ##### VpcEgressGatewaySelector
 
@@ -778,8 +778,8 @@
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
-| ingress | Int64 | 入向带宽限速，单位 Mbps |
-| egress | Int64 | 出向带宽限速，单位 Mbps |
+| ingress | Int64 或 String | 从外部网络进入 VPC 的流量限制；整数和纯数字字符串的单位为 Mbps，quantity 使用 `M`、`Mi`、`G` 或 `Gi` bit/s |
+| egress | Int64 或 String | 从 VPC 发往外部网络的流量限制；整数和纯数字字符串的单位为 Mbps，quantity 使用 `M`、`Mi`、`G` 或 `Gi` bit/s |
 
 #### VpcEgressGatewayStatus
 

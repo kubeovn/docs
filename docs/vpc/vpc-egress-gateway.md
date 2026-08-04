@@ -405,6 +405,34 @@ Spec：
 | `selectors` | `object array` | 是 | - | 通过 Namespace Selector 以及 Pod Selector 配置 Egress 策略。匹配到的 Pod 将开启 SNAT/MASQUERADE。可与 `policies` 同时配置。 | - |
 | `nodeSelector` | `object array` | 是 | - | 工作负载的节点选择器，工作负载（Deployment/Pod）将运行在被选择的节点上。 | - |
 | `trafficPolicy` | `string` | 是 | `Cluster` | 可选值：`Cluster`/`Local`。**仅开启 BFD 时生效**。 设置为 `Local` 时，Egress 流量将优先导向同节点上的 VPC Egress Gateway 实例。若同节点上的 VPC Egress Gateway 实例出现故障，Egress 流量将导向其它实例。 | `Local` |
+| `bandwidth` | `object` | 是 | - | 每个网关副本的入向和出向带宽限制。 | - |
+| `bandwidth.ingress` | `integer 或 string` | 是 | - | 从外部网络进入 VPC 的流量限制。 | `1024` / `1Gi` |
+| `bandwidth.egress` | `integer 或 string` | 是 | - | 从 VPC 发往外部网络的流量限制。 | `1024` / `1Gi` |
+
+##### 带宽限制
+
+整数或纯数字字符串表示整数 Mbps 值。带有 `M`、`Mi`、`G` 或 `Gi` 后缀的 quantity 字符串表示 bit/s，并向上取整为整数 Mbps。例如，`100M`、`100Mi`、`1G` 和 `1Gi` 分别转换为 100、105、1000 和 1074 Mbps。
+
+带宽值必须为非负数，且不得超过 9223372036854 Mbps。空字符串、其它单位后缀、指数格式、负数、首尾含空白的值，以及没有单位后缀的小数均会被拒绝。省略 `ingress` 或 `egress` 表示对应方向不限速；空字符串不等同于省略字段。
+
+```yaml
+spec:
+  bandwidth:
+    ingress: 1024
+    egress: 1Gi
+```
+
+!!! warning "升级与降级兼容性"
+
+    升级后，0 到 9223372036854 范围内的现有整数值仍保持原有 Mbps 语义。在所有 Kube-OVN 组件完成升级，并确认 `vpc-egress-gateways.kubeovn.io` CRD 的两个带宽字段均包含 `x-kubernetes-int-or-string: true` 之前，请继续使用整数值。
+
+    Helm 不会更新 Chart 的 `crds/` 目录中的 CRD。使用 `kube-ovn-v2` Chart 升级时，请将 `KUBE_OVN_VERSION` 设置为待安装的准确 Kube-OVN 版本标签，并在使用字符串值之前显式应用匹配的 CRD bundle：
+
+    ```shell
+    kubectl apply -f "https://raw.githubusercontent.com/kubeovn/kube-ovn/${KUBE_OVN_VERSION}/charts/kube-ovn-v2/crds/kube-ovn-crd.yaml"
+    ```
+
+    降级到仅接受整数带宽字段的版本前，请将所有纯数字字符串或 quantity 字符串转换回对应的整数 Mbps 值。
 
 BFD 配置：
 
