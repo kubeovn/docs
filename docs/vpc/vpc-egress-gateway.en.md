@@ -412,7 +412,7 @@ Spec:
 
 An integer or a numeric string specifies an integer Mbps value. A quantity string with an `M`, `Mi`, `G`, or `Gi` suffix specifies bits per second and is rounded up to a whole Mbps value. For example, `100M`, `100Mi`, `1G`, and `1Gi` become 100, 105, 1000, and 1074 Mbps, respectively.
 
-Values must be non-negative and must not exceed 9223372036854 Mbps. Other suffixes, exponent notation, negative values, whitespace-padded values, and decimals without a suffix are rejected.
+Values must be non-negative and must not exceed 9223372036854 Mbps. Empty strings, other suffixes, exponent notation, negative values, whitespace-padded values, and decimals without a suffix are rejected. Omit `ingress` or `egress` to leave that direction unlimited; an empty string is not equivalent to an omitted field.
 
 ```yaml
 spec:
