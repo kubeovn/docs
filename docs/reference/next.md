@@ -20,6 +20,7 @@ This document lists the features merged into the master branch for the next mino
   - Allow any EIP to share external subnet gateway in one native VLAN. [#6426](https://github.com/kubeovn/kube-ovn/pull/6426)
 - VPC Egress Gateway
   - Support custom resources and bandwidth limits. [#6407](https://github.com/kubeovn/kube-ovn/pull/6407)
+  - Accept integer Mbps values and `M`, `Mi`, `G`, or `Gi` bit-rate quantities for per-replica bandwidth limits. [#7123](https://github.com/kubeovn/kube-ovn/pull/7123)
 - Interconnection
   - Add vendor ID to transit switches to avoid conflicts with other OVN controllers. [#6186](https://github.com/kubeovn/kube-ovn/pull/6186)
 - Reliability
