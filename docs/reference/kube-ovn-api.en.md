@@ -740,7 +740,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | nodeSelector | []VpcEgressGatewayNodeSelector | Optional. Node selector for the workload |
 | tolerations | []Toleration | Optional. Standard Kubernetes tolerations |
 | resources | ResourceRequirements | Optional. Container resource limits; the controller uses defaults when unspecified |
-| bandwidth | BandwidthLimit | Optional. Per-replica ingress/egress bandwidth limit (in Mbps) |
+| bandwidth | BandwidthLimit | Optional. Per-replica ingress/egress bandwidth limit, expressed as integer Mbps or a supported bit-rate quantity |
 
 ##### VpcEgressGatewaySelector
 
@@ -778,8 +778,8 @@ In each CRD definition, the Condition field in Status follows the above format, 
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| ingress | Int64 | Ingress bandwidth limit, in Mbps |
-| egress | Int64 | Egress bandwidth limit, in Mbps |
+| ingress | Int64 or String | Limit for traffic entering the VPC from the external network. Integers and numeric strings are Mbps; quantities use `M`, `Mi`, `G`, or `Gi` bits per second |
+| egress | Int64 or String | Limit for traffic leaving the VPC for the external network. Integers and numeric strings are Mbps; quantities use `M`, `Mi`, `G`, or `Gi` bits per second |
 
 #### VpcEgressGatewayStatus
 

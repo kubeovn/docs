@@ -404,6 +404,34 @@ Spec:
 | `selectors` | `object array` | Yes | - | Configure Egress policies by namespace selectors and Pod selectors. SNAT/MASQUERADE will be applied to the matched Pods. Configurable when `policies` is configured. | - |
 | `nodeSelector` | `object array` | Yes | - | Node selector applied to the workload. The workload (Deployment/Pod) will run on the selected nodes. | - |
 | `trafficPolicy` | `string` | Yes | `Cluster` | Available values: `Cluster`/`Local`. **Effective only when BFD is enabled**. When set to `Local`, Egress traffic will be redirected to the VPC Egress Gateway instance running on the same node if available. If the instance is down, Egress traffic will be redirected to other instances. | `Local` |
+| `bandwidth` | `object` | Yes | - | Per-replica ingress and egress bandwidth limits. | - |
+| `bandwidth.ingress` | `integer or string` | Yes | - | Limit for traffic entering the VPC from the external network. | `1024` / `1Gi` |
+| `bandwidth.egress` | `integer or string` | Yes | - | Limit for traffic leaving the VPC for the external network. | `1024` / `1Gi` |
+
+##### Bandwidth Limits
+
+An integer or a numeric string specifies an integer Mbps value. A quantity string with an `M`, `Mi`, `G`, or `Gi` suffix specifies bits per second and is rounded up to a whole Mbps value. For example, `100M`, `100Mi`, `1G`, and `1Gi` become 100, 105, 1000, and 1074 Mbps, respectively.
+
+Values must be non-negative and must not exceed 9223372036854 Mbps. Empty strings, other suffixes, exponent notation, negative values, whitespace-padded values, and decimals without a suffix are rejected. Omit `ingress` or `egress` to leave that direction unlimited; an empty string is not equivalent to an omitted field.
+
+```yaml
+spec:
+  bandwidth:
+    ingress: 1024
+    egress: 1Gi
+```
+
+!!! warning "Upgrade and downgrade compatibility"
+
+    Existing integer values from 0 through 9223372036854 retain their Mbps meaning after an upgrade. Keep using integer values until every Kube-OVN component has been upgraded and the `vpc-egress-gateways.kubeovn.io` CRD contains `x-kubernetes-int-or-string: true` for both bandwidth fields.
+
+    Helm does not update CRDs stored in a chart's `crds/` directory. When upgrading with the `kube-ovn-v2` chart, set `KUBE_OVN_VERSION` to the exact Kube-OVN release tag being installed and explicitly apply its matching CRD bundle before using string values:
+
+    ```shell
+    kubectl apply -f "https://raw.githubusercontent.com/kubeovn/kube-ovn/${KUBE_OVN_VERSION}/charts/kube-ovn-v2/crds/kube-ovn-crd.yaml"
+    ```
+
+    Before downgrading to a version that only accepts integer bandwidth fields, convert every numeric or quantity string back to its integer Mbps value.
 
 BFD Configuration:
 
