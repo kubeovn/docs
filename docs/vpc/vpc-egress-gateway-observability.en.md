@@ -6,7 +6,7 @@ VPC Egress Gateway can run one native observability sidecar in every gateway Pod
 
 - Kubernetes 1.29 or later is required because the observer uses a [restartable init container](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/). If the Kubernetes version is older or cannot be discovered, the controller does not inject the observer and sets `ObservabilityConfigured=False`; the gateway data plane continues to reconcile normally.
 - Upgrade the `vpc-egress-gateways.kubeovn.io` CRD explicitly before creating resources that use `spec.observability`. Helm does not upgrade CRDs that are already installed automatically. Apply the CRD delivered with the same Kube-OVN version, using your normal CRD upgrade procedure.
-- Conntrack collection requires `NET_ADMIN` in the gateway Pod network namespace. The observer runs as UID and GID 65534, drops all other capabilities, disallows privilege escalation, and uses a read-only root filesystem. The observer binary has no file capability.
+- Conntrack collection requires `NET_ADMIN` in the gateway Pod network namespace. The official observer binary carries only the `CAP_NET_ADMIN` file capability, while the generated container security context admits only `NET_ADMIN` into the capability bounding set. `allowPrivilegeEscalation` is enabled so that this trusted file capability survives the non-root launcher `exec`; the observer still runs as UID and GID 65534, drops all other capabilities, and uses a read-only root filesystem.
 - Prometheus Operator is optional. The gateway works without the ServiceMonitor CRD.
 
 ## Enabling Observability
@@ -64,7 +64,7 @@ The controller stores the runtime configuration in a per-gateway ConfigMap. Coll
 - changing `observability.resources`;
 - changing the gateway workload image.
 
-If an explicitly selected older workload image does not contain `/kube-ovn/vpc-egress-gateway-observer`, the launcher runs `sleep infinity` instead, so the missing binary does not block the data plane.
+If an explicitly selected older workload image does not contain `/kube-ovn/vpc-egress-gateway-observer`, the launcher runs `sleep infinity` instead, so the missing binary does not block the data plane. A custom image that does contain the observer must preserve its `CAP_NET_ADMIN` file capability; otherwise, interface metrics remain available but conntrack metrics and flow logs report collector errors.
 
 ## Metrics
 
