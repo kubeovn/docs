@@ -20,6 +20,8 @@
 
 VPC Egress Gateway also supports establishing dynamic routing with external networks through BGP and EVPN/VXLAN. For details, refer to [Egress Gateway BGP/EVPN Support](./vpc-egress-gateway-bgp-evpn.en.md).
 
+For interface metrics, conntrack NAT metrics, and JSON flow logs, refer to [VPC Egress Gateway Observability](./vpc-egress-gateway-observability.en.md).
+
 At the same time, VPC Egress Gateway has the following limitations:
 
 - Uses macvlan for underlying network connectivity, requiring [Underlay support](../start/underlay.en.md#environment-requirements) from the underlying network
