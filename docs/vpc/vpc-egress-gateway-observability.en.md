@@ -71,6 +71,8 @@ If an explicitly selected older workload image does not contain `/kube-ovn/vpc-e
 
 The observer serves `/metrics` and `/healthz` on TCP port `10666`. It uses a private Prometheus registry and does not expose `go_*`, `process_*`, or `promhttp_*` metrics. Every metric includes the identity labels `namespace`, `name`, `pod`, and `node`.
 
+For a gateway in the default VPC, kubelet checks `/healthz` with an HTTP liveness probe. For a gateway in a custom VPC, the liveness probe executes the observer binary inside the container and checks the same endpoint over loopback. This avoids making observer health depend on node-to-Pod reachability into the custom VPC.
+
 ### Interface Metrics
 
 Interface metrics are read from `/proc/net/dev` on every scrape. The observer resolves the primary interface and the external Multus interface from the Pod `network-status` annotation on the first successful scrape and caches those names for the lifetime of the process.
