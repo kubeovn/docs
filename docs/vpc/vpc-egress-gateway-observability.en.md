@@ -4,7 +4,7 @@ VPC Egress Gateway can run one native observability sidecar in every gateway Pod
 
 ## Requirements and Upgrade Notes
 
-- Kubernetes 1.29 or later with the `SidecarContainers` feature enabled is required because the observer uses a [restartable init container](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/). The controller performs a server-side dry-run with a zero-replica Deployment and verifies that the API server preserves the restartable-init policy. If the version is too old, the feature is disabled, or the capability cannot be verified, the controller does not inject the observer and sets `ObservabilityConfigured=False`; the gateway data plane continues to reconcile normally. Transient capability-probe errors are retried.
+- Kubernetes 1.29 or later with the `SidecarContainers` feature enabled is required because the observer uses a [restartable init container](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/). The controller performs a server-side dry-run with a zero-replica Deployment and verifies that the API server preserves the restartable-init policy. If the version is too old or the feature is disabled, the controller does not inject the observer and sets `ObservabilityConfigured=False`; the gateway data plane continues to reconcile normally. Transient capability-probe errors are retried, and an existing observer remains in its last-known-good configuration while the capability cannot be verified.
 - Upgrade the `vpc-egress-gateways.kubeovn.io` CRD explicitly before creating resources that use `spec.observability`. Helm does not upgrade CRDs that are already installed automatically. Apply the CRD delivered with the same Kube-OVN version, using your normal CRD upgrade procedure.
 - Conntrack collection requires `NET_ADMIN` in the gateway Pod network namespace. The official observer binary carries only the `CAP_NET_ADMIN` file capability, while the generated container security context admits only `NET_ADMIN` into the capability bounding set. `allowPrivilegeEscalation` is enabled so that this trusted file capability survives the non-root launcher `exec`; the observer still runs as UID and GID 65534, drops all other capabilities, and uses a read-only root filesystem.
 - Prometheus Operator is optional. The gateway works without the ServiceMonitor CRD.
@@ -65,13 +65,15 @@ The controller stores the runtime configuration in a per-gateway ConfigMap. Coll
 - changing `observability.resources`;
 - changing the gateway workload image.
 
+If the capability probe or a ConfigMap or Service update fails transiently, the controller reports the observability condition and keeps the existing observer container, volumes, and auxiliary resources. Data-plane reconciliation continues without replacing a last-known-good gateway Pod because of an observability-only failure.
+
 If an explicitly selected older workload image does not contain `/kube-ovn/vpc-egress-gateway-observer`, the launcher runs `sleep infinity` instead, so the missing binary does not block the data plane. A custom image that does contain the observer must preserve its `CAP_NET_ADMIN` file capability; otherwise, interface metrics remain available but conntrack metrics and flow logs report collector errors.
 
 ## Metrics
 
 The observer serves `/metrics` and `/healthz` on TCP port `10666`. It uses a private Prometheus registry and does not expose `go_*`, `process_*`, or `promhttp_*` metrics. Every metric includes the identity labels `namespace`, `name`, `pod`, and `node`.
 
-For a gateway in the default VPC, kubelet checks `/healthz` with an HTTP liveness probe. For a gateway in a custom VPC, the liveness probe executes the observer binary inside the container and checks the same endpoint over loopback. This avoids making observer health depend on node-to-Pod reachability into the custom VPC.
+For every gateway, the liveness probe executes the observer binary inside the container and checks `/healthz` over loopback. This keeps observer health independent of node-to-Pod reachability and lets the probe succeed when an older workload image uses the `sleep infinity` fallback because it does not contain the observer binary.
 
 ### Interface Metrics
 
