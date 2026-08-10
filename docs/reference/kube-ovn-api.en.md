@@ -819,15 +819,15 @@ Kubernetes 1.29 or later is required. For runtime behavior, metrics, flow-log sc
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| recordsPerSecond | Int32 | Sustained records per second. Defaults to 100 |
-| burst | Int32 | Maximum burst. Defaults to 1000 |
+| recordsPerSecond | Int32 | Sustained records per second, from 1 through 100000. Defaults to 100 |
+| burst | Int32 | Maximum burst, from 1 through 1000000. Defaults to 1000 |
 
 ##### VpcEgressGatewayConntrackLogFilters
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| include | []VpcEgressGatewayConntrackLogFilter | Optional include rules. An empty list includes every NAT flow |
-| exclude | []VpcEgressGatewayConntrackLogFilter | Optional exclude rules. Exclude matches take precedence |
+| include | []VpcEgressGatewayConntrackLogFilter | Optional include rules, with at most 64 entries. An empty list includes every NAT flow |
+| exclude | []VpcEgressGatewayConntrackLogFilter | Optional exclude rules, with at most 64 entries. Exclude matches take precedence |
 
 ##### VpcEgressGatewayConntrackLogFilter
 
@@ -845,10 +845,10 @@ Configured fields in one rule are ANDed; values within a field and rules within 
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| sourceCIDRs | []String | Optional source CIDRs |
-| destinationCIDRs | []String | Optional destination CIDRs |
-| sourcePorts | []VpcEgressGatewayPortRange | Optional inclusive source-port ranges |
-| destinationPorts | []VpcEgressGatewayPortRange | Optional inclusive destination-port ranges |
+| sourceCIDRs | []String | Optional source CIDRs, with at most 64 entries |
+| destinationCIDRs | []String | Optional destination CIDRs, with at most 64 entries |
+| sourcePorts | []VpcEgressGatewayPortRange | Optional inclusive source-port ranges, with at most 64 entries |
+| destinationPorts | []VpcEgressGatewayPortRange | Optional inclusive destination-port ranges, with at most 64 entries |
 
 ##### VpcEgressGatewayPortRange
 

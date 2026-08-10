@@ -4,7 +4,7 @@ VPC Egress Gateway can run one native observability sidecar in every gateway Pod
 
 ## Requirements and Upgrade Notes
 
-- Kubernetes 1.29 or later with the `SidecarContainers` feature enabled is required because the observer uses a [restartable init container](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/). The controller performs a server-side dry-run with a zero-replica Deployment and verifies that the API server preserves the restartable-init policy. If the version is too old or the feature is disabled, the controller does not inject the observer and sets `ObservabilityConfigured=False`; the gateway data plane continues to reconcile normally. Transient capability-probe errors are retried, and an existing observer remains in its last-known-good configuration while the capability cannot be verified.
+- Kubernetes 1.29 or later with the `SidecarContainers` feature enabled is required because the observer uses a [restartable init container](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/){: target="_blank" }. The controller performs a server-side dry-run with a zero-replica Deployment and verifies that the API server preserves the restartable-init policy. If the version is too old or the feature is disabled, the controller does not inject the observer and sets `ObservabilityConfigured=False`; the gateway data plane continues to reconcile normally. Transient capability-probe errors are retried, and an existing observer remains in its last-known-good configuration while the capability cannot be verified.
 - Upgrade the `vpc-egress-gateways.kubeovn.io` CRD explicitly before creating resources that use `spec.observability`. Helm does not upgrade CRDs that are already installed automatically. Apply the CRD delivered with the same Kube-OVN version, using your normal CRD upgrade procedure.
 - Conntrack collection requires `NET_ADMIN` in the gateway Pod network namespace. The official observer binary carries only the `CAP_NET_ADMIN` file capability, while the generated container security context admits only `NET_ADMIN` into the capability bounding set. `allowPrivilegeEscalation` is enabled so that this trusted file capability survives the non-root launcher `exec`; the observer still runs as UID and GID 65534, drops all other capabilities, and uses a read-only root filesystem.
 - Prometheus Operator is optional. The gateway works without the ServiceMonitor CRD.
@@ -116,7 +116,7 @@ If the ServiceMonitor CRD is absent, the controller sets `ServiceMonitorReady=Fa
 
 Flow logs are JSON Lines written only to the `observability` container standard output. Diagnostics are written to standard error. Read the records with:
 
-```shell
+```bash
 kubectl logs -n default <gateway-pod> -c observability
 ```
 
