@@ -741,6 +741,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | tolerations | []Toleration | Optional. Standard Kubernetes tolerations |
 | resources | ResourceRequirements | Optional. Container resource limits; the controller uses defaults when unspecified |
 | bandwidth | BandwidthLimit | Optional. Per-replica ingress/egress bandwidth limit, expressed as integer Mbps or a supported bit-rate quantity |
+| observability | VpcEgressGatewayObservability | Optional. Native interface metrics, conntrack metrics, JSON flow logs, and ServiceMonitor metadata. All capabilities default to disabled |
 
 ##### VpcEgressGatewaySelector
 
@@ -780,6 +781,88 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | --- | --- | --- |
 | ingress | Int64 or String | Limit for traffic entering the VPC from the external network. Integers and numeric strings are Mbps; quantities use `M`, `Mi`, `G`, or `Gi` bits per second |
 | egress | Int64 or String | Limit for traffic leaving the VPC for the external network. Integers and numeric strings are Mbps; quantities use `M`, `Mi`, `G`, or `Gi` bits per second |
+
+##### VpcEgressGatewayObservability
+
+Kubernetes 1.29 or later is required. For runtime behavior, metrics, flow-log schema, and operational limits, see [VPC Egress Gateway Observability](../vpc/vpc-egress-gateway-observability.en.md).
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| resources | ResourceRequirements | Optional. Observer sidecar resources. Defaults to requests of `20m` CPU and `64Mi` memory and limits of `200m` CPU and `256Mi` memory |
+| interfaceMetrics | VpcEgressGatewayObservabilityFeature | Interface metrics collector configuration |
+| conntrack | VpcEgressGatewayConntrackObservability | Conntrack metrics and flow-log configuration |
+| serviceMonitor | VpcEgressGatewayServiceMonitor | Metadata merged into the per-gateway ServiceMonitor |
+
+##### VpcEgressGatewayObservabilityFeature
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| enabled | Boolean | Whether the feature is enabled. Defaults to false |
+
+##### VpcEgressGatewayConntrackObservability
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| metrics | VpcEgressGatewayObservabilityFeature | Low-cardinality NAT conntrack metrics configuration |
+| log | VpcEgressGatewayConntrackLog | JSON Lines NAT flow-log configuration |
+
+##### VpcEgressGatewayConntrackLog
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| enabled | Boolean | Whether JSON flow logging to the observer container standard output is enabled. Defaults to false |
+| events | []String | Optional. Lifecycle events to emit: `start` and/or `end`. Both are emitted when omitted |
+| rateLimit | VpcEgressGatewayConntrackLogRateLimit | Per-Pod flow-log rate limit |
+| filters | VpcEgressGatewayConntrackLogFilters | Optional include and exclude rules |
+
+##### VpcEgressGatewayConntrackLogRateLimit
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| recordsPerSecond | Int32 | Sustained records per second, from 1 through 100000. Defaults to 100 |
+| burst | Int32 | Maximum burst, from 1 through 1000000. Defaults to 1000 |
+
+##### VpcEgressGatewayConntrackLogFilters
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| include | []VpcEgressGatewayConntrackLogFilter | Optional include rules, with at most 64 entries. An empty list includes every NAT flow |
+| exclude | []VpcEgressGatewayConntrackLogFilter | Optional exclude rules, with at most 64 entries. Exclude matches take precedence |
+
+##### VpcEgressGatewayConntrackLogFilter
+
+Configured fields in one rule are ANDed; values within a field and rules within one list are ORed.
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| addressFamilies | []String | Optional. `ipv4` and/or `ipv6` |
+| protocols | []String | Optional. `tcp`, `udp`, `sctp`, `icmp`, `icmpv6`, and/or `other` |
+| natTypes | []String | Optional. `snat`, `dnat`, and/or `snat_dnat` |
+| original | VpcEgressGatewayConntrackTupleFilter | Original tuple match |
+| translated | VpcEgressGatewayConntrackTupleFilter | Translated tuple match |
+
+##### VpcEgressGatewayConntrackTupleFilter
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| sourceCIDRs | []String | Optional source CIDRs, with at most 64 entries |
+| destinationCIDRs | []String | Optional destination CIDRs, with at most 64 entries |
+| sourcePorts | []VpcEgressGatewayPortRange | Optional inclusive source-port ranges, with at most 64 entries |
+| destinationPorts | []VpcEgressGatewayPortRange | Optional inclusive destination-port ranges, with at most 64 entries |
+
+##### VpcEgressGatewayPortRange
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| start | Int32 | Inclusive first port, from 0 through 65535 |
+| end | Int32 | Inclusive last port, from `start` through 65535 |
+
+##### VpcEgressGatewayServiceMonitor
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| labels | map[String]String | Optional ServiceMonitor labels. Controller-required selector labels cannot be overridden |
+| annotations | map[String]String | Optional ServiceMonitor annotations |
 
 #### VpcEgressGatewayStatus
 

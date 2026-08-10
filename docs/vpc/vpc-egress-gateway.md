@@ -20,6 +20,8 @@ VPC Egress Gateway 用于控制 VPC（包括默认 VPC）内 Pod 使用一组固
 
 VPC Egress Gateway 还支持通过 BGP 和 EVPN/VXLAN 与外部网络建立动态路由，详情请参考 [Egress Gateway BGP/EVPN 支持](./vpc-egress-gateway-bgp-evpn.md)。
 
+如需使用网卡指标、conntrack NAT 指标和 JSON 流日志，请参考 [VPC Egress Gateway 可观测性](./vpc-egress-gateway-observability.md)。
+
 同时 VPC Egress Gateway 具有如下限制：
 
 - 使用 Macvlan 实现底层网络打通，需要底层网络[支持 Underlay](../start/underlay.md#_2)

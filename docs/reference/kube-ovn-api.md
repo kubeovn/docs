@@ -741,6 +741,7 @@
 | tolerations | []Toleration | 可选，标准 Kubernetes 容忍配置 |
 | resources | ResourceRequirements | 可选，容器资源限制；未指定时控制器使用默认值 |
 | bandwidth | BandwidthLimit | 可选，每个网关副本的入向/出向带宽限制，可使用整数 Mbps 或支持的 bit-rate quantity |
+| observability | VpcEgressGatewayObservability | 可选，原生网卡指标、conntrack 指标、JSON 流日志和 ServiceMonitor 元数据；所有功能默认禁用 |
 
 ##### VpcEgressGatewaySelector
 
@@ -780,6 +781,88 @@
 | --- | --- | --- |
 | ingress | Int64 或 String | 从外部网络进入 VPC 的流量限制；整数和纯数字字符串的单位为 Mbps，quantity 使用 `M`、`Mi`、`G` 或 `Gi` bit/s |
 | egress | Int64 或 String | 从 VPC 发往外部网络的流量限制；整数和纯数字字符串的单位为 Mbps，quantity 使用 `M`、`Mi`、`G` 或 `Gi` bit/s |
+
+##### VpcEgressGatewayObservability
+
+需要 Kubernetes 1.29 或更高版本。有关运行时行为、指标、流日志 schema 和运行限制，请参考 [VPC Egress Gateway 可观测性](../vpc/vpc-egress-gateway-observability.md)。
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| resources | ResourceRequirements | 可选，observer sidecar 资源；默认 request 为 `20m` CPU 和 `64Mi` 内存，limit 为 `200m` CPU 和 `256Mi` 内存 |
+| interfaceMetrics | VpcEgressGatewayObservabilityFeature | 网卡指标采集器配置 |
+| conntrack | VpcEgressGatewayConntrackObservability | conntrack 指标和流日志配置 |
+| serviceMonitor | VpcEgressGatewayServiceMonitor | 合并到每个网关 ServiceMonitor 的元数据 |
+
+##### VpcEgressGatewayObservabilityFeature
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| enabled | Boolean | 是否启用该功能，默认 false |
+
+##### VpcEgressGatewayConntrackObservability
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| metrics | VpcEgressGatewayObservabilityFeature | 低基数 NAT conntrack 指标配置 |
+| log | VpcEgressGatewayConntrackLog | JSON Lines NAT 流日志配置 |
+
+##### VpcEgressGatewayConntrackLog
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| enabled | Boolean | 是否把 JSON 流日志写入 observer 容器标准输出，默认 false |
+| events | []String | 可选，要输出的生命周期事件：`start` 和/或 `end`；省略时输出两者 |
+| rateLimit | VpcEgressGatewayConntrackLogRateLimit | 每个 Pod 的流日志限速 |
+| filters | VpcEgressGatewayConntrackLogFilters | 可选，include 和 exclude 规则 |
+
+##### VpcEgressGatewayConntrackLogRateLimit
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| recordsPerSecond | Int32 | 每秒持续记录数，范围为 1 至 100000，默认 100 |
+| burst | Int32 | 最大突发记录数，范围为 1 至 1000000，默认 1000 |
+
+##### VpcEgressGatewayConntrackLogFilters
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| include | []VpcEgressGatewayConntrackLogFilter | 可选，最多 64 条 include 规则；空列表包含所有 NAT 流 |
+| exclude | []VpcEgressGatewayConntrackLogFilter | 可选，最多 64 条 exclude 规则；exclude 匹配优先 |
+
+##### VpcEgressGatewayConntrackLogFilter
+
+同一规则内已配置的字段按 AND 组合；同一字段内的值以及同一列表内的规则按 OR 组合。
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| addressFamilies | []String | 可选，`ipv4` 和/或 `ipv6` |
+| protocols | []String | 可选，`tcp`、`udp`、`sctp`、`icmp`、`icmpv6` 和/或 `other` |
+| natTypes | []String | 可选，`snat`、`dnat` 和/或 `snat_dnat` |
+| original | VpcEgressGatewayConntrackTupleFilter | 原始 tuple 匹配 |
+| translated | VpcEgressGatewayConntrackTupleFilter | 转换后 tuple 匹配 |
+
+##### VpcEgressGatewayConntrackTupleFilter
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| sourceCIDRs | []String | 可选，源 CIDR，最多 64 项 |
+| destinationCIDRs | []String | 可选，目标 CIDR，最多 64 项 |
+| sourcePorts | []VpcEgressGatewayPortRange | 可选，包含边界的源端口范围，最多 64 项 |
+| destinationPorts | []VpcEgressGatewayPortRange | 可选，包含边界的目标端口范围，最多 64 项 |
+
+##### VpcEgressGatewayPortRange
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| start | Int32 | 包含边界的起始端口，范围为 0 至 65535 |
+| end | Int32 | 包含边界的结束端口，范围为 `start` 至 65535 |
+
+##### VpcEgressGatewayServiceMonitor
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| labels | map[String]String | 可选，ServiceMonitor 标签；不能覆盖控制器必需的 selector 标签 |
+| annotations | map[String]String | 可选，ServiceMonitor annotations |
 
 #### VpcEgressGatewayStatus
 
