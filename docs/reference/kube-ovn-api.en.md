@@ -733,6 +733,8 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | externalSubnet | String | Required. Name of the external subnet |
 | internalIPs | []String | Optional. List of internal IPs (must be no fewer than the replica count; in dual-stack mode, each entry takes the form `v4,v6`) |
 | externalIPs | []String | Optional. List of external IPs (must be no fewer than the replica count; in dual-stack mode, each entry takes the form `v4,v6`) |
+| internalIPPool | String | Optional. Name of an `IPPool` used to allocate internal addresses. Its subnet must match `internalSubnet`; mutually exclusive with `internalIPs` |
+| externalIPPool | String | Optional. Name of an `IPPool` used to allocate external addresses. Its subnet must match `externalSubnet`; mutually exclusive with `externalIPs` |
 | selectors | []VpcEgressGatewaySelector | Namespace/Pod selectors that pick the traffic sources handled by this gateway |
 | trafficPolicy | String | Optional. Traffic policy, `Cluster` (default) or `Local`; only effective for the default VPC |
 | bfd | VpcEgressGatewayBFDConfig | BFD configuration |
