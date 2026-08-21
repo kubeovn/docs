@@ -264,6 +264,17 @@ spec:
         kubernetes.io/hostname: kube-ovn-worker
 ```
 
+除了直接填写 IP 地址外，也可以通过 `internalIPPool` 和
+`externalIPPool` 引用命名的 `IPPool` 资源。IPPool 的子网必须分别与
+`internalSubnet` 和 `externalSubnet` 匹配，且两个字段分别不能与
+`internalIPs` 和 `externalIPs` 同时设置：
+
+```yaml
+spec:
+  internalIPPool: veg-internal
+  externalIPPool: veg-external
+```
+
 ### 开启 BFD 高可用
 
 BFD 高可用依赖 VPC 的 BFD LRP 功能，因此需要先修改 VPC 资源，开启 BFD Port。示例如下：
@@ -401,6 +412,8 @@ Spec：
 | `externalSubnet` | `string` | 否 | - | 接入外部网络的子网名称。 | `ext1` |
 | `internalIPs` | `string array` | 是 | - | 接入 VPC 网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
 | `externalIPs` | `string array` | 是 | - | 接入外部网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
+| `internalIPPool` | `string` | 是 | - | 用于分配内部地址的 `IPPool` 名称。IPPool 子网必须与 `internalSubnet` 匹配，且不能与 `internalIPs` 同时设置。 | `veg-internal` |
+| `externalIPPool` | `string` | 是 | - | 用于分配外部地址的 `IPPool` 名称。IPPool 子网必须与 `externalSubnet` 匹配，且不能与 `externalIPs` 同时设置。 | `veg-external` |
 | `bfd` | `object` | 是 | - | BFD 配置。 | - |
 | `policies` | `object array` | 是 | - | Egress 策略。可与 `selectors` 同时配置。 | - |
 | `selectors` | `object array` | 是 | - | 通过 Namespace Selector 以及 Pod Selector 配置 Egress 策略。匹配到的 Pod 将开启 SNAT/MASQUERADE。可与 `policies` 同时配置。 | - |
