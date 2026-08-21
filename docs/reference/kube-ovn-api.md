@@ -733,6 +733,8 @@
 | externalSubnet | String | 必填，外部子网名称 |
 | internalIPs | []String | 可选，内部 IP 列表（数量不少于副本数；双栈时元素为 `v4,v6` 形式） |
 | externalIPs | []String | 可选，外部 IP 列表（数量不少于副本数；双栈时元素为 `v4,v6` 形式） |
+| internalIPPool | String | 可选，用于分配内部地址的 `IPPool` 名称；其子网必须与 `internalSubnet` 匹配，且不能与 `internalIPs` 同时设置 |
+| externalIPPool | String | 可选，用于分配外部地址的 `IPPool` 名称；其子网必须与 `externalSubnet` 匹配，且不能与 `externalIPs` 同时设置 |
 | selectors | []VpcEgressGatewaySelector | 命名空间/Pod 选择器，用于选择由该网关承载的流量来源 |
 | trafficPolicy | String | 可选，流量策略，`Cluster`（默认）或 `Local`，仅默认 VPC 生效 |
 | bfd | VpcEgressGatewayBFDConfig | BFD 配置 |

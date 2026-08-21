@@ -262,6 +262,17 @@ spec:
         kubernetes.io/hostname: kube-ovn-worker
 ```
 
+Instead of listing literal addresses, you can reference named `IPPool`
+resources with `internalIPPool` and `externalIPPool`. Each pool must belong to
+the corresponding subnet, and the pool fields are mutually exclusive with
+`internalIPs` and `externalIPs` respectively:
+
+```yaml
+spec:
+  internalIPPool: veg-internal
+  externalIPPool: veg-external
+```
+
 ### Enabling BFD-based High Availability
 
 BFD-based high availability relies on the VPC BFD LRP function, so you need to modify the VPC resource to enable BFD Port. Here is an example:
@@ -400,6 +411,8 @@ Spec:
 | `externalSubnet` | `string` | No | - | Name of the subnet used to access the external network. | `ext1` |
 | `internalIPs` | `string array` | Yes | - | IP addresses used for accessing the VPC network. IPv4, IPv6 and dual-stack are supported. The number of IPs specified must NOT be less than `replicas`. It is recommended to set the number to `<replicas> + 1` to avoid extreme cases where the Pod is not created properly. | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
 | `externalIPs` | `string array` | Yes | - | IP addresses used for accessing the external network. IPv4, IPv6 and dual-stack are supported. The number of IPs specified must NOT be less than `replicas`. It is recommended to set the number to `<replicas> + 1` to avoid extreme cases where the Pod is not created properly. | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
+| `internalIPPool` | `string` | Yes | - | Name of an `IPPool` used to allocate internal addresses. The pool subnet must match `internalSubnet`; mutually exclusive with `internalIPs`. | `veg-internal` |
+| `externalIPPool` | `string` | Yes | - | Name of an `IPPool` used to allocate external addresses. The pool subnet must match `externalSubnet`; mutually exclusive with `externalIPs`. | `veg-external` |
 | `bfd` | `object` | Yes | - | BFD Configuration. | - |
 | `policies` | `object array` | Yes | - | Egress policies. Configurable when `selectors` is configured. | - |
 | `selectors` | `object array` | Yes | - | Configure Egress policies by namespace selectors and Pod selectors. SNAT/MASQUERADE will be applied to the matched Pods. Configurable when `policies` is configured. | - |
