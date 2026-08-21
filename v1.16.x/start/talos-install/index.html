@@ -24,9 +24,9 @@
 <span class=w>    </span>--set<span class=w> </span>networking.vlan.VLAN_INTERFACE_NAME<span class=o>=</span>enp0s5f1<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span>networking.vlan.VLAN_ID<span class=o>=</span><span class=m>0</span><span class=w> </span><span class=se>\ </span><span class=w>   </span><span class=c1># VLAN_ID=0 表示不打 VLAN tag，对应 untagged 物理网卡；chart 默认值为 100</span>
 <span class=w>    </span>--set<span class=w> </span>networking.NET_STACK<span class=o>=</span>ipv4<span class=w> </span><span class=se>\</span>
-<span class=w>    </span>--set-json<span class=w> </span>networking.EXCLUDE_IPS<span class=o>=</span><span class=s1>&#39;&quot;172.99.99.11..172.99.99.99&quot;&#39;</span><span class=w> </span><span class=se>\</span>
-<span class=w>    </span>--set-json<span class=w> </span>ipv4.POD_CIDR<span class=o>=</span><span class=s1>&#39;&quot;172.99.99.0/24&quot;&#39;</span><span class=w> </span><span class=se>\</span>
-<span class=w>    </span>--set-json<span class=w> </span>ipv4.POD_GATEWAY<span class=o>=</span><span class=s1>&#39;&quot;172.99.99.1&quot;&#39;</span>
+<span class=w>    </span>--set-json<span class=w> </span>networking.EXCLUDE_IPS<span class=o>=</span><span class=s1>'"172.99.99.11..172.99.99.99"'</span><span class=w> </span><span class=se>\</span>
+<span class=w>    </span>--set-json<span class=w> </span>ipv4.POD_CIDR<span class=o>=</span><span class=s1>'"172.99.99.0/24"'</span><span class=w> </span><span class=se>\</span>
+<span class=w>    </span>--set-json<span class=w> </span>ipv4.POD_GATEWAY<span class=o>=</span><span class=s1>'"172.99.99.1"'</span>
 </code></pre></div> <div class="admonition note"> <p class=admonition-title>Note</p> <p>VLAN、Bond、Bridge 等类型的虚拟网卡不可用作 Underlay 网络的节点网卡。Underlay 使用的物理网卡需要在 Talos 配置中将其设置为 <code>ignore=true</code>。示例如下： <div class=highlight><pre><span></span><code><span class=nt>machine</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>network</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>interfaces</span><span class=p>:</span>

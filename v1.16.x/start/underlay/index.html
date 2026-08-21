@@ -18,26 +18,26 @@ ENABLE_LB<span class=w>                     </span><span class=c1># 如果 Under
 EXCHANGE_LINK_NAME<span class=w>            </span><span class=c1># 是否交换默认 provider-network 下 OVS 网桥和桥接网卡的名字，默认为 false</span>
 LS_DNAT_MOD_DL_DST<span class=w>            </span><span class=c1># DNAT 时是否对 MAC 地址进行转换，可加速 Service 的访问，默认为 true</span>
 </code></pre></div> <h3 id=_6>运行安装脚本<a class=headerlink href=#_6 title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code>bash<span class=w> </span>install.sh
-</code></pre></div> <h2 id=crd-underlay>通过 CRD 动态创建 Underlay 网络<a class=headerlink href=#crd-underlay title="Permanent link">&para;</a></h2> <p>该方式可在安装后动态的创建某个 Underlay 子网供 Pod 使用。需要配置 <code>ProviderNetwork</code>，<code>Vlan</code> 和 <code>Subnet</code> 三种自定义资源。</p> <h3 id=providernetwork>创建 ProviderNetwork<a class=headerlink href=#providernetwork title="Permanent link">&para;</a></h3> <p>ProviderNetwork 提供了主机网卡到物理网络映射的抽象，将同属一个网络的网卡进行统一管理， 并解决在复杂环境下同机器多网卡、网卡名不一致、对应 Underlay 网络不一致等情况下的配置问题。</p> <p>创建如下 ProviderNetwork 并应用:</p> <div class=highlight><pre><span></span><code>apiVersion: kubeovn.io/v1
-kind: ProviderNetwork
-metadata:
-  name: net1
-spec:
-  defaultInterface: eth1
-  customInterfaces:
-    - interface: eth2
-      nodes:
-        - node1
-  nodeSelector:
-    matchLabels:
-      kubernetes.io/arch: amd64
-      network-type: underlay
-    matchExpressions:
-      - key: kubernetes.io/hostname
-        operator: In
-        values:
-          - node1
-          - node2
+</code></pre></div> <h2 id=crd-underlay>通过 CRD 动态创建 Underlay 网络<a class=headerlink href=#crd-underlay title="Permanent link">&para;</a></h2> <p>该方式可在安装后动态的创建某个 Underlay 子网供 Pod 使用。需要配置 <code>ProviderNetwork</code>，<code>Vlan</code> 和 <code>Subnet</code> 三种自定义资源。</p> <h3 id=providernetwork>创建 ProviderNetwork<a class=headerlink href=#providernetwork title="Permanent link">&para;</a></h3> <p>ProviderNetwork 提供了主机网卡到物理网络映射的抽象，将同属一个网络的网卡进行统一管理， 并解决在复杂环境下同机器多网卡、网卡名不一致、对应 Underlay 网络不一致等情况下的配置问题。</p> <p>创建如下 ProviderNetwork 并应用:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ProviderNetwork</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>defaultInterface</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eth1</span>
+<span class=w>  </span><span class=nt>customInterfaces</span><span class=p>:</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>interface</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eth2</span>
+<span class=w>      </span><span class=nt>nodes</span><span class=p>:</span>
+<span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">node1</span>
+<span class=w>  </span><span class=nt>nodeSelector</span><span class=p>:</span>
+<span class=w>    </span><span class=nt>matchLabels</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>kubernetes.io/arch</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">amd64</span>
+<span class=w>      </span><span class=nt>network-type</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">underlay</span>
+<span class=w>    </span><span class=nt>matchExpressions</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>key</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/hostname</span>
+<span class=w>        </span><span class=nt>operator</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class=w>        </span><span class=nt>values</span><span class=p>:</span>
+<span class=w>          </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">node1</span>
+<span class=w>          </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">node2</span>
 </code></pre></div> <p><strong>注意：ProviderNetwork 资源名称长度不得超过 12 个字符。</strong></p> <ul> <li><code>defaultInterface</code>: 为默认使用的节点网卡名称。该网卡可以是物理网卡也可以是 Bond 网卡或者 Vlan 子接口。ProviderNetwork 创建成功后，各节点（除 excludeNodes 外）中会创建名为 br-net1（格式为 <code>br-NAME</code>）的 OVS 网桥，并将指定的节点网卡桥接至此网桥。</li> <li><code>customInterfaces</code>: 为可选项，可针对特定节点指定需要使用的网卡。</li> <li><code>nodeSelector</code>: 可选项，用于基于节点标签选择需要创建 OVS 网桥的节点。支持 <code>matchLabels</code> 和 <code>matchExpressions</code> 两种选择方式。</li> <li><code>excludeNodes</code>: 可选项，用于指定不桥接网卡的节点。该列表中的节点会被添加 <code>net1.provider-network.ovn.kubernetes.io/exclude=true</code> 标签。<strong>注意：一旦使用了 <code>nodeSelector</code>，<code>excludeNodes</code> 将不再生效，推荐只使用 <code>nodeSelector</code>。</strong></li> <li><code>autoCreateVlanSubinterfaces</code>: 可选项，默认为 <code>false</code>。设置为 <code>true</code> 时，系统会自动在指定的物理接口上创建 VLAN 子接口，支持 <code>&lt;interface&gt;.&lt;vlanid&gt;</code> 格式的接口命名。</li> </ul> <p>其它节点会被添加如下标签：</p> <table> <thead> <tr> <th>Key</th> <th>Value</th> <th>描述</th> </tr> </thead> <tbody> <tr> <td>net1.provider-network.ovn.kubernetes.io/ready</td> <td>true</td> <td>节点中的桥接工作已完成，ProviderNetwork 在节点中可用</td> </tr> <tr> <td>net1.provider-network.ovn.kubernetes.io/interface</td> <td>eth1</td> <td>节点中被桥接的网卡的名称</td> </tr> <tr> <td>net1.provider-network.ovn.kubernetes.io/mtu</td> <td>1500</td> <td>节点中被桥接的网卡的 MTU</td> </tr> </tbody> </table> <blockquote> <p>如果节点网卡上已经配置了 IP，则 IP 地址和网卡上的路由会被转移至对应的 OVS 网桥。</p> </blockquote> <h3 id=vlan>自动创建 VLAN 子接口<a class=headerlink href=#vlan title="Permanent link">&para;</a></h3> <p>当 ProviderNetwork 中启用 <code>autoCreateVlanSubinterfaces: true</code> 时，系统会自动创建 VLAN 子接口，简化多 VLAN 环境下的网络配置。</p> <h4 id=_7>配置示例<a class=headerlink href=#_7 title="Permanent link">&para;</a></h4> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ProviderNetwork</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -50,13 +50,13 @@ spec:
 <span class=w>      </span><span class=nt>nodes</span><span class=p>:</span>
 <span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">worker-node-1</span>
 <span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">worker-node-2</span>
-</code></pre></div> <h4 id=_8>功能说明<a class=headerlink href=#_8 title="Permanent link">&para;</a></h4> <p>系统会自动创建 <code>&lt;interface&gt;.&lt;vlanid&gt;</code> 格式的 VLAN 子接口，无需手动配置。适用于多 VLAN 环境和大规模部署，可以显著简化网络管理。删除 ProviderNetwork 时会自动清理相关接口。</p> <h3 id=vlan_1>创建 VLAN<a class=headerlink href=#vlan_1 title="Permanent link">&para;</a></h3> <p>Vlan 提供了将 Vlan Tag 和 ProviderNetwork 进行绑定的能力。</p> <p>创建如下 VLAN 并应用：</p> <div class=highlight><pre><span></span><code>apiVersion: kubeovn.io/v1
-kind: Vlan
-metadata:
-  name: vlan1
-spec:
-  id: 0
-  provider: net1
+</code></pre></div> <h4 id=_8>功能说明<a class=headerlink href=#_8 title="Permanent link">&para;</a></h4> <p>系统会自动创建 <code>&lt;interface&gt;.&lt;vlanid&gt;</code> 格式的 VLAN 子接口，无需手动配置。适用于多 VLAN 环境和大规模部署，可以显著简化网络管理。删除 ProviderNetwork 时会自动清理相关接口。</p> <h3 id=vlan_1>创建 VLAN<a class=headerlink href=#vlan_1 title="Permanent link">&para;</a></h3> <p>Vlan 提供了将 Vlan Tag 和 ProviderNetwork 进行绑定的能力。</p> <p>创建如下 VLAN 并应用：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Vlan</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vlan1</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>id</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class=w>  </span><span class=nt>provider</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1</span>
 </code></pre></div> <ul> <li><code>id</code>: 为 VLAN ID/Tag，Kube-OVN 会对对该 Vlan 下的流量增加 Vlan 标签，为 0 时不增加任何标签，vlan 标签作用在一个 localnet 端口。</li> <li><code>provider</code>: 为需要使用的 ProviderNetwork 资源的名称。多个 VLAN 可以引用同一个 ProviderNetwork。</li> </ul> <h3 id=subnet>创建 Subnet<a class=headerlink href=#subnet title="Permanent link">&para;</a></h3> <p>将 Vlan 和一个子网绑定，如下所示：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Subnet</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -67,16 +67,16 @@ spec:
 <span class=w>  </span><span class=nt>gateway</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">172.17.0.1</span>
 <span class=w>  </span><span class=nt>vlan</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vlan1</span>
 <span class=w>  </span><span class=nt>disableGatewayCheck</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-</code></pre></div> <ul> <li><code>vlan</code>：需要使用的 VLAN 名称，多个 Subnet 可以引用同一个 VLAN。</li> <li><code>disableGatewayCheck</code>：若所在 Underlay 网络网关不存在，可将该字段设置为 <code>true</code>，关闭网关探测。</li> </ul> <h2 id=_9>容器创建<a class=headerlink href=#_9 title="Permanent link">&para;</a></h2> <p>可按正常容器创建方式进行创建，查看容器 IP 是否在规定范围内，以及容器是否可以和物理网络互通。</p> <p>如有固定 IP 需求，可参考 <a href=../../guide/static-ip-mac/ >Pod 固定 IP 和 Mac</a></p> <h2 id=_10>使用逻辑网关<a class=headerlink href=#_10 title="Permanent link">&para;</a></h2> <p>对于物理网络不存在网关的情况，Kube-OVN 支持在 Underlay 模式的子网中配置使用逻辑网关。 若要使用此功能，设置子网的 <code>spec.logicalGateway</code> 为 <code>true</code> 即可：</p> <div class=highlight><pre><span></span><code>apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: subnet1
-spec:
-  protocol: IPv4
-  cidrBlock: 172.17.0.0/16
-  gateway: 172.17.0.1
-  vlan: vlan1
-  logicalGateway: true
+</code></pre></div> <ul> <li><code>vlan</code>：需要使用的 VLAN 名称，多个 Subnet 可以引用同一个 VLAN。</li> <li><code>disableGatewayCheck</code>：若所在 Underlay 网络网关不存在，可将该字段设置为 <code>true</code>，关闭网关探测。</li> </ul> <h2 id=_9>容器创建<a class=headerlink href=#_9 title="Permanent link">&para;</a></h2> <p>可按正常容器创建方式进行创建，查看容器 IP 是否在规定范围内，以及容器是否可以和物理网络互通。</p> <p>如有固定 IP 需求，可参考 <a href=../../guide/static-ip-mac/ >Pod 固定 IP 和 Mac</a></p> <h2 id=_10>使用逻辑网关<a class=headerlink href=#_10 title="Permanent link">&para;</a></h2> <p>对于物理网络不存在网关的情况，Kube-OVN 支持在 Underlay 模式的子网中配置使用逻辑网关。 若要使用此功能，设置子网的 <code>spec.logicalGateway</code> 为 <code>true</code> 即可：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Subnet</span>
+<span class=nt>metadata</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">subnet1</span>
+<span class=nt>spec</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">IPv4</span>
+<span class=w>  </span><span class=nt>cidrBlock</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">172.17.0.0/16</span>
+<span class=w>  </span><span class=nt>gateway</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">172.17.0.1</span>
+<span class=w>  </span><span class=nt>vlan</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vlan1</span>
+<span class=w>  </span><span class=nt>logicalGateway</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div> <p>开启此功能后，Pod 不使用外部网关，而是使用 Kube-OVN 创建的逻辑路由器（Logical Router）对于跨网段通信进行转发。</p> <h2 id=underlay-overlay>Underlay 和 Overlay 网络互通<a class=headerlink href=#underlay-overlay title="Permanent link">&para;</a></h2> <p>如果一个集群同时存在 Underlay 和 Overlay 子网，默认情况下 Overlay 子网下的 Pod 可以通过网关以 NAT 的方式访问 Underlay 子网下的 Pod IP。 在 Underlay 子网的 Pod 看来 Overlay 子网的地址是一个外部的地址，需要通过底层物理设备去转发，但底层物理设备并不清楚 Overlay 子网的地址无法进行转发。 因此 Underlay 子网下的 Pod 无法通过 Pod IP 直接访问 Overlay 子网的 Pod。</p> <p>如果需要 Underlay 和 Overlay 互通需要将子网的 <code>u2oInterconnection</code> 设置为 <code>true</code>，在这个情况下 Kube-OVN 会额外使用一个 Underlay IP 将 Underlay 子网 和 <code>ovn-cluster</code> 逻辑路由器连接，并设置对应的路由规则实现互通。 和逻辑网关不同，该方案只会连接 Kube-OVN 内部的 Underlay 和 Overlay 子网，其他访问外网的流量还是会通过物理网关进行转发。</p> <div class="admonition warning"> <p class=admonition-title>Warning</p> <p>若多个不同 Vlan 下的 Underlay 存在子网地址重叠，同时接入后会导致逻辑路由器路由异常，因此当 Underlay 子网地址重叠时不能同时开启 u2o 功能。</p> </div> <h3 id=ip>指定逻辑网关 IP<a class=headerlink href=#ip title="Permanent link">&para;</a></h3> <p>开启互通功能后，会随机从 subnet 内的取一个 IP 作为逻辑网关，如果需要指定 Underlay Subnet 的逻辑网关可以指定字段 <code>u2oInterconnectionIP</code>。</p> <h3 id=underlay-subnet-vpc>指定 Underlay Subnet 连接的自定义 VPC<a class=headerlink href=#underlay-subnet-vpc title="Permanent link">&para;</a></h3> <p>默认情况下 Underlay Subnet 会和默认 VPC 上的 Overlay Subnet 互通，如果要指定和某个 VPC 互通，在 <code>u2oInterconnection</code> 设置为 <code>true</code> 后，指定 <code>subnet.spec.vpc</code> 字段为该 VPC 名字即可。</p> <h2 id=_11>注意事项<a class=headerlink href=#_11 title="Permanent link">&para;</a></h2> <p>如果您使用的节点网卡上配置有 IP 地址，且操作系统通过 Netplan 配置网络（如 Ubuntu），建议您将 Netplan 的 renderer 设置为 NetworkManager，并为节点网卡配置静态 IP 地址（关闭 DHCP）：</p> <div class=highlight><pre><span></span><code><span class=nt>network</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>renderer</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">NetworkManager</span>
 <span class=w>  </span><span class=nt>ethernets</span><span class=p>:</span>
@@ -94,7 +94,7 @@ nmcli<span class=w> </span>device<span class=w> </span><span class=nb>set</span>
 nmcli<span class=w> </span>-t<span class=w> </span>-f<span class=w> </span>GENERAL.STATE<span class=w> </span>device<span class=w> </span>show<span class=w> </span>eth0<span class=w> </span><span class=p>|</span><span class=w> </span>grep<span class=w> </span>-qw<span class=w> </span>unmanaged<span class=w> </span><span class=o>||</span><span class=w> </span>nmcli<span class=w> </span>device<span class=w> </span>reapply<span class=w> </span>eth0
 </code></pre></div> <p><strong>注意</strong>：节点网卡配置的动态修改仅支持 IP 和路由，不支持 MAC 地址的修改。</p> <h2 id=_12>已知问题<a class=headerlink href=#_12 title="Permanent link">&para;</a></h2> <h3 id=hairpin-pod>物理网络开启 hairpin 时 Pod 网络异常<a class=headerlink href=#hairpin-pod title="Permanent link">&para;</a></h3> <p>当物理网络开启 hairpin 或类似行为时，可能出现创建 Pod 时网关检查失败、Pod 网络通信异常等问题。这是因为 OVS 网桥默认的 MAC 学习功能不支持这种网络环境。</p> <p>要解决此问题，需要关闭 hairpin（或修改物理网络的相关配置），或更新 Kube-OVN 版本。</p> <h3 id=pod-pod>Pod 数量较多时新建 Pod 网关检查失败<a class=headerlink href=#pod-pod title="Permanent link">&para;</a></h3> <p>若同一个节点上运行的 Pod 数量较多（大于 300），可能会出现 ARP 广播包的 OVS 流表 resubmit 次数超过上限导致丢包的现象：</p> <div class=highlight><pre><span></span><code>2022-11-13T08:43:46.782Z|00222|ofproto_dpif_upcall(handler5)|WARN|Flow: arp,in_port=331,vlan_tci=0x0000,dl_src=00:00:00:25:eb:39,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.131.240,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:25:eb:39,arp_tha=ff:ff:ff:ff:ff:ff
 
-bridge(&quot;br-int&quot;)
+bridge("br-int")
 ----------------
  0. No match.
      &gt;&gt;&gt;&gt; received packet on unknown port 331 &lt;&lt;&lt;&lt;

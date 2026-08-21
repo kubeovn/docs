@@ -10,10 +10,10 @@
 apiVersion:<span class=w> </span>kubeovn.io/v1
 kind:<span class=w> </span>Subnet
 metadata:
-<span class=w>  </span>creationTimestamp:<span class=w> </span><span class=s2>&quot;2019-08-06T09:33:43Z&quot;</span>
+<span class=w>  </span>creationTimestamp:<span class=w> </span><span class=s2>"2019-08-06T09:33:43Z"</span>
 <span class=w>  </span>generation:<span class=w> </span><span class=m>1</span>
 <span class=w>  </span>name:<span class=w> </span>ovn-default
-<span class=w>  </span>resourceVersion:<span class=w> </span><span class=s2>&quot;1571334&quot;</span>
+<span class=w>  </span>resourceVersion:<span class=w> </span><span class=s2>"1571334"</span>
 <span class=w>  </span>selfLink:<span class=w> </span>/apis/kubeovn.io/v1/subnets/ovn-default
 <span class=w>  </span>uid:<span class=w> </span>7e2451f8-fb44-4f7f-b3e0-cfd27f6fd5d6
 spec:
@@ -30,10 +30,10 @@ spec:
 apiVersion:<span class=w> </span>kubeovn.io/v1
 kind:<span class=w> </span>Subnet
 metadata:
-<span class=w>  </span>creationTimestamp:<span class=w> </span><span class=s2>&quot;2019-08-06T09:33:43Z&quot;</span>
+<span class=w>  </span>creationTimestamp:<span class=w> </span><span class=s2>"2019-08-06T09:33:43Z"</span>
 <span class=w>  </span>generation:<span class=w> </span><span class=m>1</span>
 <span class=w>  </span>name:<span class=w> </span>join
-<span class=w>  </span>resourceVersion:<span class=w> </span><span class=s2>&quot;1571333&quot;</span>
+<span class=w>  </span>resourceVersion:<span class=w> </span><span class=s2>"1571333"</span>
 <span class=w>  </span>selfLink:<span class=w> </span>/apis/kubeovn.io/v1/subnets/join
 <span class=w>  </span>uid:<span class=w> </span>9c744810-c678-4d50-8a7d-b8ec12ef91b8
 spec:
@@ -42,8 +42,8 @@ spec:
 <span class=w>  </span>excludeIps:
 <span class=w>  </span>-<span class=w> </span><span class=m>100</span>.64.0.1
 <span class=w>  </span>gateway:<span class=w> </span><span class=m>100</span>.64.0.1
-<span class=w>  </span>gatewayNode:<span class=w> </span><span class=s2>&quot;&quot;</span>
-<span class=w>  </span>gatewayType:<span class=w> </span><span class=s2>&quot;&quot;</span>
+<span class=w>  </span>gatewayNode:<span class=w> </span><span class=s2>""</span>
+<span class=w>  </span>gatewayType:<span class=w> </span><span class=s2>""</span>
 <span class=w>  </span>natOutgoing:<span class=w> </span><span class=nb>false</span>
 <span class=w>  </span>private:<span class=w> </span><span class=nb>false</span>
 <span class=w>  </span>protocol:<span class=w> </span>IPv4
@@ -70,7 +70,7 @@ ovn0:<span class=w> </span><span class=nv>flags</span><span class=o>=</span><spa
 <span class=s>  gateway: 10.66.0.1</span>
 <span class=s>  gatewayType: distributed</span>
 <span class=s>  natOutgoing: true</span>
-<span class=s>  routeTable: &quot;&quot;</span>
+<span class=s>  routeTable: ""</span>
 <span class=s>  namespaces:</span>
 <span class=s>  - ns1</span>
 <span class=s>  - ns2</span>
@@ -119,7 +119,7 @@ nginx-74d5899f46-n8wtg<span class=w>   </span><span class=m>1</span>/1<span clas
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.166.0.1</span>
 <span class=w>  </span><span class=nt>gateway</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.166.0.1</span>
 <span class=w>  </span><span class=nt>gatewayType</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">centralized</span>
-<span class=w>  </span><span class=nt>gatewayNode</span><span class=p>:</span><span class=w> </span><span class=s>&quot;node1,node2&quot;</span>
+<span class=w>  </span><span class=nt>gatewayNode</span><span class=p>:</span><span class=w> </span><span class=s>"node1,node2"</span>
 <span class=w>  </span><span class=nt>natOutgoing</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div> <ul> <li>If a centralized gateway wants to specify a specific NIC of a machine for outbound networking, <code>gatewayNode</code> format can be changed to <code>kube-ovn-worker:172.18.0.2, kube-ovn-control-plane:172.18.0.3</code>.</li> <li>The centralized gateway defaults to primary-backup mode, with only the primary node performing traffic forwarding. If you need to switch to ECMP mode, please refer to <a href=../../reference/setup-options/#centralized-gateway-ecmp-settings>ECMP Settings</a>.</li> <li>The spec field <code>enableEcmp</code> has been added to the subnet CRD definition since Kube-OVN v1.12.0 to migrate the ECMP switch to the subnet level. You can set whether to enable ECMP mode based on different subnets. The <code>enable-ecmp</code> parameter in the <code>kube-ovn-controller</code> deployment is no longer used. After the previous version is upgraded to v1.12.0, the subnet switch will automatically inherit the value of the original global switch parameter.</li> </ul> <div class="admonition note"> <p class=admonition-title>Failover Time</p> <p>In centralized gateway ECMP mode, kube-ovn-controller actively probes node status through ping, detecting failures within 5s and completing failover within 5s-10s, during which some traffic may fail.</p> <p>In centralized gateway primary-backup mode, failover is based on Node Ready status, and it may take several minutes to complete failover in case of power outage.</p> </div> <h4 id=using-label-selectors-to-specify-gateway-nodes>Using Label Selectors to Specify Gateway Nodes<a class=headerlink href=#using-label-selectors-to-specify-gateway-nodes title="Permanent link">&para;</a></h4> <p>In addition to specifying node names directly, you can use <code>gatewayNodeSelectors</code> to dynamically select gateway nodes using label selectors. This approach is more flexible, especially useful when node names are not fixed or when you need to select gateways based on labels dynamically.</p> <div class="admonition note"> <p class=admonition-title>gatewayNodeSelectors Usage Notes</p> <ul> <li>If <code>gatewayNode</code> is not empty, it takes precedence and <code>gatewayNodeSelectors</code> is ignored.</li> <li>Multiple selectors are evaluated with OR logic - a node matching any selector becomes a gateway node.</li> <li>When node labels change, the system automatically updates the gateway node list.</li> </ul> </div> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Subnet</span>
@@ -139,7 +139,7 @@ nginx-74d5899f46-n8wtg<span class=w>   </span><span class=m>1</span>/1<span clas
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>matchExpressions</span><span class=p>:</span>
 <span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>key</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">node-type</span>
 <span class=w>          </span><span class=nt>operator</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
-<span class=w>          </span><span class=nt>values</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&quot;gateway&quot;</span><span class="p p-Indicator">,</span><span class=w> </span><span class=s>&quot;egress&quot;</span><span class="p p-Indicator">]</span>
+<span class=w>          </span><span class=nt>values</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>"gateway"</span><span class="p p-Indicator">,</span><span class=w> </span><span class=s>"egress"</span><span class="p p-Indicator">]</span>
 <span class=w>  </span><span class=nt>natOutgoing</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div> <h2 id=subnet-acl>Subnet ACL<a class=headerlink href=#subnet-acl title="Permanent link">&para;</a></h2> <div class="admonition warning"> <p class=admonition-title>Warning</p> <p>Kube-OVN supports four types of access control mechanisms: <a href=https://kubernetes.io/docs/concepts/services-networking/network-policies/ >NetworkPolicy</a>, <a href=https://network-policy-api.sigs.k8s.io/ >Network Policy API</a>, Subnet ACL, and <a href=../../vpc/security-group/ >Security Group</a>. All of these are implemented using OVN ACLs at the underlying level. Among them, NetworkPolicy and Network Policy API are designed with rule layering in mind, ensuring no priority conflicts. However, mixing other types of access control methods may lead to priority conflicts. It is recommended to avoid using multiple access control mechanisms simultaneously to prevent rule confusion caused by priority conflicts.</p> </div> <p>For scenarios with fine-grained ACL control, Subnet of Kube-OVN provides ACL to enable fine-grained rules.</p> <p>The ACL rules in Subnet are the same as the ACL rules in OVN, and you can refer to <a href=https://man7.org/linux/man-pages/man5/ovn-nb.5.html#ACL_TABLE target=_blank>ovn-nb ACL Table</a> for more details. The supported field in <code>match</code> can refer to <a href=https://man7.org/linux/man-pages/man5/ovn-sb.5.html#Logical_Flow_TABLE target=_blank>ovn-sb Logical Flow Table</a>.</p> <p>Example of an ACL rule that allows Pods with IP address <code>10.10.0.2</code> to access all addresses, but does not allow other addresses to access itself, is as follows:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Subnet</span>

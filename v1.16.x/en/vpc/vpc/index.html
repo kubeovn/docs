@@ -73,39 +73,39 @@
 <span class=w>  </span><span class=nt>excludeIps</span><span class=p>:</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">192.168.0.1..192.168.0.10</span>
 <span class=nn>---</span>
-<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>&quot;k8s.cni.cncf.io/v1&quot;</span>
+<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>"k8s.cni.cncf.io/v1"</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">NetworkAttachmentDefinition</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-vpc-external-network</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
 <span class=nt>spec</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>&#39;{</span>
-<span class=w>      </span><span class=s>&quot;cniVersion&quot;:</span><span class=nv> </span><span class=s>&quot;0.3.0&quot;,</span>
-<span class=w>      </span><span class=s>&quot;type&quot;:</span><span class=nv> </span><span class=s>&quot;macvlan&quot;,</span>
-<span class=w>      </span><span class=s>&quot;master&quot;:</span><span class=nv> </span><span class=s>&quot;eth1&quot;,</span>
-<span class=w>      </span><span class=s>&quot;mode&quot;:</span><span class=nv> </span><span class=s>&quot;bridge&quot;,</span>
-<span class=w>      </span><span class=s>&quot;ipam&quot;:</span><span class=nv> </span><span class=s>{</span>
-<span class=w>        </span><span class=s>&quot;type&quot;:</span><span class=nv> </span><span class=s>&quot;kube-ovn&quot;,</span>
-<span class=w>        </span><span class=s>&quot;server_socket&quot;:</span><span class=nv> </span><span class=s>&quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>        </span><span class=s>&quot;provider&quot;:</span><span class=nv> </span><span class=s>&quot;ovn-vpc-external-network.kube-system&quot;</span>
+<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>'{</span>
+<span class=w>      </span><span class=s>"cniVersion":</span><span class=nv> </span><span class=s>"0.3.0",</span>
+<span class=w>      </span><span class=s>"type":</span><span class=nv> </span><span class=s>"macvlan",</span>
+<span class=w>      </span><span class=s>"master":</span><span class=nv> </span><span class=s>"eth1",</span>
+<span class=w>      </span><span class=s>"mode":</span><span class=nv> </span><span class=s>"bridge",</span>
+<span class=w>      </span><span class=s>"ipam":</span><span class=nv> </span><span class=s>{</span>
+<span class=w>        </span><span class=s>"type":</span><span class=nv> </span><span class=s>"kube-ovn",</span>
+<span class=w>        </span><span class=s>"server_socket":</span><span class=nv> </span><span class=s>"/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>        </span><span class=s>"provider":</span><span class=nv> </span><span class=s>"ovn-vpc-external-network.kube-system"</span>
 <span class=w>      </span><span class=s>}</span>
-<span class=w>    </span><span class=s>}&#39;</span>
+<span class=w>    </span><span class=s>}'</span>
 
-<span class="l l-Scalar l-Scalar-Plain">You can also avoid having the VPC gateway&#39;s net1 NIC obtain an IP address from Kube-OVN by not specifying the ipam field</span><span class="p p-Indicator">:</span>
+<span class="l l-Scalar l-Scalar-Plain">You can also avoid having the VPC gateway's net1 NIC obtain an IP address from Kube-OVN by not specifying the ipam field</span><span class="p p-Indicator">:</span>
 
 <span class=nn>---</span>
-<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>&quot;k8s.cni.cncf.io/v1&quot;</span>
+<span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>"k8s.cni.cncf.io/v1"</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">NetworkAttachmentDefinition</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-vpc-external-network</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
 <span class=nt>spec</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>&#39;{</span>
-<span class=w>      </span><span class=s>&quot;cniVersion&quot;:</span><span class=nv> </span><span class=s>&quot;0.3.0&quot;,</span>
-<span class=w>      </span><span class=s>&quot;type&quot;:</span><span class=nv> </span><span class=s>&quot;macvlan&quot;,</span>
-<span class=w>      </span><span class=s>&quot;master&quot;:</span><span class=nv> </span><span class=s>&quot;eth1&quot;,</span>
-<span class=w>      </span><span class=s>&quot;mode&quot;:</span><span class=nv> </span><span class=s>&quot;bridge&quot;</span>
-<span class=w>    </span><span class=s>}&#39;</span>
+<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>'{</span>
+<span class=w>      </span><span class=s>"cniVersion":</span><span class=nv> </span><span class=s>"0.3.0",</span>
+<span class=w>      </span><span class=s>"type":</span><span class=nv> </span><span class=s>"macvlan",</span>
+<span class=w>      </span><span class=s>"master":</span><span class=nv> </span><span class=s>"eth1",</span>
+<span class=w>      </span><span class=s>"mode":</span><span class=nv> </span><span class=s>"bridge"</span>
+<span class=w>    </span><span class=s>}'</span>
 </code></pre></div> <ul> <li>This Subnet is used to manage the available external addresses and the address will be allocated to VPC NAT Gateway through Macvlan, so please communicate with your network administrator to give you the available physical segment IPs.</li> <li>The VPC gateway uses Macvlan for physical network configuration, and <code>master</code> of <code>NetworkAttachmentDefinition</code> should be the NIC name of the corresponding physical network NIC.</li> <li><code>name</code>: External network name.</li> </ul> <p>For macvlan mode, the nic will send packets directly through that node NIC, relying on the underlying network devices for L2/L3 level forwarding capabilities. You need to configure the corresponding gateway, Vlan and security policy in the underlying network device in advance.</p> <ol> <li>For OpenStack VM environments, you need to turn off <code>PortSecurity</code> on the corresponding network port.</li> <li>For VMware vSwitch networks, <code>MAC Address Changes</code>, <code>Forged Transmits</code> and <code>Promiscuous Mode Operation</code> should be set to <code>allow</code>.</li> <li>For Hyper-V virtualization, <code>MAC Address Spoofing</code> should be enabled in VM nic advanced features.</li> <li>Public clouds, such as AWS, GCE, AliCloud, etc., do not support user-defined Mac, so they cannot support Macvlan mode network.</li> <li>Due to the limitations of Macvlan itself, a Macvlan sub-interface cannot access the address of the parent interface, which means that it is not possible to access the Pod through the network on the host machine where the VpcNATGateway Pod is located.</li> <li>If the physical network card corresponds to a switch interface in Trunk mode, a sub-interface needs to be created on the network card and provided to Macvlan for use.</li> </ol> <h3 id=enabling-the-vpc-gateway>Enabling the VPC Gateway<a class=headerlink href=#enabling-the-vpc-gateway title="Permanent link">&para;</a></h3> <p>The VPC gateway functionality is enabled by configuring <code>ovn-vpc-nat-gw-config</code> in the <code>kube-system</code> namespace. In addition, the <code>ovn-vpc-nat-config</code> ConfigMap can configure <code>image</code> (the image used by the gateway Pod) and <code>nodeSelector</code> (note: this <code>nodeSelector</code> is only used for the lb-svc deployment of <code>LoadBalancer</code> type Services; the scheduling of VpcNATGateway Pods is determined by the <code>VpcNatGateway.spec.selector</code> field):</p> <div class=highlight><pre><span></span><code><span class=nn>---</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
 <span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
@@ -123,7 +123,7 @@
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-vpc-nat-gw-config</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
 <span class=nt>data</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>enable-vpc-nat-gw</span><span class=p>:</span><span class=w> </span><span class=s>&#39;true&#39;</span>
+<span class=w>  </span><span class=nt>enable-vpc-nat-gw</span><span class=p>:</span><span class=w> </span><span class=s>'true'</span>
 </code></pre></div> <ul> <li><code>image</code>: The image used by the Gateway Pod.</li> <li><code>enable-vpc-nat-gw</code>: Controls whether the VPC Gateway feature is enabled.</li> </ul> <h3 id=create-vpc-gateway>Create VPC Gateway<a class=headerlink href=#create-vpc-gateway title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">VpcNatGateway</span>
 <span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -133,8 +133,8 @@
 <span class=w>  </span><span class=nt>subnet</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1</span>
 <span class=w>  </span><span class=nt>lanIp</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.254</span>
 <span class=w>  </span><span class=nt>selector</span><span class=p>:</span>
-<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;kubernetes.io/hostname:</span><span class=nv> </span><span class=s>kube-ovn-worker&quot;</span>
-<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;kubernetes.io/os:</span><span class=nv> </span><span class=s>linux&quot;</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"kubernetes.io/hostname:</span><span class=nv> </span><span class=s>kube-ovn-worker"</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"kubernetes.io/os:</span><span class=nv> </span><span class=s>linux"</span>
 <span class=w>  </span><span class=nt>externalSubnets</span><span class=p>:</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-vpc-external-network</span>
 <span class=w>  </span><span class=nt>noDefaultEIP</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -172,9 +172,9 @@
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">dnat01</span>
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>eip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eipd01</span>
-<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>&#39;8888&#39;</span>
+<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>'8888'</span>
 <span class=w>  </span><span class=nt>internalIp</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.10</span>
-<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>&#39;80&#39;</span>
+<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>'80'</span>
 <span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
 </code></pre></div> <h3 id=create-snat-rules>Create SNAT Rules<a class=headerlink href=#create-snat-rules title="Permanent link">&para;</a></h3> <p>Through SNAT rules, when a Pod in the VPC accesses an external address, it will go through the corresponding EIP for SNAT.</p> <div class=highlight><pre><span></span><code><span class=nn>---</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">IptablesEIP</span>
@@ -219,7 +219,7 @@
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>cidr</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">172.31.0.0/24</span>
 <span class=w>      </span><span class=nt>nextHopIP</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.253</span>
 <span class=w>      </span><span class=nt>policy</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">policySrc</span>
-<span class=w>      </span><span class=nt>routeTable</span><span class=p>:</span><span class=w> </span><span class=s>&quot;rtb1&quot;</span>
+<span class=w>      </span><span class=nt>routeTable</span><span class=p>:</span><span class=w> </span><span class=s>"rtb1"</span>
 </code></pre></div> <ul> <li><code>policy</code>: Supports destination routing <code>policyDst</code> and source routing <code>policySrc</code>.</li> <li>When there are overlapping routing rules, the rule with the longer CIDR mask has higher priority, and if the mask length is the same, the destination route has a higher priority over the source route.</li> <li><code>routeTable</code>: You can store the route in a specific table, the default is the main table. Associate with subnet please refer to <a href=../../guide/subnet/#create-custom-subnets>Create Custom Subnets</a></li> </ul> <h3 id=policy-routes>Policy Routes<a class=headerlink href=#policy-routes title="Permanent link">&para;</a></h3> <p>Traffic matched by static routes can be controlled at a finer granularity by policy routing. Policy routing provides more precise matching rules, priority control and more forwarding actions. This feature brings the OVN internal logical router policy function directly to the outside world, for more information on its use, please refer to <a href=https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Policy_TABLE target=_blank>Logical Router Policy</a>.</p> <p>An example of policy routes:</p> <div class=highlight><pre><span></span><code><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Vpc</span>
 <span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -251,18 +251,18 @@
 </code></pre></div> <ul> <li><code>vip</code>: Custom internal load balancing address.</li> <li><code>namespace</code>: Namespace where the load balancer backend Pods are located.</li> <li><code>sessionAffinity</code>: Same functionality as Service's <code>sessionAffinity</code>.</li> <li><code>selector</code>: Same functionality as Service's <code>selector</code>.</li> <li><code>ports</code>: Same functionality as Service's <code>port</code>.</li> </ul> <p>View deployed internal load balancer rules:</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl get slr</span>
 NAME<span class=w>                </span>VIP<span class=w>         </span>PORT<span class=o>(</span>S<span class=o>)</span><span class=w>                  </span>SERVICE<span class=w>                             </span>AGE
 vpc-dns-test-cjh2<span class=w>   </span><span class=m>10</span>.96.0.3<span class=w>   </span><span class=m>53</span>/UDP,53/TCP,9153/TCP<span class=w>   </span>kube-system/slr-vpc-dns-test-cjh2<span class=w>   </span>88m
-</code></pre></div> <h2 id=custom-vpc-dns>Custom vpc-dns<a class=headerlink href=#custom-vpc-dns title="Permanent link">&para;</a></h2> <p>Due to the isolation between custom VPCs and default VPC networks, Pods in VPCs cannot use the default coredns service for domain name resolution. If you want to use coredns to resolve Service domain names within the custom VPC, you can use the <code>vpc-dns</code> resource provided by Kube-OVN.</p> <h3 id=create-an-additional-network>Create an Additional Network<a class=headerlink href=#create-an-additional-network title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>&quot;k8s.cni.cncf.io/v1&quot;</span>
+</code></pre></div> <h2 id=custom-vpc-dns>Custom vpc-dns<a class=headerlink href=#custom-vpc-dns title="Permanent link">&para;</a></h2> <p>Due to the isolation between custom VPCs and default VPC networks, Pods in VPCs cannot use the default coredns service for domain name resolution. If you want to use coredns to resolve Service domain names within the custom VPC, you can use the <code>vpc-dns</code> resource provided by Kube-OVN.</p> <h3 id=create-an-additional-network>Create an Additional Network<a class=headerlink href=#create-an-additional-network title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>"k8s.cni.cncf.io/v1"</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">NetworkAttachmentDefinition</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-nad</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class=nt>spec</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>&#39;{</span>
-<span class=w>      </span><span class=s>&quot;cniVersion&quot;:</span><span class=nv> </span><span class=s>&quot;0.3.0&quot;,</span>
-<span class=w>      </span><span class=s>&quot;type&quot;:</span><span class=nv> </span><span class=s>&quot;kube-ovn&quot;,</span>
-<span class=w>      </span><span class=s>&quot;server_socket&quot;:</span><span class=nv> </span><span class=s>&quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>      </span><span class=s>&quot;provider&quot;:</span><span class=nv> </span><span class=s>&quot;ovn-nad.default.ovn&quot;</span>
-<span class=w>    </span><span class=s>}&#39;</span>
+<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>'{</span>
+<span class=w>      </span><span class=s>"cniVersion":</span><span class=nv> </span><span class=s>"0.3.0",</span>
+<span class=w>      </span><span class=s>"type":</span><span class=nv> </span><span class=s>"kube-ovn",</span>
+<span class=w>      </span><span class=s>"server_socket":</span><span class=nv> </span><span class=s>"/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>      </span><span class=s>"provider":</span><span class=nv> </span><span class=s>"ovn-nad.default.ovn"</span>
+<span class=w>    </span><span class=s>}'</span>
 </code></pre></div> <h3 id=modify-the-vpc-dns-configmap>Modify the vpc-dns ConfigMap<a class=headerlink href=#modify-the-vpc-dns-configmap title="Permanent link">&para;</a></h3> <p>Create a ConfigMap in the kube-system namespace, configure the vpc-dns parameters to be used for the subsequent vpc-dns feature activation:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -270,7 +270,7 @@ vpc-dns-test-cjh2<span class=w>   </span><span class=m>10</span>.96.0.3<span cla
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
 <span class=nt>data</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>coredns-vip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.96.0.3</span>
-<span class=w>  </span><span class=nt>enable-vpc-dns</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
+<span class=w>  </span><span class=nt>enable-vpc-dns</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
 <span class=w>  </span><span class=nt>nad-name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-nad</span>
 <span class=w>  </span><span class=nt>nad-provider</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-nad.default.ovn</span>
 </code></pre></div> <ul> <li><code>enable-vpc-dns</code>: (optional) <code>true</code> to enable the feature, <code>false</code> to disable the feature. Default <code>true</code>.</li> <li><code>coredns-image</code>: (optional): DNS deployment image. Default is the cluster coredns deployment version.</li> <li><code>coredns-vip</code>: VIP providing LB service for coredns.</li> <li><code>nad-name</code>: Name of the configured <code>network-attachment-definitions</code> resource.</li> <li><code>nad-provider</code>: Name of the used provider.</li> <li><code>k8s-service-host</code>: (optional) IP used by coredns to access the k8s apiserver service.</li> <li><code>k8s-service-port</code>: (optional) Port used by coredns to access the k8s apiserver service.</li> </ul> <h3 id=deploying-vpc-dns-dependent-resources>Deploying VPC-DNS Dependent Resources<a class=headerlink href=#deploying-vpc-dns-dependent-resources title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
@@ -281,7 +281,7 @@ vpc-dns-test-cjh2<span class=w>   </span><span class=m>10</span>.96.0.3<span cla
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">system:vpc-dns</span>
 <span class=nt>rules</span><span class=p>:</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>apiGroups</span><span class=p>:</span>
-<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;&quot;</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>""</span>
 <span class=w>    </span><span class=nt>resources</span><span class=p>:</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">endpoints</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">services</span>
@@ -302,7 +302,7 @@ vpc-dns-test-cjh2<span class=w>   </span><span class=m>10</span>.96.0.3<span cla
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRoleBinding</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>rbac.authorization.kubernetes.io/autoupdate</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
+<span class=w>    </span><span class=nt>rbac.authorization.kubernetes.io/autoupdate</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
 <span class=w>  </span><span class=nt>labels</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>kubernetes.io/bootstrapping</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">rbac-defaults</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc-dns</span>

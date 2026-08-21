@@ -26,7 +26,7 @@
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>vni</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1016</span>
 <span class=w>  </span><span class=nt>routeTargets</span><span class=p>:</span>
-<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;65000:1016&quot;</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"65000:1016"</span>
 </code></pre></div> <p>上述资源定义了一个 VNI 为 1016 的 EVPN 配置，Route Target 为 <code>65000:1016</code>。</p> <h3 id=bgpevpn-vpc-egress-gateway>创建启用 BGP/EVPN 的 VPC Egress Gateway<a class=headerlink href=#bgpevpn-vpc-egress-gateway title="Permanent link">&para;</a></h3> <p>首先按照 <a href=../vpc-egress-gateway/ >VPC Egress Gateway</a> 文档创建 NetworkAttachmentDefinition 和对应的子网。</p> <p>然后在 VpcEgressGateway 的 <code>.spec</code> 中通过 <code>bgpConf</code> 和 <code>evpnConf</code> 字段引用对应的配置资源。示例如下：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">VpcEgressGateway</span>
 <span class=nt>metadata</span><span class=p>:</span>

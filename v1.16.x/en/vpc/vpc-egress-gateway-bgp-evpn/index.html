@@ -26,7 +26,7 @@
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>vni</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1016</span>
 <span class=w>  </span><span class=nt>routeTargets</span><span class=p>:</span>
-<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;65000:1016&quot;</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"65000:1016"</span>
 </code></pre></div> <p>The above resource defines an EVPN configuration with VNI 1016 and Route Target <code>65000:1016</code>.</p> <h3 id=creating-a-vpc-egress-gateway-with-bgpevpn>Creating a VPC Egress Gateway with BGP/EVPN<a class=headerlink href=#creating-a-vpc-egress-gateway-with-bgpevpn title="Permanent link">&para;</a></h3> <p>First, create the NetworkAttachmentDefinition and corresponding subnet following the <a href=../vpc-egress-gateway/ >VPC Egress Gateway</a> documentation.</p> <p>Then reference the corresponding configuration resources via the <code>bgpConf</code> and <code>evpnConf</code> fields in the VpcEgressGateway <code>.spec</code>. Example:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">VpcEgressGateway</span>
 <span class=nt>metadata</span><span class=p>:</span>

@@ -13,13 +13,13 @@
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-ic-config</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
 <span class=nt>data</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>enable-ic</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
-<span class=w>  </span><span class=nt>az-name</span><span class=p>:</span><span class=w> </span><span class=s>&quot;az1&quot;</span><span class=w> </span>
-<span class=w>  </span><span class=nt>ic-db-host</span><span class=p>:</span><span class=w> </span><span class=s>&quot;192.168.65.3&quot;</span>
-<span class=w>  </span><span class=nt>ic-nb-port</span><span class=p>:</span><span class=w> </span><span class=s>&quot;6645&quot;</span><span class=w> </span>
-<span class=w>  </span><span class=nt>ic-sb-port</span><span class=p>:</span><span class=w> </span><span class=s>&quot;6646&quot;</span>
-<span class=w>  </span><span class=nt>gw-nodes</span><span class=p>:</span><span class=w> </span><span class=s>&quot;az1-gw&quot;</span>
-<span class=w>  </span><span class=nt>auto-route</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
+<span class=w>  </span><span class=nt>enable-ic</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
+<span class=w>  </span><span class=nt>az-name</span><span class=p>:</span><span class=w> </span><span class=s>"az1"</span><span class=w> </span>
+<span class=w>  </span><span class=nt>ic-db-host</span><span class=p>:</span><span class=w> </span><span class=s>"192.168.65.3"</span>
+<span class=w>  </span><span class=nt>ic-nb-port</span><span class=p>:</span><span class=w> </span><span class=s>"6645"</span><span class=w> </span>
+<span class=w>  </span><span class=nt>ic-sb-port</span><span class=p>:</span><span class=w> </span><span class=s>"6646"</span>
+<span class=w>  </span><span class=nt>gw-nodes</span><span class=p>:</span><span class=w> </span><span class=s>"az1-gw"</span>
+<span class=w>  </span><span class=nt>auto-route</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
 </code></pre></div> <ul> <li><code>enable-ic</code>: Whether to enable cluster interconnection.</li> <li><code>az-name</code>: Distinguish the cluster names of different clusters, each interconnected cluster needs to be different.</li> <li><code>ic-db-host</code>: Address of the node where the <code>OVN-IC</code> DB is deployed.</li> <li><code>ic-nb-port</code>: <code>OVN-IC</code> Northbound Database port, default 6645.</li> <li><code>ic-sb-port</code>: <code>OVN-IC</code> Southbound Database port, default 6645.</li> <li><code>gw-nodes</code>: The name of the nodes in the cluster interconnection that takes on the work of the gateways, separated by commas.</li> <li><code>auto-route</code>: Whether to automatically publish and learn routes.</li> </ul> <h3 id=openstack-side-operations>OpenStack Side Operations<a class=headerlink href=#openstack-side-operations title="Permanent link">&para;</a></h3> <p>Create logical routers that interconnect with Kubernetes:</p> <div class=highlight><pre><span></span><code><span class=c1># openstack router create router0</span>
 <span class=c1># openstack router list</span>
 +--------------------------------------+---------+--------+-------+----------------------------------+
@@ -78,8 +78,8 @@ ovs-vsctl<span class=w> </span><span class=nb>set</span><span class=w> </span>op
 +--------------------------------------+-------------------+--------+-----------------------+--------+--------+
 </code></pre></div> <p>On the Kubernetes side, query the VPC resources from OpenStack:</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl get vpc</span>
 NAME<span class=w>                                           </span>STANDBY<span class=w>   </span>SUBNETS
-neutron-22040ed5-0598-4f77-bffd-e7fd4db47e93<span class=w>   </span><span class=nb>true</span><span class=w>      </span><span class=o>[</span><span class=s2>&quot;neutron-cd59e36a-37db-4c27-b709-d35379a7920f&quot;</span><span class=o>]</span>
-ovn-cluster<span class=w>                                    </span><span class=nb>true</span><span class=w>      </span><span class=o>[</span><span class=s2>&quot;join&quot;</span>,<span class=s2>&quot;ovn-default&quot;</span><span class=o>]</span>
+neutron-22040ed5-0598-4f77-bffd-e7fd4db47e93<span class=w>   </span><span class=nb>true</span><span class=w>      </span><span class=o>[</span><span class=s2>"neutron-cd59e36a-37db-4c27-b709-d35379a7920f"</span><span class=o>]</span>
+ovn-cluster<span class=w>                                    </span><span class=nb>true</span><span class=w>      </span><span class=o>[</span><span class=s2>"join"</span>,<span class=s2>"ovn-default"</span><span class=o>]</span>
 </code></pre></div> <p><code>neutron-22040ed5-0598-4f77-bffd-e7fd4db47e93</code> is the VPC resources synchronized from OpenStack.</p> <p>Next, you can create Pods and run them according to Kube-OVN's native VPC and Subnet operations.</p> <p>Bind VPC, Subnet to Namespace <code>net2</code> and create Pod:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Namespace</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -88,12 +88,12 @@ ovn-cluster<span class=w>                                    </span><span class=
 <span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Vpc</span>
 <span class=nt>metadata</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>creationTimestamp</span><span class=p>:</span><span class=w> </span><span class=s>&quot;2021-06-20T13:34:11Z&quot;</span>
+<span class=w>  </span><span class=nt>creationTimestamp</span><span class=p>:</span><span class=w> </span><span class=s>"2021-06-20T13:34:11Z"</span>
 <span class=w>  </span><span class=nt>generation</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 <span class=w>  </span><span class=nt>labels</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>ovn.kubernetes.io/vpc_external</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
+<span class=w>    </span><span class=nt>ovn.kubernetes.io/vpc_external</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">neutron-22040ed5-0598-4f77-bffd-e7fd4db47e93</span>
-<span class=w>  </span><span class=nt>resourceVersion</span><span class=p>:</span><span class=w> </span><span class=s>&quot;583728&quot;</span>
+<span class=w>  </span><span class=nt>resourceVersion</span><span class=p>:</span><span class=w> </span><span class=s>"583728"</span>
 <span class=w>  </span><span class=nt>uid</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">18d4c654-f511-4def-a3a0-a6434d237c1e</span>
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>namespaces</span><span class=p>:</span>
@@ -119,8 +119,8 @@ ovn-cluster<span class=w>                                    </span><span class=
 <span class=w>  </span><span class=nt>containers</span><span class=p>:</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/kubeovn/kube-ovn:v1.8.0</span>
 <span class=w>      </span><span class=nt>command</span><span class=p>:</span>
-<span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;sleep&quot;</span>
-<span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;604800&quot;</span>
+<span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"sleep"</span>
+<span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"604800"</span>
 <span class=w>      </span><span class=nt>imagePullPolicy</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
 <span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu</span>
 <span class=w>  </span><span class=nt>restartPolicy</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Always</span>

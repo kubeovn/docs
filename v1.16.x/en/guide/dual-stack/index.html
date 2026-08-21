@@ -16,19 +16,19 @@
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.16.0.1</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">fd00:10:16::1</span>
 <span class=w>  </span><span class=nt>gateway</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.16.0.1,fd00:10:16::1</span>
-</code></pre></div> <p>If you need to use a dual stack for the default subnet during installation, you need to change the following parameters in the installation script (the default IPv6 mask under dual-stack in <code>install.sh</code> is <code>/112</code>, which more easily avoids common ULA ranges; <code>/64</code> is also allowed if preferred, but make sure it does not collide with node or Service CIDRs):</p> <div class=highlight><pre><span></span><code><span class=nv>POD_CIDR</span><span class=o>=</span><span class=s2>&quot;10.16.0.0/16,fd00:10:16::/112&quot;</span>
-<span class=nv>JOIN_CIDR</span><span class=o>=</span><span class=s2>&quot;100.64.0.0/16,fd00:100:64::/112&quot;</span>
+</code></pre></div> <p>If you need to use a dual stack for the default subnet during installation, you need to change the following parameters in the installation script (the default IPv6 mask under dual-stack in <code>install.sh</code> is <code>/112</code>, which more easily avoids common ULA ranges; <code>/64</code> is also allowed if preferred, but make sure it does not collide with node or Service CIDRs):</p> <div class=highlight><pre><span></span><code><span class=nv>POD_CIDR</span><span class=o>=</span><span class=s2>"10.16.0.0/16,fd00:10:16::/112"</span>
+<span class=nv>JOIN_CIDR</span><span class=o>=</span><span class=s2>"100.64.0.0/16,fd00:100:64::/112"</span>
 </code></pre></div> <h2 id=check-pod-address>Check Pod Address<a class=headerlink href=#check-pod-address title="Permanent link">&para;</a></h2> <p>Pods configured for dual-stack networks will be assigned both IPv4 and IPv6 addresses from that subnet, and the results will be displayed in the annotation of the Pod:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>ovn.kubernetes.io/allocated</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
+<span class=w>    </span><span class=nt>ovn.kubernetes.io/allocated</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
 <span class=w>    </span><span class=nt>ovn.kubernetes.io/cidr</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.16.0.0/16,fd00:10:16::/64</span>
 <span class=w>    </span><span class=nt>ovn.kubernetes.io/gateway</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.16.0.1,fd00:10:16::1</span>
 <span class=w>    </span><span class=nt>ovn.kubernetes.io/ip_address</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.16.0.9,fd00:10:16::9</span>
 <span class=w>    </span><span class=nt>ovn.kubernetes.io/logical_switch</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-default</span>
 <span class=w>    </span><span class=nt>ovn.kubernetes.io/mac_address</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">00:00:00:14:88:09</span>
-<span class=w>    </span><span class=nt>ovn.kubernetes.io/routed</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
+<span class=w>    </span><span class=nt>ovn.kubernetes.io/routed</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
 <span class=nn>...</span>
 <span class=nt>podIP</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.16.0.9</span>
 <span class=w>  </span><span class="l l-Scalar l-Scalar-Plain">podIPs</span><span class="p p-Indicator">:</span>

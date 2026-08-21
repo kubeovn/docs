@@ -14,7 +14,7 @@
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">system:vpc-dns</span>
 <span class=nt>rules</span><span class=p>:</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>apiGroups</span><span class=p>:</span>
-<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;&quot;</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>""</span>
 <span class=w>    </span><span class=nt>resources</span><span class=p>:</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">endpoints</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">services</span>
@@ -35,7 +35,7 @@
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRoleBinding</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>rbac.authorization.kubernetes.io/autoupdate</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
+<span class=w>    </span><span class=nt>rbac.authorization.kubernetes.io/autoupdate</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
 <span class=w>  </span><span class=nt>labels</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>kubernetes.io/bootstrapping</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">rbac-defaults</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc-dns</span>
@@ -80,18 +80,18 @@
 <span class=w>        </span><span class=no>reload</span>
 <span class=w>        </span><span class=no>loadbalance</span>
 <span class=w>    </span><span class=no>}</span>
-</code></pre></div> <p>除了以上资源，该功能还依赖 nat-gw-pod 镜像进行路由配置。</p> <h2 id=_1>配置附加网卡<a class=headerlink href=#_1 title="Permanent link">&para;</a></h2> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>&quot;k8s.cni.cncf.io/v1&quot;</span>
+</code></pre></div> <p>除了以上资源，该功能还依赖 nat-gw-pod 镜像进行路由配置。</p> <h2 id=_1>配置附加网卡<a class=headerlink href=#_1 title="Permanent link">&para;</a></h2> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>"k8s.cni.cncf.io/v1"</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">NetworkAttachmentDefinition</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-nad</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class=nt>spec</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>&#39;{</span>
-<span class=w>      </span><span class=s>&quot;cniVersion&quot;:</span><span class=nv> </span><span class=s>&quot;0.3.0&quot;,</span>
-<span class=w>      </span><span class=s>&quot;type&quot;:</span><span class=nv> </span><span class=s>&quot;kube-ovn&quot;,</span>
-<span class=w>      </span><span class=s>&quot;server_socket&quot;:</span><span class=nv> </span><span class=s>&quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>      </span><span class=s>&quot;provider&quot;:</span><span class=nv> </span><span class=s>&quot;ovn-nad.default.ovn&quot;</span>
-<span class=w>    </span><span class=s>}&#39;</span>
+<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>'{</span>
+<span class=w>      </span><span class=s>"cniVersion":</span><span class=nv> </span><span class=s>"0.3.0",</span>
+<span class=w>      </span><span class=s>"type":</span><span class=nv> </span><span class=s>"kube-ovn",</span>
+<span class=w>      </span><span class=s>"server_socket":</span><span class=nv> </span><span class=s>"/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>      </span><span class=s>"provider":</span><span class=nv> </span><span class=s>"ovn-nad.default.ovn"</span>
+<span class=w>    </span><span class=s>}'</span>
 </code></pre></div> <h2 id=vpc-dns-configmap>配置 vpc-dns 的 Configmap<a class=headerlink href=#vpc-dns-configmap title="Permanent link">&para;</a></h2> <p>在 kube-system 命名空间下创建 configmap，配置 vpc-dns 使用参数，用于后面启动 vpc-dns 功能：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -99,7 +99,7 @@
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
 <span class=nt>data</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>coredns-vip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.96.0.3</span>
-<span class=w>  </span><span class=nt>enable-vpc-dns</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
+<span class=w>  </span><span class=nt>enable-vpc-dns</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
 <span class=w>  </span><span class=nt>nad-name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-nad</span>
 <span class=w>  </span><span class=nt>nad-provider</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-nad.default.ovn</span>
 </code></pre></div> <ul> <li><code>enable-vpc-dns</code>：是否启用功能，默认 <code>true</code>。</li> <li><code>coredns-image</code>：dns 部署镜像。默认为集群 coredns 部署版本。</li> <li><code>coredns-vip</code>：为 coredns 提供 lb 服务的 vip。</li> <li><code>nad-name</code>：配置的 <code>network-attachment-definitions</code> 资源名称。</li> <li><code>nad-provider</code>：使用的 provider 名称。</li> <li><code>k8s-service-host</code>：用于 coredns 访问 k8s apiserver 服务的 ip，默认为集群内 apiserver 地址。</li> <li><code>k8s-service-port</code>：用于 coredns 访问 k8s apiserver 服务的 port，默认为集群内 apiserver 端口。</li> </ul> <h2 id=vpc-dns_2>部署 vpc-dns<a class=headerlink href=#vpc-dns_2 title="Permanent link">&para;</a></h2> <p>配置 vpc-dns yaml：</p> <div class=highlight><pre><span></span><code><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">VpcDns</span>

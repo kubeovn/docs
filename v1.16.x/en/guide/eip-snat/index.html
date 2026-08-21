@@ -12,25 +12,25 @@
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn-external-gw-config</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
 <span class=nt>data</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=s>&quot;centralized&quot;</span>
-<span class=w>  </span><span class=nt>enable-external-gw</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
-<span class=w>  </span><span class=nt>external-gw-nodes</span><span class=p>:</span><span class=w> </span><span class=s>&quot;kube-ovn-worker&quot;</span>
-<span class=w>  </span><span class=nt>external-gw-nic</span><span class=p>:</span><span class=w> </span><span class=s>&quot;eth1&quot;</span>
-<span class=w>  </span><span class=nt>external-gw-addr</span><span class=p>:</span><span class=w> </span><span class=s>&quot;172.56.0.1/16&quot;</span>
-<span class=w>  </span><span class=nt>nic-ip</span><span class=p>:</span><span class=w> </span><span class=s>&quot;172.56.0.254/16&quot;</span>
-<span class=w>  </span><span class=nt>nic-mac</span><span class=p>:</span><span class=w> </span><span class=s>&quot;16:52:f3:13:6a:25&quot;</span>
+<span class=w>  </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=s>"centralized"</span>
+<span class=w>  </span><span class=nt>enable-external-gw</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
+<span class=w>  </span><span class=nt>external-gw-nodes</span><span class=p>:</span><span class=w> </span><span class=s>"kube-ovn-worker"</span>
+<span class=w>  </span><span class=nt>external-gw-nic</span><span class=p>:</span><span class=w> </span><span class=s>"eth1"</span>
+<span class=w>  </span><span class=nt>external-gw-addr</span><span class=p>:</span><span class=w> </span><span class=s>"172.56.0.1/16"</span>
+<span class=w>  </span><span class=nt>nic-ip</span><span class=p>:</span><span class=w> </span><span class=s>"172.56.0.254/16"</span>
+<span class=w>  </span><span class=nt>nic-mac</span><span class=p>:</span><span class=w> </span><span class=s>"16:52:f3:13:6a:25"</span>
 </code></pre></div> <ul> <li><code>enable-external-gw</code>: Whether to enable SNAT and EIP functions.</li> <li><code>type</code>: <code>centralized</code> or <code>distributed</code>, the default is <code>centralized</code>. If <code>distributed</code> is used, all nodes of the cluster need to have the same name NIC to perform the gateway function.</li> <li><code>external-gw-nodes</code>: In <code>centralized</code> mode, the names of the node performing the gateway role, comma separated.</li> <li><code>external-gw-nic</code>: The name of the NIC that performs the role of a gateway on the node.</li> <li><code>external-gw-addr</code>: The IP and mask of the physical network gateway.</li> <li><code>nic-ip</code>,<code>nic-mac</code>: The IP and Mac assigned to the logical gateway port needs to be an unoccupied IP and Mac for the physical subnet.</li> </ul> <h2 id=confirm-the-configuration-take-effect>Confirm the Configuration Take Effect<a class=headerlink href=#confirm-the-configuration-take-effect title="Permanent link">&para;</a></h2> <p>Check the OVN-NB status to confirm that the <code>ovn-external</code> logical switch exists and that the correct address and chassis are bound to the <code>ovn-cluster-ovn-external</code> logical router port.</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko nbctl show</span>
 switch<span class=w> </span>3de4cea7-1a71-43f3-8b62-435a57ef16a6<span class=w> </span><span class=o>(</span>external<span class=o>)</span>
 <span class=w>    </span>port<span class=w> </span>localnet.external
 <span class=w>        </span>type:<span class=w> </span>localnet
-<span class=w>        </span>addresses:<span class=w> </span><span class=o>[</span><span class=s2>&quot;unknown&quot;</span><span class=o>]</span>
+<span class=w>        </span>addresses:<span class=w> </span><span class=o>[</span><span class=s2>"unknown"</span><span class=o>]</span>
 <span class=w>    </span>port<span class=w> </span>external-ovn-cluster
 <span class=w>        </span>type:<span class=w> </span>router
 <span class=w>        </span>router-port:<span class=w> </span>ovn-cluster-external
 router<span class=w> </span>e1eb83ad-34be-4ed5-9a02-fcc8b1d357c4<span class=w> </span><span class=o>(</span>ovn-cluster<span class=o>)</span>
 <span class=w>    </span>port<span class=w> </span>ovn-cluster-external
-<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;ac:1f:6b:2d:33:f1&quot;</span>
-<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;172.56.0.100/16&quot;</span><span class=o>]</span>
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>"ac:1f:6b:2d:33:f1"</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>"172.56.0.100/16"</span><span class=o>]</span>
 <span class=w>        </span>gateway<span class=w> </span>chassis:<span class=w> </span><span class=o>[</span>a5682814-2e2c-46dd-9c1c-6803ef0dab66<span class=o>]</span>
 </code></pre></div> <p>Check the OVS status to confirm that the corresponding NIC is bridged into the <code>br-external</code> bridge:</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko vsctl ${gateway node name} show</span>
 e7d81150-7743-4d6e-9e6f-5c688232e130

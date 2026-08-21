@@ -11,7 +11,7 @@
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">sn-dual</span>
 <span class=nt>spec</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>cidrBlock</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10.0.0.0/24,240e::a00/120&quot;</span>
+<span class=w>  </span><span class=nt>cidrBlock</span><span class=p>:</span><span class=w> </span><span class=s>"10.0.0.0/24,240e::a00/120"</span>
 <span class=w>  </span><span class=nt>default</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class=w>  </span><span class=nt>disableGatewayCheck</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class=w>  </span><span class=nt>disableInterConnection</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -19,7 +19,7 @@
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.0.0.1</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">240e::a01</span>
 <span class=w>  </span><span class=nt>gateway</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.0.0.1,240e::a01</span>
-<span class=w>  </span><span class=nt>gatewayNode</span><span class=p>:</span><span class=w> </span><span class=s>&#39;&#39;</span>
+<span class=w>  </span><span class=nt>gatewayNode</span><span class=p>:</span><span class=w> </span><span class=s>''</span>
 <span class=w>  </span><span class=nt>gatewayType</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">distributed</span>
 <span class=w>  </span><span class=nt>natOutgoing</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class=w>  </span><span class=nt>private</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -27,23 +27,23 @@
 <span class=w>  </span><span class=nt>provider</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ovn</span>
 <span class=w>  </span><span class=nt>vpc</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc-test</span>
 <span class=w>  </span><span class=nt>enableDHCP</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class=w>  </span><span class=nt>dhcpV4Options</span><span class=p>:</span><span class=w> </span><span class=s>&quot;lease_time=3600,router=10.0.0.1,server_id=169.254.0.254,server_mac=00:00:00:2E:2F:B8&quot;</span>
-<span class=w>  </span><span class=nt>dhcpV6Options</span><span class=p>:</span><span class=w> </span><span class=s>&quot;server_id=00:00:00:2E:2F:C5&quot;</span>
+<span class=w>  </span><span class=nt>dhcpV4Options</span><span class=p>:</span><span class=w> </span><span class=s>"lease_time=3600,router=10.0.0.1,server_id=169.254.0.254,server_mac=00:00:00:2E:2F:B8"</span>
+<span class=w>  </span><span class=nt>dhcpV6Options</span><span class=p>:</span><span class=w> </span><span class=s>"server_id=00:00:00:2E:2F:C5"</span>
 <span class=w>  </span><span class=nt>enableIPv6RA</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class=w>  </span><span class=nt>ipv6RAConfigs</span><span class=p>:</span><span class=w> </span><span class=s>&quot;address_mode=dhcpv6_stateful,max_interval=30,min_interval=5,send_periodic=true&quot;</span>
-</code></pre></div> <ul> <li><code>enableDHCP</code>: 是否开启子网的 DHCP 功能。</li> <li><code>dhcpV4Options</code>,<code>dhcpV6Options</code>: 该字段直接暴露 ovn-nb 内 DHCP 相关选项，请参考 <a href=https://man7.org/linux/man-pages/man5/ovn-nb.5.html#DHCP_Options_TABLE target=target>DHCP Options</a>。 默认值分别为 <code>"lease_time=3600, router=$ipv4_gateway, server_id=169.254.0.254, server_mac=$random_mac"</code> 和 <code>server_id=$random_mac</code>。</li> <li><code>enableIPv6RA</code>: 是否开启 DHCPv6 的路由广播功能。</li> <li><code>ipv6RAConfigs</code>：该字段直接暴露 ovn-nb 内 Logical_Router_Port 相关选项，请参考 <a href=https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Port_TABLE target=target>Logical Router Port</a>。默认值为 <code>address_mode=dhcpv6_stateful, max_interval=30, min_interval=5, send_periodic=true</code>。</li> </ul> <h2 id=pod-dhcp>Pod 级别 DHCP 配置<a class=headerlink href=#pod-dhcp title="Permanent link">&para;</a></h2> <p>除了子网级别的 DHCP 配置外，Kube-OVN 还支持通过 Pod 注解为每个 Pod 的网络接口单独配置 DHCP 选项。Pod 级别的 DHCP 配置具有最高优先级，会覆盖子网级别的 DHCP 设置，并且不受子网 <code>enableDHCP</code> 设置的影响。</p> <h3 id=_1>注解格式<a class=headerlink href=#_1 title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=c1># 主网络（provider 为 &quot;ovn&quot;）</span>
-ovn.kubernetes.io/dhcp-v4-options:<span class=w> </span><span class=s2>&quot;lease_time=3600,router=10.0.0.1,dns_server=8.8.8.8&quot;</span>
-ovn.kubernetes.io/dhcp-v6-options:<span class=w> </span><span class=s2>&quot;server_id=00:00:00:00:00:01&quot;</span>
+<span class=w>  </span><span class=nt>ipv6RAConfigs</span><span class=p>:</span><span class=w> </span><span class=s>"address_mode=dhcpv6_stateful,max_interval=30,min_interval=5,send_periodic=true"</span>
+</code></pre></div> <ul> <li><code>enableDHCP</code>: 是否开启子网的 DHCP 功能。</li> <li><code>dhcpV4Options</code>,<code>dhcpV6Options</code>: 该字段直接暴露 ovn-nb 内 DHCP 相关选项，请参考 <a href=https://man7.org/linux/man-pages/man5/ovn-nb.5.html#DHCP_Options_TABLE target=target>DHCP Options</a>。 默认值分别为 <code>"lease_time=3600, router=$ipv4_gateway, server_id=169.254.0.254, server_mac=$random_mac"</code> 和 <code>server_id=$random_mac</code>。</li> <li><code>enableIPv6RA</code>: 是否开启 DHCPv6 的路由广播功能。</li> <li><code>ipv6RAConfigs</code>：该字段直接暴露 ovn-nb 内 Logical_Router_Port 相关选项，请参考 <a href=https://man7.org/linux/man-pages/man5/ovn-nb.5.html#Logical_Router_Port_TABLE target=target>Logical Router Port</a>。默认值为 <code>address_mode=dhcpv6_stateful, max_interval=30, min_interval=5, send_periodic=true</code>。</li> </ul> <h2 id=pod-dhcp>Pod 级别 DHCP 配置<a class=headerlink href=#pod-dhcp title="Permanent link">&para;</a></h2> <p>除了子网级别的 DHCP 配置外，Kube-OVN 还支持通过 Pod 注解为每个 Pod 的网络接口单独配置 DHCP 选项。Pod 级别的 DHCP 配置具有最高优先级，会覆盖子网级别的 DHCP 设置，并且不受子网 <code>enableDHCP</code> 设置的影响。</p> <h3 id=_1>注解格式<a class=headerlink href=#_1 title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=c1># 主网络（provider 为 "ovn"）</span>
+ovn.kubernetes.io/dhcp-v4-options:<span class=w> </span><span class=s2>"lease_time=3600,router=10.0.0.1,dns_server=8.8.8.8"</span>
+ovn.kubernetes.io/dhcp-v6-options:<span class=w> </span><span class=s2>"server_id=00:00:00:00:00:01"</span>
 
-<span class=c1># 附加网络（provider 为 &quot;net1.ns1.ovn&quot;）</span>
-net1.ns1.ovn.kubernetes.io/dhcp-v4-options:<span class=w> </span><span class=s2>&quot;lease_time=7200&quot;</span>
+<span class=c1># 附加网络（provider 为 "net1.ns1.ovn"）</span>
+net1.ns1.ovn.kubernetes.io/dhcp-v4-options:<span class=w> </span><span class=s2>"lease_time=7200"</span>
 </code></pre></div> <p>注解的 key 格式为 <code>&lt;provider&gt;.kubernetes.io/dhcp-v4-options</code> 和 <code>&lt;provider&gt;.kubernetes.io/dhcp-v6-options</code>，其中 <code>&lt;provider&gt;</code> 为网络提供者名称。对于默认网络，provider 为 <code>ovn</code>；对于通过 Multus 添加的附加网络，provider 格式为 <code>&lt;net-attach-def-name&gt;.&lt;namespace&gt;.ovn</code>。</p> <h3 id=_2>使用示例<a class=headerlink href=#_2 title="Permanent link">&para;</a></h3> <p>以下示例为 Pod 设置自定义的 DHCPv4 选项：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">dhcp-pod</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>ovn.kubernetes.io/dhcp-v4-options</span><span class=p>:</span><span class=w> </span><span class=s>&quot;lease_time=3600,router=10.0.0.1,dns_server=8.8.8.8&quot;</span>
-<span class=w>    </span><span class=nt>ovn.kubernetes.io/dhcp-v6-options</span><span class=p>:</span><span class=w> </span><span class=s>&quot;server_id=00:00:00:00:00:01&quot;</span>
+<span class=w>    </span><span class=nt>ovn.kubernetes.io/dhcp-v4-options</span><span class=p>:</span><span class=w> </span><span class=s>"lease_time=3600,router=10.0.0.1,dns_server=8.8.8.8"</span>
+<span class=w>    </span><span class=nt>ovn.kubernetes.io/dhcp-v6-options</span><span class=p>:</span><span class=w> </span><span class=s>"server_id=00:00:00:00:00:01"</span>
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>containers</span><span class=p>:</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
@@ -53,9 +53,9 @@ net1.ns1.ovn.kubernetes.io/dhcp-v4-options:<span class=w> </span><span class=s2>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">multi-nic-dhcp-pod</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/networks</span><span class=p>:</span><span class=w> </span><span class=s>&#39;[{&quot;name&quot;:</span><span class=nv> </span><span class=s>&quot;net1&quot;,</span><span class=nv> </span><span class=s>&quot;namespace&quot;:</span><span class=nv> </span><span class=s>&quot;ns1&quot;}]&#39;</span>
-<span class=w>    </span><span class=nt>ovn.kubernetes.io/dhcp-v4-options</span><span class=p>:</span><span class=w> </span><span class=s>&quot;lease_time=3600,router=10.0.0.1&quot;</span>
-<span class=w>    </span><span class=nt>net1.ns1.ovn.kubernetes.io/dhcp-v4-options</span><span class=p>:</span><span class=w> </span><span class=s>&quot;lease_time=7200,router=10.0.1.1&quot;</span>
+<span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/networks</span><span class=p>:</span><span class=w> </span><span class=s>'[{"name":</span><span class=nv> </span><span class=s>"net1",</span><span class=nv> </span><span class=s>"namespace":</span><span class=nv> </span><span class=s>"ns1"}]'</span>
+<span class=w>    </span><span class=nt>ovn.kubernetes.io/dhcp-v4-options</span><span class=p>:</span><span class=w> </span><span class=s>"lease_time=3600,router=10.0.0.1"</span>
+<span class=w>    </span><span class=nt>net1.ns1.ovn.kubernetes.io/dhcp-v4-options</span><span class=p>:</span><span class=w> </span><span class=s>"lease_time=7200,router=10.0.1.1"</span>
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>containers</span><span class=p>:</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">test</span>

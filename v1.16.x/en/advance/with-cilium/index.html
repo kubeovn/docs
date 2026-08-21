@@ -21,24 +21,24 @@
 <span class=nt>data</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>cni-config</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|-</span>
 <span class=w>    </span><span class=no>{</span>
-<span class=w>      </span><span class=no>&quot;name&quot;: &quot;generic-veth&quot;,</span>
-<span class=w>      </span><span class=no>&quot;cniVersion&quot;: &quot;0.3.1&quot;,</span>
-<span class=w>      </span><span class=no>&quot;plugins&quot;: [</span>
+<span class=w>      </span><span class=no>"name": "generic-veth",</span>
+<span class=w>      </span><span class=no>"cniVersion": "0.3.1",</span>
+<span class=w>      </span><span class=no>"plugins": [</span>
 <span class=w>        </span><span class=no>{</span>
-<span class=w>          </span><span class=no>&quot;type&quot;: &quot;kube-ovn&quot;,</span>
-<span class=w>          </span><span class=no>&quot;server_socket&quot;: &quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>          </span><span class=no>&quot;ipam&quot;: {</span>
-<span class=w>              </span><span class=no>&quot;type&quot;: &quot;kube-ovn&quot;,</span>
-<span class=w>              </span><span class=no>&quot;server_socket&quot;: &quot;/run/openvswitch/kube-ovn-daemon.sock&quot;</span>
+<span class=w>          </span><span class=no>"type": "kube-ovn",</span>
+<span class=w>          </span><span class=no>"server_socket": "/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>          </span><span class=no>"ipam": {</span>
+<span class=w>              </span><span class=no>"type": "kube-ovn",</span>
+<span class=w>              </span><span class=no>"server_socket": "/run/openvswitch/kube-ovn-daemon.sock"</span>
 <span class=w>          </span><span class=no>}</span>
 <span class=w>        </span><span class=no>},</span>
 <span class=w>        </span><span class=no>{</span>
-<span class=w>          </span><span class=no>&quot;type&quot;: &quot;portmap&quot;,</span>
-<span class=w>          </span><span class=no>&quot;snat&quot;: true,</span>
-<span class=w>          </span><span class=no>&quot;capabilities&quot;: {&quot;portMappings&quot;: true}</span>
+<span class=w>          </span><span class=no>"type": "portmap",</span>
+<span class=w>          </span><span class=no>"snat": true,</span>
+<span class=w>          </span><span class=no>"capabilities": {"portMappings": true}</span>
 <span class=w>        </span><span class=no>},</span>
 <span class=w>        </span><span class=no>{</span>
-<span class=w>          </span><span class=no>&quot;type&quot;: &quot;cilium-cni&quot;</span>
+<span class=w>          </span><span class=no>"type": "cilium-cni"</span>
 <span class=w>        </span><span class=no>}</span>
 <span class=w>      </span><span class=no>]</span>
 <span class=w>    </span><span class=no>}</span>
@@ -51,7 +51,7 @@ helm<span class=w> </span>install<span class=w> </span>cilium<span class=w> </sp
 <span class=w>    </span>--set<span class=w> </span>cni.configMap<span class=o>=</span>cni-configuration<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>routingMode</span><span class=o>=</span>native<span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>enableIPv4Masquerade</span><span class=o>=</span><span class=nb>false</span><span class=w> </span><span class=se>\</span>
-<span class=w>    </span>--set<span class=w> </span><span class=nv>devices</span><span class=o>=</span><span class=s2>&quot;eth+ ovn0 genev_sys_6081 vxlan_sys_4789&quot;</span><span class=w> </span><span class=se>\</span>
+<span class=w>    </span>--set<span class=w> </span><span class=nv>devices</span><span class=o>=</span><span class=s2>"eth+ ovn0 genev_sys_6081 vxlan_sys_4789"</span><span class=w> </span><span class=se>\</span>
 <span class=w>    </span>--set<span class=w> </span><span class=nv>enableIdentityMark</span><span class=o>=</span><span class=nb>false</span>
 </code></pre></div> <p>Confirm that the Cilium installation was successful:</p> <div class=highlight><pre><span></span><code><span class=c1># cilium  status</span>
 <span class=w>    </span>/¯¯<span class=se>\</span>
