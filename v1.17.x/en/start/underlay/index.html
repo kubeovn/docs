@@ -33,26 +33,26 @@ ENABLE_LB<span class="w">                     </span><span class="c1"># If Under
 EXCHANGE_LINK_NAME<span class="w">            </span><span class="c1"># If swap the names of the OVS bridge and the bridge interface under the default provider-network. Default to false.</span>
 LS_DNAT_MOD_DL_DST<span class="w">            </span><span class="c1"># If DNAT translate MAC addresses to accelerate service access. Default to true.</span>
 </code></pre></div> <h3 id="run-the-script">Run the Script<a class="headerlink" href="#run-the-script" title="Permanent link">¶</a></h3> <div class="highlight"><pre><span></span><code>bash<span class="w"> </span>install.sh
-</code></pre></div> <h2 id="dynamically-create-underlay-networks-via-crd">Dynamically Create Underlay Networks via CRD<a class="headerlink" href="#dynamically-create-underlay-networks-via-crd" title="Permanent link">¶</a></h2> <p>This approach dynamically creates an Underlay subnet that Pod can use after installation.</p> <h3 id="create-providernetwork">Create ProviderNetwork<a class="headerlink" href="#create-providernetwork" title="Permanent link">¶</a></h3> <p>ProviderNetwork provides the abstraction of host NIC to physical network mapping, unifies the management of NICs belonging to the same network, and solves the configuration problems in complex environments with multiple NICs on the same machine, inconsistent NIC names and inconsistent corresponding Underlay networks.</p> <p>Create ProviderNetwork as below:</p> <div class="highlight"><pre><span></span><code>apiVersion: kubeovn.io/v1
-kind: ProviderNetwork
-metadata:
-  name: net1
-spec:
-  defaultInterface: eth1
-  customInterfaces:
-    - interface: eth2
-      nodes:
-        - node1
-  nodeSelector:
-    matchLabels:
-      kubernetes.io/arch: amd64
-      network-type: underlay
-    matchExpressions:
-      - key: kubernetes.io/hostname
-        operator: In
-        values:
-          - node1
-          - node2
+</code></pre></div> <h2 id="dynamically-create-underlay-networks-via-crd">Dynamically Create Underlay Networks via CRD<a class="headerlink" href="#dynamically-create-underlay-networks-via-crd" title="Permanent link">¶</a></h2> <p>This approach dynamically creates an Underlay subnet that Pod can use after installation.</p> <h3 id="create-providernetwork">Create ProviderNetwork<a class="headerlink" href="#create-providernetwork" title="Permanent link">¶</a></h3> <p>ProviderNetwork provides the abstraction of host NIC to physical network mapping, unifies the management of NICs belonging to the same network, and solves the configuration problems in complex environments with multiple NICs on the same machine, inconsistent NIC names and inconsistent corresponding Underlay networks.</p> <p>Create ProviderNetwork as below:</p> <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ProviderNetwork</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">net1</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">defaultInterface</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eth1</span>
+<span class="w">  </span><span class="nt">customInterfaces</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">interface</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eth2</span>
+<span class="w">      </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node1</span>
+<span class="w">  </span><span class="nt">nodeSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">kubernetes.io/arch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">amd64</span>
+<span class="w">      </span><span class="nt">network-type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">underlay</span>
+<span class="w">    </span><span class="nt">matchExpressions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/hostname</span>
+<span class="w">        </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">        </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node1</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node2</span>
 </code></pre></div> <p><strong>Note: The length of the ProviderNetwork resource name must not exceed 12.</strong></p> <ul> <li><code>defaultInterface</code>: The default node NIC name. The NIC can be a physical NIC, a Bond NIC, or a Vlan sub-interface. When the ProviderNetwork is successfully created, an OVS bridge named br-net1 (in the format <code>br-NAME</code>) is created in each node (except excludeNodes) and the specified node NIC is bridged to this bridge.</li> <li><code>customInterfaces</code>: Optionally, you can specify the NIC to be used for a specific node.</li> <li><code>nodeSelector</code>: Optional, used to select nodes for creating OVS bridges based on node labels. Supports both <code>matchLabels</code> and <code>matchExpressions</code> selection methods.</li> <li><code>excludeNodes</code>: Optional, to specify nodes that do not bridge the NIC. Nodes in this list will be added with the <code>net1.provider-network.ovn.kubernetes.io/exclude=true</code> tag. <strong>Note: Once <code>nodeSelector</code> is used, <code>excludeNodes</code> will no longer take effect. It is recommended to use only <code>nodeSelector</code>.</strong></li> <li><code>autoCreateVlanSubinterfaces</code>: Optional, default is <code>false</code>. When set to <code>true</code>, the system automatically creates VLAN sub-interfaces on the specified physical interface, supporting <code>&lt;interface&gt;.&lt;vlanid&gt;</code> format interface naming.</li> </ul> <p>Other nodes will be added with the following tags:</p> <table> <thead> <tr> <th>Key</th> <th>Value</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td>net1.provider-network.ovn.kubernetes.io/ready</td> <td>true</td> <td>bridge work finished, ProviderNetwork is ready on this node</td> </tr> <tr> <td>net1.provider-network.ovn.kubernetes.io/interface</td> <td>eth1</td> <td>The name of the bridged NIC in the node.</td> </tr> <tr> <td>net1.provider-network.ovn.kubernetes.io/mtu</td> <td>1500</td> <td>MTU of bridged NIC in node</td> </tr> </tbody> </table> <blockquote> <p>If an IP has been configured on the node NIC, the IP address and the route on the NIC are transferred to the corresponding OVS bridge.</p> </blockquote> <h3 id="auto-create-vlan-sub-interfaces">Auto-create VLAN Sub-interfaces<a class="headerlink" href="#auto-create-vlan-sub-interfaces" title="Permanent link">¶</a></h3> <p>When <code>autoCreateVlanSubinterfaces: true</code> is enabled in ProviderNetwork, the system automatically creates and manages VLAN sub-interfaces, simplifying network configuration in multi-VLAN environments.</p> <h4 id="configuration-example">Configuration Example<a class="headerlink" href="#configuration-example" title="Permanent link">¶</a></h4> <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ProviderNetwork</span>
 <span class="nt">metadata</span><span class="p">:</span>
@@ -65,13 +65,13 @@ spec:
 <span class="w">      </span><span class="nt">nodes</span><span class="p">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">worker-node-1</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">worker-node-2</span>
-</code></pre></div> <h4 id="feature-description">Feature Description<a class="headerlink" href="#feature-description" title="Permanent link">¶</a></h4> <p>The system automatically creates VLAN sub-interfaces in <code>&lt;interface&gt;.&lt;vlanid&gt;</code> format without manual configuration. Suitable for multi-VLAN environments and large-scale deployments, significantly simplifying network management. Related sub-interfaces are automatically cleaned up when ProviderNetwork is deleted.</p> <h3 id="create-vlan">Create VLAN<a class="headerlink" href="#create-vlan" title="Permanent link">¶</a></h3> <p>Vlan provides an abstraction to bind Vlan Tag and ProviderNetwork.</p> <p>Create a VLAN as below:</p> <div class="highlight"><pre><span></span><code>apiVersion: kubeovn.io/v1
-kind: Vlan
-metadata:
-  name: vlan1
-spec:
-  id: 0
-  provider: net1
+</code></pre></div> <h4 id="feature-description">Feature Description<a class="headerlink" href="#feature-description" title="Permanent link">¶</a></h4> <p>The system automatically creates VLAN sub-interfaces in <code>&lt;interface&gt;.&lt;vlanid&gt;</code> format without manual configuration. Suitable for multi-VLAN environments and large-scale deployments, significantly simplifying network management. Related sub-interfaces are automatically cleaned up when ProviderNetwork is deleted.</p> <h3 id="create-vlan">Create VLAN<a class="headerlink" href="#create-vlan" title="Permanent link">¶</a></h3> <p>Vlan provides an abstraction to bind Vlan Tag and ProviderNetwork.</p> <p>Create a VLAN as below:</p> <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Vlan</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vlan1</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">net1</span>
 </code></pre></div> <ul> <li><code>id</code>: VLAN ID/Tag, Kube-OVN will add this Vlan tag to traffic, if set 0, no tag is added. the vlan tag applies to a localnet port.</li> <li><code>provider</code>: The name of ProviderNetwork. Multiple VLAN can use a same ProviderNetwork.</li> </ul> <h3 id="create-subnet">Create Subnet<a class="headerlink" href="#create-subnet" title="Permanent link">¶</a></h3> <p>Bind Vlan to a Subnet as below:</p> <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Subnet</span>
 <span class="nt">metadata</span><span class="p">:</span>
