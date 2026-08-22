@@ -71,10 +71,10 @@ label-test1-77b6764857-swq4k<span class=w>   </span><span class=m>1</span>/1<spa
 
 <span class=c1># As the destination Pod for testing access.</span>
 test-54c98bc466-mft5s<span class=w>          </span><span class=m>1</span>/1<span class=w>     </span>Running<span class=w>   </span><span class=m>0</span><span class=w>          </span>8h<span class=w>      </span><span class=m>10</span>.16.0.41<span class=w>   </span>kube-ovn-worker<span class=w>          </span>&lt;none&gt;<span class=w>           </span>&lt;none&gt;<span class=w>            </span><span class=nv>app</span><span class=o>=</span>test,pod-template-hash<span class=o>=</span>54c98bc466
-</code></pre></div> <h3 id=l3-network-policy-test>L3 Network Policy Test<a class=headerlink href=#l3-network-policy-test title="Permanent link">&para;</a></h3> <p>Refer to the following yaml, create <code>CiliumNetworkPolicy</code> resource:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>&quot;cilium.io/v2&quot;</span>
+</code></pre></div> <h3 id=l3-network-policy-test>L3 Network Policy Test<a class=headerlink href=#l3-network-policy-test title="Permanent link">&para;</a></h3> <p>Refer to the following yaml, create <code>CiliumNetworkPolicy</code> resource:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>"cilium.io/v2"</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">CiliumNetworkPolicy</span>
 <span class=nt>metadata</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=s>&quot;l3-rule&quot;</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=s>"l3-rule"</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>endpointSelector</span><span class=p>:</span>
@@ -132,10 +132,10 @@ PING<span class=w> </span><span class=m>10</span>.16.0.41<span class=w> </span><
 ---<span class=w> </span><span class=m>10</span>.16.0.41<span class=w> </span>ping<span class=w> </span>statistics<span class=w> </span>---
 <span class=m>3</span><span class=w> </span>packets<span class=w> </span>transmitted,<span class=w> </span><span class=m>3</span><span class=w> </span>packets<span class=w> </span>received,<span class=w> </span><span class=m>0</span>%<span class=w> </span>packet<span class=w> </span>loss
 round-trip<span class=w> </span>min/avg/max<span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>0</span>.115/0.880/2.383<span class=w> </span>ms
-</code></pre></div> <p>Using the standard Kubernetes network policy <a href=https://kubernetes.io/zh-cn/docs/concepts/services-networking/network-policies/ >networkpolicy</a>, the test results show that Cilium also restricts access within the same namespace, and cross-namespace access is prohibited.</p> <p>It is different from Kube-OVN implementation. Kube-OVN supports standard k8s network policy, which restricts the <strong>destination Pod</strong> in a specific namespace, but there is no namespace restriction on the source Pod. Any Pod that meets the restriction rules in any namespace can access the destination Pod.</p> <h3 id=l4-network-policy-test>L4 Network Policy Test<a class=headerlink href=#l4-network-policy-test title="Permanent link">&para;</a></h3> <p>Refer to the following yaml, create <code>CiliumNetworkPolicy</code> resource:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>&quot;cilium.io/v2&quot;</span>
+</code></pre></div> <p>Using the standard Kubernetes network policy <a href=https://kubernetes.io/zh-cn/docs/concepts/services-networking/network-policies/ >networkpolicy</a>, the test results show that Cilium also restricts access within the same namespace, and cross-namespace access is prohibited.</p> <p>It is different from Kube-OVN implementation. Kube-OVN supports standard k8s network policy, which restricts the <strong>destination Pod</strong> in a specific namespace, but there is no namespace restriction on the source Pod. Any Pod that meets the restriction rules in any namespace can access the destination Pod.</p> <h3 id=l4-network-policy-test>L4 Network Policy Test<a class=headerlink href=#l4-network-policy-test title="Permanent link">&para;</a></h3> <p>Refer to the following yaml, create <code>CiliumNetworkPolicy</code> resource:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>"cilium.io/v2"</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">CiliumNetworkPolicy</span>
 <span class=nt>metadata</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=s>&quot;l4-rule&quot;</span>
+<span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=s>"l4-rule"</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>endpointSelector</span><span class=p>:</span>
@@ -147,7 +147,7 @@ round-trip<span class=w> </span>min/avg/max<span class=w> </span><span class=o>=
 <span class=w>        </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">dynamic</span>
 <span class=w>    </span><span class=nt>toPorts</span><span class=p>:</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>ports</span><span class=p>:</span>
-<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=s>&quot;80&quot;</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>port</span><span class=p>:</span><span class=w> </span><span class=s>"80"</span>
 <span class=w>        </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
 </code></pre></div> <p>Test the access of the Pod that meets the network policy rules in the same namespace</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl exec -it -n test dynamic-7d8d7874f5-6dsg6 -- bash</span>
 bash-5.0#<span class=w> </span>ping<span class=w> </span>-c<span class=w> </span><span class=m>3</span><span class=w> </span><span class=m>10</span>.16.0.41
@@ -160,13 +160,13 @@ bash-5.0#<span class=w> </span>curl<span class=w> </span><span class=m>10</span>
 &lt;html&gt;
 &lt;head&gt;
 <span class=w>        </span>&lt;title&gt;Hello<span class=w> </span>World!&lt;/title&gt;
-<span class=w>        </span>&lt;link<span class=w> </span><span class=nv>href</span><span class=o>=</span><span class=s1>&#39;//fonts.googleapis.com/css?family=Open+Sans:400,700&#39;</span><span class=w> </span><span class=nv>rel</span><span class=o>=</span><span class=s1>&#39;stylesheet&#39;</span><span class=w> </span><span class=nv>type</span><span class=o>=</span><span class=s1>&#39;text/css&#39;</span>&gt;
+<span class=w>        </span>&lt;link<span class=w> </span><span class=nv>href</span><span class=o>=</span><span class=s1>'//fonts.googleapis.com/css?family=Open+Sans:400,700'</span><span class=w> </span><span class=nv>rel</span><span class=o>=</span><span class=s1>'stylesheet'</span><span class=w> </span><span class=nv>type</span><span class=o>=</span><span class=s1>'text/css'</span>&gt;
 <span class=w>        </span>&lt;style&gt;
 <span class=w>        </span>body<span class=w> </span><span class=o>{</span>
 <span class=w>                </span>background-color:<span class=w> </span>white<span class=p>;</span>
 <span class=w>                </span>text-align:<span class=w> </span>center<span class=p>;</span>
 <span class=w>                </span>padding:<span class=w> </span>50px<span class=p>;</span>
-<span class=w>                </span>font-family:<span class=w> </span><span class=s2>&quot;Open Sans&quot;</span>,<span class=s2>&quot;Helvetica Neue&quot;</span>,Helvetica,Arial,sans-serif<span class=p>;</span>
+<span class=w>                </span>font-family:<span class=w> </span><span class=s2>"Open Sans"</span>,<span class=s2>"Helvetica Neue"</span>,Helvetica,Arial,sans-serif<span class=p>;</span>
 <span class=w>        </span><span class=o>}</span>
 <span class=w>        </span><span class=c1>#logo {</span>
 <span class=w>                </span>margin-bottom:<span class=w> </span>40px<span class=p>;</span>
@@ -180,7 +180,7 @@ bash-5.0#<span class=w> </span>curl<span class=w> </span><span class=m>10</span>
 <span class=w>        </span>&lt;h3&gt;Cookie<span class=w>                  </span><span class=o>=</span>&lt;/h3&gt;
 <span class=w>                                        </span>&lt;b&gt;KUBERNETES&lt;/b&gt;<span class=w> </span>listening<span class=w> </span><span class=k>in</span><span class=w> </span><span class=m>443</span><span class=w> </span>available<span class=w> </span>at<span class=w> </span>tcp://10.96.0.1:443&lt;br<span class=w> </span>/&gt;
 <span class=w>                                                </span>&lt;h3&gt;my<span class=w> </span>name<span class=w> </span>is<span class=w> </span>hanhouchao!&lt;/h3&gt;
-<span class=w>                        </span>&lt;h3&gt;<span class=w> </span><span class=nv>RequestURI</span><span class=o>=</span><span class=s1>&#39;/&#39;</span>&lt;/h3&gt;
+<span class=w>                        </span>&lt;h3&gt;<span class=w> </span><span class=nv>RequestURI</span><span class=o>=</span><span class=s1>'/'</span>&lt;/h3&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </code></pre></div> <p>The Pod that does not meet the network policy rules in the same namespace cannot access</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl exec -it -n test label-test1-77b6764857-swq4k -- bash</span>

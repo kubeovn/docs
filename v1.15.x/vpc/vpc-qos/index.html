@@ -15,13 +15,13 @@
 <span class=w>  </span><span class=nt>bindingType</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">EIP</span>
 <span class=w>  </span><span class=nt>bandwidthLimitRules</span><span class=p>:</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-ingress</span>
-<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;1&quot;</span><span class=w> </span><span class=c1># Mbps</span>
-<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;1&quot;</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>"1"</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>"1"</span><span class=w> </span><span class=c1># Mbps</span>
 <span class=w>    </span><span class=nt>priority</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class=w>    </span><span class=nt>direction</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-egress</span>
-<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;1&quot;</span><span class=w> </span><span class=c1># Mbps</span>
-<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;1&quot;</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>"1"</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>"1"</span><span class=w> </span><span class=c1># Mbps</span>
 <span class=w>    </span><span class=nt>priority</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class=w>    </span><span class=nt>direction</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">egress</span>
 </code></pre></div> <p>IptablesEIP 配置如下：</p> <div class=highlight><pre><span></span><code><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">IptablesEIP</span>
@@ -44,14 +44,14 @@ eip-1<span class=w>   </span><span class=m>172</span>.18.11.24<span class=w>   <
 <span class=w>  </span><span class=nt>bandwidthLimitRules</span><span class=p>:</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1-ingress</span>
 <span class=w>    </span><span class=nt>interface</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1</span>
-<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10&quot;</span><span class=w> </span><span class=c1># Mbps</span>
-<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10&quot;</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>"10"</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>"10"</span><span class=w> </span><span class=c1># Mbps</span>
 <span class=w>    </span><span class=nt>priority</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
 <span class=w>    </span><span class=nt>direction</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1-egress</span>
 <span class=w>    </span><span class=nt>interface</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1</span>
-<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10&quot;</span><span class=w> </span><span class=c1># Mbps</span>
-<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10&quot;</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>"10"</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>"10"</span><span class=w> </span><span class=c1># Mbps</span>
 <span class=w>    </span><span class=nt>priority</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
 <span class=w>    </span><span class=nt>direction</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">egress</span>
 </code></pre></div> <p>VpcNatGateway 配置如下：</p> <div class=highlight><pre><span></span><code><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">VpcNatGateway</span>
@@ -64,8 +64,8 @@ eip-1<span class=w>   </span><span class=m>172</span>.18.11.24<span class=w>   <
 <span class=w>  </span><span class=nt>lanIp</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.254</span>
 <span class=w>  </span><span class=nt>qosPolicy</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">qos-natgw-example</span>
 <span class=w>  </span><span class=nt>selector</span><span class=p>:</span>
-<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;kubernetes.io/hostname:</span><span class=nv> </span><span class=s>kube-ovn-worker&quot;</span>
-<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;kubernetes.io/os:</span><span class=nv> </span><span class=s>linux&quot;</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"kubernetes.io/hostname:</span><span class=nv> </span><span class=s>kube-ovn-worker"</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"kubernetes.io/os:</span><span class=nv> </span><span class=s>linux"</span>
 </code></pre></div> <p><code>.spec.qosPolicy</code> 的值支持创建传入，也支持后续修改。</p> <h2 id=net1-qos>net1 网卡特定流量 QoS<a class=headerlink href=#net1-qos title="Permanent link">&para;</a></h2> <p>对 net1 网卡上特定流量进行限速，限速值为 5Mbps，优先级为 2，这里 <code>shared=true</code>，表示这个 QoSPolicy 可以同时给多个资源使用，此时不允许修改 QoSPolicy 的内容。</p> <p>QoSPolicy 配置如下：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">QoSPolicy</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -76,16 +76,16 @@ eip-1<span class=w>   </span><span class=m>172</span>.18.11.24<span class=w>   <
 <span class=w>  </span><span class=nt>bandwidthLimitRules</span><span class=p>:</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1-extip-ingress</span>
 <span class=w>    </span><span class=nt>interface</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1</span>
-<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;5&quot;</span><span class=w> </span><span class=c1># Mbps</span>
-<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;5&quot;</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>"5"</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>"5"</span><span class=w> </span><span class=c1># Mbps</span>
 <span class=w>    </span><span class=nt>priority</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 <span class=w>    </span><span class=nt>direction</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span>
 <span class=w>    </span><span class=nt>matchType</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ip</span>
 <span class=w>    </span><span class=nt>matchValue</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">src 172.18.11.22/32</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1-extip-egress</span>
 <span class=w>    </span><span class=nt>interface</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">net1</span>
-<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;5&quot;</span><span class=w> </span><span class=c1># Mbps</span>
-<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>&quot;5&quot;</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>rateMax</span><span class=p>:</span><span class=w> </span><span class=s>"5"</span><span class=w> </span><span class=c1># Mbps</span>
+<span class=w>    </span><span class=nt>burstMax</span><span class=p>:</span><span class=w> </span><span class=s>"5"</span><span class=w> </span><span class=c1># Mbps</span>
 <span class=w>    </span><span class=nt>priority</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 <span class=w>    </span><span class=nt>direction</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">egress</span>
 <span class=w>    </span><span class=nt>matchType</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">ip</span>
@@ -100,8 +100,8 @@ eip-1<span class=w>   </span><span class=m>172</span>.18.11.24<span class=w>   <
 <span class=w>  </span><span class=nt>lanIp</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.254</span>
 <span class=w>  </span><span class=nt>qosPolicy</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">qos-natgw-example</span>
 <span class=w>  </span><span class=nt>selector</span><span class=p>:</span>
-<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;kubernetes.io/hostname:</span><span class=nv> </span><span class=s>kube-ovn-worker&quot;</span>
-<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;kubernetes.io/os:</span><span class=nv> </span><span class=s>linux&quot;</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"kubernetes.io/hostname:</span><span class=nv> </span><span class=s>kube-ovn-worker"</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"kubernetes.io/os:</span><span class=nv> </span><span class=s>linux"</span>
 </code></pre></div> <h2 id=qos-natgw>查看已启用 QoS 的 NATGW<a class=headerlink href=#qos-natgw title="Permanent link">&para;</a></h2> <p>通过 <code>label</code> 查看已经设置对应 qos 的 eip：</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl get vpc-nat-gw  -l ovn.kubernetes.io/qos=qos-natgw-example</span>
 NAME<span class=w>   </span>VPC<span class=w>          </span>SUBNET<span class=w>   </span>LANIP
 gw1<span class=w>    </span>test-vpc-1<span class=w>   </span>net1<span class=w>     </span><span class=m>10</span>.0.1.254

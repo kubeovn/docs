@@ -33,8 +33,8 @@ devlink<span class=w> </span>dev<span class=w> </span>param<span class=w> </span
 <span class=m>127</span>
 <span class=c1># cat /sys/class/net/enp132s1f0np1/device/sriov_totalvfs</span>
 <span class=m>127</span>
-</code></pre></div> <p>创建 VF，总数不要超过上面查询出的数量：</p> <div class=highlight><pre><span></span><code><span class=c1># echo &#39;4&#39; &gt; /sys/class/net/enp132s0f0np0/device/sriov_numvfs</span>
-<span class=c1># echo &#39;4&#39; &gt; /sys/class/net/enp132s1f0np1/device/sriov_numvfs</span>
+</code></pre></div> <p>创建 VF，总数不要超过上面查询出的数量：</p> <div class=highlight><pre><span></span><code><span class=c1># echo '4' &gt; /sys/class/net/enp132s0f0np0/device/sriov_numvfs</span>
+<span class=c1># echo '4' &gt; /sys/class/net/enp132s1f0np1/device/sriov_numvfs</span>
 <span class=c1># ip link show enp132s0f0np0</span>
 <span class=m>160</span>:<span class=w> </span>enp132s0f0np0:<span class=w> </span>&lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt;<span class=w> </span>mtu<span class=w> </span><span class=m>1500</span><span class=w> </span>qdisc<span class=w> </span>mq<span class=w> </span>state<span class=w> </span>DOWN<span class=w> </span>mode<span class=w> </span>DEFAULT<span class=w> </span>group<span class=w> </span>default<span class=w> </span>qlen<span class=w> </span><span class=m>1000</span>
 <span class=w>    </span>link/ether<span class=w> </span><span class=m>08</span>:c0:eb:74:c3:4a<span class=w> </span>brd<span class=w> </span>ff:ff:ff:ff:ff:ff
@@ -96,13 +96,13 @@ systemctl<span class=w> </span>disable<span class=w> </span>NetworkManager
 <span class=nt>data</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>config.json</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>    </span><span class=no>{</span>
-<span class=w>      </span><span class=no>&quot;resourceList&quot;: [{</span>
-<span class=w>          </span><span class=no>&quot;resourcePrefix&quot;: &quot;mellanox.com&quot;,</span>
-<span class=w>          </span><span class=no>&quot;resourceName&quot;: &quot;cx5_sriov_switchdev&quot;,</span>
-<span class=w>          </span><span class=no>&quot;selectors&quot;: {</span>
-<span class=w>                  </span><span class=no>&quot;vendors&quot;: [&quot;15b3&quot;],</span>
-<span class=w>                  </span><span class=no>&quot;devices&quot;: [&quot;1018&quot;],</span>
-<span class=w>                  </span><span class=no>&quot;drivers&quot;: [&quot;mlx5_core&quot;]</span>
+<span class=w>      </span><span class=no>"resourceList": [{</span>
+<span class=w>          </span><span class=no>"resourcePrefix": "mellanox.com",</span>
+<span class=w>          </span><span class=no>"resourceName": "cx5_sriov_switchdev",</span>
+<span class=w>          </span><span class=no>"selectors": {</span>
+<span class=w>                  </span><span class=no>"vendors": ["15b3"],</span>
+<span class=w>                  </span><span class=no>"devices": ["1018"],</span>
+<span class=w>                  </span><span class=no>"drivers": ["mlx5_core"]</span>
 <span class=w>              </span><span class=no>}</span>
 <span class=w>      </span><span class=no>}</span>
 <span class=w>      </span><span class=no>]</span>
@@ -136,22 +136,22 @@ kind:<span class=w> </span>SriovNetworkNodeState
 spec:<span class=w> </span>...
 status:
 <span class=w>  </span>interfaces:
-<span class=w>  </span>-<span class=w> </span>deviceID:<span class=w> </span><span class=s2>&quot;1017&quot;</span>
+<span class=w>  </span>-<span class=w> </span>deviceID:<span class=w> </span><span class=s2>"1017"</span>
 <span class=w>    </span>driver:<span class=w> </span>mlx5_core
 <span class=w>    </span>mtu:<span class=w> </span><span class=m>1500</span>
-<span class=w>    </span>pciAddress:<span class=w> </span><span class=s2>&quot;0000:5f:00.0&quot;</span>
+<span class=w>    </span>pciAddress:<span class=w> </span><span class=s2>"0000:5f:00.0"</span>
 <span class=w>    </span>totalvfs:<span class=w> </span><span class=m>8</span>
-<span class=w>    </span>vendor:<span class=w> </span><span class=s2>&quot;15b3&quot;</span>
+<span class=w>    </span>vendor:<span class=w> </span><span class=s2>"15b3"</span>
 <span class=w>    </span>linkSeed:<span class=w> </span>25000Mb/s
 <span class=w>    </span>linkType:<span class=w> </span>ETH
 <span class=w>    </span>mac:<span class=w> </span><span class=m>08</span>:c0:eb:f4:85:bb
 <span class=w>    </span>name:<span class=w> </span>ens41f0np0
-<span class=w>  </span>-<span class=w> </span>deviceID:<span class=w> </span><span class=s2>&quot;1017&quot;</span>
+<span class=w>  </span>-<span class=w> </span>deviceID:<span class=w> </span><span class=s2>"1017"</span>
 <span class=w>    </span>driver:<span class=w> </span>mlx5_core
 <span class=w>    </span>mtu:<span class=w> </span><span class=m>1500</span>
-<span class=w>    </span>pciAddress:<span class=w> </span><span class=s2>&quot;0000:5f:00.1&quot;</span>
+<span class=w>    </span>pciAddress:<span class=w> </span><span class=s2>"0000:5f:00.1"</span>
 <span class=w>    </span>totalvfs:<span class=w> </span><span class=m>8</span>
-<span class=w>    </span>vendor:<span class=w> </span><span class=s2>&quot;15b3&quot;</span>
+<span class=w>    </span>vendor:<span class=w> </span><span class=s2>"15b3"</span>
 <span class=w>    </span>linkSeed:<span class=w> </span>25000Mb/s
 <span class=w>    </span>linkType:<span class=w> </span>ETH
 <span class=w>    </span>mac:<span class=w> </span><span class=m>08</span>:c0:eb:f4:85:bb
@@ -163,7 +163,7 @@ status:
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>nodeSelector</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>feature.node.kubernetes.io/network-sriov.capable</span><span class=p>:</span><span class=w> </span><span class=s>&quot;true&quot;</span>
+<span class=w>    </span><span class=nt>feature.node.kubernetes.io/network-sriov.capable</span><span class=p>:</span><span class=w> </span><span class=s>"true"</span>
 <span class=w>  </span><span class=nt>eSwitchMode</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">switchdev</span>
 <span class=w>  </span><span class=nt>numVfs</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
 <span class=w>  </span><span class=nt>nicSelector</span><span class=p>:</span>
@@ -198,16 +198,16 @@ status:
 <span class=w>    </span>-<span class=w> </span>deviceID:<span class=w> </span><span class=m>1018</span>
 <span class=w>      </span>driver:<span class=w> </span>mlx5_core
 <span class=w>      </span>pciAddress:<span class=w> </span><span class=m>0000</span>:5f:00.2
-<span class=w>      </span>vendor:<span class=w> </span><span class=s2>&quot;15b3&quot;</span>
+<span class=w>      </span>vendor:<span class=w> </span><span class=s2>"15b3"</span>
 <span class=w>    </span>-<span class=w> </span>deviceID:<span class=w> </span><span class=m>1018</span>
 <span class=w>      </span>driver:<span class=w> </span>mlx5_core
 <span class=w>      </span>pciAddress:<span class=w> </span><span class=m>0000</span>:5f:00.3
-<span class=w>      </span>vendor:<span class=w> </span><span class=s2>&quot;15b3&quot;</span>
+<span class=w>      </span>vendor:<span class=w> </span><span class=s2>"15b3"</span>
 <span class=w>    </span>-<span class=w> </span>deviceID:<span class=w> </span><span class=m>1018</span>
 <span class=w>      </span>driver:<span class=w> </span>mlx5_core
 <span class=w>      </span>pciAddress:<span class=w> </span><span class=m>0000</span>:5f:00.4
-<span class=w>      </span>vendor:<span class=w> </span><span class=s2>&quot;15b3&quot;</span>
-<span class=w>    </span>deviceID:<span class=w> </span><span class=s2>&quot;1017&quot;</span>
+<span class=w>      </span>vendor:<span class=w> </span><span class=s2>"15b3"</span>
+<span class=w>    </span>deviceID:<span class=w> </span><span class=s2>"1017"</span>
 <span class=w>    </span>driver:<span class=w> </span>mlx5_core
 <span class=w>    </span>linkSeed:<span class=w> </span>25000Mb/s
 <span class=w>    </span>linkType:<span class=w> </span>ETH
@@ -217,21 +217,21 @@ status:
 <span class=w>    </span>numVfs:<span class=w> </span><span class=m>3</span>
 <span class=w>    </span>pciAddress:<span class=w> </span><span class=m>0000</span>:5f:00.0
 <span class=w>    </span>totalvfs:<span class=w> </span><span class=m>3</span>
-<span class=w>    </span>vendor:<span class=w> </span><span class=s2>&quot;15b3&quot;</span>
+<span class=w>    </span>vendor:<span class=w> </span><span class=s2>"15b3"</span>
 <span class=w>  </span>-<span class=w> </span>Vfs:
 <span class=w>    </span>-<span class=w> </span>deviceID:<span class=w> </span><span class=m>1018</span>
 <span class=w>      </span>driver:<span class=w> </span>mlx5_core
 <span class=w>      </span>pciAddress:<span class=w> </span><span class=m>0000</span>:5f:00.5
-<span class=w>      </span>vendor:<span class=w> </span><span class=s2>&quot;15b3&quot;</span>
+<span class=w>      </span>vendor:<span class=w> </span><span class=s2>"15b3"</span>
 <span class=w>    </span>-<span class=w> </span>deviceID:<span class=w> </span><span class=m>1018</span>
 <span class=w>      </span>driver:<span class=w> </span>mlx5_core
 <span class=w>      </span>pciAddress:<span class=w> </span><span class=m>0000</span>:5f:00.6
-<span class=w>      </span>vendor:<span class=w> </span><span class=s2>&quot;15b3&quot;</span>
+<span class=w>      </span>vendor:<span class=w> </span><span class=s2>"15b3"</span>
 <span class=w>    </span>-<span class=w> </span>deviceID:<span class=w> </span><span class=m>1018</span>
 <span class=w>      </span>driver:<span class=w> </span>mlx5_core
 <span class=w>      </span>pciAddress:<span class=w> </span><span class=m>0000</span>:5f:00.7
-<span class=w>      </span>vendor:<span class=w> </span><span class=s2>&quot;15b3&quot;</span>
-<span class=w>    </span>deviceID:<span class=w> </span><span class=s2>&quot;1017&quot;</span>
+<span class=w>      </span>vendor:<span class=w> </span><span class=s2>"15b3"</span>
+<span class=w>    </span>deviceID:<span class=w> </span><span class=s2>"1017"</span>
 <span class=w>    </span>driver:<span class=w> </span>mlx5_core
 <span class=w>    </span>linkSeed:<span class=w> </span>25000Mb/s
 <span class=w>    </span>linkType:<span class=w> </span>ETH
@@ -241,7 +241,7 @@ status:
 <span class=w>    </span>numVfs:<span class=w> </span><span class=m>3</span>
 <span class=w>    </span>pciAddress:<span class=w> </span><span class=m>0000</span>:5f:00.1
 <span class=w>    </span>totalvfs:<span class=w> </span><span class=m>3</span>
-<span class=w>    </span>vendor:<span class=w> </span><span class=s2>&quot;15b3&quot;</span>
+<span class=w>    </span>vendor:<span class=w> </span><span class=s2>"15b3"</span>
 </code></pre></div> <p>检查 VF 的状态：</p> <div class=highlight><pre><span></span><code><span class=c1># lspci -nn | grep ConnectX</span>
 5f:00.0<span class=w> </span>Ethernet<span class=w> </span>controller<span class=w> </span><span class=o>[</span><span class=m>0200</span><span class=o>]</span>:<span class=w> </span>Mellanox<span class=w> </span>Technologies<span class=w> </span>MT27800<span class=w> </span>Family<span class=w> </span><span class=o>[</span>ConnectX-5<span class=o>]</span><span class=w> </span><span class=o>[</span>15b3:1017<span class=o>]</span>
 5f:00.1<span class=w> </span>Ethernet<span class=w> </span>controller<span class=w> </span><span class=o>[</span><span class=m>0200</span><span class=o>]</span>:<span class=w> </span>Mellanox<span class=w> </span>Technologies<span class=w> </span>MT27800<span class=w> </span>Family<span class=w> </span><span class=o>[</span>ConnectX-5<span class=o>]</span><span class=w> </span><span class=o>[</span>15b3:1017<span class=o>]</span>
@@ -254,7 +254,7 @@ status:
 </code></pre></div> <p>检查 PF 工作模式：</p> <div class=highlight><pre><span></span><code><span class=c1># cat /sys/class/net/ens41f0np0/compat/devlink/mode</span>
 switchdev
 </code></pre></div> <h2 id=multus-cni>安装 Multus-CNI<a class=headerlink href=#multus-cni title="Permanent link">&para;</a></h2> <p>SR-IOV Device Plugin 调度时获得的设备 ID 需要通过 Multus-CNI 传递给 Kube-OVN，因此需要配置 Multus-CNI 配合完成相关任务。</p> <p>参考 <a href=https://github.com/k8snetworkplumbingwg/multus-cni>Multus-CNI 文档</a>进行部署：</p> <div class=highlight><pre><span></span><code>kubectl<span class=w> </span>apply<span class=w> </span>-f<span class=w> </span>https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v4.0.2/deployments/multus-daemonset-thick.yml
-</code></pre></div> <blockquote> <p>注意：multus 提供了 Thin 和 Thick 版本的插件，若要支持 SR-IOV 则需要安装 Thick 版本。</p> </blockquote> <p>创建 <code>NetworkAttachmentDefinition</code>：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>&quot;k8s.cni.cncf.io/v1&quot;</span>
+</code></pre></div> <blockquote> <p>注意：multus 提供了 Thin 和 Thick 版本的插件，若要支持 SR-IOV 则需要安装 Thick 版本。</p> </blockquote> <p>创建 <code>NetworkAttachmentDefinition</code>：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>"k8s.cni.cncf.io/v1"</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">NetworkAttachmentDefinition</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">sriov</span>
@@ -262,28 +262,28 @@ switchdev
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/resourceName</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">mellanox.com/cx5_sriov_switchdev</span>
 <span class=nt>spec</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>&#39;{</span>
-<span class=w>    </span><span class=s>&quot;cniVersion&quot;:</span><span class=nv> </span><span class=s>&quot;0.3.1&quot;,</span>
-<span class=w>    </span><span class=s>&quot;name&quot;:</span><span class=nv> </span><span class=s>&quot;kube-ovn&quot;,</span>
-<span class=w>    </span><span class=s>&quot;plugins&quot;:[</span>
+<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>'{</span>
+<span class=w>    </span><span class=s>"cniVersion":</span><span class=nv> </span><span class=s>"0.3.1",</span>
+<span class=w>    </span><span class=s>"name":</span><span class=nv> </span><span class=s>"kube-ovn",</span>
+<span class=w>    </span><span class=s>"plugins":[</span>
 <span class=w>        </span><span class=s>{</span>
-<span class=w>            </span><span class=s>&quot;type&quot;:&quot;kube-ovn&quot;,</span>
-<span class=w>            </span><span class=s>&quot;server_socket&quot;:&quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>            </span><span class=s>&quot;provider&quot;:</span><span class=nv> </span><span class=s>&quot;sriov.default.ovn&quot;</span>
+<span class=w>            </span><span class=s>"type":"kube-ovn",</span>
+<span class=w>            </span><span class=s>"server_socket":"/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>            </span><span class=s>"provider":</span><span class=nv> </span><span class=s>"sriov.default.ovn"</span>
 <span class=w>        </span><span class=s>},</span>
 <span class=w>        </span><span class=s>{</span>
-<span class=w>            </span><span class=s>&quot;type&quot;:&quot;portmap&quot;,</span>
-<span class=w>            </span><span class=s>&quot;capabilities&quot;:{</span>
-<span class=w>                </span><span class=s>&quot;portMappings&quot;:true</span>
+<span class=w>            </span><span class=s>"type":"portmap",</span>
+<span class=w>            </span><span class=s>"capabilities":{</span>
+<span class=w>                </span><span class=s>"portMappings":true</span>
 <span class=w>            </span><span class=s>}</span>
 <span class=w>        </span><span class=s>}</span>
 <span class=w>    </span><span class=s>]</span>
-<span class=s>}&#39;</span>
+<span class=s>}'</span>
 </code></pre></div> <ul> <li><code>provider</code>: 格式为当前 <code>NetworkAttachmentDefinition</code> 的 {name}.{namespace}.ovn。</li> </ul> <h2 id=overlay>Overlay 卸载<a class=headerlink href=#overlay title="Permanent link">&para;</a></h2> <h3 id=kube-ovn>Kube-OVN 中开启卸载模式<a class=headerlink href=#kube-ovn title="Permanent link">&para;</a></h3> <p>下载安装脚本：</p> <div class=highlight><pre><span></span><code>wget<span class=w> </span>https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.15/dist/images/install.sh
 </code></pre></div> <p>修改相关参数，<code>IFACE</code> 需要为物理网卡名，该网卡需要有可路由 IP：</p> <div class=highlight><pre><span></span><code><span class=nv>ENABLE_MIRROR</span><span class=o>=</span><span class=si>${</span><span class=nv>ENABLE_MIRROR</span><span class=k>:-</span><span class=nv>false</span><span class=si>}</span>
 <span class=nv>HW_OFFLOAD</span><span class=o>=</span><span class=si>${</span><span class=nv>HW_OFFLOAD</span><span class=k>:-</span><span class=nv>true</span><span class=si>}</span>
 <span class=nv>ENABLE_LB</span><span class=o>=</span><span class=si>${</span><span class=nv>ENABLE_LB</span><span class=k>:-</span><span class=nv>false</span><span class=si>}</span>
-<span class=nv>IFACE</span><span class=o>=</span><span class=s2>&quot;bond1&quot;</span>
+<span class=nv>IFACE</span><span class=o>=</span><span class=s2>"bond1"</span>
 <span class=c1># 以手动配置 SR-IOV 和 Device Plugin 中的网卡为例，若绑定 bond，则将 IFACE 设置为 bond1，若未绑定 bond，则可将 IFACE 设置为 enp132s0f0np0 或 enp132s0f1np1</span>
 </code></pre></div> <p>安装 Kube-OVN：</p> <div class=highlight><pre><span></span><code>bash<span class=w> </span>install.sh
 </code></pre></div> <h3 id=vf-pod>创建使用 VF 网卡的 Pod<a class=headerlink href=#vf-pod title="Permanent link">&para;</a></h3> <p>可以使用如下 yaml 格式创建使用 VF 进行网络卸载加速的 Pod:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
@@ -299,14 +299,14 @@ switchdev
 <span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/library/nginx:alpine</span>
 <span class=w>    </span><span class=nt>resources</span><span class=p>:</span>
 <span class=w>      </span><span class=nt>requests</span><span class=p>:</span>
-<span class=w>        </span><span class=nt>mellanox.com/cx5_sriov_switchdev</span><span class=p>:</span><span class=w> </span><span class=s>&#39;1&#39;</span>
+<span class=w>        </span><span class=nt>mellanox.com/cx5_sriov_switchdev</span><span class=p>:</span><span class=w> </span><span class=s>'1'</span>
 <span class=w>      </span><span class=nt>limits</span><span class=p>:</span>
-<span class=w>        </span><span class=nt>mellanox.com/cx5_sriov_switchdev</span><span class=p>:</span><span class=w> </span><span class=s>&#39;1&#39;</span>
+<span class=w>        </span><span class=nt>mellanox.com/cx5_sriov_switchdev</span><span class=p>:</span><span class=w> </span><span class=s>'1'</span>
 </code></pre></div> <ul> <li><code>v1.multus-cni.io/default-network</code>: 为上一步骤中 <code>NetworkAttachmentDefinition</code> 的 {namespace}/{name}。</li> <li><code>sriov.default.ovn.kubernetes.io/logical_switch</code>: 指定 Pod 所属的子网，若希望 Pod 所属的子网为默认子网，则该行注解可省略。</li> </ul> <h2 id=underlay>Underlay 卸载<a class=headerlink href=#underlay title="Permanent link">&para;</a></h2> <h3 id=kube-ovn_1>Kube-OVN 中开启卸载模式<a class=headerlink href=#kube-ovn_1 title="Permanent link">&para;</a></h3> <p>下载安装脚本：</p> <div class=highlight><pre><span></span><code>wget<span class=w> </span>https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.15/dist/images/install.sh
 </code></pre></div> <p>修改相关参数，<code>IFACE</code> 需要为物理网卡名，该网卡需要有可路由 IP：</p> <div class=highlight><pre><span></span><code><span class=nv>ENABLE_MIRROR</span><span class=o>=</span><span class=si>${</span><span class=nv>ENABLE_MIRROR</span><span class=k>:-</span><span class=nv>false</span><span class=si>}</span>
 <span class=nv>HW_OFFLOAD</span><span class=o>=</span><span class=si>${</span><span class=nv>HW_OFFLOAD</span><span class=k>:-</span><span class=nv>true</span><span class=si>}</span>
 <span class=nv>ENABLE_LB</span><span class=o>=</span><span class=si>${</span><span class=nv>ENABLE_LB</span><span class=k>:-</span><span class=nv>false</span><span class=si>}</span>
-<span class=nv>IFACE</span><span class=o>=</span><span class=s2>&quot;&quot;</span>
+<span class=nv>IFACE</span><span class=o>=</span><span class=s2>""</span>
 <span class=c1># 若需要 Underlay 卸载，IFACE 需设置为其它非 PF 的网卡。（IFACE 为空时会默认使用 K8s 集群通信的网卡，注意这张网卡不能是 PF 的网卡）</span>
 </code></pre></div> <p>安装 Kube-OVN：</p> <div class=highlight><pre><span></span><code>bash<span class=w> </span>install.sh
 </code></pre></div> <h3 id=vf-pod_1>创建使用 VF 网卡的 Pod<a class=headerlink href=#vf-pod_1 title="Permanent link">&para;</a></h3> <p>可以使用如下 yaml 格式创建使用 VF 进行网络卸载加速的 Pod:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
@@ -345,11 +345,11 @@ switchdev
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">nginx-underlay</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/networks</span><span class=p>:</span><span class=w> </span><span class=s>&#39;[{</span>
-<span class=w>      </span><span class=s>&quot;name&quot;:</span><span class=nv> </span><span class=s>&quot;sriov&quot;,</span>
-<span class=w>      </span><span class=s>&quot;namespace&quot;:</span><span class=nv> </span><span class=s>&quot;default&quot;,</span>
-<span class=w>      </span><span class=s>&quot;default-route&quot;:</span><span class=nv> </span><span class=s>[&quot;10.10.204.254&quot;]</span>
-<span class=w>    </span><span class=s>}]&#39;</span>
+<span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/networks</span><span class=p>:</span><span class=w> </span><span class=s>'[{</span>
+<span class=w>      </span><span class=s>"name":</span><span class=nv> </span><span class=s>"sriov",</span>
+<span class=w>      </span><span class=s>"namespace":</span><span class=nv> </span><span class=s>"default",</span>
+<span class=w>      </span><span class=s>"default-route":</span><span class=nv> </span><span class=s>["10.10.204.254"]</span>
+<span class=w>    </span><span class=s>}]'</span>
 <span class=w>    </span><span class=nt>sriov.default.ovn.kubernetes.io/logical_switch</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vlan0</span>
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>containers</span><span class=p>:</span>
@@ -357,9 +357,9 @@ switchdev
 <span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/library/nginx:alpine</span>
 <span class=w>    </span><span class=nt>resources</span><span class=p>:</span>
 <span class=w>      </span><span class=nt>requests</span><span class=p>:</span>
-<span class=w>        </span><span class=nt>mellanox.com/cx5_sriov_switchdev</span><span class=p>:</span><span class=w> </span><span class=s>&#39;1&#39;</span>
+<span class=w>        </span><span class=nt>mellanox.com/cx5_sriov_switchdev</span><span class=p>:</span><span class=w> </span><span class=s>'1'</span>
 <span class=w>      </span><span class=nt>limits</span><span class=p>:</span>
-<span class=w>        </span><span class=nt>mellanox.com/cx5_sriov_switchdev</span><span class=p>:</span><span class=w> </span><span class=s>&#39;1&#39;</span>
+<span class=w>        </span><span class=nt>mellanox.com/cx5_sriov_switchdev</span><span class=p>:</span><span class=w> </span><span class=s>'1'</span>
 </code></pre></div> <ul> <li><code>v1.multus-cni.io/default-network</code>: 为上一步骤中 <code>NetworkAttachmentDefinition</code> 的 {namespace}/{name}。</li> </ul> <blockquote> <p>注意：上述示例中通过 multus 创建了使用 VF 作为副网卡的 Pod，同时将 VF 作为 Pod 的默认路由。还可以将 VF 作为 Pod 的主网卡，更多 multus 配置详见<a href=../multi-nic/ >多网卡管理</a>。</p> </blockquote> <p>需要注意的是仍可以使用如下 yaml 格式创建不使用 VF 进行网络卸载加速的 Pod:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
 <span class=nt>metadata</span><span class=p>:</span>

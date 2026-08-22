@@ -30,10 +30,10 @@
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>    </span><span class=no>{</span>
-<span class=w>      </span><span class=no>&quot;cniVersion&quot;: &quot;0.3.1&quot;,</span>
-<span class=w>      </span><span class=no>&quot;type&quot;: &quot;kube-ovn&quot;,</span>
-<span class=w>      </span><span class=no>&quot;server_socket&quot;: &quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>      </span><span class=no>&quot;provider&quot;: &quot;kube-ovn-vpc-network.default.ovn&quot;</span>
+<span class=w>      </span><span class=no>"cniVersion": "0.3.1",</span>
+<span class=w>      </span><span class=no>"type": "kube-ovn",</span>
+<span class=w>      </span><span class=no>"server_socket": "/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>      </span><span class=no>"provider": "kube-ovn-vpc-network.default.ovn"</span>
 <span class=w>    </span><span class=no>}</span>
 </code></pre></div> <h3 id=vpc>VPC 和子网配置<a class=headerlink href=#vpc title="Permanent link">&para;</a></h3> <p>为次要网络创建 VPC 和子网资源：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Vpc</span>
@@ -49,8 +49,8 @@
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">subnet-secondary</span>
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>vpc</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc-secondary</span>
-<span class=w>  </span><span class=nt>cidr</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10.100.0.0/16&quot;</span>
-<span class=w>  </span><span class=nt>gateway</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10.100.0.1&quot;</span>
+<span class=w>  </span><span class=nt>cidr</span><span class=p>:</span><span class=w> </span><span class=s>"10.100.0.0/16"</span>
+<span class=w>  </span><span class=nt>gateway</span><span class=p>:</span><span class=w> </span><span class=s>"10.100.0.1"</span>
 <span class=w>  </span><span class=nt>provider</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-ovn-vpc-network.default.ovn</span>
 </code></pre></div> <h3 id=pod>Pod 配置<a class=headerlink href=#pod title="Permanent link">&para;</a></h3> <p>为 Pod 添加注解以请求额外的网络接口：</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
@@ -70,8 +70,8 @@
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>      </span><span class=no>[</span>
-<span class=w>        </span><span class=no>{&quot;name&quot;: &quot;default/public-network&quot;},</span>
-<span class=w>        </span><span class=no>{&quot;name&quot;: &quot;default/internal-network&quot;}</span>
+<span class=w>        </span><span class=no>{"name": "default/public-network"},</span>
+<span class=w>        </span><span class=no>{"name": "default/internal-network"}</span>
 <span class=w>      </span><span class=no>]</span>
 </code></pre></div> <h3 id=2>2. 多租户<a class=headerlink href=#2 title="Permanent link">&para;</a></h3> <p>提供租户特定的网络：</p> <div class=highlight><pre><span></span><code><span class=c1># 租户 A Pod</span>
 <span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
@@ -96,28 +96,28 @@
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>vpc</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc-secondary</span>
 <span class=w>  </span><span class=nt>subnet</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">subnet-secondary</span>
-<span class=w>  </span><span class=nt>lanIp</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10.100.0.254&quot;</span>
+<span class=w>  </span><span class=nt>lanIp</span><span class=p>:</span><span class=w> </span><span class=s>"10.100.0.254"</span>
 </code></pre></div> <h2 id=_10>高级功能<a class=headerlink href=#_10 title="Permanent link">&para;</a></h2> <h3 id=_11>多个网络提供者<a class=headerlink href=#_11 title="Permanent link">&para;</a></h3> <p>Pod 可以拥有来自多个提供者的接口：</p> <div class=highlight><pre><span></span><code><span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>      </span><span class=no>[</span>
-<span class=w>        </span><span class=no>{&quot;name&quot;: &quot;default/kube-ovn-network-1&quot;, &quot;interface&quot;: &quot;net1&quot;},</span>
-<span class=w>        </span><span class=no>{&quot;name&quot;: &quot;default/kube-ovn-network-2&quot;, &quot;interface&quot;: &quot;net2&quot;}</span>
+<span class=w>        </span><span class=no>{"name": "default/kube-ovn-network-1", "interface": "net1"},</span>
+<span class=w>        </span><span class=no>{"name": "default/kube-ovn-network-2", "interface": "net2"}</span>
 <span class=w>      </span><span class=no>]</span>
 </code></pre></div> <h3 id=ip>IP 地址分配<a class=headerlink href=#ip title="Permanent link">&para;</a></h3> <p>控制次要接口的 IP 分配：</p> <div class=highlight><pre><span></span><code><span class=c1># 静态 IP 分配</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>      </span><span class=no>[{</span>
-<span class=w>        </span><span class=no>&quot;name&quot;: &quot;default/kube-ovn-network&quot;,</span>
-<span class=w>        </span><span class=no>&quot;ips&quot;: [&quot;10.100.0.100/16&quot;]</span>
+<span class=w>        </span><span class=no>"name": "default/kube-ovn-network",</span>
+<span class=w>        </span><span class=no>"ips": ["10.100.0.100/16"]</span>
 <span class=w>      </span><span class=no>}]</span>
 </code></pre></div> <h3 id=qos>服务质量（QoS）<a class=headerlink href=#qos title="Permanent link">&para;</a></h3> <p>对次要接口应用 QoS 策略：</p> <div class=highlight><pre><span></span><code><span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>ovn.kubernetes.io/ingress_rate</span><span class=p>:</span><span class=w> </span><span class=s>&quot;1000&quot;</span>
-<span class=w>    </span><span class=nt>ovn.kubernetes.io/egress_rate</span><span class=p>:</span><span class=w> </span><span class=s>&quot;1000&quot;</span>
+<span class=w>    </span><span class=nt>ovn.kubernetes.io/ingress_rate</span><span class=p>:</span><span class=w> </span><span class=s>"1000"</span>
+<span class=w>    </span><span class=nt>ovn.kubernetes.io/egress_rate</span><span class=p>:</span><span class=w> </span><span class=s>"1000"</span>
 </code></pre></div> <h2 id=_12>故障排查<a class=headerlink href=#_12 title="Permanent link">&para;</a></h2> <h3 id=_13>常见问题<a class=headerlink href=#_13 title="Permanent link">&para;</a></h3> <ol> <li> <p><strong>Pod 无法获取次要接口</strong> - 验证 NAD 是否在正确的命名空间中创建 - 检查 kube-ovn-cni 日志中的错误 - 确保 Multus 已正确安装</p> </li> <li> <p><strong>次要接口无连接</strong> - 验证子网和 VPC 配置 - 检查 Pod 中的路由表 - 确保安全组规则允许流量</p> </li> <li> <p><strong>IP 地址冲突</strong> - 验证子网 CIDR 范围不重叠 - 检查静态 IP 冲突 - 查看 IPAM 配置</p> </li> </ol> <h3 id=_14>调试命令<a class=headerlink href=#_14 title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=c1># 检查 Pod 网络状态</span>
-kubectl<span class=w> </span>get<span class=w> </span>pod<span class=w> </span>&lt;pod-name&gt;<span class=w> </span>-o<span class=w> </span>yaml<span class=w> </span><span class=p>|</span><span class=w> </span>grep<span class=w> </span>-A<span class=w> </span><span class=m>10</span><span class=w> </span><span class=s2>&quot;networks-status&quot;</span>
+kubectl<span class=w> </span>get<span class=w> </span>pod<span class=w> </span>&lt;pod-name&gt;<span class=w> </span>-o<span class=w> </span>yaml<span class=w> </span><span class=p>|</span><span class=w> </span>grep<span class=w> </span>-A<span class=w> </span><span class=m>10</span><span class=w> </span><span class=s2>"networks-status"</span>
 
 <span class=c1># 查看 Pod 中的网络接口</span>
 kubectl<span class=w> </span><span class=nb>exec</span><span class=w> </span>&lt;pod-name&gt;<span class=w> </span>--<span class=w> </span>ip<span class=w> </span>addr<span class=w> </span>show

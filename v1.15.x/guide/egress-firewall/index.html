@@ -41,8 +41,8 @@ kubectl<span class=w> </span>apply<span class=w> </span>-f<span class=w> </span>
 <span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">deny-baidu-google</span>
 <span class=w>    </span><span class=nt>to</span><span class=p>:</span>
 <span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>domainNames</span><span class=p>:</span>
-<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;*.baidu.com.&#39;</span>
-<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;*.google.com.&#39;</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>'*.baidu.com.'</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>'*.google.com.'</span>
 </code></pre></div> <p>字段说明：</p> <table> <thead> <tr> <th>字段</th> <th>说明</th> </tr> </thead> <tbody> <tr> <td><code>priority</code></td> <td>策略优先级，数值越小优先级越高</td> </tr> <tr> <td><code>subject</code></td> <td>策略应用的目标，支持按命名空间、Pod 标签等选择</td> </tr> <tr> <td><code>egress</code></td> <td>出口规则配置</td> </tr> <tr> <td><code>action</code></td> <td>执行动作，支持 <code>Allow</code>、<code>Deny</code>、<code>Pass</code></td> </tr> <tr> <td><code>domainNames</code></td> <td>目标域名列表，支持通配符，需要以 <code>.</code> 结尾</td> </tr> </tbody> </table> <h2 id=_7>验证测试<a class=headerlink href=#_7 title="Permanent link">&para;</a></h2> <p>使用 kube-ovn-pinger 测试连通性：</p> <div class=highlight><pre><span></span><code><span class=c1># 测试对被阻止域名的访问</span>
 kubectl<span class=w> </span><span class=nb>exec</span><span class=w> </span>-it<span class=w> </span>-n<span class=w> </span>kube-system<span class=w> </span>kube-ovn-pinger-xxxxx<span class=w> </span>--<span class=w> </span>ping<span class=w> </span>baidu.com
 </code></pre></div> <blockquote> <p>注意：首次访问可能成功，因为 DNS 解析和 ACL 规则应用需要时间。</p> </blockquote> <p>查看 DNSNameResolver 状态：</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl get dnsnameresolver</span>

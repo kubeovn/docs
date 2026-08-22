@@ -61,7 +61,7 @@ spec:
 <span class=w>  </span>disableGatewayCheck:<span class=w> </span><span class=nb>false</span>
 <span class=w>  </span>disableInterConnection:<span class=w> </span><span class=nb>true</span>
 <span class=w>  </span>enableEcmp:<span class=w> </span><span class=nb>true</span><span class=w>  </span><span class=c1># 只需开启 ecmp</span>
-<span class=w>  </span>gatewayNode:<span class=w> </span><span class=s2>&quot;&quot;</span>
+<span class=w>  </span>gatewayNode:<span class=w> </span><span class=s2>""</span>
 <span class=w>  </span>gatewayType:<span class=w> </span>distributed
 <span class=w>  </span><span class=c1>#gatewayType: centralized</span>
 <span class=w>  </span>natOutgoing:<span class=w> </span><span class=nb>false</span>
@@ -75,8 +75,8 @@ spec:
 <span class=c1># 查看 vpc</span>
 <span class=c1># k get vpc</span>
 NAME<span class=w>          </span>ENABLEEXTERNAL<span class=w>   </span>ENABLEBFD<span class=w>   </span>STANDBY<span class=w>   </span>SUBNETS<span class=w>                                </span>NAMESPACES
-ovn-cluster<span class=w>   </span><span class=nb>true</span><span class=w>                         </span><span class=nb>true</span><span class=w>      </span><span class=o>[</span><span class=s2>&quot;external204&quot;</span>,<span class=s2>&quot;join&quot;</span>,<span class=s2>&quot;ovn-default&quot;</span><span class=o>]</span>
-vpc1<span class=w>          </span><span class=nb>true</span><span class=w>             </span><span class=nb>true</span><span class=w>        </span><span class=nb>true</span><span class=w>      </span><span class=o>[</span><span class=s2>&quot;vpc1-subnet1&quot;</span><span class=o>]</span><span class=w>                       </span><span class=o>[</span><span class=s2>&quot;vpc1&quot;</span><span class=o>]</span>
+ovn-cluster<span class=w>   </span><span class=nb>true</span><span class=w>                         </span><span class=nb>true</span><span class=w>      </span><span class=o>[</span><span class=s2>"external204"</span>,<span class=s2>"join"</span>,<span class=s2>"ovn-default"</span><span class=o>]</span>
+vpc1<span class=w>          </span><span class=nb>true</span><span class=w>             </span><span class=nb>true</span><span class=w>        </span><span class=nb>true</span><span class=w>      </span><span class=o>[</span><span class=s2>"vpc1-subnet1"</span><span class=o>]</span><span class=w>                       </span><span class=o>[</span><span class=s2>"vpc1"</span><span class=o>]</span>
 
 <span class=c1># 默认 vpc 未支持 ENABLEBFD</span>
 <span class=c1># 自定义 vpc 已支持且已启用</span>
@@ -85,7 +85,7 @@ vpc1<span class=w>          </span><span class=nb>true</span><span class=w>     
 <span class=c1># k ko nbctl list bfd</span>
 _uuid<span class=w>               </span>:<span class=w> </span>be7df545-2c4c-4751-878f-b3507987f050
 detect_mult<span class=w>         </span>:<span class=w> </span><span class=m>3</span>
-dst_ip<span class=w>              </span>:<span class=w> </span><span class=s2>&quot;10.5.204.121&quot;</span>
+dst_ip<span class=w>              </span>:<span class=w> </span><span class=s2>"10.5.204.121"</span>
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
 logical_port<span class=w>        </span>:<span class=w> </span>vpc1-external204
 min_rx<span class=w>              </span>:<span class=w> </span><span class=m>100</span>
@@ -95,7 +95,7 @@ status<span class=w>              </span>:<span class=w> </span>up
 
 _uuid<span class=w>               </span>:<span class=w> </span>684c4489-5b59-4693-8d8c-3beab93f8093
 detect_mult<span class=w>         </span>:<span class=w> </span><span class=m>3</span>
-dst_ip<span class=w>              </span>:<span class=w> </span><span class=s2>&quot;10.5.204.109&quot;</span>
+dst_ip<span class=w>              </span>:<span class=w> </span><span class=s2>"10.5.204.109"</span>
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
 logical_port<span class=w>        </span>:<span class=w> </span>vpc1-external204
 min_rx<span class=w>              </span>:<span class=w> </span><span class=m>100</span>
@@ -105,7 +105,7 @@ status<span class=w>              </span>:<span class=w> </span>up
 
 _uuid<span class=w>               </span>:<span class=w> </span>f0f62077-2ae9-4e79-b4f8-a446ec6e784c
 detect_mult<span class=w>         </span>:<span class=w> </span><span class=m>3</span>
-dst_ip<span class=w>              </span>:<span class=w> </span><span class=s2>&quot;10.5.204.108&quot;</span>
+dst_ip<span class=w>              </span>:<span class=w> </span><span class=s2>"10.5.204.108"</span>
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
 logical_port<span class=w>        </span>:<span class=w> </span>vpc1-external204
 min_rx<span class=w>              </span>:<span class=w> </span><span class=m>100</span>
@@ -124,36 +124,36 @@ Route<span class=w> </span>Table<span class=w> </span>&lt;main&gt;:
 <span class=w>           </span><span class=m>192</span>.168.0.0/24<span class=w>              </span><span class=m>10</span>.5.204.121<span class=w> </span>src-ip<span class=w> </span>ecmp<span class=w> </span>ecmp-symmetric-reply<span class=w> </span>bfd
 
 <span class=c1># 3. 静态路由详情</span>
-<span class=c1># k ko nbctl find Logical_Router_Static_Route  policy=src-ip options=ecmp_symmetric_reply=&quot;true&quot;</span>
+<span class=c1># k ko nbctl find Logical_Router_Static_Route  policy=src-ip options=ecmp_symmetric_reply="true"</span>
 _uuid<span class=w>               </span>:<span class=w> </span>3aacb384-d5ee-4b14-aebf-59e8c11717ba
 bfd<span class=w>                 </span>:<span class=w> </span>684c4489-5b59-4693-8d8c-3beab93f8093
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
-ip_prefix<span class=w>           </span>:<span class=w> </span><span class=s2>&quot;192.168.0.0/24&quot;</span>
-nexthop<span class=w>             </span>:<span class=w> </span><span class=s2>&quot;10.5.204.109&quot;</span>
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>ecmp_symmetric_reply</span><span class=o>=</span><span class=s2>&quot;true&quot;</span><span class=o>}</span>
+ip_prefix<span class=w>           </span>:<span class=w> </span><span class=s2>"192.168.0.0/24"</span>
+nexthop<span class=w>             </span>:<span class=w> </span><span class=s2>"10.5.204.109"</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>ecmp_symmetric_reply</span><span class=o>=</span><span class=s2>"true"</span><span class=o>}</span>
 output_port<span class=w>         </span>:<span class=w> </span><span class=o>[]</span>
 policy<span class=w>              </span>:<span class=w> </span>src-ip
-route_table<span class=w>         </span>:<span class=w> </span><span class=s2>&quot;&quot;</span>
+route_table<span class=w>         </span>:<span class=w> </span><span class=s2>""</span>
 
 _uuid<span class=w>               </span>:<span class=w> </span>18bcc585-bc05-430b-925b-ef673c8e1aef
 bfd<span class=w>                 </span>:<span class=w> </span>f0f62077-2ae9-4e79-b4f8-a446ec6e784c
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
-ip_prefix<span class=w>           </span>:<span class=w> </span><span class=s2>&quot;192.168.0.0/24&quot;</span>
-nexthop<span class=w>             </span>:<span class=w> </span><span class=s2>&quot;10.5.204.108&quot;</span>
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>ecmp_symmetric_reply</span><span class=o>=</span><span class=s2>&quot;true&quot;</span><span class=o>}</span>
+ip_prefix<span class=w>           </span>:<span class=w> </span><span class=s2>"192.168.0.0/24"</span>
+nexthop<span class=w>             </span>:<span class=w> </span><span class=s2>"10.5.204.108"</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>ecmp_symmetric_reply</span><span class=o>=</span><span class=s2>"true"</span><span class=o>}</span>
 output_port<span class=w>         </span>:<span class=w> </span><span class=o>[]</span>
 policy<span class=w>              </span>:<span class=w> </span>src-ip
-route_table<span class=w>         </span>:<span class=w> </span><span class=s2>&quot;&quot;</span>
+route_table<span class=w>         </span>:<span class=w> </span><span class=s2>""</span>
 
 _uuid<span class=w>               </span>:<span class=w> </span>7d0a4e6b-cde0-4110-8176-fbaf19738498
 bfd<span class=w>                 </span>:<span class=w> </span>be7df545-2c4c-4751-878f-b3507987f050
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
-ip_prefix<span class=w>           </span>:<span class=w> </span><span class=s2>&quot;192.168.0.0/24&quot;</span>
-nexthop<span class=w>             </span>:<span class=w> </span><span class=s2>&quot;10.5.204.121&quot;</span>
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>ecmp_symmetric_reply</span><span class=o>=</span><span class=s2>&quot;true&quot;</span><span class=o>}</span>
+ip_prefix<span class=w>           </span>:<span class=w> </span><span class=s2>"192.168.0.0/24"</span>
+nexthop<span class=w>             </span>:<span class=w> </span><span class=s2>"10.5.204.121"</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>ecmp_symmetric_reply</span><span class=o>=</span><span class=s2>"true"</span><span class=o>}</span>
 output_port<span class=w>         </span>:<span class=w> </span><span class=o>[]</span>
 policy<span class=w>              </span>:<span class=w> </span>src-ip
-route_table<span class=w>         </span>:<span class=w> </span><span class=s2>&quot;&quot;</span>
+route_table<span class=w>         </span>:<span class=w> </span><span class=s2>""</span>
 </code></pre></div> <div class=highlight><pre><span></span><code><span class=c1># 同时在网关节点都应该具备以下资源</span>
 <span class=o>[</span>root@pc-node-1<span class=w> </span>~<span class=o>]</span><span class=c1># ip netns exec ovnext ip a</span>
 <span class=m>1</span>:<span class=w> </span>lo:<span class=w> </span>&lt;LOOPBACK,UP,LOWER_UP&gt;<span class=w> </span>mtu<span class=w> </span><span class=m>65536</span><span class=w> </span>qdisc<span class=w> </span>noqueue<span class=w> </span>state<span class=w> </span>UNKNOWN<span class=w> </span>group<span class=w> </span>default<span class=w> </span>qlen<span class=w> </span><span class=m>1000</span>

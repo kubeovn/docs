@@ -75,40 +75,40 @@ vulpecula-subnet<span class=w>    </span><span class=m>10</span>.16.0.2<span cla
 _uuid<span class=w>               </span>:<span class=w> </span>3cbb6d43-44aa-4028-962f-30d2dba9f0b8
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
 health_check<span class=w>        </span>:<span class=w> </span><span class=o>[</span>5bee3f12-6b54-411c-9cc8-c9def8f67356<span class=o>]</span>
-ip_port_mappings<span class=w>    </span>:<span class=w> </span><span class=o>{</span><span class=s2>&quot;10.16.0.4&quot;</span><span class=o>=</span><span class=s2>&quot;nginx-78d9578975-f4qn4.default:10.16.0.2&quot;</span>,<span class=w> </span><span class=s2>&quot;10.16.0.6&quot;</span><span class=o>=</span><span class=s2>&quot;nginx-78d9578975-t8tm5.default:10.16.0.2&quot;</span><span class=o>}</span>
+ip_port_mappings<span class=w>    </span>:<span class=w> </span><span class=o>{</span><span class=s2>"10.16.0.4"</span><span class=o>=</span><span class=s2>"nginx-78d9578975-f4qn4.default:10.16.0.2"</span>,<span class=w> </span><span class=s2>"10.16.0.6"</span><span class=o>=</span><span class=s2>"nginx-78d9578975-t8tm5.default:10.16.0.2"</span><span class=o>}</span>
 name<span class=w>                </span>:<span class=w> </span>cluster-tcp-session-loadbalancer
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>affinity_timeout</span><span class=o>=</span><span class=s2>&quot;10800&quot;</span><span class=o>}</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>affinity_timeout</span><span class=o>=</span><span class=s2>"10800"</span><span class=o>}</span>
 protocol<span class=w>            </span>:<span class=w> </span>tcp
 selection_fields<span class=w>    </span>:<span class=w> </span><span class=o>[</span>ip_src<span class=o>]</span>
-vips<span class=w>                </span>:<span class=w> </span><span class=o>{</span><span class=s2>&quot;1.1.1.1:8888&quot;</span><span class=o>=</span><span class=s2>&quot;10.16.0.4:80,10.16.0.6:80&quot;</span><span class=o>}</span>
+vips<span class=w>                </span>:<span class=w> </span><span class=o>{</span><span class=s2>"1.1.1.1:8888"</span><span class=o>=</span><span class=s2>"10.16.0.4:80,10.16.0.6:80"</span><span class=o>}</span>
 
 root@server:~#<span class=w> </span>kubectl<span class=w> </span>ko<span class=w> </span>nbctl<span class=w> </span>list<span class=w> </span>Load_Balancer_Health_Check
 _uuid<span class=w>               </span>:<span class=w> </span>5bee3f12-6b54-411c-9cc8-c9def8f67356
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{</span><span class=nv>switch_lb_subnet</span><span class=o>=</span>vulpecula-subnet<span class=o>}</span>
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>&quot;5&quot;</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>&quot;20&quot;</span><span class=o>}</span>
-vip<span class=w>                 </span>:<span class=w> </span><span class=s2>&quot;1.1.1.1:8888&quot;</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>"5"</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>"20"</span><span class=o>}</span>
+vip<span class=w>                 </span>:<span class=w> </span><span class=s2>"1.1.1.1:8888"</span>
 
 root@server:~#<span class=w> </span>kubectl<span class=w> </span>ko<span class=w> </span>sbctl<span class=w> </span>list<span class=w> </span>Service_Monitor
 _uuid<span class=w>               </span>:<span class=w> </span>1bddc541-cc49-44ea-9935-a4208f627a91
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
-ip<span class=w>                  </span>:<span class=w> </span><span class=s2>&quot;10.16.0.4&quot;</span>
+ip<span class=w>                  </span>:<span class=w> </span><span class=s2>"10.16.0.4"</span>
 logical_port<span class=w>        </span>:<span class=w> </span>nginx-78d9578975-f4qn4.default
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>&quot;5&quot;</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>&quot;20&quot;</span><span class=o>}</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>"5"</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>"20"</span><span class=o>}</span>
 port<span class=w>                </span>:<span class=w> </span><span class=m>80</span>
 protocol<span class=w>            </span>:<span class=w> </span>tcp
-src_ip<span class=w>              </span>:<span class=w> </span><span class=s2>&quot;10.16.0.2&quot;</span>
-src_mac<span class=w>             </span>:<span class=w> </span><span class=s2>&quot;c6:d4:b8:08:54:e7&quot;</span>
+src_ip<span class=w>              </span>:<span class=w> </span><span class=s2>"10.16.0.2"</span>
+src_mac<span class=w>             </span>:<span class=w> </span><span class=s2>"c6:d4:b8:08:54:e7"</span>
 status<span class=w>              </span>:<span class=w> </span>online
 
 _uuid<span class=w>               </span>:<span class=w> </span>84dd24c5-e1b4-4e97-9daa-13687ed59785
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
-ip<span class=w>                  </span>:<span class=w> </span><span class=s2>&quot;10.16.0.6&quot;</span>
+ip<span class=w>                  </span>:<span class=w> </span><span class=s2>"10.16.0.6"</span>
 logical_port<span class=w>        </span>:<span class=w> </span>nginx-78d9578975-t8tm5.default
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>&quot;5&quot;</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>&quot;20&quot;</span><span class=o>}</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>"5"</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>"20"</span><span class=o>}</span>
 port<span class=w>                </span>:<span class=w> </span><span class=m>80</span>
 protocol<span class=w>            </span>:<span class=w> </span>tcp
-src_ip<span class=w>              </span>:<span class=w> </span><span class=s2>&quot;10.16.0.2&quot;</span>
-src_mac<span class=w>             </span>:<span class=w> </span><span class=s2>&quot;c6:d4:b8:08:54:e7&quot;</span>
+src_ip<span class=w>              </span>:<span class=w> </span><span class=s2>"10.16.0.2"</span>
+src_mac<span class=w>             </span>:<span class=w> </span><span class=s2>"c6:d4:b8:08:54:e7"</span>
 status<span class=w>              </span>:<span class=w> </span>online
 </code></pre></div> <p>此时通过负载均衡 <code>vip</code> 可以成功得到服务响应。</p> <div class=highlight><pre><span></span><code>root@server:~#<span class=w> </span>kubectl<span class=w> </span><span class=nb>exec</span><span class=w> </span>-it<span class=w> </span>-n<span class=w> </span>vulpecula<span class=w> </span>nginx-78d9578975-t8tm5<span class=w> </span>--<span class=w> </span>curl<span class=w> </span><span class=m>1</span>.1.1.1:8888
 &lt;!DOCTYPE<span class=w> </span>html&gt;
@@ -127,43 +127,43 @@ nginx-78d9578975-t8tm5<span class=w>   </span><span class=m>1</span>/1<span clas
 _uuid<span class=w>               </span>:<span class=w> </span>3cbb6d43-44aa-4028-962f-30d2dba9f0b8
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
 health_check<span class=w>        </span>:<span class=w> </span><span class=o>[</span>5bee3f12-6b54-411c-9cc8-c9def8f67356<span class=o>]</span>
-ip_port_mappings<span class=w>    </span>:<span class=w> </span><span class=o>{</span><span class=s2>&quot;10.16.0.4&quot;</span><span class=o>=</span><span class=s2>&quot;nginx-78d9578975-f4qn4.default:10.16.0.2&quot;</span>,<span class=w> </span><span class=s2>&quot;10.16.0.6&quot;</span><span class=o>=</span><span class=s2>&quot;nginx-78d9578975-t8tm5.default:10.16.0.2&quot;</span>,<span class=w> </span><span class=s2>&quot;10.16.0.8&quot;</span><span class=o>=</span><span class=s2>&quot;nginx-78d9578975-lxmvh.default:10.16.0.2&quot;</span><span class=o>}</span>
+ip_port_mappings<span class=w>    </span>:<span class=w> </span><span class=o>{</span><span class=s2>"10.16.0.4"</span><span class=o>=</span><span class=s2>"nginx-78d9578975-f4qn4.default:10.16.0.2"</span>,<span class=w> </span><span class=s2>"10.16.0.6"</span><span class=o>=</span><span class=s2>"nginx-78d9578975-t8tm5.default:10.16.0.2"</span>,<span class=w> </span><span class=s2>"10.16.0.8"</span><span class=o>=</span><span class=s2>"nginx-78d9578975-lxmvh.default:10.16.0.2"</span><span class=o>}</span>
 name<span class=w>                </span>:<span class=w> </span>cluster-tcp-session-loadbalancer
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>affinity_timeout</span><span class=o>=</span><span class=s2>&quot;10800&quot;</span><span class=o>}</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>affinity_timeout</span><span class=o>=</span><span class=s2>"10800"</span><span class=o>}</span>
 protocol<span class=w>            </span>:<span class=w> </span>tcp
 selection_fields<span class=w>    </span>:<span class=w> </span><span class=o>[</span>ip_src<span class=o>]</span>
-vips<span class=w>                </span>:<span class=w> </span><span class=o>{</span><span class=s2>&quot;1.1.1.1:8888&quot;</span><span class=o>=</span><span class=s2>&quot;10.16.0.6:80,10.16.0.8:80&quot;</span><span class=o>}</span>
+vips<span class=w>                </span>:<span class=w> </span><span class=o>{</span><span class=s2>"1.1.1.1:8888"</span><span class=o>=</span><span class=s2>"10.16.0.6:80,10.16.0.8:80"</span><span class=o>}</span>
 
 root@server:~#<span class=w> </span>kubectl<span class=w> </span>ko<span class=w> </span>nbctl<span class=w> </span>list<span class=w> </span>Load_Balancer_Health_Check
 _uuid<span class=w>               </span>:<span class=w> </span>5bee3f12-6b54-411c-9cc8-c9def8f67356
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{</span><span class=nv>switch_lb_subnet</span><span class=o>=</span>vulpecula-subnet<span class=o>}</span>
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>&quot;5&quot;</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>&quot;20&quot;</span><span class=o>}</span>
-vip<span class=w>                 </span>:<span class=w> </span><span class=s2>&quot;1.1.1.1:8888&quot;</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>"5"</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>"20"</span><span class=o>}</span>
+vip<span class=w>                 </span>:<span class=w> </span><span class=s2>"1.1.1.1:8888"</span>
 
 root@server:~#<span class=w> </span>kubectl<span class=w> </span>ko<span class=w> </span>sbctl<span class=w> </span>list<span class=w> </span>Service_Monitor
 _uuid<span class=w>               </span>:<span class=w> </span>84dd24c5-e1b4-4e97-9daa-13687ed59785
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
-ip<span class=w>                  </span>:<span class=w> </span><span class=s2>&quot;10.16.0.6&quot;</span>
+ip<span class=w>                  </span>:<span class=w> </span><span class=s2>"10.16.0.6"</span>
 logical_port<span class=w>        </span>:<span class=w> </span>nginx-78d9578975-t8tm5.default
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>&quot;5&quot;</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>&quot;20&quot;</span><span class=o>}</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>"5"</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>"20"</span><span class=o>}</span>
 port<span class=w>                </span>:<span class=w> </span><span class=m>80</span>
 protocol<span class=w>            </span>:<span class=w> </span>tcp
-src_ip<span class=w>              </span>:<span class=w> </span><span class=s2>&quot;10.16.0.2&quot;</span>
-src_mac<span class=w>             </span>:<span class=w> </span><span class=s2>&quot;c6:d4:b8:08:54:e7&quot;</span>
+src_ip<span class=w>              </span>:<span class=w> </span><span class=s2>"10.16.0.2"</span>
+src_mac<span class=w>             </span>:<span class=w> </span><span class=s2>"c6:d4:b8:08:54:e7"</span>
 status<span class=w>              </span>:<span class=w> </span>online
 
 _uuid<span class=w>               </span>:<span class=w> </span>5917b7b7-a999-49f2-a42d-da81f1eeb28f
 external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{}</span>
-ip<span class=w>                  </span>:<span class=w> </span><span class=s2>&quot;10.16.0.8&quot;</span>
+ip<span class=w>                  </span>:<span class=w> </span><span class=s2>"10.16.0.8"</span>
 logical_port<span class=w>        </span>:<span class=w> </span>nginx-78d9578975-lxmvh.default
-options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>&quot;5&quot;</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>&quot;3&quot;</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>&quot;20&quot;</span><span class=o>}</span>
+options<span class=w>             </span>:<span class=w> </span><span class=o>{</span><span class=nv>failure_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>interval</span><span class=o>=</span><span class=s2>"5"</span>,<span class=w> </span><span class=nv>success_count</span><span class=o>=</span><span class=s2>"3"</span>,<span class=w> </span><span class=nv>timeout</span><span class=o>=</span><span class=s2>"20"</span><span class=o>}</span>
 port<span class=w>                </span>:<span class=w> </span><span class=m>80</span>
 protocol<span class=w>            </span>:<span class=w> </span>tcp
-src_ip<span class=w>              </span>:<span class=w> </span><span class=s2>&quot;10.16.0.2&quot;</span>
-src_mac<span class=w>             </span>:<span class=w> </span><span class=s2>&quot;c6:d4:b8:08:54:e7&quot;</span>
+src_ip<span class=w>              </span>:<span class=w> </span><span class=s2>"10.16.0.2"</span>
+src_mac<span class=w>             </span>:<span class=w> </span><span class=s2>"c6:d4:b8:08:54:e7"</span>
 status<span class=w>              </span>:<span class=w> </span>online
 </code></pre></div> <p>删除 <code>SwitchLBRule</code>，并确认资源状态，可以看到 <code>Load_Balancer_Health_Check</code> 和 <code>Service_Monitor</code> 都已经被删除，并且对应的 <code>vip</code> 也被删除。</p> <div class=highlight><pre><span></span><code>root@server:~#<span class=w> </span>kubectl<span class=w> </span>delete<span class=w> </span>-f<span class=w> </span>slr.yaml<span class=w> </span>
-switchlbrule.kubeovn.io<span class=w> </span><span class=s2>&quot;vulpecula-nginx&quot;</span><span class=w> </span>deleted
+switchlbrule.kubeovn.io<span class=w> </span><span class=s2>"vulpecula-nginx"</span><span class=w> </span>deleted
 root@server:~#<span class=w> </span>kubectl<span class=w> </span>get<span class=w> </span>vip
 No<span class=w> </span>resources<span class=w> </span>found
 root@server:~#<span class=w> </span>kubectl<span class=w> </span>ko<span class=w> </span>sbctl<span class=w> </span>list<span class=w> </span>Service_Monitor

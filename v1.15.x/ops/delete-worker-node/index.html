@@ -19,7 +19,7 @@
 </code></pre></div> <h2 id=kubelet-docker>停止 kubelet 和 docker<a class=headerlink href=#kubelet-docker title="Permanent link">&para;</a></h2> <p>该步骤会停止 <code>ovs-ovn</code> 容器，以避免向 <code>ovn-central</code> 进行信息注册，登录到对应节点执行下列命令：</p> <div class=highlight><pre><span></span><code>systemctl<span class=w> </span>stop<span class=w> </span>kubelet
 systemctl<span class=w> </span>stop<span class=w> </span>docker
 </code></pre></div> <h3 id=containerd>Containerd<a class=headerlink href=#containerd title="Permanent link">&para;</a></h3> <blockquote> <p>使用 containerd 作为 CRI 时，停止上述服务并不会停止正在运行的 Pod/容器，需要手动停止 <code>ovs-ovn</code>。</p> </blockquote> <p>使用 containerd 时，需要执行下面的命令来停止 <code>ovs-ovn</code> 容器：</p> <ol> <li> <p>停止 kubelet</p> <div class=highlight><pre><span></span><code>systemctl<span class=w> </span>stop<span class=w> </span>kubelet
-</code></pre></div> </li> <li> <p>删除 ovs-ovn Pod</p> <div class=highlight><pre><span></span><code>crictl<span class=w> </span>rm<span class=w> </span>-f<span class=w> </span><span class=k>$(</span>crictl<span class=w> </span>ps<span class=w> </span><span class=p>|</span><span class=w> </span>grep<span class=w> </span>openvswitch<span class=w> </span><span class=p>|</span><span class=w> </span>awk<span class=w> </span><span class=s1>&#39;{print $1}&#39;</span><span class=k>)</span>
+</code></pre></div> </li> <li> <p>删除 ovs-ovn Pod</p> <div class=highlight><pre><span></span><code>crictl<span class=w> </span>rm<span class=w> </span>-f<span class=w> </span><span class=k>$(</span>crictl<span class=w> </span>ps<span class=w> </span><span class=p>|</span><span class=w> </span>grep<span class=w> </span>openvswitch<span class=w> </span><span class=p>|</span><span class=w> </span>awk<span class=w> </span><span class=s1>'{print $1}'</span><span class=k>)</span>
 </code></pre></div> </li> <li> <p>停止 containerd</p> <div class=highlight><pre><span></span><code>systemctl<span class=w> </span>stop<span class=w> </span>containerd
 </code></pre></div> </li> </ol> <h2 id=node>清理 Node 上的残留数据<a class=headerlink href=#node title="Permanent link">&para;</a></h2> <div class=highlight><pre><span></span><code>rm<span class=w> </span>-rf<span class=w> </span>/var/run/openvswitch
 rm<span class=w> </span>-rf<span class=w> </span>/var/run/ovn
@@ -31,17 +31,17 @@ rm<span class=w> </span>-rf<span class=w> </span>/var/log/openvswitch
 rm<span class=w> </span>-rf<span class=w> </span>/var/log/ovn
 </code></pre></div> <h2 id=kubectl>使用 kubectl 删除节点<a class=headerlink href=#kubectl title="Permanent link">&para;</a></h2> <div class=highlight><pre><span></span><code>kubectl<span class=w> </span>delete<span class=w> </span>no<span class=w> </span>kube-ovn-01
 </code></pre></div> <h2 id=ovn-sb>检查对应节点是否从 ovn-sb 中删除<a class=headerlink href=#ovn-sb title="Permanent link">&para;</a></h2> <p>下面的示例为 <code>kube-ovn-worker</code> 依然未被删除：</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko sbctl show</span>
-Chassis<span class=w> </span><span class=s2>&quot;b0564934-5a0d-4804-a4c0-476c93596a17&quot;</span>
+Chassis<span class=w> </span><span class=s2>"b0564934-5a0d-4804-a4c0-476c93596a17"</span>
 <span class=w>  </span>hostname:<span class=w> </span>kube-ovn-worker
 <span class=w>  </span>Encap<span class=w> </span>geneve
-<span class=w>      </span>ip:<span class=w> </span><span class=s2>&quot;172.18.0.2&quot;</span>
-<span class=w>      </span>options:<span class=w> </span><span class=o>{</span><span class=nv>csum</span><span class=o>=</span><span class=s2>&quot;true&quot;</span><span class=o>}</span>
+<span class=w>      </span>ip:<span class=w> </span><span class=s2>"172.18.0.2"</span>
+<span class=w>      </span>options:<span class=w> </span><span class=o>{</span><span class=nv>csum</span><span class=o>=</span><span class=s2>"true"</span><span class=o>}</span>
 <span class=w>  </span>Port_Binding<span class=w> </span>kube-ovn-pinger-5rxfs.kube-system
-Chassis<span class=w> </span><span class=s2>&quot;6a29de7e-d731-4eaf-bacd-2f239ee52b28&quot;</span>
+Chassis<span class=w> </span><span class=s2>"6a29de7e-d731-4eaf-bacd-2f239ee52b28"</span>
 <span class=w>  </span>hostname:<span class=w> </span>kube-ovn-control-plane
 <span class=w>  </span>Encap<span class=w> </span>geneve
-<span class=w>      </span>ip:<span class=w> </span><span class=s2>&quot;172.18.0.3&quot;</span>
-<span class=w>      </span>options:<span class=w> </span><span class=o>{</span><span class=nv>csum</span><span class=o>=</span><span class=s2>&quot;true&quot;</span><span class=o>}</span>
+<span class=w>      </span>ip:<span class=w> </span><span class=s2>"172.18.0.3"</span>
+<span class=w>      </span>options:<span class=w> </span><span class=o>{</span><span class=nv>csum</span><span class=o>=</span><span class=s2>"true"</span><span class=o>}</span>
 <span class=w>  </span>Port_Binding<span class=w> </span>coredns-64897985d-nbfln.kube-system
 <span class=w>  </span>Port_Binding<span class=w> </span>node-kube-ovn-control-plane
 <span class=w>  </span>Port_Binding<span class=w> </span>local-path-provisioner-5ddd94ff66-h4tn9.local-path-storage
@@ -49,11 +49,11 @@ Chassis<span class=w> </span><span class=s2>&quot;6a29de7e-d731-4eaf-bacd-2f239e
 <span class=w>  </span>Port_Binding<span class=w> </span>coredns-64897985d-fhwlw.kube-system
 </code></pre></div> <h2 id=chassis>若节点对应的 chassis 依然存在，手动进行删除<a class=headerlink href=#chassis title="Permanent link">&para;</a></h2> <p>uuid 为之前命令所查出的 Chassis 对应 id：</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko sbctl chassis-del b0564934-5a0d-4804-a4c0-476c93596a17</span>
 <span class=c1># kubectl ko sbctl show</span>
-Chassis<span class=w> </span><span class=s2>&quot;6a29de7e-d731-4eaf-bacd-2f239ee52b28&quot;</span>
+Chassis<span class=w> </span><span class=s2>"6a29de7e-d731-4eaf-bacd-2f239ee52b28"</span>
 <span class=w>  </span>hostname:<span class=w> </span>kube-ovn-control-plane
 <span class=w>  </span>Encap<span class=w> </span>geneve
-<span class=w>      </span>ip:<span class=w> </span><span class=s2>&quot;172.18.0.3&quot;</span>
-<span class=w>      </span>options:<span class=w> </span><span class=o>{</span><span class=nv>csum</span><span class=o>=</span><span class=s2>&quot;true&quot;</span><span class=o>}</span>
+<span class=w>      </span>ip:<span class=w> </span><span class=s2>"172.18.0.3"</span>
+<span class=w>      </span>options:<span class=w> </span><span class=o>{</span><span class=nv>csum</span><span class=o>=</span><span class=s2>"true"</span><span class=o>}</span>
 <span class=w>  </span>Port_Binding<span class=w> </span>coredns-64897985d-nbfln.kube-system
 <span class=w>  </span>Port_Binding<span class=w> </span>node-kube-ovn-control-plane
 <span class=w>  </span>Port_Binding<span class=w> </span>local-path-provisioner-5ddd94ff66-h4tn9.local-path-storage

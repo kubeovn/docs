@@ -30,10 +30,10 @@
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>    </span><span class=no>{</span>
-<span class=w>      </span><span class=no>&quot;cniVersion&quot;: &quot;0.3.1&quot;,</span>
-<span class=w>      </span><span class=no>&quot;type&quot;: &quot;kube-ovn&quot;,</span>
-<span class=w>      </span><span class=no>&quot;server_socket&quot;: &quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>      </span><span class=no>&quot;provider&quot;: &quot;kube-ovn-vpc-network.default.ovn&quot;</span>
+<span class=w>      </span><span class=no>"cniVersion": "0.3.1",</span>
+<span class=w>      </span><span class=no>"type": "kube-ovn",</span>
+<span class=w>      </span><span class=no>"server_socket": "/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>      </span><span class=no>"provider": "kube-ovn-vpc-network.default.ovn"</span>
 <span class=w>    </span><span class=no>}</span>
 </code></pre></div> <h3 id=vpc-and-subnet-configuration>VPC and Subnet Configuration<a class=headerlink href=#vpc-and-subnet-configuration title="Permanent link">&para;</a></h3> <p>Create VPC and subnet resources for secondary networks:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Vpc</span>
@@ -49,8 +49,8 @@
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">subnet-secondary</span>
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>vpc</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc-secondary</span>
-<span class=w>  </span><span class=nt>cidr</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10.100.0.0/16&quot;</span>
-<span class=w>  </span><span class=nt>gateway</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10.100.0.1&quot;</span>
+<span class=w>  </span><span class=nt>cidr</span><span class=p>:</span><span class=w> </span><span class=s>"10.100.0.0/16"</span>
+<span class=w>  </span><span class=nt>gateway</span><span class=p>:</span><span class=w> </span><span class=s>"10.100.0.1"</span>
 <span class=w>  </span><span class=nt>provider</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kube-ovn-vpc-network.default.ovn</span>
 </code></pre></div> <h3 id=pod-configuration>Pod Configuration<a class=headerlink href=#pod-configuration title="Permanent link">&para;</a></h3> <p>Annotate pods to request additional network interfaces:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
@@ -70,8 +70,8 @@
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>      </span><span class=no>[</span>
-<span class=w>        </span><span class=no>{&quot;name&quot;: &quot;default/public-network&quot;},</span>
-<span class=w>        </span><span class=no>{&quot;name&quot;: &quot;default/internal-network&quot;}</span>
+<span class=w>        </span><span class=no>{"name": "default/public-network"},</span>
+<span class=w>        </span><span class=no>{"name": "default/internal-network"}</span>
 <span class=w>      </span><span class=no>]</span>
 </code></pre></div> <h3 id=2-multi-tenancy>2. Multi-Tenancy<a class=headerlink href=#2-multi-tenancy title="Permanent link">&para;</a></h3> <p>Provide tenant-specific networks:</p> <div class=highlight><pre><span></span><code><span class=c1># Tenant A pods</span>
 <span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
@@ -96,28 +96,28 @@
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>vpc</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc-secondary</span>
 <span class=w>  </span><span class=nt>subnet</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">subnet-secondary</span>
-<span class=w>  </span><span class=nt>lanIp</span><span class=p>:</span><span class=w> </span><span class=s>&quot;10.100.0.254&quot;</span>
+<span class=w>  </span><span class=nt>lanIp</span><span class=p>:</span><span class=w> </span><span class=s>"10.100.0.254"</span>
 </code></pre></div> <h2 id=advanced-features>Advanced Features<a class=headerlink href=#advanced-features title="Permanent link">&para;</a></h2> <h3 id=multiple-network-providers>Multiple Network Providers<a class=headerlink href=#multiple-network-providers title="Permanent link">&para;</a></h3> <p>Pods can have interfaces from multiple providers:</p> <div class=highlight><pre><span></span><code><span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>      </span><span class=no>[</span>
-<span class=w>        </span><span class=no>{&quot;name&quot;: &quot;default/kube-ovn-network-1&quot;, &quot;interface&quot;: &quot;net1&quot;},</span>
-<span class=w>        </span><span class=no>{&quot;name&quot;: &quot;default/kube-ovn-network-2&quot;, &quot;interface&quot;: &quot;net2&quot;}</span>
+<span class=w>        </span><span class=no>{"name": "default/kube-ovn-network-1", "interface": "net1"},</span>
+<span class=w>        </span><span class=no>{"name": "default/kube-ovn-network-2", "interface": "net2"}</span>
 <span class=w>      </span><span class=no>]</span>
 </code></pre></div> <h3 id=ip-address-assignment>IP Address Assignment<a class=headerlink href=#ip-address-assignment title="Permanent link">&para;</a></h3> <p>Control IP assignment for secondary interfaces:</p> <div class=highlight><pre><span></span><code><span class=c1># Static IP assignment</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>      </span><span class=no>[{</span>
-<span class=w>        </span><span class=no>&quot;name&quot;: &quot;default/kube-ovn-network&quot;,</span>
-<span class=w>        </span><span class=no>&quot;ips&quot;: [&quot;10.100.0.100/16&quot;]</span>
+<span class=w>        </span><span class=no>"name": "default/kube-ovn-network",</span>
+<span class=w>        </span><span class=no>"ips": ["10.100.0.100/16"]</span>
 <span class=w>      </span><span class=no>}]</span>
 </code></pre></div> <h3 id=quality-of-service-qos>Quality of Service (QoS)<a class=headerlink href=#quality-of-service-qos title="Permanent link">&para;</a></h3> <p>Apply QoS policies to secondary interfaces:</p> <div class=highlight><pre><span></span><code><span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>ovn.kubernetes.io/ingress_rate</span><span class=p>:</span><span class=w> </span><span class=s>&quot;1000&quot;</span>
-<span class=w>    </span><span class=nt>ovn.kubernetes.io/egress_rate</span><span class=p>:</span><span class=w> </span><span class=s>&quot;1000&quot;</span>
+<span class=w>    </span><span class=nt>ovn.kubernetes.io/ingress_rate</span><span class=p>:</span><span class=w> </span><span class=s>"1000"</span>
+<span class=w>    </span><span class=nt>ovn.kubernetes.io/egress_rate</span><span class=p>:</span><span class=w> </span><span class=s>"1000"</span>
 </code></pre></div> <h2 id=troubleshooting>Troubleshooting<a class=headerlink href=#troubleshooting title="Permanent link">&para;</a></h2> <h3 id=common-issues>Common Issues<a class=headerlink href=#common-issues title="Permanent link">&para;</a></h3> <ol> <li> <p><strong>Pod fails to get secondary interface</strong> - Verify NAD is created in the correct namespace - Check kube-ovn-cni logs for errors - Ensure Multus is properly installed</p> </li> <li> <p><strong>Secondary interface has no connectivity</strong> - Verify subnet and VPC configuration - Check routing table in the pod - Ensure security group rules allow traffic</p> </li> <li> <p><strong>IP address conflicts</strong> - Verify subnet CIDR ranges don't overlap - Check for static IP conflicts - Review IPAM configuration</p> </li> </ol> <h3 id=debug-commands>Debug Commands<a class=headerlink href=#debug-commands title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=c1># Check pod network status</span>
-kubectl<span class=w> </span>get<span class=w> </span>pod<span class=w> </span>&lt;pod-name&gt;<span class=w> </span>-o<span class=w> </span>yaml<span class=w> </span><span class=p>|</span><span class=w> </span>grep<span class=w> </span>-A<span class=w> </span><span class=m>10</span><span class=w> </span><span class=s2>&quot;networks-status&quot;</span>
+kubectl<span class=w> </span>get<span class=w> </span>pod<span class=w> </span>&lt;pod-name&gt;<span class=w> </span>-o<span class=w> </span>yaml<span class=w> </span><span class=p>|</span><span class=w> </span>grep<span class=w> </span>-A<span class=w> </span><span class=m>10</span><span class=w> </span><span class=s2>"networks-status"</span>
 
 <span class=c1># View network interfaces in pod</span>
 kubectl<span class=w> </span><span class=nb>exec</span><span class=w> </span>&lt;pod-name&gt;<span class=w> </span>--<span class=w> </span>ip<span class=w> </span>addr<span class=w> </span>show

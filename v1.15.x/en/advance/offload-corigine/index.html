@@ -12,7 +12,7 @@
 <span class=nv>ASSY</span><span class=o>=</span><span class=si>${</span><span class=nv>2</span><span class=k>:-</span><span class=si>${</span><span class=nv>DEFAULT_ASSY</span><span class=si>}}</span>
 <span class=nv>APP</span><span class=o>=</span><span class=si>${</span><span class=nv>3</span><span class=k>:-</span><span class=nv>flower</span><span class=si>}</span>
 
-<span class=k>if</span><span class=w> </span><span class=o>[</span><span class=w> </span><span class=s2>&quot;x</span><span class=si>${</span><span class=nv>DEVICE</span><span class=si>}</span><span class=s2>&quot;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s2>&quot;x&quot;</span><span class=w> </span>-o<span class=w> </span>!<span class=w> </span>-e<span class=w> </span>/sys/class/net/<span class=si>${</span><span class=nv>DEVICE</span><span class=si>}</span><span class=w> </span><span class=o>]</span><span class=p>;</span><span class=w> </span><span class=k>then</span>
+<span class=k>if</span><span class=w> </span><span class=o>[</span><span class=w> </span><span class=s2>"x</span><span class=si>${</span><span class=nv>DEVICE</span><span class=si>}</span><span class=s2>"</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s2>"x"</span><span class=w> </span>-o<span class=w> </span>!<span class=w> </span>-e<span class=w> </span>/sys/class/net/<span class=si>${</span><span class=nv>DEVICE</span><span class=si>}</span><span class=w> </span><span class=o>]</span><span class=p>;</span><span class=w> </span><span class=k>then</span>
 <span class=w>    </span><span class=nb>echo</span><span class=w> </span>Syntax:<span class=w> </span><span class=si>${</span><span class=nv>0</span><span class=si>}</span><span class=w> </span>device<span class=w> </span><span class=o>[</span>ASSY<span class=o>]</span><span class=w> </span><span class=o>[</span>APP<span class=o>]</span>
 <span class=w>    </span><span class=nb>echo</span>
 <span class=w>    </span><span class=nb>echo</span><span class=w> </span>This<span class=w> </span>script<span class=w> </span>associates<span class=w> </span>the<span class=w> </span>TC<span class=w> </span>Offload<span class=w> </span>firmware
@@ -27,25 +27,25 @@
 
 <span class=c1># It is recommended that the assembly be determined by inspection</span>
 <span class=c1># The following code determines the value via the debug interface</span>
-<span class=k>if</span><span class=w> </span><span class=o>[</span><span class=w> </span><span class=s2>&quot;</span><span class=si>${</span><span class=nv>ASSY</span><span class=si>}</span><span class=s2>x&quot;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s2>&quot;scanx&quot;</span><span class=w> </span><span class=o>]</span><span class=p>;</span><span class=w> </span><span class=k>then</span>
+<span class=k>if</span><span class=w> </span><span class=o>[</span><span class=w> </span><span class=s2>"</span><span class=si>${</span><span class=nv>ASSY</span><span class=si>}</span><span class=s2>x"</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s2>"scanx"</span><span class=w> </span><span class=o>]</span><span class=p>;</span><span class=w> </span><span class=k>then</span>
 <span class=w>    </span>ethtool<span class=w> </span>-W<span class=w> </span><span class=si>${</span><span class=nv>DEVICE</span><span class=si>}</span><span class=w> </span><span class=m>0</span>
 <span class=w>    </span><span class=nv>DEBUG</span><span class=o>=</span><span class=k>$(</span>ethtool<span class=w> </span>-w<span class=w> </span><span class=si>${</span><span class=nv>DEVICE</span><span class=si>}</span><span class=w> </span>data<span class=w> </span>/dev/stdout<span class=w> </span><span class=p>|</span><span class=w> </span>strings<span class=k>)</span>
-<span class=w>    </span><span class=nv>SERIAL</span><span class=o>=</span><span class=k>$(</span><span class=nb>echo</span><span class=w> </span><span class=s2>&quot;</span><span class=si>${</span><span class=nv>DEBUG</span><span class=si>}</span><span class=s2>&quot;</span><span class=w> </span><span class=p>|</span><span class=w> </span>grep<span class=w> </span><span class=s2>&quot;^SN:&quot;</span><span class=k>)</span>
+<span class=w>    </span><span class=nv>SERIAL</span><span class=o>=</span><span class=k>$(</span><span class=nb>echo</span><span class=w> </span><span class=s2>"</span><span class=si>${</span><span class=nv>DEBUG</span><span class=si>}</span><span class=s2>"</span><span class=w> </span><span class=p>|</span><span class=w> </span>grep<span class=w> </span><span class=s2>"^SN:"</span><span class=k>)</span>
 <span class=w>    </span><span class=nv>ASSY</span><span class=o>=</span><span class=k>$(</span><span class=nb>echo</span><span class=w> </span><span class=si>${</span><span class=nv>SERIAL</span><span class=si>}</span><span class=w> </span><span class=p>|</span><span class=w> </span>grep<span class=w> </span>-oE<span class=w> </span>AMDA<span class=o>[</span><span class=m>0</span>-9<span class=o>]{</span><span class=m>4</span><span class=o>}</span><span class=k>)</span>
 <span class=k>fi</span>
 
 <span class=nv>PCIADDR</span><span class=o>=</span><span class=k>$(</span>basename<span class=w> </span><span class=k>$(</span>readlink<span class=w> </span>-e<span class=w> </span>/sys/class/net/<span class=si>${</span><span class=nv>DEVICE</span><span class=si>}</span>/device<span class=k>))</span>
-<span class=nv>FWDIR</span><span class=o>=</span><span class=s2>&quot;/lib/firmware/netronome&quot;</span>
+<span class=nv>FWDIR</span><span class=o>=</span><span class=s2>"/lib/firmware/netronome"</span>
 
 <span class=c1># AMDA0081 and AMDA0097 uses the same firmware</span>
-<span class=k>if</span><span class=w> </span><span class=o>[</span><span class=w> </span><span class=s2>&quot;</span><span class=si>${</span><span class=nv>ASSY</span><span class=si>}</span><span class=s2>&quot;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s2>&quot;AMDA0081&quot;</span><span class=w> </span><span class=o>]</span><span class=p>;</span><span class=w> </span><span class=k>then</span>
+<span class=k>if</span><span class=w> </span><span class=o>[</span><span class=w> </span><span class=s2>"</span><span class=si>${</span><span class=nv>ASSY</span><span class=si>}</span><span class=s2>"</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s2>"AMDA0081"</span><span class=w> </span><span class=o>]</span><span class=p>;</span><span class=w> </span><span class=k>then</span>
 <span class=w>    </span><span class=k>if</span><span class=w> </span><span class=o>[</span><span class=w> </span>!<span class=w> </span>-e<span class=w> </span><span class=si>${</span><span class=nv>FWDIR</span><span class=si>}</span>/<span class=si>${</span><span class=nv>APP</span><span class=si>}</span>/nic_AMDA0081.nffw<span class=w> </span><span class=o>]</span><span class=p>;</span><span class=w> </span><span class=k>then</span>
 <span class=w>       </span>ln<span class=w> </span>-sf<span class=w> </span>nic_AMDA0097.nffw<span class=w> </span><span class=si>${</span><span class=nv>FWDIR</span><span class=si>}</span>/<span class=si>${</span><span class=nv>APP</span><span class=si>}</span>/nic_AMDA0081.nffw
 <span class=w>   </span><span class=k>fi</span>
 <span class=k>fi</span>
 
-<span class=nv>FW</span><span class=o>=</span><span class=s2>&quot;</span><span class=si>${</span><span class=nv>FWDIR</span><span class=si>}</span><span class=s2>/pci-</span><span class=si>${</span><span class=nv>PCIADDR</span><span class=si>}</span><span class=s2>.nffw&quot;</span>
-ln<span class=w> </span>-sf<span class=w> </span><span class=s2>&quot;</span><span class=si>${</span><span class=nv>APP</span><span class=si>}</span><span class=s2>/nic_</span><span class=si>${</span><span class=nv>ASSY</span><span class=si>}</span><span class=s2>.nffw&quot;</span><span class=w> </span><span class=s2>&quot;</span><span class=si>${</span><span class=nv>FW</span><span class=si>}</span><span class=s2>&quot;</span>
+<span class=nv>FW</span><span class=o>=</span><span class=s2>"</span><span class=si>${</span><span class=nv>FWDIR</span><span class=si>}</span><span class=s2>/pci-</span><span class=si>${</span><span class=nv>PCIADDR</span><span class=si>}</span><span class=s2>.nffw"</span>
+ln<span class=w> </span>-sf<span class=w> </span><span class=s2>"</span><span class=si>${</span><span class=nv>APP</span><span class=si>}</span><span class=s2>/nic_</span><span class=si>${</span><span class=nv>ASSY</span><span class=si>}</span><span class=s2>.nffw"</span><span class=w> </span><span class=s2>"</span><span class=si>${</span><span class=nv>FW</span><span class=si>}</span><span class=s2>"</span>
 
 <span class=c1># insert distro-specific initramfs section here...</span>
 </code></pre></div> <p>Switching firmware options and reloading the driver:</p> <div class=highlight><pre><span></span><code>./agilio-tc-fw-select.sh<span class=w> </span>ens47np0<span class=w> </span>scan
@@ -63,13 +63,13 @@ modprobe<span class=w> </span>nfp
 <span class=nt>data</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>config.json</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>    </span><span class=no>{</span>
-<span class=w>      </span><span class=no>&quot;resourceList&quot;: [{</span>
-<span class=w>          </span><span class=no>&quot;resourcePrefix&quot;: &quot;corigine.com&quot;,</span>
-<span class=w>          </span><span class=no>&quot;resourceName&quot;: &quot;agilio_sriov&quot;,</span>
-<span class=w>          </span><span class=no>&quot;selectors&quot;: {</span>
-<span class=w>                  </span><span class=no>&quot;vendors&quot;: [&quot;19ee&quot;],</span>
-<span class=w>                  </span><span class=no>&quot;devices&quot;: [&quot;6003&quot;],</span>
-<span class=w>                  </span><span class=no>&quot;drivers&quot;: [&quot;nfp_netvf&quot;]</span>
+<span class=w>      </span><span class=no>"resourceList": [{</span>
+<span class=w>          </span><span class=no>"resourcePrefix": "corigine.com",</span>
+<span class=w>          </span><span class=no>"resourceName": "agilio_sriov",</span>
+<span class=w>          </span><span class=no>"selectors": {</span>
+<span class=w>                  </span><span class=no>"vendors": ["19ee"],</span>
+<span class=w>                  </span><span class=no>"devices": ["6003"],</span>
+<span class=w>                  </span><span class=no>"drivers": ["nfp_netvf"]</span>
 <span class=w>              </span><span class=no>}</span>
 <span class=w>      </span><span class=no>}</span>
 <span class=w>      </span><span class=no>]</span>
@@ -81,7 +81,7 @@ corigine.com/agilio_sriov:<span class=w>  </span><span class=m>4</span>
 corigine.com/agilio_sriov:<span class=w>  </span><span class=m>4</span>
 corigine.com/agilio_sriov<span class=w>  </span><span class=m>0</span><span class=w>           </span><span class=m>0</span>
 </code></pre></div> <h2 id=install-multus-cni>Install Multus-CNI<a class=headerlink href=#install-multus-cni title="Permanent link">&para;</a></h2> <p>The device IDs obtained during SR-IOV Device Plugin scheduling need to be passed to Kube-OVN via Multus-CNI, so Multus-CNI needs to be configured to perform the related tasks.</p> <p>Please read <a href=https://github.com/k8snetworkplumbingwg/multus-cni>Multus-CNI Document</a> to deploy:</p> <div class=highlight><pre><span></span><code>kubectl<span class=w> </span>apply<span class=w> </span>-f<span class=w> </span>https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml
-</code></pre></div> <p>Create <code>NetworkAttachmentDefinition</code>:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>&quot;k8s.cni.cncf.io/v1&quot;</span>
+</code></pre></div> <p>Create <code>NetworkAttachmentDefinition</code>:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>"k8s.cni.cncf.io/v1"</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">NetworkAttachmentDefinition</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
@@ -89,28 +89,28 @@ corigine.com/agilio_sriov<span class=w>  </span><span class=m>0</span><span clas
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/resourceName</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">corigine.com/agilio_sriov</span>
 <span class=nt>spec</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>&#39;{</span>
-<span class=w>    </span><span class=s>&quot;cniVersion&quot;:</span><span class=nv> </span><span class=s>&quot;0.3.1&quot;,</span>
-<span class=w>    </span><span class=s>&quot;name&quot;:</span><span class=nv> </span><span class=s>&quot;kube-ovn&quot;,</span>
-<span class=w>    </span><span class=s>&quot;plugins&quot;:[</span>
+<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>'{</span>
+<span class=w>    </span><span class=s>"cniVersion":</span><span class=nv> </span><span class=s>"0.3.1",</span>
+<span class=w>    </span><span class=s>"name":</span><span class=nv> </span><span class=s>"kube-ovn",</span>
+<span class=w>    </span><span class=s>"plugins":[</span>
 <span class=w>        </span><span class=s>{</span>
-<span class=w>            </span><span class=s>&quot;type&quot;:&quot;kube-ovn&quot;,</span>
-<span class=w>            </span><span class=s>&quot;server_socket&quot;:&quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>            </span><span class=s>&quot;provider&quot;:</span><span class=nv> </span><span class=s>&quot;default.default.ovn&quot;</span>
+<span class=w>            </span><span class=s>"type":"kube-ovn",</span>
+<span class=w>            </span><span class=s>"server_socket":"/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>            </span><span class=s>"provider":</span><span class=nv> </span><span class=s>"default.default.ovn"</span>
 <span class=w>        </span><span class=s>},</span>
 <span class=w>        </span><span class=s>{</span>
-<span class=w>            </span><span class=s>&quot;type&quot;:&quot;portmap&quot;,</span>
-<span class=w>            </span><span class=s>&quot;capabilities&quot;:{</span>
-<span class=w>                </span><span class=s>&quot;portMappings&quot;:true</span>
+<span class=w>            </span><span class=s>"type":"portmap",</span>
+<span class=w>            </span><span class=s>"capabilities":{</span>
+<span class=w>                </span><span class=s>"portMappings":true</span>
 <span class=w>            </span><span class=s>}</span>
 <span class=w>        </span><span class=s>}</span>
 <span class=w>    </span><span class=s>]</span>
-<span class=s>}&#39;</span>
+<span class=s>}'</span>
 </code></pre></div> <ul> <li><code>provider</code>: the format should be {name}.{namespace}.ovn of related <code>NetworkAttachmentDefinition</code>.</li> </ul> <h2 id=enable-offload-in-kube-ovn>Enable Offload in Kube-OVN<a class=headerlink href=#enable-offload-in-kube-ovn title="Permanent link">&para;</a></h2> <p>Download the scripts:</p> <div class=highlight><pre><span></span><code>wget<span class=w> </span>https://raw.githubusercontent.com/kubeovn/kube-ovn/release-1.15/dist/images/install.sh
 </code></pre></div> <p>Change the related options, <code>IFACE</code> should be the physic NIC and has an IP:</p> <div class=highlight><pre><span></span><code><span class=nv>ENABLE_MIRROR</span><span class=o>=</span><span class=si>${</span><span class=nv>ENABLE_MIRROR</span><span class=k>:-</span><span class=nv>false</span><span class=si>}</span>
 <span class=nv>HW_OFFLOAD</span><span class=o>=</span><span class=si>${</span><span class=nv>HW_OFFLOAD</span><span class=k>:-</span><span class=nv>true</span><span class=si>}</span>
 <span class=nv>ENABLE_LB</span><span class=o>=</span><span class=si>${</span><span class=nv>ENABLE_LB</span><span class=k>:-</span><span class=nv>false</span><span class=si>}</span>
-<span class=nv>IFACE</span><span class=o>=</span><span class=s2>&quot;ensp01&quot;</span>
+<span class=nv>IFACE</span><span class=o>=</span><span class=s2>"ensp01"</span>
 </code></pre></div> <p>Install Kube-OVN:</p> <div class=highlight><pre><span></span><code>bash<span class=w> </span>install.sh
 </code></pre></div> <h2 id=create-pods-with-vf-nics>Create Pods with VF NICs<a class=headerlink href=#create-pods-with-vf-nics title="Permanent link">&para;</a></h2> <p>Pods that use VF for network offload acceleration can be created using the following yaml:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
@@ -125,9 +125,9 @@ corigine.com/agilio_sriov<span class=w>  </span><span class=m>0</span><span clas
 <span class=w>      </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/library/nginx:alpine</span>
 <span class=w>      </span><span class=nt>resources</span><span class=p>:</span>
 <span class=w>        </span><span class=nt>requests</span><span class=p>:</span>
-<span class=w>          </span><span class=nt>corigine.com/agilio_sriov</span><span class=p>:</span><span class=w> </span><span class=s>&#39;1&#39;</span>
+<span class=w>          </span><span class=nt>corigine.com/agilio_sriov</span><span class=p>:</span><span class=w> </span><span class=s>'1'</span>
 <span class=w>        </span><span class=nt>limits</span><span class=p>:</span>
-<span class=w>          </span><span class=nt>corigine.com/agilio_sriov</span><span class=p>:</span><span class=w> </span><span class=s>&#39;1&#39;</span>
+<span class=w>          </span><span class=nt>corigine.com/agilio_sriov</span><span class=p>:</span><span class=w> </span><span class=s>'1'</span>
 </code></pre></div> <ul> <li><code>v1.multus-cni.io/default-network</code>: should be the {namespace}/{name} of related <code>NetworkAttachmentDefinition</code>.</li> </ul> <p>Running the following command in the <code>ovs-ovn</code> container of the Pod run node to observe if offload success.</p> <div class=highlight><pre><span></span><code><span class=c1># ovs-appctl dpctl/dump-flows -m type=offloaded</span>
 ufid:91cc45de-e7e9-4935-8f82-1890430b0f66,<span class=w> </span>skb_priority<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,skb_mark<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_state<span class=o>(</span><span class=m>0</span>/0x23<span class=o>)</span>,ct_zone<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_mark<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_label<span class=o>(</span><span class=m>0</span>/0x1<span class=o>)</span>,recirc_id<span class=o>(</span><span class=m>0</span><span class=o>)</span>,dp_hash<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,in_port<span class=o>(</span>5b45c61b307e_h<span class=o>)</span>,packet_type<span class=o>(</span><span class=nv>ns</span><span class=o>=</span><span class=m>0</span>/0,id<span class=o>=</span><span class=m>0</span>/0<span class=o>)</span>,eth<span class=o>(</span><span class=nv>src</span><span class=o>=</span><span class=m>00</span>:00:00:c5:6d:4e,dst<span class=o>=</span><span class=m>00</span>:00:00:e7:16:ce<span class=o>)</span>,eth_type<span class=o>(</span>0x0800<span class=o>)</span>,ipv4<span class=o>(</span><span class=nv>src</span><span class=o>=</span><span class=m>0</span>.0.0.0/0.0.0.0,dst<span class=o>=</span><span class=m>0</span>.0.0.0/0.0.0.0,proto<span class=o>=</span><span class=m>0</span>/0,tos<span class=o>=</span><span class=m>0</span>/0,ttl<span class=o>=</span><span class=m>0</span>/0,frag<span class=o>=</span>no<span class=o>)</span>,<span class=w> </span>packets:941539,<span class=w> </span>bytes:62142230,<span class=w> </span>used:0.260s,<span class=w> </span>offloaded:yes,<span class=w> </span>dp:tc,<span class=w> </span>actions:54235e5753b8_h
 ufid:e00768d7-e652-4d79-8182-3291d852b791,<span class=w> </span>skb_priority<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,skb_mark<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_state<span class=o>(</span><span class=m>0</span>/0x23<span class=o>)</span>,ct_zone<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_mark<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_label<span class=o>(</span><span class=m>0</span>/0x1<span class=o>)</span>,recirc_id<span class=o>(</span><span class=m>0</span><span class=o>)</span>,dp_hash<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,in_port<span class=o>(</span>54235e5753b8_h<span class=o>)</span>,packet_type<span class=o>(</span><span class=nv>ns</span><span class=o>=</span><span class=m>0</span>/0,id<span class=o>=</span><span class=m>0</span>/0<span class=o>)</span>,eth<span class=o>(</span><span class=nv>src</span><span class=o>=</span><span class=m>00</span>:00:00:e7:16:ce,dst<span class=o>=</span><span class=m>00</span>:00:00:c5:6d:4e<span class=o>)</span>,eth_type<span class=o>(</span>0x0800<span class=o>)</span>,ipv4<span class=o>(</span><span class=nv>src</span><span class=o>=</span><span class=m>0</span>.0.0.0/0.0.0.0,dst<span class=o>=</span><span class=m>0</span>.0.0.0/0.0.0.0,proto<span class=o>=</span><span class=m>0</span>/0,tos<span class=o>=</span><span class=m>0</span>/0,ttl<span class=o>=</span><span class=m>0</span>/0,frag<span class=o>=</span>no<span class=o>)</span>,<span class=w> </span>packets:82386659,<span class=w> </span>bytes:115944854173,<span class=w> </span>used:0.260s,<span class=w> </span>offloaded:yes,<span class=w> </span>dp:tc,<span class=w> </span>actions:5b45c61b307e_h
