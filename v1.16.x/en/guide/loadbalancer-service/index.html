@@ -252,7 +252,7 @@ Chain<span class=w> </span>POSTROUTING<span class=w> </span><span class=o>(</spa
 <span class=w>    </span><span class=m>0</span><span class=w>     </span><span class=m>0</span><span class=w> </span>MASQUERADE<span class=w>  </span>all<span class=w>  </span>--<span class=w>  </span>*<span class=w>      </span>*<span class=w>       </span><span class=m>0</span>.0.0.0/0<span class=w>            </span><span class=m>10</span>.109.201.193
 </code></pre></div> <h3 id=configure-the-nodeselector-for-the-lb-service-pod>Configure the <code>nodeSelector</code> for the LB Service Pod<a class=headerlink href=#configure-the-nodeselector-for-the-lb-service-pod title="Permanent link">&para;</a></h3> <p>You can specify the node where the LoadBalancer service gateway Pod is deployed by adjusting the <code>nodeSelector</code> in the <code>ovn-vpc-nat-config</code> ConfigMap.</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>data</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/kubeovn/vpc-nat-gateway:v1.16.2</span>
+<span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/kubeovn/vpc-nat-gateway:v1.16.3</span>
 <span class=w>  </span><span class=nt>nodeSelector</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>    </span><span class=no>kubernetes.io/hostname: kube-ovn-control-plane</span>
 <span class=w>    </span><span class=no>kubernetes.io/os: linux</span>

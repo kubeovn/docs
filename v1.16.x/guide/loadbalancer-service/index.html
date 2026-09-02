@@ -252,7 +252,7 @@ Chain<span class=w> </span>POSTROUTING<span class=w> </span><span class=o>(</spa
 <span class=w>    </span><span class=m>0</span><span class=w>     </span><span class=m>0</span><span class=w> </span>MASQUERADE<span class=w>  </span>all<span class=w>  </span>--<span class=w>  </span>*<span class=w>      </span>*<span class=w>       </span><span class=m>0</span>.0.0.0/0<span class=w>            </span><span class=m>10</span>.109.201.193
 </code></pre></div> <h3 id=lb-service-pod-nodeselector>配置 lb service Pod 的 nodeSelector<a class=headerlink href=#lb-service-pod-nodeselector title="Permanent link">&para;</a></h3> <p>可以通过调整 <code>ovn-vpc-nat-config</code> ConfigMap 中的 <code>nodeSelector</code> 来指定 LoadBalancer service 网关 Pod 部署的节点。</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>data</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/kubeovn/vpc-nat-gateway:v1.16.2</span>
+<span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/kubeovn/vpc-nat-gateway:v1.16.3</span>
 <span class=w>  </span><span class=nt>nodeSelector</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>    </span><span class=no>kubernetes.io/hostname: kube-ovn-control-plane</span>
 <span class=w>    </span><span class=no>kubernetes.io/os: linux</span>
