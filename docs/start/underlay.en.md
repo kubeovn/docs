@@ -313,8 +313,4 @@ Datapath actions: drop
 2022-11-13T08:44:34.077Z|00224|ofproto_dpif_xlate(handler5)|WARN|over 4096 resubmit actions on bridge br-int while processing arp,in_port=13483,vlan_tci=0x0000,dl_src=00:00:00:59:ef:13,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.152.3,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:59:ef:13,arp_tha=ff:ff:ff:ff:ff:ff
 ```
 
-To solve this issue, modify the OVN NB option `bcast_arp_req_flood` to `false`:
-
-```sh
-kubectl ko nbctl set NB_Global . options:bcast_arp_req_flood=false
-```
+Current versions forward broadcast ARP/ND requests to `MC_UNKNOWN` (typically localnet and other unknown-address ports) instead of flooding every non-router port, which avoids this resubmit limit. GARP packets are still flooded to `MC_FLOOD_L2`. The removed NB option `bcast_arp_req_flood` is no longer needed.
