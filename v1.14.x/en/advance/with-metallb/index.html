@@ -24,7 +24,7 @@ kubectl<span class=w> </span>edit<span class=w> </span>deployment<span class=w> 
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.180.204.251</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10.180.204.252</span><span class=w>  </span><span class=c1># MetalLB address pool range, includes the VIP 10.180.204.252</span>
 <span class=w>  </span><span class=nt>natOutgoing</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class=w>  </span><span class=nt>enableExternalLBAddress</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class=w>   </span><span class=c1># When enabled, IPs in the subnet&#39;s CIDR can be used as MetalLB VIPs</span>
+<span class=w>  </span><span class=nt>enableExternalLBAddress</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class=w>   </span><span class=c1># When enabled, IPs in the subnet's CIDR can be used as MetalLB VIPs</span>
 </code></pre></div> <h3 id=3-deploy-metallb>3. Deploy MetalLB<a class=headerlink href=#3-deploy-metallb title="Permanent link">&para;</a></h3> <p>Deploy MetalLB following the <a href=https://metallb.universe.tf/installation/ >MetalLB official documentation</a>:</p> <div class=highlight><pre><span></span><code>kubectl<span class=w> </span>apply<span class=w> </span>-f<span class=w> </span>https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
 </code></pre></div> <p>Configure MetalLB's address pool and L2 advertisement mode:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">metallb.io/v1beta1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">IPAddressPool</span>
@@ -65,7 +65,7 @@ kubectl<span class=w> </span>edit<span class=w> </span>deployment<span class=w> 
 <span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>args</span><span class=p>:</span>
 <span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">netexec</span>
 <span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">--http-port</span>
-<span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;80&quot;</span>
+<span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>"80"</span>
 <span class=w>        </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn/agnhost:2.47</span>
 <span class=w>        </span><span class=nt>imagePullPolicy</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
 <span class=w>        </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>

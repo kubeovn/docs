@@ -12,17 +12,17 @@
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eth1</span>
 <span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class=nt>spec</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>&#39;{</span>
-<span class=w>      </span><span class=s>&quot;cniVersion&quot;:</span><span class=nv> </span><span class=s>&quot;0.3.0&quot;,</span>
-<span class=w>      </span><span class=s>&quot;type&quot;:</span><span class=nv> </span><span class=s>&quot;macvlan&quot;,</span>
-<span class=w>      </span><span class=s>&quot;master&quot;:</span><span class=nv> </span><span class=s>&quot;eth1&quot;,</span>
-<span class=w>      </span><span class=s>&quot;mode&quot;:</span><span class=nv> </span><span class=s>&quot;bridge&quot;,</span>
-<span class=w>      </span><span class=s>&quot;ipam&quot;:</span><span class=nv> </span><span class=s>{</span>
-<span class=w>        </span><span class=s>&quot;type&quot;:</span><span class=nv> </span><span class=s>&quot;kube-ovn&quot;,</span>
-<span class=w>        </span><span class=s>&quot;server_socket&quot;:</span><span class=nv> </span><span class=s>&quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>        </span><span class=s>&quot;provider&quot;:</span><span class=nv> </span><span class=s>&quot;eth1.default&quot;</span>
+<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>'{</span>
+<span class=w>      </span><span class=s>"cniVersion":</span><span class=nv> </span><span class=s>"0.3.0",</span>
+<span class=w>      </span><span class=s>"type":</span><span class=nv> </span><span class=s>"macvlan",</span>
+<span class=w>      </span><span class=s>"master":</span><span class=nv> </span><span class=s>"eth1",</span>
+<span class=w>      </span><span class=s>"mode":</span><span class=nv> </span><span class=s>"bridge",</span>
+<span class=w>      </span><span class=s>"ipam":</span><span class=nv> </span><span class=s>{</span>
+<span class=w>        </span><span class=s>"type":</span><span class=nv> </span><span class=s>"kube-ovn",</span>
+<span class=w>        </span><span class=s>"server_socket":</span><span class=nv> </span><span class=s>"/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>        </span><span class=s>"provider":</span><span class=nv> </span><span class=s>"eth1.default"</span>
 <span class=w>      </span><span class=s>}</span>
-<span class=w>    </span><span class=s>}&#39;</span>
+<span class=w>    </span><span class=s>}'</span>
 <span class=nn>---</span>
 <span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Subnet</span>
@@ -53,7 +53,7 @@ NAME<span class=w>       </span>VPC<span class=w>           </span>REPLICAS<span
 gateway1<span class=w>   </span>ovn-cluster<span class=w>   </span><span class=m>1</span><span class=w>          </span><span class=nb>false</span><span class=w>         </span>macvlan1<span class=w>          </span>Completed<span class=w>   </span><span class=nb>true</span><span class=w>    </span>13s
 </code></pre></div> <p>To view more informations:</p> <div class=highlight><pre><span></span><code>kubectl<span class=w> </span>get<span class=w> </span>veg<span class=w> </span>gateway1<span class=w> </span>-o<span class=w> </span>wide
 NAME<span class=w>       </span>VPC<span class=w>           </span>REPLICAS<span class=w>   </span>BFD<span class=w> </span>ENABLED<span class=w>   </span>EXTERNAL<span class=w> </span>SUBNET<span class=w>   </span>PHASE<span class=w>       </span>READY<span class=w>   </span>INTERNAL<span class=w> </span>IPS<span class=w>     </span>EXTERNAL<span class=w> </span>IPS<span class=w>      </span>WORKING<span class=w> </span>NODES<span class=w>         </span>AGE
-gateway1<span class=w>   </span>ovn-cluster<span class=w>   </span><span class=m>1</span><span class=w>          </span><span class=nb>false</span><span class=w>         </span>macvlan1<span class=w>          </span>Completed<span class=w>   </span><span class=nb>true</span><span class=w>    </span><span class=o>[</span><span class=s2>&quot;10.16.0.12&quot;</span><span class=o>]</span><span class=w>   </span><span class=o>[</span><span class=s2>&quot;172.17.0.11&quot;</span><span class=o>]</span><span class=w>   </span><span class=o>[</span><span class=s2>&quot;kube-ovn-worker&quot;</span><span class=o>]</span><span class=w>   </span>82s
+gateway1<span class=w>   </span>ovn-cluster<span class=w>   </span><span class=m>1</span><span class=w>          </span><span class=nb>false</span><span class=w>         </span>macvlan1<span class=w>          </span>Completed<span class=w>   </span><span class=nb>true</span><span class=w>    </span><span class=o>[</span><span class=s2>"10.16.0.12"</span><span class=o>]</span><span class=w>   </span><span class=o>[</span><span class=s2>"172.17.0.11"</span><span class=o>]</span><span class=w>   </span><span class=o>[</span><span class=s2>"kube-ovn-worker"</span><span class=o>]</span><span class=w>   </span>82s
 </code></pre></div> <p>To view the workload:</p> <div class=highlight><pre><span></span><code>$<span class=w> </span>kubectl<span class=w> </span>get<span class=w> </span>deployment<span class=w> </span>-l<span class=w> </span>ovn.kubernetes.io/vpc-egress-gateway<span class=o>=</span>gateway1
 NAME<span class=w>       </span>READY<span class=w>   </span>UP-TO-DATE<span class=w>   </span>AVAILABLE<span class=w>   </span>AGE
 gateway1<span class=w>   </span><span class=m>1</span>/1<span class=w>     </span><span class=m>1</span><span class=w>            </span><span class=m>1</span><span class=w>           </span>4m40s
@@ -177,11 +177,11 @@ Routing<span class=w> </span>Policies
 </code></pre></div> <p>After the BFD Port is enabled, an LRP dedicated to BFD is automatically created on the corresponding OVN LR:</p> <div class=highlight><pre><span></span><code>$<span class=w> </span>kubectl<span class=w> </span>ko<span class=w> </span>nbctl<span class=w> </span>show<span class=w> </span>vpc1
 router<span class=w> </span>0c1d1e8f-4c86-4d96-88b2-c4171c7ff824<span class=w> </span><span class=o>(</span>vpc1<span class=o>)</span>
 <span class=w>    </span>port<span class=w> </span>bfd@vpc1
-<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;8e:51:4b:16:3c:90&quot;</span>
-<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;10.255.255.255&quot;</span><span class=o>]</span>
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>"8e:51:4b:16:3c:90"</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>"10.255.255.255"</span><span class=o>]</span>
 <span class=w>    </span>port<span class=w> </span>vpc1-subnet1
-<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;de:c9:5c:38:7a:61&quot;</span>
-<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;192.168.0.1/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>"de:c9:5c:38:7a:61"</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>"192.168.0.1/24"</span><span class=o>]</span>
 </code></pre></div> <p>After that, set <code>.spec.bfd.enabled</code> to <code>true</code> in VPC Egress Gateway. An example is shown below:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">kubeovn.io/v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">VpcEgressGateway</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -200,7 +200,7 @@ router<span class=w> </span>0c1d1e8f-4c86-4d96-88b2-c4171c7ff824<span class=w> <
 <span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">192.168.0.0/24</span>
 </code></pre></div> <p>To view VPC Egress Gateway information:</p> <div class=highlight><pre><span></span><code>$<span class=w> </span>kubectl<span class=w> </span>get<span class=w> </span>veg<span class=w> </span>gateway2<span class=w> </span>-o<span class=w> </span>wide
 NAME<span class=w>       </span>VPC<span class=w>    </span>REPLICAS<span class=w>   </span>BFD<span class=w> </span>ENABLED<span class=w>   </span>EXTERNAL<span class=w> </span>SUBNET<span class=w>   </span>PHASE<span class=w>       </span>READY<span class=w>   </span>INTERNAL<span class=w> </span>IPS<span class=w>                    </span>EXTERNAL<span class=w> </span>IPS<span class=w>                    </span>WORKING<span class=w> </span>NODES<span class=w>                            </span>AGE
-gateway2<span class=w>   </span>vpc1<span class=w>   </span><span class=m>2</span><span class=w>          </span><span class=nb>true</span><span class=w>          </span>macvlan<span class=w>           </span>Completed<span class=w>   </span><span class=nb>true</span><span class=w>    </span><span class=o>[</span><span class=s2>&quot;192.168.0.2&quot;</span>,<span class=s2>&quot;192.168.0.3&quot;</span><span class=o>]</span><span class=w>   </span><span class=o>[</span><span class=s2>&quot;172.17.0.13&quot;</span>,<span class=s2>&quot;172.17.0.14&quot;</span><span class=o>]</span><span class=w>   </span><span class=o>[</span><span class=s2>&quot;kube-ovn-worker&quot;</span>,<span class=s2>&quot;kube-ovn-worker2&quot;</span><span class=o>]</span><span class=w>   </span>58s
+gateway2<span class=w>   </span>vpc1<span class=w>   </span><span class=m>2</span><span class=w>          </span><span class=nb>true</span><span class=w>          </span>macvlan<span class=w>           </span>Completed<span class=w>   </span><span class=nb>true</span><span class=w>    </span><span class=o>[</span><span class=s2>"192.168.0.2"</span>,<span class=s2>"192.168.0.3"</span><span class=o>]</span><span class=w>   </span><span class=o>[</span><span class=s2>"172.17.0.13"</span>,<span class=s2>"172.17.0.14"</span><span class=o>]</span><span class=w>   </span><span class=o>[</span><span class=s2>"kube-ovn-worker"</span>,<span class=s2>"kube-ovn-worker2"</span><span class=o>]</span><span class=w>   </span>58s
 
 $<span class=w> </span>kubectl<span class=w> </span>get<span class=w> </span>pod<span class=w> </span>-l<span class=w> </span>ovn.kubernetes.io/vpc-egress-gateway<span class=o>=</span>gateway2<span class=w> </span>-o<span class=w> </span>wide
 NAME<span class=w>                       </span>READY<span class=w>   </span>STATUS<span class=w>    </span>RESTARTS<span class=w>   </span>AGE<span class=w>     </span>IP<span class=w>            </span>NODE<span class=w>               </span>NOMINATED<span class=w> </span>NODE<span class=w>   </span>READINESS<span class=w> </span>GATES
@@ -216,9 +216,9 @@ Route<span class=w> </span>Table<span class=w> </span>&lt;main&gt;:
 $<span class=w> </span>kubectl<span class=w> </span>ko<span class=w> </span>nbctl<span class=w> </span>list<span class=w> </span>bfd
 _uuid<span class=w>               </span>:<span class=w> </span>223ede10-9169-4c7d-9524-a546e24bfab5
 detect_mult<span class=w>         </span>:<span class=w> </span><span class=m>3</span>
-dst_ip<span class=w>              </span>:<span class=w> </span><span class=s2>&quot;192.168.0.2&quot;</span>
-external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{</span><span class=nv>af</span><span class=o>=</span><span class=s2>&quot;4&quot;</span>,<span class=w> </span><span class=nv>vendor</span><span class=o>=</span>kube-ovn,<span class=w> </span>vpc-egress-gateway<span class=o>=</span><span class=s2>&quot;default/gateway2&quot;</span><span class=o>}</span>
-logical_port<span class=w>        </span>:<span class=w> </span><span class=s2>&quot;bfd@vpc1&quot;</span>
+dst_ip<span class=w>              </span>:<span class=w> </span><span class=s2>"192.168.0.2"</span>
+external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{</span><span class=nv>af</span><span class=o>=</span><span class=s2>"4"</span>,<span class=w> </span><span class=nv>vendor</span><span class=o>=</span>kube-ovn,<span class=w> </span>vpc-egress-gateway<span class=o>=</span><span class=s2>"default/gateway2"</span><span class=o>}</span>
+logical_port<span class=w>        </span>:<span class=w> </span><span class=s2>"bfd@vpc1"</span>
 min_rx<span class=w>              </span>:<span class=w> </span><span class=m>1000</span>
 min_tx<span class=w>              </span>:<span class=w> </span><span class=m>1000</span>
 options<span class=w>             </span>:<span class=w> </span><span class=o>{}</span>
@@ -226,9 +226,9 @@ status<span class=w>              </span>:<span class=w> </span>up
 
 _uuid<span class=w>               </span>:<span class=w> </span>b050c75e-2462-470b-b89c-7bd38889b758
 detect_mult<span class=w>         </span>:<span class=w> </span><span class=m>3</span>
-dst_ip<span class=w>              </span>:<span class=w> </span><span class=s2>&quot;192.168.0.3&quot;</span>
-external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{</span><span class=nv>af</span><span class=o>=</span><span class=s2>&quot;4&quot;</span>,<span class=w> </span><span class=nv>vendor</span><span class=o>=</span>kube-ovn,<span class=w> </span>vpc-egress-gateway<span class=o>=</span><span class=s2>&quot;default/gateway2&quot;</span><span class=o>}</span>
-logical_port<span class=w>        </span>:<span class=w> </span><span class=s2>&quot;bfd@vpc1&quot;</span>
+dst_ip<span class=w>              </span>:<span class=w> </span><span class=s2>"192.168.0.3"</span>
+external_ids<span class=w>        </span>:<span class=w> </span><span class=o>{</span><span class=nv>af</span><span class=o>=</span><span class=s2>"4"</span>,<span class=w> </span><span class=nv>vendor</span><span class=o>=</span>kube-ovn,<span class=w> </span>vpc-egress-gateway<span class=o>=</span><span class=s2>"default/gateway2"</span><span class=o>}</span>
+logical_port<span class=w>        </span>:<span class=w> </span><span class=s2>"bfd@vpc1"</span>
 min_rx<span class=w>              </span>:<span class=w> </span><span class=m>1000</span>
 min_tx<span class=w>              </span>:<span class=w> </span><span class=m>1000</span>
 options<span class=w>             </span>:<span class=w> </span><span class=o>{}</span>

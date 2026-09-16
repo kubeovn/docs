@@ -71,11 +71,11 @@ metadata:
 <span class=w>  </span>name:<span class=w> </span>ovn-external-gw-config
 <span class=w>  </span>namespace:<span class=w> </span>kube-system
 data:
-<span class=w>  </span>enable-external-gw:<span class=w> </span><span class=s2>&quot;true&quot;</span>
-<span class=w>  </span>external-gw-nodes:<span class=w> </span><span class=s2>&quot;pc-node-1,pc-node-2,pc-node-3&quot;</span>
-<span class=w>  </span>type:<span class=w> </span><span class=s2>&quot;centralized&quot;</span>
-<span class=w>  </span>external-gw-nic:<span class=w> </span><span class=s2>&quot;vlan&quot;</span>
-<span class=w>  </span>external-gw-addr:<span class=w> </span><span class=s2>&quot;10.5.204.254/24&quot;</span>
+<span class=w>  </span>enable-external-gw:<span class=w> </span><span class=s2>"true"</span>
+<span class=w>  </span>external-gw-nodes:<span class=w> </span><span class=s2>"pc-node-1,pc-node-2,pc-node-3"</span>
+<span class=w>  </span>type:<span class=w> </span><span class=s2>"centralized"</span>
+<span class=w>  </span>external-gw-nic:<span class=w> </span><span class=s2>"vlan"</span>
+<span class=w>  </span>external-gw-addr:<span class=w> </span><span class=s2>"10.5.204.254/24"</span>
 </code></pre></div> <p>This feature currently supports the ability to create lrp type ovn eip resources without specifying the lrp ip and mac, which is already supported for automatic acquisition. If specified, it is equivalent to specifying the ip to create an ovn-eip of type lrp. Of course, you can also manually create the lrp type ovn eip in advance.</p> <h3 id=13-custom-vpc-enable-eip-snat-fip-function>1.3 Custom VPC enable eip snat fip function<a class=headerlink href=#13-custom-vpc-enable-eip-snat-fip-function title="Permanent link">&para;</a></h3> <p>Clusters generally require multiple gateway nodes to achieve high availability. The configuration is as follows:</p> <div class=highlight><pre><span></span><code><span class=c1># First specify external-gw-nodes by adding label</span>
 kubectl<span class=w> </span>label<span class=w> </span>nodes<span class=w> </span>pc-node-1<span class=w> </span>pc-node-2<span class=w> </span>pc-node-3<span class=w> </span>ovn.kubernetes.io/external-gw<span class=o>=</span><span class=nb>true</span>
 </code></pre></div> <div class=highlight><pre><span></span><code><span class=c1># cat 00-ns.yml</span>
@@ -113,7 +113,7 @@ spec:
 <span class=w>  </span>disableGatewayCheck:<span class=w> </span><span class=nb>false</span>
 <span class=w>  </span>disableInterConnection:<span class=w> </span><span class=nb>true</span>
 <span class=w>  </span>enableEcmp:<span class=w> </span><span class=nb>true</span>
-<span class=w>  </span>gatewayNode:<span class=w> </span><span class=s2>&quot;&quot;</span>
+<span class=w>  </span>gatewayNode:<span class=w> </span><span class=s2>""</span>
 <span class=w>  </span>gatewayType:<span class=w> </span>distributed
 <span class=w>  </span><span class=c1>#gatewayType: centralized</span>
 <span class=w>  </span>natOutgoing:<span class=w> </span><span class=nb>false</span>
@@ -127,16 +127,16 @@ spec:
 
 router<span class=w> </span>87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f<span class=w> </span><span class=o>(</span>vpc1<span class=o>)</span>
 <span class=w>    </span>port<span class=w> </span>vpc1-vpc1-subnet1
-<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:ED:8E:C7&quot;</span>
-<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;192.168.0.1/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>"00:00:00:ED:8E:C7"</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>"192.168.0.1/24"</span><span class=o>]</span>
 <span class=w>    </span>port<span class=w> </span>vpc1-external204
-<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:EF:05:C7&quot;</span>
-<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;10.5.204.105/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>"00:00:00:EF:05:C7"</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>"10.5.204.105/24"</span><span class=o>]</span>
 <span class=w>        </span>gateway<span class=w> </span>chassis:<span class=w> </span><span class=o>[</span>7cedd14f-265b-42e5-ac17-e03e7a1f2342<span class=w> </span>276baccb-fe9c-4476-b41d-05872a94976d<span class=w> </span>fd9f140c-c45d-43db-a6c0-0d4f8ea298dd<span class=o>]</span>
 <span class=w>    </span>nat<span class=w> </span>21d853b0-f7b4-40bd-9a53-31d2e2745739
-<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;10.5.204.115&quot;</span>
-<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;192.168.0.0/24&quot;</span>
-<span class=w>        </span>type:<span class=w> </span><span class=s2>&quot;snat&quot;</span>
+<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>"10.5.204.115"</span>
+<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>"192.168.0.0/24"</span>
+<span class=w>        </span>type:<span class=w> </span><span class=s2>"snat"</span>
 </code></pre></div> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko nbctl lr-route-list vpc1</span>
 
 IPv4<span class=w> </span>Routes
@@ -185,15 +185,15 @@ Route<span class=w> </span>Table<span class=w> </span>&lt;main&gt;:
 </code></pre></div> <p>After the above template is applied, you should see the following resources exist</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko nbctl show vpc1</span>
 <span class="l l-Scalar l-Scalar-Plain">router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)</span>
 <span class=w>    </span><span class="l l-Scalar l-Scalar-Plain">port vpc1-vpc1-subnet1</span>
-<span class=w>        </span><span class="l l-Scalar l-Scalar-Plain">mac</span><span class="p p-Indicator">:</span><span class=w> </span><span class=s>&quot;00:00:00:ED:8E:C7&quot;</span>
-<span class=w>        </span><span class=nt>networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&quot;192.168.0.1/24&quot;</span><span class="p p-Indicator">]</span>
+<span class=w>        </span><span class="l l-Scalar l-Scalar-Plain">mac</span><span class="p p-Indicator">:</span><span class=w> </span><span class=s>"00:00:00:ED:8E:C7"</span>
+<span class=w>        </span><span class=nt>networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>"192.168.0.1/24"</span><span class="p p-Indicator">]</span>
 <span class="w w-Error">    </span><span class="l l-Scalar l-Scalar-Plain">port vpc1-external204</span>
-<span class=w>        </span><span class="l l-Scalar l-Scalar-Plain">mac</span><span class="p p-Indicator">:</span><span class=w> </span><span class=s>&quot;00:00:00:EF:05:C7&quot;</span>
-<span class=w>        </span><span class=nt>networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&quot;10.5.204.105/24&quot;</span><span class="p p-Indicator">]</span>
+<span class=w>        </span><span class="l l-Scalar l-Scalar-Plain">mac</span><span class="p p-Indicator">:</span><span class=w> </span><span class=s>"00:00:00:EF:05:C7"</span>
+<span class=w>        </span><span class=nt>networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>"10.5.204.105/24"</span><span class="p p-Indicator">]</span>
 <span class=w>        </span><span class=nt>gateway chassis</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=nv>7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd</span><span class="p p-Indicator">]</span>
 <span class=w>    </span><span class="l l-Scalar l-Scalar-Plain">port vpc1-extra</span>
-<span class=w>        </span><span class="l l-Scalar l-Scalar-Plain">mac</span><span class="p p-Indicator">:</span><span class=w> </span><span class=s>&quot;00:00:00:EF:6A:C7&quot;</span>
-<span class=w>        </span><span class=nt>networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&quot;10.10.204.105/24&quot;</span><span class="p p-Indicator">]</span>
+<span class=w>        </span><span class="l l-Scalar l-Scalar-Plain">mac</span><span class="p p-Indicator">:</span><span class=w> </span><span class=s>"00:00:00:EF:6A:C7"</span>
+<span class=w>        </span><span class=nt>networks</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>"10.10.204.105/24"</span><span class="p p-Indicator">]</span>
 <span class=w>        </span><span class=nt>gateway chassis</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=nv>7cedd14f-265b-42e5-ac17-e03e7a1f2342 276baccb-fe9c-4476-b41d-05872a94976d fd9f140c-c45d-43db-a6c0-0d4f8ea298dd</span><span class="p p-Indicator">]</span>
 </code></pre></div> <h2 id=2-ovn-eip>2. ovn-eip<a class=headerlink href=#2-ovn-eip title="Permanent link">&para;</a></h2> <p>This function is designed and used in the same way as iptables-eip, ovn-eip currently has three types</p> <ul> <li>nat: indicates ovn dnat, fip, and snat.</li> <li>lrp: indicates the resource used to connect a VPC to the public network</li> <li>lsp: In the ovn BFD-based ecmp static route scenario, an ovs internal port is provided on the gateway node as the next hop of the ecmp route</li> </ul> <div class=highlight><pre><span></span><code>---
 kind:<span class=w> </span>OvnEip
@@ -231,7 +231,7 @@ metadata:
 spec:
 <span class=w>  </span>ovnEip:<span class=w> </span>eip-static
 <span class=w>  </span>ipName:<span class=w> </span>vpc-1-busybox01.vpc1<span class=w>  </span><span class=c1># the name of the ip crd, which is unique</span>
-<span class=w>  </span>type:<span class=w> </span><span class=s2>&quot;centralized&quot;</span><span class=w>           </span><span class=c1># centralized or distributed</span>
+<span class=w>  </span>type:<span class=w> </span><span class=s2>"centralized"</span><span class=w>           </span><span class=c1># centralized or distributed</span>
 
 --
 <span class=c1># Alternatively, you can specify a VPC or Intranet ip address</span>
@@ -244,7 +244,7 @@ spec:
 <span class=w>  </span>ovnEip:<span class=w> </span>eip-static
 <span class=w>  </span>vpc:<span class=w> </span>vpc1
 <span class=w>  </span>v4Ip:<span class=w> </span><span class=m>192</span>.168.0.2
-<span class=w>  </span>type:<span class=w> </span><span class=s2>&quot;centralized&quot;</span><span class=w>           </span><span class=c1># centralized or distributed</span>
+<span class=w>  </span>type:<span class=w> </span><span class=s2>"centralized"</span><span class=w>           </span><span class=c1># centralized or distributed</span>
 </code></pre></div> <div class=highlight><pre><span></span><code><span class=c1># kubectl get ofip</span>
 NAME<span class=w>          </span>VPC<span class=w>    </span>V4EIP<span class=w>          </span>V4IP<span class=w>          </span>READY<span class=w>   </span>IPTYPE<span class=w>   </span>IPNAME
 eip-for-vip<span class=w>   </span>vpc1<span class=w>   </span><span class=m>10</span>.5.204.106<span class=w>   </span><span class=m>192</span>.168.0.3<span class=w>   </span><span class=nb>true</span><span class=w>    </span>vip<span class=w>      </span>test-fip-vip
@@ -270,16 +270,16 @@ rtt<span class=w> </span>min/avg/max/mdev<span class=w> </span><span class=o>=</
 <span class=c1># kubectl ko nbctl show vpc1</span>
 router<span class=w> </span>87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f<span class=w> </span><span class=o>(</span>vpc1<span class=o>)</span>
 <span class=w>    </span>port<span class=w> </span>vpc1-vpc1-subnet1
-<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:ED:8E:C7&quot;</span>
-<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;192.168.0.1/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>"00:00:00:ED:8E:C7"</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>"192.168.0.1/24"</span><span class=o>]</span>
 <span class=w>    </span>port<span class=w> </span>vpc1-external204
-<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:EF:05:C7&quot;</span>
-<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;10.5.204.105/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>"00:00:00:EF:05:C7"</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>"10.5.204.105/24"</span><span class=o>]</span>
 <span class=w>        </span>gateway<span class=w> </span>chassis:<span class=w> </span><span class=o>[</span>7cedd14f-265b-42e5-ac17-e03e7a1f2342<span class=w> </span>276baccb-fe9c-4476-b41d-05872a94976d<span class=w> </span>fd9f140c-c45d-43db-a6c0-0d4f8ea298dd<span class=o>]</span>
 <span class=w>    </span>nat<span class=w> </span>813523e7-c68c-408f-bd8c-cba30cb2e4f4
-<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;10.5.204.101&quot;</span>
-<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;192.168.0.2&quot;</span>
-<span class=w>        </span>type:<span class=w> </span><span class=s2>&quot;dnat_and_snat&quot;</span>
+<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>"10.5.204.101"</span>
+<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>"192.168.0.2"</span>
+<span class=w>        </span>type:<span class=w> </span><span class=s2>"dnat_and_snat"</span>
 </code></pre></div> <h3 id=22-create-an-fip-for-vip>2.2 Create an fip for vip<a class=headerlink href=#22-create-an-fip-for-vip title="Permanent link">&para;</a></h3> <p>In order to facilitate the use of some vip scenarios, such as inside kubevirt VM, keepalived use vip, kube-vip use vip, etc. the vip need public network access.</p> <div class=highlight><pre><span></span><code><span class=c1># First create vip, eip, then bind eip to vip</span>
 <span class=c1># cat vip.yaml</span>
 
@@ -428,20 +428,20 @@ spec:
 </code></pre></div> <p>If you want to use an additional public network, you need to explicitly specify the public network to be extended through externalSubnet. In the above configuration, the extended public network is extra.</p> <p>After the above resources are created, you can see the following resources that the snat public network feature depends on.</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl ko nbctl show vpc1</span>
 router<span class=w> </span>87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f<span class=w> </span><span class=o>(</span>vpc1<span class=o>)</span>
 <span class=w>    </span>port<span class=w> </span>vpc1-vpc1-subnet1
-<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:ED:8E:C7&quot;</span>
-<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;192.168.0.1/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>"00:00:00:ED:8E:C7"</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>"192.168.0.1/24"</span><span class=o>]</span>
 <span class=w>    </span>port<span class=w> </span>vpc1-external204
-<span class=w>        </span>mac:<span class=w> </span><span class=s2>&quot;00:00:00:EF:05:C7&quot;</span>
-<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>&quot;10.5.204.105/24&quot;</span><span class=o>]</span>
+<span class=w>        </span>mac:<span class=w> </span><span class=s2>"00:00:00:EF:05:C7"</span>
+<span class=w>        </span>networks:<span class=w> </span><span class=o>[</span><span class=s2>"10.5.204.105/24"</span><span class=o>]</span>
 <span class=w>        </span>gateway<span class=w> </span>chassis:<span class=w> </span><span class=o>[</span>7cedd14f-265b-42e5-ac17-e03e7a1f2342<span class=w> </span>276baccb-fe9c-4476-b41d-05872a94976d<span class=w> </span>fd9f140c-c45d-43db-a6c0-0d4f8ea298dd<span class=o>]</span>
 <span class=w>    </span>nat<span class=w> </span>21d853b0-f7b4-40bd-9a53-31d2e2745739
-<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;10.5.204.115&quot;</span>
-<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;192.168.0.0/24&quot;</span>
-<span class=w>        </span>type:<span class=w> </span><span class=s2>&quot;snat&quot;</span>
+<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>"10.5.204.115"</span>
+<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>"192.168.0.0/24"</span>
+<span class=w>        </span>type:<span class=w> </span><span class=s2>"snat"</span>
 <span class=w>    </span>nat<span class=w> </span>da77a11f-c523-439c-b1d1-72c664196a0f
-<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;10.5.204.116&quot;</span>
-<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>&quot;192.168.0.4&quot;</span>
-<span class=w>        </span>type:<span class=w> </span><span class=s2>&quot;snat&quot;</span>
+<span class=w>        </span>external<span class=w> </span>ip:<span class=w> </span><span class=s2>"10.5.204.116"</span>
+<span class=w>        </span>logical<span class=w> </span>ip:<span class=w> </span><span class=s2>"192.168.0.4"</span>
+<span class=w>        </span>type:<span class=w> </span><span class=s2>"snat"</span>
 </code></pre></div> <div class=highlight><pre><span></span><code><span class=o>[</span>root@pc-node-1<span class=w> </span><span class=m>03</span>-cust-vpc<span class=o>]</span><span class=c1># kubectl get po -A -o wide  | grep busy</span>
 vpc1<span class=w>            </span>vpc-1-busybox01<span class=w>                                 </span><span class=m>1</span>/1<span class=w>     </span>Running<span class=w>   </span><span class=m>0</span><span class=w>                </span>3d15h<span class=w>   </span><span class=m>192</span>.168.0.2<span class=w>   </span>pc-node-2<span class=w>   </span>&lt;none&gt;<span class=w>           </span>&lt;none&gt;
 vpc1<span class=w>            </span>vpc-1-busybox02<span class=w>                                 </span><span class=m>1</span>/1<span class=w>     </span>Running<span class=w>   </span><span class=m>0</span><span class=w>                </span>17h<span class=w>     </span><span class=m>192</span>.168.0.4<span class=w>   </span>pc-node-1<span class=w>   </span>&lt;none&gt;<span class=w>           </span>&lt;none&gt;
@@ -516,8 +516,8 @@ rtt<span class=w> </span>min/avg/max/mdev<span class=w> </span><span class=o>=</
 <span class=w>  </span><span class=nt>ovnEip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
 <span class=w>  </span><span class=nt>ipName</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc-1-busybox01.vpc1</span><span class=w> </span><span class=c1># Note that this is the name of the pod IP CRD and it is unique</span>
 <span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
-<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
-<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>"22"</span>
+<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>"22"</span>
 
 <span class=nn>---</span>
 <span class=c1># Alternatively, you can specify a VPC or Intranet ip address</span>
@@ -529,8 +529,8 @@ rtt<span class=w> </span>min/avg/max/mdev<span class=w> </span><span class=o>=</
 <span class=nt>spec</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>ovnEip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
 <span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
-<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
-<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>"22"</span>
+<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>"22"</span>
 <span class=w>  </span><span class=nt>vpc</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc1</span>
 <span class=w>  </span><span class=nt>v4Ip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">192.168.0.3</span>
 </code></pre></div> <p>If you want to use an additional public network, you need to explicitly specify the public network to be extended through externalSubnet. In the above configuration, the extended public network is extra.</p> <p>The configuration of OvnDnatRule is similar to that of IptablesDnatRule.</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl get oeip eip-dnat</span>
@@ -549,8 +549,8 @@ eip-dnat<span class=w>               </span>eip-dnat<span class=w>              
 <span class=w>  </span><span class=nt>ovnEip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
 <span class=w>  </span><span class=nt>ipName</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">test-dnat-vip</span>
 <span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
-<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
-<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>"22"</span>
+<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>"22"</span>
 
 
 <span class=nn>---</span>
@@ -565,8 +565,8 @@ eip-dnat<span class=w>               </span>eip-dnat<span class=w>              
 <span class=w>  </span><span class=nt>ovnEip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eip-dnat</span>
 <span class=w>  </span><span class=nt>ipName</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">test-dnat-vip</span>
 <span class=w>  </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
-<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
-<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>&quot;22&quot;</span>
+<span class=w>  </span><span class=nt>internalPort</span><span class=p>:</span><span class=w> </span><span class=s>"22"</span>
+<span class=w>  </span><span class=nt>externalPort</span><span class=p>:</span><span class=w> </span><span class=s>"22"</span>
 <span class=w>  </span><span class=nt>vpc</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">vpc1</span>
 <span class=w>  </span><span class=nt>v4Ip</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">192.168.0.4</span>
 </code></pre></div> <p>The configuration of OvnDnatRule is similar to that of IptablesDnatRule.</p> <div class=highlight><pre><span></span><code><span class=c1># kubectl get vip test-dnat-vip</span>

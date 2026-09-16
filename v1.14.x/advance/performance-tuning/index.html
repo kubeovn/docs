@@ -43,7 +43,7 @@ cat<span class=w> </span>/proc/cpuinfo<span class=w>  </span><span class=p>|</sp
 <span class=nb>cd</span><span class=w> </span>ovs
 curl<span class=w> </span>-s<span class=w>  </span>https://github.com/kubeovn/ovs/commit/2d2c83c26d4217446918f39d5cd5838e9ac27b32.patch<span class=w> </span><span class=p>|</span><span class=w>  </span>git<span class=w> </span>apply
 ./boot.sh
-./configure<span class=w> </span>--with-linux<span class=o>=</span>/lib/modules/<span class=k>$(</span>uname<span class=w> </span>-r<span class=k>)</span>/build<span class=w> </span><span class=nv>CFLAGS</span><span class=o>=</span><span class=s2>&quot;-g -O2 -mpopcnt -msse4.2&quot;</span>
+./configure<span class=w> </span>--with-linux<span class=o>=</span>/lib/modules/<span class=k>$(</span>uname<span class=w> </span>-r<span class=k>)</span>/build<span class=w> </span><span class=nv>CFLAGS</span><span class=o>=</span><span class=s2>"-g -O2 -mpopcnt -msse4.2"</span>
 make<span class=w> </span>rpm-fedora-kmod
 <span class=nb>cd</span><span class=w> </span>rpm/rpmbuild/RPMS/x86_64/
 </code></pre></div> <p>复制 RPM 到每个节点并进行安装：</p> <div class=highlight><pre><span></span><code>rpm<span class=w> </span>-i<span class=w> </span>openvswitch-kmod-3.5.1-1.el7.x86_64.rpm

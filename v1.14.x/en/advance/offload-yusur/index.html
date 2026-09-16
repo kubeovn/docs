@@ -30,12 +30,12 @@
 <span class=nt>data</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>config.json</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>    </span><span class=no>{</span>
-<span class=w>        </span><span class=no>&quot;resourceList&quot;: [{</span>
-<span class=w>                </span><span class=no>&quot;resourceName&quot;: &quot;sriov_dpu&quot;,</span>
-<span class=w>                </span><span class=no>&quot;resourcePrefix&quot;: &quot;yusur.tech&quot;,</span>
-<span class=w>                </span><span class=no>&quot;selectors&quot;: {</span>
-<span class=w>                    </span><span class=no>&quot;vendors&quot;: [&quot;1f47&quot;],</span>
-<span class=w>                    </span><span class=no>&quot;devices&quot;: [&quot;110f&quot;]</span>
+<span class=w>        </span><span class=no>"resourceList": [{</span>
+<span class=w>                </span><span class=no>"resourceName": "sriov_dpu",</span>
+<span class=w>                </span><span class=no>"resourcePrefix": "yusur.tech",</span>
+<span class=w>                </span><span class=no>"selectors": {</span>
+<span class=w>                    </span><span class=no>"vendors": ["1f47"],</span>
+<span class=w>                    </span><span class=no>"devices": ["110f"]</span>
 <span class=w>                </span><span class=no>}}</span>
 <span class=w>        </span><span class=no>]</span>
 <span class=w>    </span><span class=no>}</span>
@@ -46,7 +46,7 @@
 <span class=w>  </span>yusur.tech/sriov_dpu<span class=w>  </span><span class=m>0</span><span class=w>           </span><span class=m>0</span>
 </code></pre></div> <h2 id=install-multus-cni>Install Multus-CNI<a class=headerlink href=#install-multus-cni title="Permanent link">&para;</a></h2> <p>The device IDs obtained during SR-IOV Device Plugin scheduling need to be passed to Kube-OVN via Multus-CNI, so Multus-CNI needs to be configured to perform the related tasks.</p> <div class=highlight><pre><span></span><code>kubectl<span class=w> </span>apply<span class=w> </span>-f<span class=w> </span>https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v4.0.2/deployments/multus-daemonset-thick.yml
 </code></pre></div> <p>Create <code>NetworkAttachmentDefinition</code>:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span>
-<span class=w>  </span><span class=s>&quot;k8s.cni.cncf.io/v1&quot;</span>
+<span class=w>  </span><span class=s>"k8s.cni.cncf.io/v1"</span>
 <span class=nt>kind</span><span class=p>:</span>
 <span class=w>  </span><span class="l l-Scalar l-Scalar-Plain">NetworkAttachmentDefinition</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -55,19 +55,19 @@
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/resourceName</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">yusur.tech/sriov_dpu</span>
 <span class=nt>spec</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>&#39;{</span>
-<span class=w>    </span><span class=s>&quot;cniVersion&quot;:</span><span class=nv> </span><span class=s>&quot;0.3.1&quot;,</span>
-<span class=w>    </span><span class=s>&quot;name&quot;:</span><span class=nv> </span><span class=s>&quot;kube-ovn&quot;,</span>
-<span class=w>    </span><span class=s>&quot;plugins&quot;:[</span>
+<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>'{</span>
+<span class=w>    </span><span class=s>"cniVersion":</span><span class=nv> </span><span class=s>"0.3.1",</span>
+<span class=w>    </span><span class=s>"name":</span><span class=nv> </span><span class=s>"kube-ovn",</span>
+<span class=w>    </span><span class=s>"plugins":[</span>
 <span class=w>        </span><span class=s>{</span>
-<span class=w>            </span><span class=s>&quot;type&quot;:&quot;kube-ovn&quot;,</span>
-<span class=w>            </span><span class=s>&quot;server_socket&quot;:&quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>            </span><span class=s>&quot;provider&quot;:</span><span class=nv> </span><span class=s>&quot;test.kube-system.ovn&quot;</span>
+<span class=w>            </span><span class=s>"type":"kube-ovn",</span>
+<span class=w>            </span><span class=s>"server_socket":"/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>            </span><span class=s>"provider":</span><span class=nv> </span><span class=s>"test.kube-system.ovn"</span>
 <span class=w>        </span><span class=s>},</span>
 <span class=w>        </span><span class=s>{</span>
-<span class=w>            </span><span class=s>&quot;type&quot;:&quot;portmap&quot;,</span>
-<span class=w>            </span><span class=s>&quot;capabilities&quot;:{</span>
-<span class=w>                </span><span class=s>&quot;portMappings&quot;:true</span>
+<span class=w>            </span><span class=s>"type":"portmap",</span>
+<span class=w>            </span><span class=s>"capabilities":{</span>
+<span class=w>                </span><span class=s>"portMappings":true</span>
 <span class=w>            </span><span class=s>}</span>
 <span class=w>        </span><span class=s>}</span>
 <span class=w>    </span><span class=s>]</span>
@@ -76,7 +76,7 @@
 </code></pre></div> <p>Change the related options, <code>IFACE</code> should be the physic NIC and has an IP:</p> <div class=highlight><pre><span></span><code><span class=nv>ENABLE_MIRROR</span><span class=o>=</span><span class=si>${</span><span class=nv>ENABLE_MIRROR</span><span class=k>:-</span><span class=nv>false</span><span class=si>}</span>
 <span class=nv>HW_OFFLOAD</span><span class=o>=</span><span class=si>${</span><span class=nv>HW_OFFLOAD</span><span class=k>:-</span><span class=nv>true</span><span class=si>}</span>
 <span class=nv>ENABLE_LB</span><span class=o>=</span><span class=si>${</span><span class=nv>ENABLE_LB</span><span class=k>:-</span><span class=nv>false</span><span class=si>}</span>
-<span class=nv>IFACE</span><span class=o>=</span><span class=s2>&quot;p0&quot;</span>
+<span class=nv>IFACE</span><span class=o>=</span><span class=s2>"p0"</span>
 </code></pre></div> <ol start=2> <li>Install Kube-OVN:</li> </ol> <div class=highlight><pre><span></span><code>bash<span class=w> </span>install.sh
 </code></pre></div> <h3 id=create-pods-with-vf-nicscreate-pods-with-vf-nics>Create Pods with VF NICsCreate Pods with VF NICs<a class=headerlink href=#create-pods-with-vf-nicscreate-pods-with-vf-nics title="Permanent link">&para;</a></h3> <p>Pods that use VF for network offload acceleration can be created using the following yaml:</p> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
@@ -91,9 +91,9 @@
 <span class=w>      </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/library/nginx:alpine</span>
 <span class=w>      </span><span class=nt>resources</span><span class=p>:</span>
 <span class=w>        </span><span class=nt>requests</span><span class=p>:</span>
-<span class=w>          </span><span class=nt>yusur.tech/sriov_dpu</span><span class=p>:</span><span class=w> </span><span class=s>&#39;1&#39;</span>
+<span class=w>          </span><span class=nt>yusur.tech/sriov_dpu</span><span class=p>:</span><span class=w> </span><span class=s>'1'</span>
 <span class=w>        </span><span class=nt>limits</span><span class=p>:</span>
-<span class=w>          </span><span class=nt>yusur.tech/sriov_dpu</span><span class=p>:</span><span class=w> </span><span class=s>&#39;1&#39;</span>
+<span class=w>          </span><span class=nt>yusur.tech/sriov_dpu</span><span class=p>:</span><span class=w> </span><span class=s>'1'</span>
 </code></pre></div> <ul> <li><code>v1.multus-cni.io/default-network</code>: should be the <code>{namespace}/{name}</code> of related NetworkAttachmentDefinition.</li> </ul> <h3 id=offload-verification>Offload verification<a class=headerlink href=#offload-verification title="Permanent link">&para;</a></h3> <p>Running the following command in the <code>ovs-ovn</code> container of the Pod run node to observe if offload success.</p> <div class=highlight><pre><span></span><code><span class=c1># ovs-appctl dpctl/dump-flows -m type=offloaded</span>
 ufid:67c2e10f-92d4-4574-be70-d072815ff166,<span class=w> </span>skb_priority<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,skb_mark<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_state<span class=o>(</span><span class=m>0</span>/0x23<span class=o>)</span>,ct_zone<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_mark<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_label<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,recirc_id<span class=o>(</span><span class=m>0</span><span class=o>)</span>,dp_hash<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,in_port<span class=o>(</span>d85b161b6840_h<span class=o>)</span>,packet_type<span class=o>(</span><span class=nv>ns</span><span class=o>=</span><span class=m>0</span>/0,id<span class=o>=</span><span class=m>0</span>/0<span class=o>)</span>,eth<span class=o>(</span><span class=nv>src</span><span class=o>=</span>0a:c9:1c:70:01:09,dst<span class=o>=</span>8a:18:a4:22:b7:7d<span class=o>)</span>,eth_type<span class=o>(</span>0x0800<span class=o>)</span>,ipv4<span class=o>(</span><span class=nv>src</span><span class=o>=</span><span class=m>10</span>.0.1.10,dst<span class=o>=</span><span class=m>10</span>.0.1.6,proto<span class=o>=</span><span class=m>6</span>,tos<span class=o>=</span><span class=m>0</span>/0x3,ttl<span class=o>=</span><span class=m>0</span>/0,frag<span class=o>=</span>no<span class=o>)</span>,tcp<span class=o>(</span><span class=nv>src</span><span class=o>=</span><span class=m>60774</span>,dst<span class=o>=</span><span class=m>9001</span><span class=o>)</span>,<span class=w> </span>packets:75021,<span class=w> </span>bytes:109521630,<span class=w> </span>offload_packets:75019,<span class=w> </span>offload_bytes:109521498,<span class=w> </span>used:3.990s,offloaded:yes,dp:tc,<span class=w> </span>actions:set<span class=o>(</span>tunnel<span class=o>(</span><span class=nv>tun_id</span><span class=o>=</span>0x5,dst<span class=o>=</span><span class=m>192</span>.168.201.12,ttl<span class=o>=</span><span class=m>64</span>,tp_dst<span class=o>=</span><span class=m>6081</span>,geneve<span class=o>({</span><span class=nv>class</span><span class=o>=</span>0x102,type<span class=o>=</span>0x80,len<span class=o>=</span><span class=m>4</span>,0xa0006<span class=o>})</span>,flags<span class=o>(</span>csum<span class=p>|</span>key<span class=o>)))</span>,genev_sys_6081
 ufid:7940666e-a0bd-42a5-8116-1e84e81bb338,<span class=w> </span>skb_priority<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,tunnel<span class=o>(</span><span class=nv>tun_id</span><span class=o>=</span>0x5,src<span class=o>=</span><span class=m>192</span>.168.201.12,dst<span class=o>=</span><span class=m>192</span>.168.201.11,ttl<span class=o>=</span><span class=m>0</span>/0,tp_dst<span class=o>=</span><span class=m>6081</span>,geneve<span class=o>({</span><span class=nv>class</span><span class=o>=</span>0x102,type<span class=o>=</span>0x80,len<span class=o>=</span><span class=m>4</span>,0x6000a<span class=o>})</span>,flags<span class=o>(</span>+key<span class=o>))</span>,skb_mark<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_state<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_zone<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_mark<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,ct_label<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,recirc_id<span class=o>(</span><span class=m>0</span><span class=o>)</span>,dp_hash<span class=o>(</span><span class=m>0</span>/0<span class=o>)</span>,in_port<span class=o>(</span>genev_sys_6081<span class=o>)</span>,packet_type<span class=o>(</span><span class=nv>ns</span><span class=o>=</span><span class=m>0</span>/0,id<span class=o>=</span><span class=m>0</span>/0<span class=o>)</span>,eth<span class=o>(</span><span class=nv>src</span><span class=o>=</span>8a:18:a4:22:b7:7d,dst<span class=o>=</span>0a:c9:1c:70:01:09<span class=o>)</span>,eth_type<span class=o>(</span>0x0800<span class=o>)</span>,ipv4<span class=o>(</span><span class=nv>src</span><span class=o>=</span><span class=m>10</span>.0.1.6,dst<span class=o>=</span><span class=m>10</span>.0.1.10,proto<span class=o>=</span><span class=m>6</span>,tos<span class=o>=</span><span class=m>0</span>/0,ttl<span class=o>=</span><span class=m>0</span>/0,frag<span class=o>=</span>no<span class=o>)</span>,tcp<span class=o>(</span><span class=nv>src</span><span class=o>=</span><span class=m>9001</span>,dst<span class=o>=</span><span class=m>60774</span><span class=o>)</span>,<span class=w> </span>packets:6946,<span class=w> </span>bytes:459664,<span class=w> </span>offload_packets:6944,<span class=w> </span>offload_bytes:459532,<span class=w> </span>used:4.170s,<span class=w> </span>dp:tc,offloaded:yes,actions:d85b161b6840_h

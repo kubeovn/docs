@@ -14,7 +14,7 @@
 <span class=c1># specify cpu mask for ovs dpdk, not specified by default</span>
 <span class=nv>CPU_MASK</span><span class=o>=</span>0x02
 <span class=c1># specify socket memory, not specified by default</span>
-<span class=nv>SOCKET_MEM</span><span class=o>=</span><span class=s2>&quot;2048,2048&quot;</span>
+<span class=nv>SOCKET_MEM</span><span class=o>=</span><span class=s2>"2048,2048"</span>
 <span class=c1># specify encap IP</span>
 <span class=nv>ENCAP_IP</span><span class=o>=</span><span class=m>6</span>.6.6.208/24
 <span class=c1># specify pci device</span>
@@ -31,7 +31,7 @@ b3:00.1<span class=w> </span>Ethernet<span class=w> </span>controller:<span clas
 lrwxrwxrwx<span class=w> </span><span class=m>1</span><span class=w> </span>root<span class=w> </span>root<span class=w> </span><span class=m>0</span><span class=w> </span>May<span class=w>  </span><span class=m>7</span><span class=w> </span><span class=m>16</span>:30<span class=w> </span>p3p1<span class=w> </span>-&gt;<span class=w> </span>../../devices/pci0000:b2/0000:b2:00.0/0000:b3:00.0/net/p3p1
 </code></pre></div> <ol start=3> <li>检查可用的 VF 数量：</li> </ol> <div class=highlight><pre><span></span><code>cat<span class=w> </span>/sys/class/net/p3p1/device/sriov_totalvfs
 <span class=m>512</span>
-</code></pre></div> <ol start=4> <li>创建 VF：</li> </ol> <div class=highlight><pre><span></span><code><span class=nb>echo</span><span class=w> </span><span class=s1>&#39;10&#39;</span><span class=w> </span>&gt;<span class=w> </span>/sys/class/net/p3p1/device/sriov_numvfs
+</code></pre></div> <ol start=4> <li>创建 VF：</li> </ol> <div class=highlight><pre><span></span><code><span class=nb>echo</span><span class=w> </span><span class=s1>'10'</span><span class=w> </span>&gt;<span class=w> </span>/sys/class/net/p3p1/device/sriov_numvfs
 </code></pre></div> <ol start=5> <li>确认 VF 创建成功：</li> </ol> <div class=highlight><pre><span></span><code>lspci<span class=w> </span>-d<span class=w> </span>1f67:
 b3:00.0<span class=w> </span>Ethernet<span class=w> </span>controller:<span class=w> </span>Device<span class=w> </span>1f67:1111<span class=w> </span><span class=o>(</span>rev<span class=w> </span><span class=m>02</span><span class=o>)</span>
 b3:00.1<span class=w> </span>Ethernet<span class=w> </span>controller:<span class=w> </span>Device<span class=w> </span>1f67:1111<span class=w> </span><span class=o>(</span>rev<span class=w> </span><span class=m>02</span><span class=o>)</span>
@@ -54,12 +54,12 @@ b3:01.3<span class=w> </span>Ethernet<span class=w> </span>controller:<span clas
 <span class=nt>data</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>config.json</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">|</span>
 <span class=w>    </span><span class=no>{</span>
-<span class=w>        </span><span class=no>&quot;resourceList&quot;: [{</span>
-<span class=w>                </span><span class=no>&quot;resourceName&quot;: &quot;xsc_sriov&quot;,</span>
-<span class=w>                </span><span class=no>&quot;resourcePrefix&quot;: &quot;yunsilicon.com&quot;,</span>
-<span class=w>                </span><span class=no>&quot;selectors&quot;: {</span>
-<span class=w>                    </span><span class=no>&quot;vendors&quot;: [&quot;1f67&quot;],</span>
-<span class=w>                    </span><span class=no>&quot;devices&quot;: [&quot;1012&quot;, &quot;1112&quot;]</span>
+<span class=w>        </span><span class=no>"resourceList": [{</span>
+<span class=w>                </span><span class=no>"resourceName": "xsc_sriov",</span>
+<span class=w>                </span><span class=no>"resourcePrefix": "yunsilicon.com",</span>
+<span class=w>                </span><span class=no>"selectors": {</span>
+<span class=w>                    </span><span class=no>"vendors": ["1f67"],</span>
+<span class=w>                    </span><span class=no>"devices": ["1012", "1112"]</span>
 <span class=w>                </span><span class=no>}}</span>
 <span class=w>        </span><span class=no>]</span>
 <span class=w>    </span><span class=no>}</span>
@@ -68,7 +68,7 @@ b3:01.3<span class=w> </span>Ethernet<span class=w> </span>controller:<span clas
 <span class=w>  </span>yunsilicon.com/xsc_sriov:<span class=w>  </span><span class=m>10</span>
 <span class=w>  </span>yunsilicon.com/xsc_sriov<span class=w>  </span><span class=m>0</span><span class=w>             </span><span class=m>0</span>
 </code></pre></div> <h3 id=multus-cni>安装 Multus-CNI<a class=headerlink href=#multus-cni title="Permanent link">&para;</a></h3> <ol> <li>参考 <a href=https://github.com/k8snetworkplumbingwg/multus-cni>Multus-CNI</a> 来部署 Multus-CNI</li> </ol> <div class=highlight><pre><span></span><code>kubectl<span class=w> </span>apply<span class=w> </span>-f<span class=w> </span>https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml
-</code></pre></div> <ol start=2> <li>创建 NetworkAttachmentDefinition</li> </ol> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>&quot;k8s.cni.cncf.io/v1&quot;</span>
+</code></pre></div> <ol start=2> <li>创建 NetworkAttachmentDefinition</li> </ol> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=s>"k8s.cni.cncf.io/v1"</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">NetworkAttachmentDefinition</span>
 <span class=nt>metadata</span><span class=p>:</span>
 <span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">sriov-net1</span>
@@ -76,23 +76,23 @@ b3:01.3<span class=w> </span>Ethernet<span class=w> </span>controller:<span clas
 <span class=w>  </span><span class=nt>annotations</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>k8s.v1.cni.cncf.io/resourceName</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">yunsilicon.com/xsc_sriov</span>
 <span class=nt>spec</span><span class=p>:</span>
-<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>&#39;{</span>
-<span class=w>    </span><span class=s>&quot;cniVersion&quot;:</span><span class=nv> </span><span class=s>&quot;0.3.1&quot;,</span>
-<span class=w>    </span><span class=s>&quot;name&quot;:</span><span class=nv> </span><span class=s>&quot;kube-ovn&quot;,</span>
-<span class=w>    </span><span class=s>&quot;plugins&quot;:[</span>
+<span class=w>  </span><span class=nt>config</span><span class=p>:</span><span class=w> </span><span class=s>'{</span>
+<span class=w>    </span><span class=s>"cniVersion":</span><span class=nv> </span><span class=s>"0.3.1",</span>
+<span class=w>    </span><span class=s>"name":</span><span class=nv> </span><span class=s>"kube-ovn",</span>
+<span class=w>    </span><span class=s>"plugins":[</span>
 <span class=w>        </span><span class=s>{</span>
-<span class=w>            </span><span class=s>&quot;type&quot;:&quot;kube-ovn&quot;,</span>
-<span class=w>            </span><span class=s>&quot;server_socket&quot;:&quot;/run/openvswitch/kube-ovn-daemon.sock&quot;,</span>
-<span class=w>            </span><span class=s>&quot;provider&quot;:</span><span class=nv> </span><span class=s>&quot;sriov-net1.default.ovn&quot;</span>
+<span class=w>            </span><span class=s>"type":"kube-ovn",</span>
+<span class=w>            </span><span class=s>"server_socket":"/run/openvswitch/kube-ovn-daemon.sock",</span>
+<span class=w>            </span><span class=s>"provider":</span><span class=nv> </span><span class=s>"sriov-net1.default.ovn"</span>
 <span class=w>        </span><span class=s>},</span>
 <span class=w>        </span><span class=s>{</span>
-<span class=w>            </span><span class=s>&quot;type&quot;:&quot;portmap&quot;,</span>
-<span class=w>            </span><span class=s>&quot;capabilities&quot;:{</span>
-<span class=w>                </span><span class=s>&quot;portMappings&quot;:true</span>
+<span class=w>            </span><span class=s>"type":"portmap",</span>
+<span class=w>            </span><span class=s>"capabilities":{</span>
+<span class=w>                </span><span class=s>"portMappings":true</span>
 <span class=w>            </span><span class=s>}</span>
 <span class=w>        </span><span class=s>}</span>
 <span class=w>    </span><span class=s>]</span>
-<span class=s>}&#39;</span>
+<span class=s>}'</span>
 </code></pre></div> <h3 id=sr-iov-pod>创建使用 SR-IOV 的 Pod<a class=headerlink href=#sr-iov-pod title="Permanent link">&para;</a></h3> <div class=highlight><pre><span></span><code><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
 <span class=nt>metadata</span><span class=p>:</span>
@@ -105,9 +105,9 @@ b3:01.3<span class=w> </span>Ethernet<span class=w> </span>controller:<span clas
 <span class=w>      </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/library/nginx:alpine</span>
 <span class=w>      </span><span class=nt>resources</span><span class=p>:</span>
 <span class=w>        </span><span class=nt>requests</span><span class=p>:</span>
-<span class=w>          </span><span class=nt>yunsilicon.com/xsc_sriov</span><span class=p>:</span><span class=w> </span><span class=s>&#39;1&#39;</span>
+<span class=w>          </span><span class=nt>yunsilicon.com/xsc_sriov</span><span class=p>:</span><span class=w> </span><span class=s>'1'</span>
 <span class=w>        </span><span class=nt>limits</span><span class=p>:</span>
-<span class=w>          </span><span class=nt>yunsilicon.com/xsc_sriov</span><span class=p>:</span><span class=w> </span><span class=s>&#39;1&#39;</span>
+<span class=w>          </span><span class=nt>yunsilicon.com/xsc_sriov</span><span class=p>:</span><span class=w> </span><span class=s>'1'</span>
 </code></pre></div> <h3 id=offload_1>Offload 验证<a class=headerlink href=#offload_1 title="Permanent link">&para;</a></h3> <p>可通过在 Pod 运行节点的 <code>ovs-ovn</code> 容器中运行下面的命令观察卸载是否成功：</p> <div class=highlight><pre><span></span><code>ovs-appctl<span class=w> </span>dpctl/dump-flows<span class=w> </span><span class=nv>type</span><span class=o>=</span>offloaded
 flow-dump<span class=w> </span>from<span class=w> </span>pmd<span class=w> </span>on<span class=w> </span>cpu<span class=w> </span>core:<span class=w> </span><span class=m>9</span>
 ct_state<span class=o>(</span>-new+est-rel+rpl+trk<span class=o>)</span>,ct_mark<span class=o>(</span><span class=m>0</span>/0x3<span class=o>)</span>,recirc_id<span class=o>(</span>0x2d277<span class=o>)</span>,in_port<span class=o>(</span><span class=m>15</span><span class=o>)</span>,packet_type<span class=o>(</span><span class=nv>ns</span><span class=o>=</span><span class=m>0</span>,id<span class=o>=</span><span class=m>0</span><span class=o>)</span>,eth<span class=o>(</span><span class=nv>src</span><span class=o>=</span><span class=m>00</span>:00:00:9d:fb:1a,dst<span class=o>=</span><span class=m>00</span>:00:00:ce:cf:b9<span class=o>)</span>,eth_type<span class=o>(</span>0x0800<span class=o>)</span>,ipv4<span class=o>(</span><span class=nv>dst</span><span class=o>=</span><span class=m>10</span>.16.0.14,frag<span class=o>=</span>no<span class=o>)</span>,<span class=w> </span>packets:6,<span class=w> </span>bytes:588,<span class=w> </span>used:7.276s,<span class=w> </span>actions:ct<span class=o>(</span><span class=nv>zone</span><span class=o>=</span><span class=m>4</span>,nat<span class=o>)</span>,recirc<span class=o>(</span>0x2d278<span class=o>)</span>
