@@ -50,6 +50,7 @@
 | policyRoutingTableID | Uint32 | 使用的本地策略路由表的 TableID，每个子网均需不同以避免冲突 |
 | mtu | Uint32 | 子网的 MTU 大小 |
 | private | Bool | 标识该子网是否为私有子网，私有子网默认拒绝子网外的地址访问 |
+| routed | Bool | 是否启用路由子网模式。启用后 Pod 使用 `/32`（IPv4）或 `/128`（IPv6）地址，并通过子网网关访问；需要 OVN 逻辑路由器端口 |
 | allowSubnets | []String | 子网为私有子网的情况下，允许访问该子网地址的集合 |
 | vlan | String | 子网绑定的 Vlan 名称 |
 | vips | []String | 子网下 virtual 类型 lsp 的 virtual-ip 参数信息 |
