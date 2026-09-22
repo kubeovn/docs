@@ -4,6 +4,8 @@ This document lists the features merged into the master branch for the next mino
 
 ## Post-v1.16.0
 
+- Add experimental NetworkPolicy ACL sampling with node-local decoding and
+  `kubectl ko acl-sample` troubleshooting commands. [#7172](https://github.com/kubeovn/kube-ovn/pull/7172)
 - QoS: support configurable ingress/egress burst limits via per-NIC annotations (`ovn.kubernetes.io/ingress_burst`). [#6628](https://github.com/kubeovn/kube-ovn/pull/6628)
 - VPC Egress Gateway: accept integer Mbps values and `M`, `Mi`, `G`, or `Gi` bit-rate quantities for per-replica bandwidth limits. [#7115](https://github.com/kubeovn/kube-ovn/pull/7115)
 - VPC NAT Gateway: allow placing the NAT gateway StatefulSet and its iptables-EIP custom resources in a user-specified namespace. [#6595](https://github.com/kubeovn/kube-ovn/pull/6595)

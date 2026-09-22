@@ -237,4 +237,5 @@ You can also globally configure the default enforcement mode using the `--np-enf
 
 ## See also
 
+- [ACL sampling](./acl-sampling.en.md)
 - [Multi-network NetworkPolicy](./multi-network-policy.en.md)
