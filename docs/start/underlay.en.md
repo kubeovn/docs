@@ -313,4 +313,4 @@ Datapath actions: drop
 2022-11-13T08:44:34.077Z|00224|ofproto_dpif_xlate(handler5)|WARN|over 4096 resubmit actions on bridge br-int while processing arp,in_port=13483,vlan_tci=0x0000,dl_src=00:00:00:59:ef:13,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.152.3,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:59:ef:13,arp_tha=ff:ff:ff:ff:ff:ff
 ```
 
-Current versions forward broadcast ARP/ND requests to `MC_UNKNOWN` (typically localnet and other unknown-address ports) instead of flooding every non-router port, which avoids this resubmit limit. GARP packets are still flooded to `MC_FLOOD_L2`. The removed NB option `bcast_arp_req_flood` is no longer needed.
+On the Kube-OVN `v1.15` release branch, broadcast ARP/ND requests are forwarded to `MC_UNKNOWN` (typically localnet and other unknown-address ports) instead of flooding every non-router port, which avoids this resubmit limit. GARP packets are still flooded to `MC_FLOOD_L2`. Kube-OVN PR [#7453](https://github.com/kubeovn/kube-ovn/pull/7453) removed the `bcast_arp_req_flood` workaround from `v1.15`, so this option is no longer needed there.

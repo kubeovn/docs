@@ -299,4 +299,4 @@ Datapath actions: drop
 2022-11-13T08:44:34.077Z|00224|ofproto_dpif_xlate(handler5)|WARN|over 4096 resubmit actions on bridge br-int while processing arp,in_port=13483,vlan_tci=0x0000,dl_src=00:00:00:59:ef:13,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.152.3,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:59:ef:13,arp_tha=ff:ff:ff:ff:ff:ff
 ```
 
-当前版本已改为将广播 ARP/ND 请求转发到 `MC_UNKNOWN`（通常包含 localnet 等 unknown 地址端口），而不再洪泛到所有非路由器端口，从而避免该 resubmit 上限。GARP 仍会洪泛到 `MC_FLOOD_L2`。无需再设置已移除的 NB 选项 `bcast_arp_req_flood`。
+在 Kube-OVN `v1.15` 发布分支中，广播 ARP/ND 请求会转发到 `MC_UNKNOWN`（通常包含 localnet 和其他 unknown 地址端口），不再洪泛到所有非路由器端口，从而避免该 resubmit 上限。GARP 仍会洪泛到 `MC_FLOOD_L2`。Kube-OVN PR [#7453](https://github.com/kubeovn/kube-ovn/pull/7453) 已从 `v1.15` 移除 `bcast_arp_req_flood` 这一 workaround，该分支无需再设置此选项。
