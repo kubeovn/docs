@@ -16,6 +16,7 @@ nav:
       - 卸载: "start/uninstall.md"
   - 使用指南:
       - 子网使用: "guide/subnet.md"
+      - 路由子网: "guide/routed-subnet.md"
       - 固定地址: "guide/static-ip-mac.md"
       - IP 池使用: "guide/ippool.md"
       - 自定义路由: "guide/custom-routes.md"
@@ -183,6 +184,7 @@ plugins:
             IP 池使用: Configure IPPool
             自定义路由: Custom Routes
             子网使用: Config Subnet
+            路由子网: Routed Subnet Mode
             LoadBalancer 类型 Service: LoadBalancer Type Service
             VPC 网络: VPC Network
             VM 固定 IP: Fixed Virtual Machine Addresses
