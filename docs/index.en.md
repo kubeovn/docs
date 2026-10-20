@@ -24,7 +24,7 @@ Kube-OVN brings the rich capabilities of network virtualization to the cloud-nat
 It currently supports [Subnet Management](guide/subnet.en.md), [Static IP Allocation](guide/static-ip-mac.en.md),
 [Distributed/Centralized Gateways](guide/subnet.en.md), [Underlay/Overlay Hybrid Networks](start/underlay.en.md),
 [VPC Multi-Tenant Networks](vpc/vpc.en.md), [VPC EIP/FIP/SNAT](vpc/ovn-eip-fip-snat.en.md), [VPC Security Groups](vpc/security-group.en.md),
-[VPC L3 ECMP HA](vpc/ovn-l3-ha-based-ecmp-with-bfd.en.md), [Cross-Cluster Interconnect](advance/with-ovn-ic.en.md),
+[Cross-Cluster Interconnect](advance/with-ovn-ic.en.md),
 [KubeVirt Live Migration](kubevirt/live-migration.en.md), [Non-Primary CNI Mode](start/non-primary-mode.en.md), [BGP Route Advertisement](advance/with-bgp.en.md),
 [OVN IPSec](advance/ovn-ipsec.en.md), [QoS Management](guide/qos.en.md), [Multi-NIC Management](advance/multi-nic.en.md),
 [ACL](guide/subnet.en.md), [Traffic Mirroring](guide/mirror.en.md), and dual-architecture support for both ARM and x86.
