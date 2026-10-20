@@ -59,7 +59,7 @@ kind: Vip
 metadata:
   name: static-vip01
 spec:
-  subnet: ovn-default 
+  subnet: ovn-default
   v4ip: "10.16.0.121"
 ```
 
@@ -126,7 +126,7 @@ spec:
     - name: busybox
       image: busybox
       command: ["sleep", "3600"]
-      securityContext: 
+      securityContext:
         capabilities:
           add:
             - NET_ADMIN
@@ -162,13 +162,13 @@ virtual-ip 被配置为 VIP 预留的 IP，virtual-parents 配置为开启 AAP �
 ```bash
 # kubectl exec -it busybox -- ip addr add 10.16.0.100/16 dev eth0
 # kubectl exec -it busybox01 -- ip addr show eth0
-35: eth0@if36: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1400 qdisc noqueue 
+35: eth0@if36: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1400 qdisc noqueue
     link/ether 00:00:00:e2:ab:0c brd ff:ff:ff:ff:ff:ff
     inet 10.16.0.7/16 brd 10.16.255.255 scope global eth0
        valid_lft forever preferred_lft forever
     inet 10.16.0.100/16 scope global secondary eth0
        valid_lft forever preferred_lft forever
-    inet6 fe80::200:ff:fee2:ab0c/64 scope link 
+    inet6 fe80::200:ff:fee2:ab0c/64 scope link
        valid_lft forever preferred_lft forever
 ```
 
@@ -192,9 +192,9 @@ spec:
 
 ## 3. Pod 使用 VIP 来固定 IP
 
-> 该功能从 v1.12 开始支持。
+> 该功能从 v1.12 开始支持，计划在 v1.17 弃用。弃用范围仅限通过 `ovn.kubernetes.io/vip` 固定 Pod IP 的用法，不影响 VIP 的 AAP 和 SwitchLB 功能。
 
-由于该功能和 IP 功能界限不清晰，不推荐在生产使用
+不推荐在生产环境中使用该功能。关于 IP 预留和固定，推荐使用 [IPPool](../guide/ippool.md) 或者 [Pod annotation](../guide/static-ip-mac.md)。
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -223,8 +223,10 @@ spec:
 
 ```
 
-### 3.1 StatefulSet 和 Kubevirt VM 保留 VIP
+## 4. StatefulSet 和 Kubevirt VM 保留 IP
 
-针对 `StatefulSet` 和 `VM` 的特殊性，在他们的 Pod 销毁再拉起起后会重新使用之前设置的 VIP。
+StatefulSet 和 VM 的 IP 保留机制不依赖 VIP 资源。
 
-VM 保留 VIP 需要确保 `kube-ovn-controller` 的 `keep-vm-ip` 参数为 `true`。请参考 [Kubevirt VM 固定地址开启设置](../reference/setup-options.md#kubevirt-vm)
+对于 `StatefulSet` 和 `VM`，其 Pod 销毁后重新创建时会复用之前分配的 IP。
+
+VM 保留 IP 需要确保 `kube-ovn-controller` 的 `keep-vm-ip` 参数为 `true`。请参考 [Kubevirt VM 固定地址开启设置](../reference/setup-options.md#kubevirt-vm)。
