@@ -540,13 +540,6 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.xen/vpc/ovn-eip-fip-snat/"/>
     </url>
     <url>
-        <loc>https://kubeovn.github.io/docs/v1.17.x/vpc/ovn-l3-ha-based-ecmp-with-bfd/</loc>
-        <lastmod>2026-10-20</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.x/vpc/ovn-l3-ha-based-ecmp-with-bfd/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.xen/vpc/ovn-l3-ha-based-ecmp-with-bfd/"/>
-    </url>
-    <url>
         <loc>https://kubeovn.github.io/docs/v1.17.x/vpc/security-group/</loc>
         <lastmod>2026-10-20</lastmod>
         <changefreq>daily</changefreq>
@@ -1147,13 +1140,6 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.x/en/vpc/ovn-eip-fip-snat/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.xvpc/ovn-eip-fip-snat/"/>
-    </url>
-    <url>
-        <loc>https://kubeovn.github.io/docs/v1.17.x/en/vpc/ovn-l3-ha-based-ecmp-with-bfd/</loc>
-        <lastmod>2026-10-20</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.x/en/vpc/ovn-l3-ha-based-ecmp-with-bfd/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.xvpc/ovn-l3-ha-based-ecmp-with-bfd/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.17.x/en/vpc/security-group/</loc>
