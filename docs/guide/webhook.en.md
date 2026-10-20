@@ -33,6 +33,94 @@ certificate.cert-manager.io/kube-ovn-webhook-serving-cert created
 issuer.cert-manager.io/kube-ovn-webhook-selfsigned-issuer created
 ```
 
+## Manage Certificates with the v2 Helm Chart
+
+This section applies to versions of the `kube-ovn-v2` Helm chart that provide
+`validatingWebhook.certificate.create`. It does not change the manifest installation above.
+
+When `validatingWebhook.enabled` is `true`, the chart creates a cert-manager Certificate
+and self-signed Issuer by default. The Boolean `validatingWebhook.certificate.create` defaults to `true`.
+Set it to `false` to manage the Certificate outside the chart while retaining the webhook
+Deployment, Service, and ValidatingWebhookConfiguration:
+
+```yaml
+validatingWebhook:
+  enabled: true
+  certificate:
+    create: false
+```
+
+Setting `validatingWebhook.enabled` to `false` disables all webhook resources,
+regardless of `validatingWebhook.certificate.create`.
+
+### Supply an External Certificate
+
+Install cert-manager, including its CA injector, and ensure the cluster networking is working
+before enabling the webhook. The setting does not remove the cert-manager dependency.
+Create an Issuer in the Certificate namespace, or use an existing ClusterIssuer.
+
+Manage the replacement Certificate separately, for example in a parent chart or through GitOps.
+The Certificate and Secret names must match the chart's existing references:
+
+| Resource | Required name | Purpose |
+| --- | --- | --- |
+| Certificate | `kube-ovn-webhook-serving-cert` | Referenced by the webhook's `cert-manager.io/inject-ca-from` annotation. |
+| Secret | `kube-ovn-webhook-secret` | Mounted by the webhook Deployment for its serving certificate and private key. |
+
+Both resources must be in the namespace configured by the chart's `namespace` value.
+For the default namespace `kube-system` and `clusterDomain` value `cluster.local`,
+save the following as `webhook-certificate.yaml`:
+
+```yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kube-ovn-webhook-serving-cert
+  namespace: kube-system
+spec:
+  secretName: kube-ovn-webhook-secret
+  dnsNames:
+    - kube-ovn-webhook.kube-system
+    - kube-ovn-webhook.kube-system.svc
+    - kube-ovn-webhook.kube-system.svc.cluster.local
+  issuerRef:
+    group: cert-manager.io
+    kind: Issuer
+    name: existing-webhook-issuer
+```
+
+Replace `existing-webhook-issuer` with your issuer name. For a ClusterIssuer, also change
+`issuerRef.kind` to `ClusterIssuer`. Adjust the namespace and DNS names to match your chart values.
+Add any certificate lifetime, renewal, private key, subject, and usage fields required by your policy.
+
+For a new installation, apply the Certificate and wait for issuance before enabling the webhook
+with `validatingWebhook.certificate.create: false`:
+
+```bash
+kubectl apply -f webhook-certificate.yaml
+kubectl wait --for=condition=Ready certificate/kube-ovn-webhook-serving-cert \
+  -n kube-system --timeout=120s
+```
+
+The Secret must contain `tls.crt`, `tls.key`, and `ca.crt`.
+The CA injector uses the external Certificate to populate the webhook's CA bundle.
+Verify that the webhook Deployment is ready and that the CA bundle is populated:
+
+```bash
+kubectl rollout status deployment/kube-ovn-webhook -n kube-system
+kubectl get validatingwebhookconfiguration kube-ovn-webhook \
+  -o jsonpath='{.webhooks[0].clientConfig.caBundle}'
+```
+
+### Migrate an Existing Installation
+
+Plan the Certificate ownership transfer before disabling chart-managed certificate creation.
+Helm removes its previously managed Certificate and self-signed Issuer on upgrade.
+Applying a Certificate with the same name does not transfer its ownership.
+Secret deletion also depends on cert-manager's Certificate owner-reference configuration.
+Arrange a migration that preserves certificate availability and establishes separate management
+of the replacement Certificate before changing the Helm value.
+
 ## Verify Webhook Take Effect
 
 Check the running Pod and get the Pod IP `10.16.0.15`:
