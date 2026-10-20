@@ -147,13 +147,6 @@ Of course, you can also manually create the lrp type ovn eip in advance.
 
 ### 1.3 Custom VPC enable eip snat fip function
 
-Clusters generally require multiple gateway nodes to achieve high availability. The configuration is as follows:
-
-```bash
-# First specify external-gw-nodes by adding label
-kubectl label nodes pc-node-1 pc-node-2 pc-node-3 ovn.kubernetes.io/external-gw=true
-```
-
 ``` bash
 # cat 00-ns.yml
 
@@ -162,7 +155,7 @@ kind: Namespace
 metadata:
   name: vpc1
 
-# cat 01-vpc-ecmp-enable-external-bfd.yml
+# cat 01-vpc-external.yml
 
 kind: Vpc
 apiVersion: kubeovn.io/v1
@@ -189,7 +182,6 @@ spec:
   default: false
   disableGatewayCheck: false
   disableInterConnection: true
-  enableEcmp: true
   gatewayNode: ""
   gatewayType: distributed
   #gatewayType: centralized
@@ -311,7 +303,7 @@ This function is designed and used in the same way as iptables-eip, ovn-eip curr
 
 - nat: indicates ovn dnat, fip, and snat.
 - lrp: indicates the resource used to connect a VPC to the public network
-- lsp: In the ovn BFD-based ecmp static route scenario, an ovs internal port is provided on the gateway node as the next hop of the ecmp route
+- lsp: Used for an EIP on a logical switch port (LSP).
 
 ``` bash
 

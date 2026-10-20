@@ -141,13 +141,6 @@ data:
 
 ### 1.3 自定义 VPC 启用 eip snat fip 功能
 
-集群一般需要多个网关 node 来实现高可用，配置如下：
-
-```bash
-# 首先通过添加标签指定 external-gw-nodes
-kubectl label nodes pc-node-1 pc-node-2 pc-node-3 ovn.kubernetes.io/external-gw=true
-```
-
 ``` bash
 # cat 00-ns.yml
 
@@ -156,7 +149,7 @@ kind: Namespace
 metadata:
   name: vpc1
 
-# cat 01-vpc-ecmp-enable-external-bfd.yml
+# cat 01-vpc-external.yml
 
 kind: Vpc
 apiVersion: kubeovn.io/v1
@@ -184,7 +177,6 @@ spec:
   default: false
   disableGatewayCheck: false
   disableInterConnection: true
-  enableEcmp: true
   gatewayNode: ""
   gatewayType: distributed
   #gatewayType: centralized
@@ -306,7 +298,7 @@ router 87ad06fd-71d5-4ff8-a1f0-54fa3bba1a7f (vpc1)
 
 - nat: 是指 ovn dnat，fip, snat 这三种 nat 资源类型
 - lrp: 软路由基于该端口和 underlay 公网互联，该 lrp 端口的 ip 可以被其他 dnat snat 复用
-- lsp: 用于 ovn 基于 bfd 的 ecmp 静态路由场景，在网关节点上提供一个 ovs internal port 作为 ecmp 路由的下一跳
+- lsp: 用于逻辑交换机端口（LSP）的 EIP
 
 ``` bash
 ---

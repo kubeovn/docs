@@ -48,7 +48,6 @@ nav:
       - 内部 DNS: "vpc/vpc-internal-dns.md"
       - 安全组: "vpc/security-group.md"
       - OVN EIP FIP SNAT 支持: "vpc/ovn-eip-fip-snat.md"
-      - OVN SNAT 基于 ECMP BFD 静态路由的 L3 HA 支持: "vpc/ovn-l3-ha-based-ecmp-with-bfd.md"
       - VPC 互联: "vpc/vpc-peering.md"
   - 运维指南:
       - Kubectl 插件使用: "ops/kubectl-ko.md"

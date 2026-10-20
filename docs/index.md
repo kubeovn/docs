@@ -22,7 +22,7 @@ OVN 和 OVS 有着悠久的历史，早在 Kubernetes 诞生前就已经出现�
 借助 OVS/OVN 在 SDN 领域成熟的能力，Kube-OVN 将网络虚拟化的丰富功能带入云原生领域。目前已支持[子网管理](guide/subnet.md)、
 [静态 IP 分配](guide/static-ip-mac.md)、[分布式/集中式网关](guide/subnet.md)、[Underlay/Overlay 混合网络](start/underlay.md)、
 [VPC 多租户网络](vpc/vpc.md)、[VPC EIP/FIP/SNAT](vpc/ovn-eip-fip-snat.md)、[VPC 安全组](vpc/security-group.md)、
-[VPC L3 ECMP HA](vpc/ovn-l3-ha-based-ecmp-with-bfd.md)、[跨集群互联网络](advance/with-ovn-ic.md)、
+[跨集群互联网络](advance/with-ovn-ic.md)、
 [KubeVirt 实时迁移](kubevirt/live-migration.md)、[Non-Primary CNI 模式](start/non-primary-mode.md)、[BGP 路由发布](advance/with-bgp.md)、
 [OVN IPSec](advance/ovn-ipsec.md)、[QoS 管理](guide/qos.md)、[多网卡管理](advance/multi-nic.md)、
 [ACL 网络控制](guide/subnet.md)、[流量镜像](guide/mirror.md)，并提供 ARM/x86 双架构支持。
