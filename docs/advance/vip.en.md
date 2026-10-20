@@ -56,7 +56,7 @@ kind: Vip
 metadata:
   name: static-vip01
 spec:
-  subnet: ovn-default 
+  subnet: ovn-default
   v4ip: "10.16.0.121"
 ```
 
@@ -122,7 +122,7 @@ spec:
     - name: busybox
       image: busybox
       command: ["sleep", "3600"]
-      securityContext: 
+      securityContext:
         capabilities:
           add:
             - NET_ADMIN
@@ -158,13 +158,13 @@ Query the configuration of the Pod after the POD is created:
 ```bash
 # kubectl exec -it busybox -- ip addr add 10.16.0.100/16 dev eth0
 # kubectl exec -it busybox01 -- ip addr show eth0
-35: eth0@if36: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1400 qdisc noqueue 
+35: eth0@if36: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1400 qdisc noqueue
     link/ether 00:00:00:e2:ab:0c brd ff:ff:ff:ff:ff:ff
     inet 10.16.0.7/16 brd 10.16.255.255 scope global eth0
        valid_lft forever preferred_lft forever
     inet 10.16.0.100/16 scope global secondary eth0
        valid_lft forever preferred_lft forever
-    inet6 fe80::200:ff:fee2:ab0c/64 scope link 
+    inet6 fe80::200:ff:fee2:ab0c/64 scope link
        valid_lft forever preferred_lft forever
 ```
 
@@ -201,9 +201,11 @@ spec:
 - `v4ip`: optional argument to use a specific IP within the subnet (SLRs only support IPv4)
 - `type`: `switch_lb_vip` indicates that this VIP is used by a SwitchLB
 
-## 3. POD Use VIP to reserve IP address
+## 3. Use VIP to Assign a Fixed Pod IP
 
-It is not recommended to use this function in production because the distinction between this function and IP function is not clear.
+> This feature has been supported since v1.12 and is planned for deprecation in v1.17. Only assigning fixed Pod IP addresses through `ovn.kubernetes.io/vip` is affected; VIP functionality for AAP and SwitchLB is unaffected.
+
+This feature is not recommended for production use. To reserve or assign fixed IP addresses, use [IPPool](../guide/ippool.en.md) or [Pod annotations](../guide/static-ip-mac.en.md) instead.
 
 ```yaml
 apiVersion: kubeovn.io/v1
@@ -215,9 +217,7 @@ spec:
   type: ""
 ```
 
-> This feature has been supported since v1.12.
-
-You can use annotations to assign a VIP to a Pod, then the pod will use the vip's ip address:
+You can use annotations to assign a VIP to a Pod, which will then use the VIP's IP address:
 
 ```yaml
 apiVersion: v1
@@ -234,8 +234,10 @@ spec:
 
 ```
 
-### 3.1 StatefulSet and Kubevirt VM retain VIP
+## 4. StatefulSet and Kubevirt VM Retain IP Addresses
 
-Due to the particularity of 'StatefulSet' and 'VM', after their Pod is destroyed and pulled up, it will re-use the previously set VIP.
+IP retention for StatefulSets and VMs does not depend on VIP resources.
 
-VM retention VIP needs to ensure that 'kube-ovn-controller' 'keep-vm-ip' parameter is' true '. Please refer to [Kubevirt VM enable keep its ip](../reference/setup-options.en.md#kubevirt-vm-fixed-address-settings)
+For `StatefulSet` and `VM` workloads, recreated Pods reuse their previously assigned IP addresses.
+
+To retain VM IP addresses, ensure that the `keep-vm-ip` parameter of `kube-ovn-controller` is `true`. Please refer to [Kubevirt VM Fixed Address Settings](../reference/setup-options.en.md#kubevirt-vm-fixed-address-settings).
