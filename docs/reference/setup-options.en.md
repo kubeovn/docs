@@ -169,6 +169,23 @@ args:
 
 EIP and SNAT is enabled by default. More information can refer to [EIP and SNAT](../guide/eip-snat.en.md).
 
+## LoadBalancer Service Support Settings
+
+In the default VPC, you can enable this option to support `LoadBalancer` type Services. For detailed usage and other configurable parameters, please refer to [LoadBalancer Service](../guide/loadbalancer-service.md).
+
+This feature is disabled by default. It can be configured in the installation script:
+
+```bash
+ENABLE_LB_SVC=true
+```
+
+Or configured post-installation by modifying the arguments of the `kube-ovn-controller` Deployment:
+
+```yaml
+args:
+- --enable-lb-svc=true
+```
+
 ## Centralized Gateway ECMP Settings
 
 The centralized gateway supports two mode of high availability, primary-backup and ECMP.
@@ -393,3 +410,27 @@ args:
 ```
 
 It can also be configured via Helm with `cni_conf.NON_PRIMARY_CNI=true` (chart v1) or `cni.nonPrimaryCNI=true` (chart v2). See [Non-Primary CNI Mode](../start/non-primary-mode.en.md) for details.
+
+## Bind Local IP Settings
+
+Services including `kube-ovn-controller`, `kube-ovn-cni`, and `kube-ovn-monitor` support binding to the local IP address. This feature was designed primarily for security considerations in scenarios where services are not permitted to listen on `0.0.0.0` (for example, when a service is deployed on an edge gateway where external users could otherwise directly access it via a public IP and port). This feature is enabled by default and controlled by the following parameter in the installation script:
+
+```bash
+ENABLE_BIND_LOCAL_IP=true
+```
+
+Taking `kube-ovn-monitor` as an example, when enabled, the service will bind to the local Pod IP:
+
+```bash
+# netstat -tunlp |grep kube-ovn
+tcp        0      0 172.18.0.5:10661        0.0.0.0:*               LISTEN      2612/./kube-ovn-mon
+```
+
+After installation, it can also be adjusted by modifying the environment variable in the Deployment or DaemonSet of the corresponding service:
+
+```yaml
+env:
+- name: ENABLE_BIND_LOCAL_IP
+  value: "false"
+```
+

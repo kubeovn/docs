@@ -10,8 +10,8 @@ OVN status metrics:
 | ------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
 | Gauge | kube_ovn_ovn_status | OVN Health Status. The values are: (2) for standby or follower, (1) for active or leader, (0) for unhealthy. |
 | Gauge | kube_ovn_failed_req_count | The number of failed requests to OVN stack. |
-| Gauge | kube_ovn_log_file_size | The size of a log file associated with an OVN component. |
-| Gauge | kube_ovn_db_file_size | The size of a database file associated with an OVN component. |
+| Gauge | kube_ovn_log_file_size_bytes | The size of a log file associated with an OVN component. |
+| Gauge | kube_ovn_db_file_size_bytes | The size of a database file associated with an OVN component. |
 | Gauge | kube_ovn_chassis_info | Whether the OVN chassis is up (1) or down (0), together with additional information about the chassis. |
 | Gauge | kube_ovn_db_status | The status of OVN NB/SB DB, (1) for healthy, (0) for unhealthy. |
 | Gauge | kube_ovn_logical_switch_info | The information about OVN logical switch. This metric is always up (1). |
