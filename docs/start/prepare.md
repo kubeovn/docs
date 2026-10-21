@@ -7,7 +7,7 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，其运行需要依赖 Kuber
 
 - Kubernetes >= 1.29。
 - 容器运行时: Containerd >= 1.6 或 CRI-O >= 1.24。如果使用旧版 Docker，需配合 cri-dockerd 使用。
-- 操作系统: Ubuntu 20.04/22.04/24.04, CentOS 7/8/9, Rocky Linux / AlmaLinux 8/9, openEuler, 麒麟操作系统等。
+- 操作系统: Ubuntu 20.04/22.04/24.04, CentOS 7/8。
 - 其他 Linux 发行版，需要检查一下内核模块是否存在 `geneve`, `openvswitch`, `ip_tables` 和 `iptable_nat`，Kube-OVN 正常工作依赖上述模块。
 
 *注意事项*：

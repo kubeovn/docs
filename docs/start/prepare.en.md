@@ -9,7 +9,7 @@ the environment configuration and the ports that need to be opened.
 
 - Kubernetes >= 1.29.
 - Container Runtime: Containerd >= 1.6 or CRI-O >= 1.24. If using legacy Docker, `cri-dockerd` is required.
-- OS: Ubuntu 20.04/22.04/24.04, CentOS 7/8/9, Rocky Linux / AlmaLinux 8/9, openEuler, Kylin Linux, etc.
+- OS: Ubuntu 20.04/22.04/24.04, CentOS 7/8.
 - For other Linux distributions, please make sure `geneve`, `openvswitch`, `ip_tables` and `iptable_nat` kernel modules exist.
 
 *Attention*:
