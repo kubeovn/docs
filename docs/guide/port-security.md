@@ -21,25 +21,9 @@
 
 ## 使用方式
 
-端口安全默认处于关闭状态，支持在子网级别全局开启或在 Pod 级别按需开启。
+该功能默认关闭，需要通过在 Pod 上添加 `ovn.kubernetes.io/port_security` annotation 来启用端口安全功能。
 
-### 子网级别全局开启
-
-可在创建或更新 Subnet 时设置 `spec.portSecurity: true`，此时该子网下创建的所有 Pod 端口都会默认启用端口安全：
-
-```yaml
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: secure-subnet
-spec:
-  cidrBlock: 10.16.0.0/16
-  portSecurity: true
-```
-
-### 单个 Pod 启用端口安全
-
-通过在 Pod 上添加 `ovn.kubernetes.io/port_security` annotation 针对单个 Pod 启用端口安全：
+### 启用端口安全
 
 ```yaml
 apiVersion: v1
@@ -51,25 +35,5 @@ metadata:
 spec:
   containers:
   - name: nginx
-    image: docker.io/library/nginx:alpine
-```
-
-对于通过 Multus 添加的多网卡 Pod，可以使用 `<provider>.kubernetes.io/port_security: "true"` 为指定的附属网卡独立启用端口安全。
-
-### 配合 AAP 放行额外地址（如 Keepalived / VRRP）
-
-当启用了端口安全的 Pod 需要使用额外的浮动 IP（VIP）发送报文（例如运行 Keepalived 或 VRRP）时，默认的端口安全策略会将其拦截。可通过 `ovn.kubernetes.io/aaps`（Additional Allowed Address Pairs）注解将允许的额外 IP/MAC 加入端口白名单中：
-
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: vrrp-pod
-  annotations:
-    ovn.kubernetes.io/port_security: "true"
-    ovn.kubernetes.io/aaps: "10.16.0.250"
-spec:
-  containers:
-  - name: keepalived
     image: docker.io/library/nginx:alpine
 ```
