@@ -21,25 +21,9 @@ This mechanism is implemented at the OVN data plane level with minimal performan
 
 ## Usage
 
-Port security is disabled by default and can be enabled globally at the Subnet level or individually at the Pod level.
+This feature is disabled by default and needs to be enabled by adding the `ovn.kubernetes.io/port_security` annotation to the Pod.
 
-### Enable Port Security at Subnet Level
-
-You can set `spec.portSecurity: true` when creating or updating a Subnet, enabling port security by default for all Pods created under that Subnet:
-
-```yaml
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: secure-subnet
-spec:
-  cidrBlock: 10.16.0.0/16
-  portSecurity: true
-```
-
-### Enable Port Security for Individual Pods
-
-Enable port security for a single Pod by adding the `ovn.kubernetes.io/port_security` annotation:
+### Enable Port Security
 
 ```yaml
 apiVersion: v1
@@ -51,25 +35,5 @@ metadata:
 spec:
   containers:
   - name: nginx
-    image: docker.io/library/nginx:alpine
-```
-
-For multi-NIC Pods added via Multus, use `<provider>.kubernetes.io/port_security: "true"` to enable port security on specific secondary interfaces.
-
-### Allow Extra Addresses with AAP (e.g. Keepalived / VRRP)
-
-When a Pod with port security enabled needs to send packets using additional floating IPs (VIPs), such as running Keepalived or VRRP, default port security drops the traffic. You can whitelist allowed extra IP/MAC addresses using the `ovn.kubernetes.io/aaps` (Additional Allowed Address Pairs) annotation:
-
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: vrrp-pod
-  annotations:
-    ovn.kubernetes.io/port_security: "true"
-    ovn.kubernetes.io/aaps: "10.16.0.250"
-spec:
-  containers:
-  - name: keepalived
     image: docker.io/library/nginx:alpine
 ```

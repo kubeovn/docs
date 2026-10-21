@@ -4,11 +4,6 @@ Kube-OVN 已经支持了 VPC 和 VPC 网关的实现，具体配置可以参考 
 
 由于 VPC 网关的使用比较复杂，基于 VPC 网关的实现做了简化，支持在默认 VPC 下创建 `LoadBalancer` 类型的 Service，实现通过 LoadBalancerIP 来访问默认 VPC 下的 Service。
 
-Kube-OVN 提供两种运行模式支持 LoadBalancer Service：
-
-- **基于 nftables 的共享模式（推荐）**：在 `kube-ovn-controller` 开启 `--enable-nftable-lb-svc=true`。多个 LoadBalancer Service 共享网关与端口集合，由底层内核 nftables 规则进行高效 DNAT 转发，无需为每个 Service 启动独占 Pod，资源占用与收敛延迟显著降低。
-- **独占 Pod 模式**：在 `kube-ovn-controller` 开启 `--enable-lb-svc=true`。控制器会为每个 Service 单独运行一个 `vpc-nat-gw` Pod 并通过 macvlan 接管流量（如下文所述）。
-
 首先确认环境上满足以下条件：
 
 1. 安装了 `multus-cni` 和 `macvlan cni`。
@@ -110,8 +105,6 @@ spec:
 可以通过 annotation 指定多网卡地址分配使用的子网。annotation key 格式为 net-attach-def 资源的 `Name.Namespace.kubernetes.io/logical_switch`。该配置为`可选`选项，在没有指定 LoadBalancerIP 地址的情况下，将从该子网动态分配地址，填充到 LoadBalancerIP 字段。
 
 如果需要静态配置 LoadBalancerIP 地址，可以配置 `spec.loadBalancerIP` 字段，该地址需要在指定子网的地址范围内。
-
-> 注意：Kubernetes 1.24+ 已将 `service.spec.loadBalancerIP` 标记为已废弃。Kube-OVN 对此保持向下兼容；当省略该字段时，Kube-OVN 会自动从关联的 Subnet 或 IPPool 中动态分配地址并回写到 `service.status.loadBalancer.ingress`。
 
 在执行 yaml 创建 Service 后，在 Service 同 Namespace 下，可以看到 Pod 启动信息：
 
