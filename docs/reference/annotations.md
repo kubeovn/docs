@@ -51,13 +51,21 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/dhcp-v4-options | String | Pod 级别的 DHCPv4 选项 UUID，可覆盖所属子网配置 |
 | ovn.kubernetes.io/dhcp-v6-options | String | Pod 级别的 DHCPv6 选项 UUID，可覆盖所属子网配置 |
 | ovn.kubernetes.io/ip_reserved | `true` or `false` | Pod 分配的 IP 是否已标记为保留地址 |
+| ovn.kubernetes.io/port_vips | VIP 列表，逗号分隔 | Pod 主网卡额外绑定的虚拟 IP 列表 |
 | ovn.kubernetes.io/vpc_nat_gw | String | VPC NAT Gateway Pod 标识，由控制器写入 |
 | ovn.kubernetes.io/vpc_nat_gw_init | `true` or `false` | VPC NAT Gateway Pod 内部初始化是否完成 |
 | ovn.kubernetes.io/vpc_nat_gw_init_instance | String | 记录网关初始化命令成功执行的容器实例 ID，当容器重启或替换时重新触发初始化 |
 | ovn.kubernetes.io/vpc_nat_gw_container_restarted | `true` or `false` | VPC NAT Gateway 主容器是否重启过，触发规则下发 |
 | ovn.kubernetes.io/vpc_nat_gw_activated | `true` or `false` | VPC NAT Gateway 是否已被激活并接管流量 |
+| ovn.kubernetes.io/vpc_eips | String | VPC NAT 网关 Pod 上同步的 EIP 列表 MD5 哈希值，由控制器维护 |
+| ovn.kubernetes.io/vpc_floating_ips | String | VPC NAT 网关 Pod 上同步的 Floating IP 列表 MD5 哈希值，由控制器维护 |
+| ovn.kubernetes.io/vpc_dnat_md5 | String | VPC NAT 网关 Pod 上同步的 DNAT 规则列表 MD5 哈希值，由控制器维护 |
+| ovn.kubernetes.io/vpc_snat_md5 | String | VPC NAT 网关 Pod 上同步的 SNAT 规则列表 MD5 哈希值，由控制器维护 |
+| ovn.kubernetes.io/vpc_cidrs | String | VPC NAT 网关 Pod 上引流的内部 CIDR 规则配置列表 |
 | \<provider\>.kubernetes.io/ip_pool | IP 列表，逗号间隔 | 多网卡场景下指定指定 provider 的 IP 池 |
 | \<provider\>.kubernetes.io/ip_family | `ipv4` or `ipv6` | 双栈子网中为指定 provider 的网卡选择单一 IP 协议族 |
+| \<provider\>.kubernetes.io/port_vips | VIP 列表，逗号分隔 | 多网卡场景下指定 provider 网卡额外绑定的虚拟 IP 列表 |
+| \<provider\>.kubernetes.io/vpc_cidrs | String | 多网卡场景下指定 provider 引流的内部 CIDR 规则配置列表 |
 | \<provider\>.kubernetes.io/dhcp-v4-options | String | 多网卡场景下指定 provider 的 DHCPv4 选项 |
 | \<provider\>.kubernetes.io/dhcp-v6-options | String | 多网卡场景下指定 provider 的 DHCPv6 选项 |
 | \<provider\>.kubernetes.io/port_security | `true` or `false` | 多网卡场景下指定 provider 的端口安全开关 |
@@ -70,6 +78,8 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | \<provider\>.kubernetes.io/limit | Int | 多网卡场景下指定 provider 网卡 qdisc 队列大小 |
 | \<provider\>.kubernetes.io/loss | Float | 多网卡场景下指定 provider 网卡模拟丢包率 |
 | \<provider\>.kubernetes.io/jitter | Int | 多网卡场景下指定 provider 网卡注入抖动（ms） |
+| \<provider\>.kubernetes.io/vf_representor | String | 多网卡 SR-IOV 场景下指定 VF representor 接口名称 |
+| \<provider\>.kubernetes.io/vf | String | 多网卡 SR-IOV 场景下分配的 VF 物理设备接口名称 |
 
 ## Node Annotation
 
@@ -86,6 +96,12 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/tunnel_interface | String | 隧道封装使用的网卡 |
 | ovn.kubernetes.io/node_networks | String | 节点上为 Pod 提供 attachment networks 的 NetworkAttachmentDefinition 列表 |
 | ovn.kubernetes.io/ovs_dp_type | `kernel` or `userspace` | 节点上 OVS 数据面类型，`userspace` 表示运行 OVS-DPDK |
+| \<provider\>.provider-network.kubernetes.io/ready | `true` or `false` | 标识该 ProviderNetwork 在当前节点是否已成功初始化就绪 |
+| \<provider\>.provider-network.kubernetes.io/interface | String | 当前节点映射到该 ProviderNetwork 的实际物理网卡接口名 |
+| \<provider\>.provider-network.kubernetes.io/mtu | Int | 当前节点 ProviderNetwork 物理网卡的 MTU 大小 |
+| \<provider\>.provider-network.kubernetes.io/vlan_interfaces | String | 自动在当前节点上为该 ProviderNetwork 创建的 VLAN 子接口列表 |
+| \<provider\>.provider-network.kubernetes.io/err_mesg | String | 当前节点初始化该 ProviderNetwork 时的错误或异常信息 |
+| \<provider\>.provider-network.kubernetes.io/exclude | String | 指定在当前节点排除接入该 ProviderNetwork 的网卡名称列表 |
 
 ## Namespace Annotation
 
@@ -105,6 +121,7 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 
 | Key | Value | Description |
 | -------------------------------------------- | ------------------------- | ----------------------------------------- |
+| ovn.kubernetes.io/service-cidr-hash | String | 记录并校验当前集群 Service CIDR 的 Hash 校验和，防止 Service CIDR 变更导致 OVN 内置路由规则冲突 |
 | ovn.kubernetes.io/bgp | `true`, `cluster`, `local` | 是否对外通过 BGP 发布 Service 地址（仅 ClusterIP Service 生效，取值与 Pod/Subnet 一致） |
 | ovn.kubernetes.io/switch_lb_vip | String | Service 在 Kube-OVN 中额外分配的 VIP 地址 |
 | ovn.kubernetes.io/vpc | String | Service 所属的 VPC |
