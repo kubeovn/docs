@@ -36,6 +36,14 @@ OVN status metrics:
 | Gauge | kube_ovn_cluster_outbound_connections_total | The total number of outbound connections from the server. |
 | Gauge | kube_ovn_cluster_inbound_connections_error_total | The total number of failed inbound connections to the server. |
 | Gauge | kube_ovn_cluster_outbound_connections_error_total | The total number of failed outbound connections from the server. |
+| Gauge | kube_ovn_ovn_status_content | Specific error message and reason when OVN is unhealthy, always set to 1, labeled by role and reason. |
+| Gauge | kube_ovn_cluster_peer_inbound_connections_info | Inbound connection status for a Raft peer, always set to 1, labeled by role, server_id, address, and status. |
+| Gauge | kube_ovn_cluster_peer_outbound_connections_info | Outbound connection status for a Raft peer, always set to 1, labeled by role, server_id, address, and status. |
+| Gauge | kube_ovn_cluster_peer_count | The total number of recognized peers in the Raft cluster. |
+| Gauge | kube_ovn_cluster_peer_next_index | Next index for each peer in the Raft cluster. |
+| Gauge | kube_ovn_cluster_peer_match_index | Match index for each peer in the Raft cluster. |
+| Gauge | kube_ovn_cluster_next_index | Global next index maintained by the current DB server. |
+| Gauge | kube_ovn_cluster_match_index | Global match index maintained by the current DB server. |
 
 ## ovs-monitor
 
@@ -79,6 +87,7 @@ OVN status metrics:
 | Gauge | interface_tx_dropped | Represents the number of output packets dropped by OVS interface. |
 | Gauge | interface_tx_errors | Represents the total number of transmit errors by OVS interface. |
 | Gauge | interface_collisions | Represents the number of collisions on OVS interface. |
+| Gauge | interface_rx_multicast_packets | Represents the number of multicast packets received by OVS interface. |
 
 ## kube-ovn-pinger
 
@@ -94,20 +103,20 @@ Network quality related metrics:
 | Gauge | pinger_apiserver_healthy | If the apiserver request is healthy on this node |
 | Gauge | pinger_apiserver_unhealthy | If the apiserver request is unhealthy on this node |
 | Histogram | pinger_apiserver_latency_ms | The latency ms histogram the node request apiserver |
-| Gauge | pinger_internal_dns_healthy | If the internal dns request is unhealthy on this node |
+| Gauge | pinger_internal_dns_healthy | If the internal dns request is healthy on this node |
 | Gauge | pinger_internal_dns_unhealthy | If the internal dns request is unhealthy on this node |
 | Histogram | pinger_internal_dns_latency_ms | The latency ms histogram the node request internal dns |
 | Gauge | pinger_external_dns_healthy | If the external dns request is healthy on this node |
 | Gauge | pinger_external_dns_unhealthy | If the external dns request is unhealthy on this node |
 | Histogram | pinger_external_dns_latency_ms | The latency ms histogram the node request external dns |
 | Histogram | pinger_pod_ping_latency_ms | The latency ms histogram for pod peer ping |
-| Gauge | pinger_pod_ping_lost_total | The lost count for pod peer ping |
-| Gauge | pinger_pod_ping_count_total | The total count for pod peer ping |
+| Counter | pinger_pod_ping_lost_total | The lost count for pod peer ping |
+| Counter | pinger_pod_ping_count_total | The total count for pod peer ping |
 | Histogram | pinger_node_ping_latency_ms | The latency ms histogram for pod ping node |
-| Gauge | pinger_node_ping_lost_total | The lost count for pod ping node |
-| Gauge | pinger_node_ping_count_total | The total count for pod ping node |
+| Counter | pinger_node_ping_lost_total | The lost count for pod ping node |
+| Counter | pinger_node_ping_count_total | The total count for pod ping node |
 | Histogram | pinger_external_ping_latency_ms | The latency ms histogram for pod ping external address |
-| Gauge | pinger_external_ping_lost_total | The lost count for pod ping external address |
+| Counter | pinger_external_ping_lost_total | The lost count for pod ping external address |
 
 ## kube-ovn-controller
 
@@ -128,6 +137,11 @@ Network quality related metrics:
 | Histogram | ovs_client_request_latency_milliseconds | The latency histogram for ovs request |
 | Gauge | subnet_available_ip_count | The available num of ip address in subnet |
 | Gauge | subnet_used_ip_count | The used num of ip address in subnet |
+| Gauge | centralized_subnet_info | Provides information for centralized subnet, always set to 1, labeled by subnet_name, enable_ecmp, gateway_node, active_gateway, match, and nexthops |
+| Gauge | subnet_ipam_info | Provides information for subnet IP address management, always set to 1, labeled by subnet_name, cidr, free, reserved, available, and using |
+| Gauge | subnet_ip_assign_info | Provides information for subnet IP addresses assigned to pods, always set to 1, labeled by subnet_name, ip, and pod_name |
+| Gauge | acl_sampling_controller_available | Whether the controller ACL sampling path is enabled and its latest operation succeeded (1 for normal, 0 for unhealthy) |
+| Counter | acl_sampling_controller_failures_total | The number of controller ACL sampling failures partitioned by operation |
 
 ## kube-ovn-cni
 
@@ -150,3 +164,75 @@ Network quality related metrics:
 | Summary | items_per_watch | How many items an API watch returns to the reflectors |
 | Gauge | last_resource_version | Last resource version seen for the reflectors |
 | Histogram | ovs_client_request_latency_milliseconds | The latency histogram for ovs request |
+| Counter | ovn_subnet_gateway_packet_bytes | The OVN subnet gateway packet bytes, labeled by hostname, subnet_name, cidr, direction, and protocol |
+| Counter | ovn_subnet_gateway_packets | The OVN subnet gateway packet count, labeled by hostname, subnet_name, cidr, direction, and protocol |
+| Gauge | ip_local_port_range | Value of system parameter `/proc/sys/net/ipv4/ip_local_port_range`, which should not conflict with the NodePort range |
+| Gauge | checksum_err_count | Value of InCsumErrors from `/proc/net/snmp`; checksum has errors when value is greater than 0 |
+| Gauge | dns_search_domain | Search domain count and additional domains in `/etc/resolv.conf` |
+| Gauge | tcp_tw_recycle | Value of system parameter `/proc/sys/net/ipv4/tcp_tw_recycle`, recommended value is 0 |
+| Gauge | tcp_mtu_probing | Value of system parameter `/proc/sys/net/ipv4/tcp_mtu_probing`, recommended value is 1 |
+| Gauge | nf_conntrack_tcp_be_liberal | Value of system parameter `/proc/sys/net/netfilter/nf_conntrack_tcp_be_liberal`, recommended value is 1 |
+| Gauge | bridge_nf_call_iptables | Value of system parameter `/proc/sys/net/bridge/bridge-nf-call-iptables`, recommended value is 1 for overlay and 0 for underlay |
+| Gauge | tcp_mem | Value of system parameter `/proc/sys/net/ipv4/tcp_mem`, minimum, pressure, and maximum memory thresholds |
+| Gauge | max_size | Value of system parameter `/proc/sys/net/ipv6/route/max_size`, recommended value is at least 16384 |
+| Gauge | acl_sampling_node_available | Whether local ACL sampling delivery is available on the node (1 for available, 0 for unavailable) |
+| Counter | acl_sampling_node_failures_total | Total number of local ACL sampling reconciliation failures on the node |
+| Gauge | kube_ovn_gateway_netfilter_backend | Current gateway netfilter backend, labeled by backend (`iptables` or `nftables`); active backend is set to 1 |
+| Counter | kube_ovn_gateway_netfilter_detect_failures_total | Number of kube-proxy mode detection failures |
+| Counter | kube_ovn_gateway_netfilter_switch_failures_total | Number of gateway netfilter backend switch failures |
+| Counter | kube_ovn_gateway_nft_transactions_total | Number of Kube-OVN nftables transactions |
+| Counter | kube_ovn_gateway_nft_transaction_failures_total | Number of failed Kube-OVN nftables transactions |
+| Histogram | kube_ovn_gateway_nft_transaction_duration_seconds | Duration of Kube-OVN nftables transactions in seconds |
+| Counter | kube_ovn_gateway_nft_repairs_total | Number of Kube-OVN nftables drift repairs |
+
+## kube-ovn-speaker
+
+`kube-ovn-speaker` status metrics (BGP Speaker and BFD):
+
+| Type | Metric | Description |
+| ----------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Gauge | kube_ovn_speaker_bgp_peer_up | Whether the BGP session with the peer is established (1) or not (0) |
+| Gauge | kube_ovn_speaker_bgp_peer_session_state | BGP session FSM state of the peer (0=unspecified, 1=idle, 2=connect, 3=active, 4=opensent, 5=openconfirm, 6=established) |
+| Gauge | kube_ovn_speaker_bgp_peer_flap_count | Number of times the BGP session with the peer has flapped |
+| Gauge | kube_ovn_speaker_bgp_peer_out_queue | Number of BGP messages queued to be sent to the peer |
+| Gauge | kube_ovn_speaker_bgp_peer_received_messages | Cumulative number of BGP messages received from the peer, labeled by type |
+| Gauge | kube_ovn_speaker_bgp_peer_sent_messages | Cumulative number of BGP messages sent to the peer, labeled by type |
+| Gauge | kube_ovn_speaker_bfd_server_received_packets | Cumulative number of BFD packets received by the server |
+| Gauge | kube_ovn_speaker_bfd_server_received_drop | Cumulative number of BFD packets dropped by the server |
+| Gauge | kube_ovn_speaker_bfd_server_received_error | Cumulative number of BFD packets received with errors by the server |
+| Gauge | kube_ovn_speaker_bfd_server_invalid_packet | Cumulative number of invalid BFD packets received by the server |
+| Gauge | kube_ovn_speaker_bfd_server_unknown_peer | Cumulative number of BFD packets received from unknown peers |
+| Gauge | kube_ovn_speaker_bfd_peer_up | Whether the BFD session with the peer is UP (1) or not (0) |
+| Gauge | kube_ovn_speaker_bfd_peer_session_state | Local BFD session state of the peer (0=unspecified, 1=up, 2=down, 3=admin_down, 4=init) |
+| Gauge | kube_ovn_speaker_bfd_peer_remote_session_state | Remote BFD session state of the peer (0=unspecified, 1=up, 2=down, 3=admin_down, 4=init) |
+| Gauge | kube_ovn_speaker_bfd_peer_failure_transitions | Cumulative number of BFD session failure transitions for the peer |
+| Gauge | kube_ovn_speaker_bfd_peer_transmitted_packets | Cumulative number of BFD packets transmitted to the peer in the BFD session |
+| Gauge | kube_ovn_speaker_bfd_peer_received_packets | Cumulative number of BFD packets received from the peer in the BFD session |
+
+## vpc-egress-gateway-observer
+
+VPC Egress Gateway (`VpcEgressGateway`) observability metrics:
+
+| Type | Metric | Description |
+| ----------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Gauge | kube_ovn_vpc_egress_gateway_observability_collector_up | Whether an observer collector is operating successfully (1 for healthy, 0 for unhealthy) |
+| Counter | kube_ovn_vpc_egress_gateway_observability_config_reload_total | Observer configuration reload attempts, labeled by result |
+| Counter | kube_ovn_vpc_egress_gateway_observability_conntrack_events_total | Conntrack events processed by the observer, labeled by event |
+| Counter | kube_ovn_vpc_egress_gateway_observability_errors_total | Observer collector errors, labeled by collector and operation |
+| Gauge | kube_ovn_vpc_egress_gateway_observability_conntrack_cache_entries | Current entries in the conntrack flow cache |
+| Gauge | kube_ovn_vpc_egress_gateway_observability_conntrack_cache_capacity | Maximum conntrack flow cache entries |
+| Counter | kube_ovn_vpc_egress_gateway_observability_conntrack_cache_evictions_total | Conntrack cache evictions |
+| Counter | kube_ovn_vpc_egress_gateway_observability_log_records_total | Flow log records written to stdout |
+| Counter | kube_ovn_vpc_egress_gateway_observability_log_drops_total | Flow log records dropped due to rate limiting or channel congestion |
+| Gauge | kube_ovn_vpc_egress_gateway_observability_conntrack_accounting_available | Whether conntrack accounting counters are available in kernel (1 for available, 0 for unavailable) |
+| Counter | kube_ovn_vpc_egress_gateway_interface_rx_bytes_total | Bytes received by a gateway interface, labeled by interface and type |
+| Counter | kube_ovn_vpc_egress_gateway_interface_tx_bytes_total | Bytes transmitted by a gateway interface, labeled by interface and type |
+| Counter | kube_ovn_vpc_egress_gateway_interface_rx_packets_total | Packets received by a gateway interface, labeled by interface and type |
+| Counter | kube_ovn_vpc_egress_gateway_interface_tx_packets_total | Packets transmitted by a gateway interface, labeled by interface and type |
+| Counter | kube_ovn_vpc_egress_gateway_interface_drops_total | Packets dropped by a gateway interface, labeled by direction |
+| Counter | kube_ovn_vpc_egress_gateway_interface_errors_total | Packet errors observed by a gateway interface, labeled by direction |
+| Gauge | kube_ovn_vpc_egress_gateway_conntrack_nat_flows_active | Active NAT conntrack flows, labeled by address_family, protocol, and nat_type |
+| Counter | kube_ovn_vpc_egress_gateway_conntrack_nat_flows_started_total | NAT conntrack flows started |
+| Counter | kube_ovn_vpc_egress_gateway_conntrack_nat_flows_ended_total | NAT conntrack flows ended |
+| Counter | kube_ovn_vpc_egress_gateway_conntrack_nat_packets_total | Packets observed in NAT conntrack flows when accounting is available |
+| Counter | kube_ovn_vpc_egress_gateway_conntrack_nat_bytes_total | Bytes observed in NAT conntrack flows when accounting is available |
