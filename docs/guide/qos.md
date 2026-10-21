@@ -5,8 +5,6 @@ Kube-OVN 支持两种层面的 QoS 配置：
 - **Pod 级别 QoS**：通过 Pod Annotation 动态调整单个 Pod 的带宽限制，或通过 `linux-netem` 模拟网络时延、抖动与丢包。
 - **集群级与子网级 QoS 策略**：通过 [QoSPolicy CRD](../reference/kube-ovn-api.md#qospolicy) 对整个子网、VPC NAT 网关或特定工作负载应用统一的共享带宽限制与流分类。
 
-> 说明：如需在子网、命名空间或 NAT 网关级别配置共享 QoS 策略，请参考 [QoSPolicy API](../reference/kube-ovn-api.md#qospolicy)。本文档主要介绍基于 Pod Annotation 的轻量级动态 QoS 配置方法。
-
 ## 基于最大带宽限制的 QoS
 
 该类型的 QoS 可以通过 Pod annotation 动态配置，可以在不中断 Pod 运行的情况下进行调整。
@@ -32,13 +30,6 @@ spec:
 ```bash
 kubectl annotate --overwrite  pod nginx-74d5899f46-d7qkn ovn.kubernetes.io/ingress_rate=3
 ```
-
-在通过 Multus 使用多网卡的场景下，可使用 `<provider>.kubernetes.io/` 前缀为特定附属网卡单独配置限速：
-
-- `<provider>.kubernetes.io/ingress_rate`：多网卡指定网卡流入限速，单位为 `Mbit/s`
-- `<provider>.kubernetes.io/egress_rate`：多网卡指定网卡流出限速，单位为 `Mbit/s`
-- `<provider>.kubernetes.io/ingress_burst`：多网卡指定网卡流入 burst 上限
-- `<provider>.kubernetes.io/egress_burst`：多网卡指定网卡流出 burst 上限
 
 ### 测试 QoS 调整
 
@@ -145,5 +136,3 @@ Pod 可以使用如下 annotation 配置 `linux-netem` 类型 QoS，由于 netem
 - `ovn.kubernetes.io/jitter`：设置 Pod 流量延迟抖动，取值为整数，单位为 ms。
 - `ovn.kubernetes.io/limit`： 为 `qdisc` 队列可容纳的最大数据包数，取值为整形数值，例如 1000。
 - `ovn.kubernetes.io/loss`： 为设置的报文丢包概率，取值为 float 类型，例如取值为 20，则为设置 20% 的丢包概率。
-
-在多网卡场景下，可通过 `<provider>.kubernetes.io/latency`、`<provider>.kubernetes.io/jitter`、`<provider>.kubernetes.io/limit`、`<provider>.kubernetes.io/loss` 为特定网卡独立注入网络损伤。
