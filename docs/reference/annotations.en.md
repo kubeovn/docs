@@ -51,13 +51,21 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/dhcp-v4-options | String | Pod-level DHCPv4 options UUID, overriding subnet-level DHCP settings |
 | ovn.kubernetes.io/dhcp-v6-options | String | Pod-level DHCPv6 options UUID, overriding subnet-level DHCP settings |
 | ovn.kubernetes.io/ip_reserved | `true` or `false` | Whether the allocated IP address is marked as reserved |
+| ovn.kubernetes.io/port_vips | VIP list, separated by comma | List of additional virtual IP addresses bound to the Pod primary interface |
 | ovn.kubernetes.io/vpc_nat_gw | String | Identifier for the VPC NAT Gateway Pod, written by the controller |
 | ovn.kubernetes.io/vpc_nat_gw_init | `true` or `false` | Whether the in-Pod initialization of the VPC NAT Gateway has finished |
 | ovn.kubernetes.io/vpc_nat_gw_init_instance | String | Records the container instance ID where initialization completed, re-triggering init if replaced |
 | ovn.kubernetes.io/vpc_nat_gw_container_restarted | `true` or `false` | Whether the main container of the VPC NAT Gateway has been restarted, used to trigger rule re-application |
 | ovn.kubernetes.io/vpc_nat_gw_activated | `true` or `false` | Whether the VPC NAT Gateway has been activated and is taking traffic |
+| ovn.kubernetes.io/vpc_eips | String | MD5 hash of synchronized EIP list on the VPC NAT Gateway Pod, maintained by controller |
+| ovn.kubernetes.io/vpc_floating_ips | String | MD5 hash of synchronized Floating IP list on the VPC NAT Gateway Pod, maintained by controller |
+| ovn.kubernetes.io/vpc_dnat_md5 | String | MD5 hash of synchronized DNAT rules on the VPC NAT Gateway Pod, maintained by controller |
+| ovn.kubernetes.io/vpc_snat_md5 | String | MD5 hash of synchronized SNAT rules on the VPC NAT Gateway Pod, maintained by controller |
+| ovn.kubernetes.io/vpc_cidrs | String | List of internal CIDRs steered to the VPC NAT Gateway Pod |
 | \<provider\>.kubernetes.io/ip_pool | IP list, separated by comma | IP pool for the specified provider in multi-NIC scenarios |
 | \<provider\>.kubernetes.io/ip_family | `ipv4` or `ipv6` | Select a single IP family for the specified provider interface in a dual-stack subnet |
+| \<provider\>.kubernetes.io/port_vips | VIP list, separated by comma | List of additional virtual IP addresses bound to the specified provider interface |
+| \<provider\>.kubernetes.io/vpc_cidrs | String | List of internal CIDRs steered to the specified provider interface |
 | \<provider\>.kubernetes.io/dhcp-v4-options | String | DHCPv4 options for the specified provider in multi-NIC scenarios |
 | \<provider\>.kubernetes.io/dhcp-v6-options | String | DHCPv6 options for the specified provider in multi-NIC scenarios |
 | \<provider\>.kubernetes.io/port_security | `true` or `false` | Port security toggle for the specified provider in multi-NIC scenarios |
@@ -70,6 +78,8 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | \<provider\>.kubernetes.io/limit | Int | Maximum number of packets for the qdisc queue of the specified provider interface |
 | \<provider\>.kubernetes.io/loss | Float | Packet loss probability for the specified provider interface |
 | \<provider\>.kubernetes.io/jitter | Int | Packet jitter delay injected to the specified provider interface, in milliseconds |
+| \<provider\>.kubernetes.io/vf_representor | String | Specified VF representor interface name in multi-NIC SR-IOV scenarios |
+| \<provider\>.kubernetes.io/vf | String | Allocated VF physical device interface name in multi-NIC SR-IOV scenarios |
 
 ## Node Annotation
 
@@ -86,6 +96,12 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/tunnel_interface | String | Network interface used for tunnel encapsulation |
 | ovn.kubernetes.io/node_networks | String | List of NetworkAttachmentDefinitions on the node that provide attachment networks for Pods |
 | ovn.kubernetes.io/ovs_dp_type | `kernel` or `userspace` | OVS datapath type on the node (`userspace` enables OVS-DPDK) |
+| \<provider\>.provider-network.kubernetes.io/ready | `true` or `false` | Indicates whether the ProviderNetwork is successfully initialized and ready on the node |
+| \<provider\>.provider-network.kubernetes.io/interface | String | Physical network interface mapped to the ProviderNetwork on the node |
+| \<provider\>.provider-network.kubernetes.io/mtu | Int | MTU of the ProviderNetwork interface on the node |
+| \<provider\>.provider-network.kubernetes.io/vlan_interfaces | String | List of VLAN sub-interfaces created or managed on the node for this ProviderNetwork |
+| \<provider\>.provider-network.kubernetes.io/err_mesg | String | Error message encountered during ProviderNetwork initialization on the node |
+| \<provider\>.provider-network.kubernetes.io/exclude | String | Network interfaces excluded from the ProviderNetwork on the node |
 
 ## Namespace Annotation
 
@@ -105,6 +121,7 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 
 | Key | Value | Description |
 | -------------------------------------------- | ----------------- | --------------------------------------------------------- |
+| ovn.kubernetes.io/service-cidr-hash | String | Records and validates the checksum hash of the cluster Service CIDR to prevent conflict |
 | ovn.kubernetes.io/bgp | `true`, `cluster`, `local` | Enable Service address BGP advertisement (only ClusterIP Services are affected; values are consistent with Pod/Subnet) |
 | ovn.kubernetes.io/switch_lb_vip | String | Additional VIP addresses assigned to Service in Kube-OVN. |
 | ovn.kubernetes.io/vpc | String | The VPC that the Service belongs to |
