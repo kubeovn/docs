@@ -8,8 +8,8 @@ the environment configuration and the ports that need to be opened.
 ## Software Version
 
 - Kubernetes >= 1.29.
-- Docker >= 1.12.6, Containerd >= 1.3.4.
-- OS: CentOS 7/8, Ubuntu 16.04/18.04/20.04.
+- Container Runtime: Containerd >= 1.6 or CRI-O >= 1.24. If using legacy Docker, `cri-dockerd` is required.
+- OS: Ubuntu 20.04/22.04/24.04, CentOS 7/8/9, Rocky Linux / AlmaLinux 8/9, openEuler, Kylin Linux, etc.
 - For other Linux distributions, please make sure `geneve`, `openvswitch`, `ip_tables` and `iptable_nat` kernel modules exist.
 
 *Attention*:
@@ -23,7 +23,9 @@ the environment configuration and the ports that need to be opened.
 
 - Kernel should enable IPv6, if kernel bootstrap options contain `ipv6.disable=1`, it should be set to `0`.
 - `kube-proxy` works, Kube-OVN can visit `kube-apiserver` from Service ClusterIP.
-- Make sure kubelet enabled `CNI` and find cni-bin and cni-conf in default directories, kubelet bootstrap options should contain `--network-plugin=cni --cni-bin-dir=/opt/cni/bin --cni-conf-dir=/etc/cni/net.d`.
+- Make sure the container runtime and kubelet have CNI enabled, with default binary and config paths at `/opt/cni/bin` and `/etc/cni/net.d`.
+    - In Kubernetes >= 1.24, dockershim was completely removed and CNI plugins are managed directly by container runtimes (such as Containerd or CRI-O). **Do not configure `--network-plugin=cni` in kubelet flags**, as it will cause kubelet to fail to start.
+    - Only on legacy Kubernetes (< 1.24) using built-in dockershim does kubelet require bootstrap flags `--network-plugin=cni --cni-bin-dir=/opt/cni/bin --cni-conf-dir=/etc/cni/net.d`.
 - Make sure no other CNI is installed or has been removed, check if any config files still exist in `/etc/cni/net.d/`.
 
 ## Ports Need Open
