@@ -438,45 +438,6 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | ports | String | SwitchLBRule port information |
 | service | String | SwitchLBRule service name |
 
-### RouterLBRule
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| apiVersion | String | Standard Kubernetes version information field, all custom resources have this value as kubeovn.io/v1 |
-| kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `RouterLBRule` |
-| metadata | ObjectMeta | Standard Kubernetes resource metadata information |
-| spec | RouterLBRuleSpec | RouterLBRule specific configuration information |
-| status | RouterLBRuleStatus | RouterLBRule status information |
-
-#### RouterLBRuleSpec
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| ovnEip | String | Bound OvnEip resource name |
-| vpc | String | Associated custom VPC name |
-| namespace | String | Target backend namespace |
-| selector | []String | Label selectors to choose backend Pods |
-| endpoints | []String | Statically configured list of backend IP:Port endpoints (when selector is empty) |
-| sessionAffinity | String | Session affinity configuration, supports ClientIP or empty |
-| ports | []RouterLBRulePort | List of load balancer port forwarding rules |
-
-##### RouterLBRulePort
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| name | String | Port rule name |
-| protocol | String | Protocol type, either tcp or udp |
-| port | Int32 | Frontend listening port |
-| targetPort | Int32 | Backend container target port |
-
-#### RouterLBRuleStatus
-
-| Property Name | Type | Description |
-| --- | --- | --- |
-| conditions | []Condition | List of resource synchronization and health conditions |
-| ports | String | Summary string of active port forwarding rules |
-| service | String | Associated Kubernetes Service name |
-
 ## QoS and IP Pool Management
 
 ### QoSPolicy
@@ -679,7 +640,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | protocol | String | Protocol type, either tcp or udp |
 | internalIp | String | Target internal IP address |
 | internalPort | String | Target internal port |
-| type | String | DNAT rule mode, either `exclusive` (default 1:1 port forwarding) or `share` (multi-backend load balancing via nftables) |
+| type | String | DNAT rule mode, either `exclusive` (default 1:1 port forwarding) or `share` (supports multiple backends sharing the same EIP:Port) |
 | sessionAffinity | String | Client-IP session affinity for share type DNAT, supports `ClientIP` or empty |
 | sessionAffinityTimeoutSeconds | Int32 | Sticky window in seconds for ClientIP affinity (default 10800, range 1-86400) |
 

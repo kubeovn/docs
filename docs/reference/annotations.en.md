@@ -128,10 +128,6 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/service_external_ip_from_subnet | `true` or `false` | Whether Service external IP is allocated from subnet |
 | ovn.kubernetes.io/service_health_check | `true` or `false` | Whether Service health check is enabled |
 | ovn.kubernetes.io/lb_svc_img | String | Load balancer service image |
-| ovn.kubernetes.io/router_lb_vip | String | Associated VIP address for RouterLBRule |
-| ovn.kubernetes.io/nftable-lb-svc-managed | `true` or `false` | Whether this Service is managed by the nftables-based shared DNAT/LB controller |
-| ovn.kubernetes.io/nftable-lb-svc-name | String | Managed nftable LB Service name |
-| ovn.kubernetes.io/nftable-lb-svc-ns | String | Managed nftable LB Service namespace |
 
 ## Networkpolicy Annotation
 

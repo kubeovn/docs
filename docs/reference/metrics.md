@@ -140,8 +140,6 @@ OVN 自身状态监控指标：
 |Gauge|centralized_subnet_info|集中式网关子网的路由与网关节点信息，值为 (1)，标签中包含 subnet_name、enable_ecmp、gateway_node、active_gateway、match、nexthops。|
 |Gauge|subnet_ipam_info|子网 IPAM 地址管理状态统计，值为 (1)，标签中包含 subnet_name、cidr、free、reserved、available、using。|
 |Gauge|subnet_ip_assign_info|子网中各 IP 地址分配绑定到 Pod 的具体信息，值为 (1)，标签中包含 subnet_name、ip、pod_name。|
-|Gauge|acl_sampling_controller_available|Controller 端的 ACL 采样处理链路是否启用且最新操作成功，(1) 为正常，(0) 为异常。|
-|Counter|acl_sampling_controller_failures_total|Controller 端在下发或同步 ACL 采样规则时的累计失败次数，按 operation 标签统计。|
 
 ## kube-ovn-cni
 
@@ -175,15 +173,6 @@ OVN 自身状态监控指标：
 |Gauge|bridge_nf_call_iptables|主机内核参数 `/proc/sys/net/bridge/bridge-nf-call-iptables` 取值（Overlay 推荐 1，Underlay 推荐 0）。|
 |Gauge|tcp_mem|主机内核参数 `/proc/sys/net/ipv4/tcp_mem` 内存阈值（min, pressure, max）。|
 |Gauge|max_size|主机 IPv6 路由表最大容量限制 `/proc/sys/net/ipv6/route/max_size`，推荐至少 16384。|
-|Gauge|acl_sampling_node_available|当前节点本地 ACL 采样收集链路是否可用，(1) 为可用，(0) 为不可用。|
-|Counter|acl_sampling_node_failures_total|当前节点在调谐 ACL 采样规则时的累计失败次数。|
-|Gauge|kube_ovn_gateway_netfilter_backend|节点当前激活的网关 Netfilter 规则后端，标签为 `backend="iptables"` 或 `"nftables"`，激活项值为 1。|
-|Counter|kube_ovn_gateway_netfilter_detect_failures_total|自动探测 kube-proxy 运行模式（iptables/ipvs/nftables）的累计失败次数。|
-|Counter|kube_ovn_gateway_netfilter_switch_failures_total|切换网关 Netfilter 规则后端时的累计失败次数。|
-|Counter|kube_ovn_gateway_nft_transactions_total|Kube-OVN 提交执行的 nftables 规则原子事务总次数。|
-|Counter|kube_ovn_gateway_nft_transaction_failures_total|Kube-OVN 执行失败的 nftables 规则事务总次数。|
-|Histogram|kube_ovn_gateway_nft_transaction_duration_seconds|Kube-OVN nftables 规则事务执行耗时直方图（秒）。|
-|Counter|kube_ovn_gateway_nft_repairs_total|Kube-OVN 周期性检测到内核 nftables 规则漂移并执行自愈修复的累计次数。|
 
 ## kube-ovn-speaker
 

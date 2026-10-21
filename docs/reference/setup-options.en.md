@@ -193,19 +193,6 @@ args:
 - --enable-lb-svc=true
 ```
 
-To support advanced load balancer services backed by VPC NAT Gateway nftables share DNAT (allowing multiple backend Pods to share the same public EIP:Port with ClientIP session affinity), configure the following parameter (enabled by default):
-
-```bash
-ENABLE_NFTABLE_LB_SVC=true
-```
-
-Or configure post-installation via `kube-ovn-controller` Deployment arguments:
-
-```yaml
-args:
-- --enable-nftable-lb-svc=true
-```
-
 ## Centralized Gateway ECMP Settings
 
 The centralized gateway supports two mode of high availability, primary-backup and ECMP.
@@ -454,23 +441,6 @@ env:
   value: "false"
 ```
 
-## TProxy Transparent Proxy Settings
-
-In custom non-default VPC scenarios, workload Pods reside in isolated networks where host kubelets cannot reach the Pod private IP directly from the node IP, causing Kubernetes liveness and readiness probes to fail. When TProxy is enabled, Kube-OVN leverages transparent proxy redirection on the host to ensure probes function properly. This feature is disabled by default.
-
-It can be enabled in the installation script:
-
-```bash
-ENABLE_TPROXY=true
-```
-
-Or adjusted post-installation by modifying the `kube-ovn-cni` DaemonSet arguments:
-
-```yaml
-args:
-- --enable-tproxy=true
-```
-
 ## Underlay ARP IP Conflict Detection Settings
 
 In Underlay physical direct-connect mode, to prevent an assigned Pod IP from conflicting with an existing physical host on the network, Kube-OVN actively sends gratuitous ARP probe packets before activating the address to verify whether the IP is already in use.
@@ -486,42 +456,6 @@ Or modified post-installation in the `kube-ovn-cni` DaemonSet arguments:
 ```yaml
 args:
 - --enable-arp-detect-ip-conflict=false
-```
-
-## Gateway Netfilter Mode Settings
-
-The Kube-OVN node daemon requires Linux kernel Netfilter mechanisms to manage gateway traffic redirection and routing rules. This parameter specifies the underlying Netfilter implementation type: `auto` (default auto-detection), `iptables`, or `nftables`. This can be explicitly set on modern Linux distributions that only support nftables (such as Debian 12 or RHEL 9).
-
-It can be configured in the installation script:
-
-```bash
-GATEWAY_NETFILTER_MODE=auto
-```
-
-Or adjusted post-installation via `kube-ovn-cni` DaemonSet arguments:
-
-```yaml
-args:
-- --gateway-netfilter-mode=auto
-```
-
-## Experimental ACL Traffic Sampling Settings
-
-Kube-OVN supports capturing NetworkPolicy traffic events (such as allowed traffic or default-deny decisions) via the OVN ACL Sampling mechanism for security auditing and network observability.
-
-It can be enabled in the installation script:
-
-```bash
-ENABLE_ACL_SAMPLING=true
-```
-
-After enabling, configure the parameters in the `kube-ovn-controller` Deployment and `kube-ovn-cni` DaemonSet:
-
-```yaml
-args:
-- --enable-acl-sampling=true
-- --acl-sampling-allow-probability-percent=100
-- --acl-sampling-default-deny-probability-percent=100
 ```
 
 ## Garbage Collection and Inspection Interval Settings

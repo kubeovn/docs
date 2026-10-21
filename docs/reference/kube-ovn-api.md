@@ -438,45 +438,6 @@
 | ports | String | SwitchLBRule 端口信息 |
 | service | String | SwitchLBRule 提供服务的 service 名称 |
 
-### RouterLBRule
-
-| 属性名称 | 类型 | 描述 |
-| --- | --- | --- |
-| apiVersion | String | 标准 Kubernetes 版本信息字段，所有自定义资源该值均为 kubeovn.io/v1 |
-| kind | String | 标准 Kubernetes 资源类型字段，本资源所有实例该值均为 `RouterLBRule` |
-| metadata | ObjectMeta | 标准 Kubernetes 资源元数据信息 |
-| spec | RouterLBRuleSpec | RouterLBRule 具体配置信息字段 |
-| status | RouterLBRuleStatus | RouterLBRule 状态信息字段 |
-
-#### RouterLBRuleSpec
-
-| 属性名称 | 类型 | 描述 |
-| --- | --- | --- |
-| ovnEip | String | 绑定的 OvnEip 资源名称 |
-| vpc | String | 关联的自定义 VPC 名称 |
-| namespace | String | 关联的目标后端命名空间 |
-| selector | []String | 用于选择后端 Pod 的标签选择器列表 |
-| endpoints | []String | 静态指定的后端 IP:Port 列表（当不使用 selector 时） |
-| sessionAffinity | String | 会话保持配置，可选值支持 ClientIP 或留空 |
-| ports | []RouterLBRulePort | 负载均衡端口映射规则列表 |
-
-##### RouterLBRulePort
-
-| 属性名称 | 类型 | 描述 |
-| --- | --- | --- |
-| name | String | 端口规则名称 |
-| protocol | String | 传输层协议，可选 tcp 或 udp |
-| port | Int32 | 前端监听服务端口 |
-| targetPort | Int32 | 后端容器目标端口 |
-
-#### RouterLBRuleStatus
-
-| 属性名称 | 类型 | 描述 |
-| --- | --- | --- |
-| conditions | []Condition | 资源同步与健康状态条件列表 |
-| ports | String | 已生效的端口映射汇总信息 |
-| service | String | 关联生成的 Kubernetes Service 名称 |
-
 ## QoS 和 IP 池管理
 
 ### QoSPolicy

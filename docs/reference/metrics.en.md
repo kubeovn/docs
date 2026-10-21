@@ -140,8 +140,6 @@ Network quality related metrics:
 | Gauge | centralized_subnet_info | Provides information for centralized subnet, always set to 1, labeled by subnet_name, enable_ecmp, gateway_node, active_gateway, match, and nexthops |
 | Gauge | subnet_ipam_info | Provides information for subnet IP address management, always set to 1, labeled by subnet_name, cidr, free, reserved, available, and using |
 | Gauge | subnet_ip_assign_info | Provides information for subnet IP addresses assigned to pods, always set to 1, labeled by subnet_name, ip, and pod_name |
-| Gauge | acl_sampling_controller_available | Whether the controller ACL sampling path is enabled and its latest operation succeeded (1 for normal, 0 for unhealthy) |
-| Counter | acl_sampling_controller_failures_total | The number of controller ACL sampling failures partitioned by operation |
 
 ## kube-ovn-cni
 
@@ -175,15 +173,6 @@ Network quality related metrics:
 | Gauge | bridge_nf_call_iptables | Value of system parameter `/proc/sys/net/bridge/bridge-nf-call-iptables`, recommended value is 1 for overlay and 0 for underlay |
 | Gauge | tcp_mem | Value of system parameter `/proc/sys/net/ipv4/tcp_mem`, minimum, pressure, and maximum memory thresholds |
 | Gauge | max_size | Value of system parameter `/proc/sys/net/ipv6/route/max_size`, recommended value is at least 16384 |
-| Gauge | acl_sampling_node_available | Whether local ACL sampling delivery is available on the node (1 for available, 0 for unavailable) |
-| Counter | acl_sampling_node_failures_total | Total number of local ACL sampling reconciliation failures on the node |
-| Gauge | kube_ovn_gateway_netfilter_backend | Current gateway netfilter backend, labeled by backend (`iptables` or `nftables`); active backend is set to 1 |
-| Counter | kube_ovn_gateway_netfilter_detect_failures_total | Number of kube-proxy mode detection failures |
-| Counter | kube_ovn_gateway_netfilter_switch_failures_total | Number of gateway netfilter backend switch failures |
-| Counter | kube_ovn_gateway_nft_transactions_total | Number of Kube-OVN nftables transactions |
-| Counter | kube_ovn_gateway_nft_transaction_failures_total | Number of failed Kube-OVN nftables transactions |
-| Histogram | kube_ovn_gateway_nft_transaction_duration_seconds | Duration of Kube-OVN nftables transactions in seconds |
-| Counter | kube_ovn_gateway_nft_repairs_total | Number of Kube-OVN nftables drift repairs |
 
 ## kube-ovn-speaker
 
