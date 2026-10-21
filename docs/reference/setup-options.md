@@ -88,6 +88,13 @@ args:
 - --mtu=1333
 ```
 
+此外，如果底层宿主机网络开启了巨型帧（Jumbo Frames，例如 MTU 设为 9000），自动计算出的 Pod MTU 也会较大。当 Pod 需要出外网访问（外网标准链路 MTU 通常为 1500）时，过大的 MTU 可能导致分片丢包或 PMTUD 黑洞。可以通过 `--max-mtu` 为自动计算的 Pod MTU 施加一个安全上限值（设置为 0 则不限制）：
+
+```yaml
+args:
+- --max-mtu=1400
+```
+
 ## 全局流量镜像开启设置
 
 在开启全局流量镜像的情况下，Kube-OVN 会在每个节点上创建一块 `mirror0` 的虚拟网卡，复制当前机器所有容器网络流量到该网卡上，
@@ -183,6 +190,19 @@ ENABLE_LB_SVC=true
 ```yaml
 args:
 - --enable-lb-svc=true
+```
+
+若需支持基于 VPC NAT 网关 nftables share DNAT 的负载均衡能力（支持多后端 Pod 共享同一个公网 EIP:Port 及 ClientIP 会话保持），可通过以下参数控制（默认开启）：
+
+```bash
+ENABLE_NFTABLE_LB_SVC=true
+```
+
+或者在安装后通过更改 `kube-ovn-controller` Deployment 的参数进行配置：
+
+```yaml
+args:
+- --enable-nftable-lb-svc=true
 ```
 
 ## 集中式网关 ECMP 开启设置
@@ -426,3 +446,114 @@ env:
 - name: ENABLE_BIND_LOCAL_IP
   value: "false"
 ```
+
+## TProxy 透明代理开启设置
+
+在自定义非默认 VPC 场景下，业务 Pod 处于隔离网络中，宿主机 kubelet 默认无法直接通过 Node IP 访问 Pod 的私有地址，导致 Pod 的 Liveness/Readiness 存活探针失败。开启 TProxy 后，Kube-OVN 会在宿主机上借助透明代理重定向探测流量，确保探针正常工作。该功能默认关闭。
+
+可在安装脚本中开启：
+
+```bash
+ENABLE_TPROXY=true
+```
+
+也可在安装后修改 `kube-ovn-cni` DaemonSet 的启动参数：
+
+```yaml
+args:
+- --enable-tproxy=true
+```
+
+## Underlay ARP IP 冲突检测设置
+
+在 Underlay 物理直通网络模式下，为防止向 Pod 分配的 IP 与物理网络中已存在的外部主机产生 IP 冲突，Kube-OVN 默认会在地址生效前主动发送 ARP 探测包检测地址是否已被占用。
+
+该功能默认开启，如网络环境中存在特殊防火墙策略导致误报，可在安装脚本中调整：
+
+```bash
+ENABLE_ARP_DETECT_IP_CONFLICT=false
+```
+
+或在安装后修改 `kube-ovn-cni` DaemonSet 启动参数：
+
+```yaml
+args:
+- --enable-arp-detect-ip-conflict=false
+```
+
+## 网关 Netfilter 后端模式设置
+
+Kube-OVN 节点守护进程需要通过内核 Netfilter 机制实现网关流量重定向与规则维护。该参数用于指定底层的 Netfilter 实现类型，可选值为 `auto`（默认自动探测）、`iptables` 或 `nftables`。在仅支持 nftables 的现代化 Linux 发行版（如 Debian 12、RHEL 9）中可显式指定。
+
+可在安装脚本中配置：
+
+```bash
+GATEWAY_NETFILTER_MODE=auto
+```
+
+也可通过修改 `kube-ovn-cni` DaemonSet 启动参数进行调整：
+
+```yaml
+args:
+- --gateway-netfilter-mode=auto
+```
+
+## 实验性 ACL 流量采样设置
+
+Kube-OVN 支持通过 OVN ACL 采样机制（ACL Sampling）捕获 NetworkPolicy 的流量事件（如允许通过、默认拒绝等），用于安全审计和网络可观测性。
+
+可在安装脚本中开启：
+
+```bash
+ENABLE_ACL_SAMPLING=true
+```
+
+开启后，可在 `kube-ovn-controller` Deployment 与 `kube-ovn-cni` DaemonSet 中配置如下参数：
+
+```yaml
+args:
+- --enable-acl-sampling=true
+- --acl-sampling-allow-probability-percent=100
+- --acl-sampling-default-deny-probability-percent=100
+```
+
+## 垃圾回收与巡检周期设置
+
+Kube-OVN 控制器后台运行有定期的垃圾回收（清理未绑定残留的 LSP 端口、孤立 IP 等）与健康巡检任务。可通过以下参数调优其执行周期：
+
+```yaml
+args:
+# 垃圾回收周期（秒），设置为 0 表示禁用 GC，默认为 360 秒
+- --gc-interval=360
+# 巡检与状态同步周期（秒），默认为 20 秒
+- --inspect-interval=20
+```
+
+## Controller Leader 选举调优设置
+
+在大规模集群或跨可用区、网络延迟较高的环境中，默认的 Leader 选举租约可能因短暂抖动引发不必要的选主切换。可通过以下参数对 Controller 的高可用选举时序进行精细化调整：
+
+```yaml
+args:
+# 非 Leader 候选节点在上次观察到心跳后尝试抢占的最大等待时间（默认 30s）
+- --leader-elect-lease-duration=30s
+# 当前 Leader 在放弃主节点身份前重试刷新心跳的超时时限（默认 20s）
+- --leader-elect-renew-deadline=20s
+# 客户端尝试重试选举的心跳间隔（默认 6s）
+- --leader-elect-retry-period=6s
+```
+
+## TLS 安全规范与加密套件设置
+
+当开启 API 服务端口安全监听时（`--secure-serving=true`），为满足企业级安全合规要求，支持自定义限制 TLS 协议版本与密码套件算法：
+
+```yaml
+args:
+- --secure-serving=true
+# 支持 TLS10, TLS11, TLS12, TLS13
+- --tls-min-version=TLS12
+- --tls-max-version=TLS13
+# 允许的密码套件（需与 Go crypto/tls 定义一致，多个以逗号分隔）
+- --tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+```
+
