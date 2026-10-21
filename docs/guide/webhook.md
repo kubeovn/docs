@@ -102,8 +102,10 @@ kubectl wait --for=condition=Ready certificate/kube-ovn-webhook-serving-cert \
   -n kube-system --timeout=120s
 ```
 
-Secret 必须包含 `tls.crt`、`tls.key` 和 `ca.crt`。
-CA 注入组件使用外部 Certificate 填充 Webhook 的 CA 证书包。
+Secret 必须包含 `tls.crt` 和 `tls.key`，Webhook 才能提供 HTTPS 服务；
+服务端进程本身不需要 `ca.crt`。另一方面，CA 注入组件使用外部 Certificate
+填充 Webhook 的 CA 证书包。请确保 Certificate 的 Secret 在 `ca.crt` 中提供
+注入组件所需的 CA 数据，以便 API server 验证服务端证书。
 确认 Webhook Deployment 已就绪，且 CA 证书包不为空：
 
 ```bash
