@@ -102,11 +102,14 @@ kubectl wait --for=condition=Ready certificate/kube-ovn-webhook-serving-cert \
   -n kube-system --timeout=120s
 ```
 
-The Secret must contain `tls.crt` and `tls.key` for the webhook to serve HTTPS;
-`ca.crt` is not required by the serving process itself. Separately, the CA injector
-uses the external Certificate to populate the webhook's CA bundle. Ensure the
-Certificate's Secret provides the CA data in `ca.crt` needed by the injector so the
-API server can verify the serving certificate.
+The webhook requires `tls.crt` and `tls.key` in `kube-ovn-webhook-secret`
+to serve HTTPS. The serving process does not require `ca.crt`.
+
+cert-manager's CA injector uses the webhook's `cert-manager.io/inject-ca-from`
+annotation to locate the Certificate named `kube-ovn-webhook-serving-cert`.
+It copies `ca.crt` from that Certificate's backing Secret into the webhook's
+`caBundle`, which the API server uses to verify the webhook's serving certificate.
+
 Verify that the webhook Deployment is ready and that the CA bundle is populated:
 
 ```bash
