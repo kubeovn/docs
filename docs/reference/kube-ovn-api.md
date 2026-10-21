@@ -240,6 +240,15 @@
 | enableExternal | Bool | 是否启用外部连接 |
 | extraExternalSubnets | []String | 额外的外部子网 |
 | enableBfd | Bool | 是否启用 BFD |
+| bfdPort | BFDPortStatus | OVN 中为该 VPC 分配关联的 BFD 端口状态信息 |
+
+##### BFDPortStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| name | String | BFD 端口名称 |
+| ip | String | BFD 端口 IP 地址 |
+| nodes | []String | 部署承载该 BFD 端口的节点列表 |
 
 ## Underlay 网络配置
 
@@ -536,6 +545,7 @@
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
+| namespace | String | EIP 资源所在的命名空间（为空时默认在 kube-ovn controller 所在命名空间） |
 | v4ip | String | IPv4 地址 |
 | v6ip | String | IPv6 地址 |
 | macAddress | String | MAC 地址 |
@@ -574,6 +584,18 @@
 | macAddress | String | MAC 地址 |
 | type | String | 类型，可以为 lrp、lsp 或 nat |
 
+#### OvnEipStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ready | Boolean | EIP 是否就绪 |
+| type | String | OVN EIP 类型 |
+| nat | String | NAT 映射配置状态 |
+| v4Ip | String | 分配的 IPv4 地址 |
+| v6Ip | String | 分配的 IPv6 地址 |
+| macAddress | String | 分配的 MAC 地址 |
+| conditions | []Condition | 当前状态变化的最新观察条件列表 |
+
 ### IptablesFIPRule
 
 | 属性名称 | 类型 | 描述 |
@@ -582,6 +604,7 @@
 | kind | String | 标准 Kubernetes 资源类型字段，本资源所有实例该值均为 `IptablesFIPRule` |
 | metadata | ObjectMeta | 标准 Kubernetes 资源元数据信息 |
 | spec | IptablesFIPRuleSpec | IptablesFIPRule 具体配置信息字段 |
+| status | IptablesFIPRuleStatus | IptablesFIPRule 状态信息字段 |
 
 #### IptablesFIPRuleSpec
 
@@ -589,6 +612,18 @@
 | --- | --- | --- |
 | eip | String | 弹性 IP 地址 |
 | internalIP | String | 内部 IP 地址 |
+
+#### IptablesFIPRuleStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ready | Boolean | FIP 规则是否已生效就绪 |
+| v4ip | String | 关联的 IPv4 EIP 地址 |
+| v6ip | String | 关联的 IPv6 EIP 地址 |
+| natGwDp | String | 承载该规则的 NAT 网关数据路径 Pod 名称 |
+| redo | String | 规则重新下发与同步操作状态 |
+| internalIp | String | 映射的目标内部 IP 地址 |
+| conditions | []Condition | 当前状态变化的最新观察条件列表 |
 
 ### OvnFip
 
@@ -612,6 +647,19 @@
 | v6Ip | String | IPv6 地址 |
 | type | String | 类型，可以为 distributed 或 centralized |
 
+#### OvnFipStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ready | Boolean | FIP 规则是否已生效就绪 |
+| vpc | String | FIP 规则所在的 VPC 名称 |
+| v4Eip | String | 关联的 IPv4 EIP 地址 |
+| v6Eip | String | 关联的 IPv6 EIP 地址 |
+| v4Ip | String | 映射的内部 IPv4 地址 |
+| v6Ip | String | 映射的内部 IPv6 地址 |
+| macAddress | String | 关联的 MAC 地址 |
+| conditions | []Condition | 当前状态变化的最新观察条件列表 |
+
 ### IptablesDnatRule
 
 | 属性名称 | 类型 | 描述 |
@@ -620,6 +668,7 @@
 | kind | String | 标准 Kubernetes 资源类型字段，本资源所有实例该值均为 `IptablesDnatRule` |
 | metadata | ObjectMeta | 标准 Kubernetes 资源元数据信息 |
 | spec | IptablesDnatRuleSpec | IptablesDnatRule 具体配置信息字段 |
+| status | IptablesDnatRuleStatus | IptablesDnatRule 状态信息字段 |
 
 #### IptablesDnatRuleSpec
 
@@ -633,6 +682,21 @@
 | type | String | DNAT 模式，可选 `exclusive`（独占 1:1 端口转发，默认）或 `share`（支持多后端共享同一个 EIP:Port） |
 | sessionAffinity | String | 客户端 IP 会话亲和性，仅当 type 为 share 时生效，可选 `ClientIP` 或留空 |
 | sessionAffinityTimeoutSeconds | Int32 | ClientIP 会话保持超时时间（单位秒，默认为 10800 秒 / 3 小时，范围 1-86400） |
+
+#### IptablesDnatRuleStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ready | Boolean | DNAT 规则是否已生效就绪 |
+| v4ip | String | 该规则绑定的 IPv4 地址 |
+| v6ip | String | 该规则绑定的 IPv6 地址 |
+| natGwDp | String | 承载该规则的 NAT 网关数据路径 Pod 名称 |
+| redo | String | 规则重新下发与同步操作状态 |
+| protocol | String | 该规则生效的协议类型 |
+| internalIp | String | 规则目标内部 IP 地址 |
+| internalPort | String | 规则目标内部端口 |
+| externalPort | String | 规则映射外部端口 |
+| conditions | []Condition | 当前状态变化的最新观察条件列表 |
 
 ### OvnDnatRule
 
@@ -682,6 +746,7 @@
 | kind | String | 标准 Kubernetes 资源类型字段，本资源所有实例该值均为 `IptablesSnatRule` |
 | metadata | ObjectMeta | 标准 Kubernetes 资源元数据信息 |
 | spec | IptablesSnatRuleSpec | IptablesSnatRule 具体配置信息字段 |
+| status | IptablesSnatRuleStatus | IptablesSnatRule 状态信息字段 |
 
 #### IptablesSnatRuleSpec
 
@@ -689,6 +754,18 @@
 | --- | --- | --- |
 | eip | String | 弹性 IP 地址 |
 | internalCIDR | String | 内部 CIDR 网段 |
+
+#### IptablesSnatRuleStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ready | Boolean | SNAT 规则是否已生效就绪 |
+| v4ip | String | 该规则绑定的 IPv4 地址 |
+| v6ip | String | 该规则绑定的 IPv6 地址 |
+| natGwDp | String | 承载该规则的 NAT 网关数据路径 Pod 名称 |
+| redo | String | 规则重新下发与同步操作状态 |
+| internalCIDR | String | 规则生效的内部 CIDR 网段 |
+| conditions | []Condition | 当前状态变化的最新观察条件列表 |
 
 ### OvnSnatRule
 
@@ -710,6 +787,18 @@
 | vpc | String | 所属 VPC |
 | v4IpCidr | String | IPv4 CIDR 网段 |
 | v6IpCidr | String | IPv6 CIDR 网段 |
+
+#### OvnSnatRuleStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ready | Boolean | SNAT 规则是否已生效就绪 |
+| vpc | String | SNAT 规则所在的 VPC 名称 |
+| v4Eip | String | 关联的 IPv4 EIP 地址 |
+| v6Eip | String | 关联的 IPv6 EIP 地址 |
+| v4IpCidr | String | 规则生效的内部 IPv4 CIDR 网段 |
+| v6IpCidr | String | 规则生效的内部 IPv6 CIDR 网段 |
+| conditions | []Condition | 当前状态变化的最新观察条件列表 |
 
 ## VPC 高级功能
 
@@ -763,9 +852,10 @@
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
-| minRx | Int32 | 期望接收 BFD 控制报文的最小时间间隔（毫秒） |
-| minTx | Int32 | 期望发送 BFD 控制报文的最小时间间隔（毫秒） |
-| detectMult | Int32 | 检测倍数，在判定链路故障前允许丢失的报文数量 |
+| enabled | Boolean | 是否启用 BFD 链路健康监测（同时要求 VPC 的 `.spec.bfd.enabled=true`），默认 false |
+| minRX | Int32 | 期望接收 BFD 控制报文的最小时间间隔（毫秒），默认 1000 |
+| minTX | Int32 | 期望发送 BFD 控制报文的最小时间间隔（毫秒），默认 1000 |
+| multiplier | Int32 | 检测倍数，在判定链路故障前允许丢失的报文数量，默认 3 |
 
 ##### Route
 
@@ -818,10 +908,12 @@
 | externalIPPool | String | 可选，用于分配外部地址的 `IPPool` 名称；其子网必须与 `externalSubnet` 匹配，且不能与 `externalIPs` 同时设置 |
 | selectors | []VpcEgressGatewaySelector | 命名空间/Pod 选择器，用于选择由该网关承载的流量来源 |
 | trafficPolicy | String | 可选，流量策略，`Cluster`（默认）或 `Local`，仅默认 VPC 生效 |
+| podAntiAffinity | String | 可选，网关工作负载副本的 Pod 反亲和性模式，`Required`（默认，分散跨节点部署）或 `Preferred`（允许同一节点部署副本但不提供节点级高可用） |
 | bfd | VpcEgressGatewayBFDConfig | BFD 配置 |
 | policies | []VpcEgressGatewayPolicy | 出向策略列表，至少一项 |
 | nodeSelector | []VpcEgressGatewayNodeSelector | 可选，工作负载节点选择器 |
 | tolerations | []Toleration | 可选，标准 Kubernetes 容忍配置 |
+| priorityClassName | String | 可选，应用于网关 Pod 的 PriorityClass 名称；未指定时继承集群默认 Pod 优先级 |
 | resources | ResourceRequirements | 可选，容器资源限制；未指定时控制器使用默认值 |
 | bandwidth | BandwidthLimit | 可选，每个网关副本的入向/出向带宽限制，可使用整数 Mbps 或支持的 bit-rate quantity |
 | observability | VpcEgressGatewayObservability | 可选，原生网卡指标、conntrack 指标、JSON 流日志和 ServiceMonitor 元数据；所有功能默认禁用 |
@@ -1071,3 +1163,11 @@
 | replicas | Int32 | 副本数量 |
 | vpc | String | 所属 VPC |
 | subnet | String | 所属子网 |
+| corefile | String | CoreDNS corefile 配置 ConfigMap 名称，默认 `vpc-dns-corefile` |
+
+#### VpcDNSStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| active | Boolean | VPC DNS 服务是否处于活跃/就绪状态 |
+| conditions | []Condition | VPC DNS 当前状态变化的最新观察条件列表 |
