@@ -44,12 +44,14 @@
 | provider | String | 默认为 OVN。多网卡情况下可以配置取值为 NetworkAttachmentDefinition 的 <name>.<namespace>，Kube-OVN 将会使用这些信息找到对应的 Subnet 资源 |
 | gatewayType | String | Overlay 模式下的网关类型，取值可以为 `distributed` 或 `centralized` |
 | gatewayNode | String | 当网关模式为 centralized 时的网关节点，可以为逗号分隔的多个节点 |
+| gatewayNodeSelectors | []LabelSelector | 集中式网关节点标签选择器列表，支持通过标签动态选择网关节点 |
 | natOutgoing | Bool | 出网流量是否进行 NAT。该参数和 `externalEgressGateway` 参数不能同时设置。 |
 | externalEgressGateway | String | 外部网关地址。需要和子网网关节点在同一个二层可达域，该参数和 `natOutgoing` 参数不能同时设置 |
 | policyRoutingPriority | Uint32 | 策略路由优先级。添加策略路由使用参数，控制流量经子网网关之后，转发到外部网关地址 |
 | policyRoutingTableID | Uint32 | 使用的本地策略路由表的 TableID，每个子网均需不同以避免冲突 |
 | mtu | Uint32 | 子网的 MTU 大小 |
 | private | Bool | 标识该子网是否为私有子网，私有子网默认拒绝子网外的地址访问 |
+| routed | Bool | 是否启用路由子网（Routed Subnet）模式。开启后 Pod 被分配 /32 或 /128 主机路由，同子网内通信强制经由逻辑路由器转发 |
 | allowSubnets | []String | 子网为私有子网的情况下，允许访问该子网地址的集合 |
 | vlan | String | 子网绑定的 Vlan 名称 |
 | vips | []String | 子网下 virtual 类型 lsp 的 virtual-ip 参数信息 |
@@ -66,12 +68,14 @@
 | natOutgoingPolicyRules | []NatOutgoingPolicyRule | NAT 出网策略规则 |
 | u2oInterconnectionIP | String | Underlay/Overlay 互联使用的 IP 地址 |
 | u2oInterconnection | Bool | 是否开启 Overlay/Underlay 的互联模式 |
+| u2oFeatures | U2OFeatures | Underlay 到 Overlay 互联的高级特性配置 |
 | enableLb | *Bool | 控制子网对应的 logical-switch 是否关联 load-balancer 记录 |
 | enableEcmp | Bool | 集中式网关，是否开启 ECMP 路由 |
 | enableMulticastSnoop | Bool | 是否启用组播侦听 |
 | enableExternalLBAddress | Bool | 是否启用外部负载均衡器地址 |
 | routeTable | String | 路由表名称 |
 | namespaceSelectors | []LabelSelector | 命名空间选择器 |
+| nodeNetwork | String | 节点底层物理网络网卡名称，用于指定 overlay 隧道封装所绑定的宿主机网卡 |
 
 ###### Acl
 
@@ -96,6 +100,12 @@
 | srcIPs | String | 源 IP 地址范围 |
 | dstIPs | String | 目标 IP 地址范围 |
 
+###### U2OFeatures
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| overlayOnlyRouting | Bool | 是否仅对 Overlay CIDR 路由启用 U2O 互联转发 |
+
 ##### SubnetStatus
 
 | 属性名称 | 类型 | 描述 |
@@ -110,6 +120,7 @@
 | v6usingIPs | BigInt | 子网现在已用的 IPv6 IP 地址数量 |
 | v6usingIPrange | String | 子网现在已用的 IPv6 地址范围 |
 | activateGateway | String | 集中式子网，主备模式下当前正在工作的网关节点 |
+| gatewayMAC | String | 集中式网关节点当前对应的 MAC 地址 |
 | dhcpV4OptionsUUID | String | 子网下 lsp dhcpv4_options 关联的 DHCP_Options 记录标识 |
 | dhcpV6OptionsUUID | String | 子网下 lsp dhcpv6_options 关联的 DHCP_Options 记录标识 |
 | u2oInterconnectionIP | String | 开启 Overlay/Underlay 互联模式后，所占用的用于互联的 IP 地址 |
@@ -276,6 +287,8 @@
 | nodeSelector | LabelSelector | 基于节点标签选择需要创建 OVS 网桥的节点，支持 matchLabels 和 matchExpressions（一旦使用 nodeSelector，excludeNodes 将不再生效） |
 | excludeNodes | []String | 该桥接网络不会绑定的节点名称 |
 | exchangeLinkName | Bool | 是否交换桥接网卡和对应 OVS 网桥名称 |
+| autoCreateVlanSubinterfaces | Bool | 是否在宿主机上自动创建 VLAN 子接口 |
+| preserveVlanInterfaces | Bool | 是否自动探测并保留宿主机上现存的 VLAN 子接口避免被意外覆盖或删除 |
 
 ##### CustomInterface
 
@@ -313,6 +326,7 @@
 | ingressRules | []SecurityGroupRule | 入站安全组规则 |
 | egressRules | []SecurityGroupRule | 出站安全组规则 |
 | allowSameGroupTraffic | Bool | 是否允许同安全组内的流量 |
+| tier | Int | 安全组规则下发到 OVN ACL 所属的 Tier 优先级分层 |
 
 ##### SecurityGroupRule
 
@@ -320,13 +334,16 @@
 | --- | --- | --- |
 | ipVersion | String | IP 版本，取值为 `ipv4` 或 `ipv6` |
 | protocol | SgProtocol | 协议类型，取值为 `all`、`icmp`、`tcp` 或 `udp` |
-| priority | Int | 规则优先级，取值范围为 1-200，数值越小，优先级越高 |
-| remoteType | SgRemoteType | 远程类型，取值为 `address` 或 `securityGroup` |
-| remoteAddress | String | 远程地址 |
+| priority | Int | 规则优先级，取值范围为 1-16384 |
+| remoteType | SgRemoteType | 远程类型，取值为 `address`、`cidr` 或 `securityGroup` |
+| remoteAddress | String | 远程地址或 CIDR |
 | remoteSecurityGroup | String | 远程安全组名称 |
-| portRangeMin | Int | 端口范围起始值，最小取值为 1 |
-| portRangeMax | Int | 端口范围最大值，最大取值为 65535 |
-| policy | SgPolicy | 策略动作，取值为 `allow` 或 `drop` |
+| portRangeMin | Int | 目的端口范围起始值，最小取值为 1 |
+| portRangeMax | Int | 目的端口范围最大值，最大取值为 65535 |
+| localAddress | String | 本地匹配的 IP 地址或 CIDR |
+| sourcePortRangeMin | Int | 源端口范围起始值 (1-65535) |
+| sourcePortRangeMax | Int | 源端口范围最大值 (1-65535) |
+| policy | SgPolicy | 策略动作，取值为 `allow`、`drop` 或 `pass` |
 
 #### SecurityGroupStatus
 
@@ -412,6 +429,45 @@
 | ports | String | SwitchLBRule 端口信息 |
 | service | String | SwitchLBRule 提供服务的 service 名称 |
 
+### RouterLBRule
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| apiVersion | String | 标准 Kubernetes 版本信息字段，所有自定义资源该值均为 kubeovn.io/v1 |
+| kind | String | 标准 Kubernetes 资源类型字段，本资源所有实例该值均为 `RouterLBRule` |
+| metadata | ObjectMeta | 标准 Kubernetes 资源元数据信息 |
+| spec | RouterLBRuleSpec | RouterLBRule 具体配置信息字段 |
+| status | RouterLBRuleStatus | RouterLBRule 状态信息字段 |
+
+#### RouterLBRuleSpec
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| ovnEip | String | 绑定的 OvnEip 资源名称 |
+| vpc | String | 关联的自定义 VPC 名称 |
+| namespace | String | 关联的目标后端命名空间 |
+| selector | []String | 用于选择后端 Pod 的标签选择器列表 |
+| endpoints | []String | 静态指定的后端 IP:Port 列表（当不使用 selector 时） |
+| sessionAffinity | String | 会话保持配置，可选值支持 ClientIP 或留空 |
+| ports | []RouterLBRulePort | 负载均衡端口映射规则列表 |
+
+##### RouterLBRulePort
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| name | String | 端口规则名称 |
+| protocol | String | 传输层协议，可选 tcp 或 udp |
+| port | Int32 | 前端监听服务端口 |
+| targetPort | Int32 | 后端容器目标端口 |
+
+#### RouterLBRuleStatus
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| conditions | []Condition | 资源同步与健康状态条件列表 |
+| ports | String | 已生效的端口映射汇总信息 |
+| service | String | 关联生成的 Kubernetes Service 名称 |
+
 ## QoS 和 IP 池管理
 
 ### QoSPolicy
@@ -448,6 +504,7 @@
 | subnet | String | 所属子网 |
 | namespaces | []String | 绑定的命名空间列表 |
 | ips | []String | IP 地址列表 |
+| enableAddressSet | Bool | 是否自动在 OVN 中创建对应的 AddressSet，方便联动策略路由与 ACL |
 
 #### IPPoolStatus
 
@@ -568,11 +625,14 @@
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
-| eip | String | 弹性 IP 地址 |
-| externalPort | String | 外部端口 |
-| protocol | String | 协议类型 |
-| internalIP | String | 内部 IP 地址 |
-| internalPort | String | 内部端口 |
+| eip | String | 弹性 IP 资源名称 |
+| externalPort | String | 外部映射端口 |
+| protocol | String | 协议类型，取值为 tcp 或 udp |
+| internalIp | String | 内部目标 IP 地址 |
+| internalPort | String | 内部目标端口 |
+| type | String | DNAT 模式，可选 `exclusive`（独占 1:1 端口转发，默认）或 `share`（支持多后端共享同一个 EIP:Port） |
+| sessionAffinity | String | 客户端 IP 会话亲和性，仅当 type 为 share 时生效，可选 `ClientIP` 或留空 |
+| sessionAffinityTimeoutSeconds | Int32 | ClientIP 会话保持超时时间（单位秒，默认为 10800 秒 / 3 小时，范围 1-86400） |
 
 ### OvnDnatRule
 
@@ -667,16 +727,23 @@
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
+| namespace | String | 网关 Pod/StatefulSet 部署的命名空间，为空时默认在 kube-ovn controller 所在命名空间 |
 | vpc | String | VPC 网关 Pod 所在的 VPC 名称 |
 | subnet | String | VPC 网关 Pod 所属的子网名称 |
 | externalSubnets | []String | 外部子网列表 |
-| lanIp | String | VPC 网关 Pod 指定分配的 IP 地址 |
+| lanIp | String | 单副本非 HA 模式下指定分配给网关 Pod 的静态局域网 IP；高可用多副本模式下该字段被忽略（各副本动态分配） |
+| replicas | Int32 | 网关副本数。默认为 1（StatefulSet 单副本兼容模式）；大于 1 时使用 Deployment 自动开启多实例高可用与反亲和打散调度 |
 | selector | []String | 标准 Kubernetes Selector 匹配信息 |
 | tolerations | []Toleration | 标准 Kubernetes 容忍信息 |
 | affinity | Affinity | 标准 Kubernetes 亲和性配置 |
 | qosPolicy | String | QoS 策略名称 |
 | bgpSpeaker | VpcBgpSpeaker | BGP speaker 配置 |
+| bfd | VpcNatGatewayBFDConfig | BFD 链路状态快速双向检测配置（仅在 HA 模式生效） |
+| internalSubnets | []String | 引流到该 NAT 网关的内部子网名称列表（自动解析为对应 CIDR 网段） |
+| internalCIDRs | []String | 引流到该 NAT 网关的内部 CIDR 网段列表，与 internalSubnets 累加生效 |
 | routes | []Route | 路由配置列表 |
+| noDefaultEIP | Bool | 是否跳过默认辅助网卡 EIP 分配，避免无 SNAT/FIP 需求时浪费公网 IP 地址 |
+| annotations | Map<String, String> | 注入到 NAT 网关 Pod 模板上的用户自定义 Annotation 注解 |
 
 ##### VpcBgpSpeaker
 
@@ -692,6 +759,14 @@
 | enableGracefulRestart | Bool | 是否启用优雅重启 |
 | extraArgs | []String | 额外参数列表 |
 
+##### VpcNatGatewayBFDConfig
+
+| 属性名称 | 类型 | 描述 |
+| --- | --- | --- |
+| minRx | Int32 | 期望接收 BFD 控制报文的最小时间间隔（毫秒） |
+| minTx | Int32 | 期望发送 BFD 控制报文的最小时间间隔（毫秒） |
+| detectMult | Int32 | 检测倍数，在判定链路故障前允许丢失的报文数量 |
+
 ##### Route
 
 | 属性名称 | 类型 | 描述 |
@@ -703,11 +778,17 @@
 
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
+| ready | Bool | 网关实例及转发策略是否已全部就绪 |
+| replicas | Int32 | 当前实际就绪的网关副本数量 |
+| lanIp | String | 实际分配给 NAT 网关 Pod 的 IP 地址（高可用模式下为逗号分隔的多个 IP 列表） |
 | qosPolicy | String | QoS 策略名称 |
 | externalSubnets | []String | 外部子网列表 |
 | selector | []String | 标准 Kubernetes Selector 匹配信息 |
 | tolerations | []Toleration | 标准 Kubernetes 容忍信息 |
 | affinity | Affinity | 标准 Kubernetes 亲和性配置 |
+| workload | VpcNatWorkload | 网关实际采用的工作负载类型信息（Deployment 或 StatefulSet） |
+| internalSubnets | []String | 当前已生效的引流内部子网列表 |
+| internalCIDRs | []String | 当前已生效的引流内部 CIDR 列表 |
 
 ### VpcEgressGateway
 
