@@ -45,14 +45,31 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/generate-hash | `true` or `false` | 是否为 Pod 生成哈希值 |
 | ovn.kubernetes.io/attachmentprovider | String | Pod 的附件提供者 |
 | ovn.kubernetes.io/ingress_burst | Int | Pod 主网卡流入方向 burst 上限 |
+| ovn.kubernetes.io/egress_burst | Int | Pod 主网卡流出方向 burst 上限 |
+| ovn.kubernetes.io/routed_subnet | `true` or `false` | 标识该 Pod 所在子网处于路由子网模式（/32 或 /128 主机路由，同网段强走网关路由） |
+| ovn.kubernetes.io/pod_nic_type | `standard`, `dpdk`, `vhost-user` | Pod 主网卡接口类型 |
+| ovn.kubernetes.io/dhcp-v4-options | String | Pod 级别的 DHCPv4 选项 UUID，可覆盖所属子网配置 |
+| ovn.kubernetes.io/dhcp-v6-options | String | Pod 级别的 DHCPv6 选项 UUID，可覆盖所属子网配置 |
+| ovn.kubernetes.io/ip_reserved | `true` or `false` | Pod 分配的 IP 是否已标记为保留地址 |
 | ovn.kubernetes.io/vpc_nat_gw | String | VPC NAT Gateway Pod 标识，由控制器写入 |
 | ovn.kubernetes.io/vpc_nat_gw_init | `true` or `false` | VPC NAT Gateway Pod 内部初始化是否完成 |
+| ovn.kubernetes.io/vpc_nat_gw_init_instance | String | 记录网关初始化命令成功执行的容器实例 ID，当容器重启或替换时重新触发初始化 |
 | ovn.kubernetes.io/vpc_nat_gw_container_restarted | `true` or `false` | VPC NAT Gateway 主容器是否重启过，触发规则下发 |
 | ovn.kubernetes.io/vpc_nat_gw_activated | `true` or `false` | VPC NAT Gateway 是否已被激活并接管流量 |
 | \<provider\>.kubernetes.io/ip_pool | IP 列表，逗号间隔 | 多网卡场景下指定指定 provider 的 IP 池 |
 | \<provider\>.kubernetes.io/ip_family | `ipv4` or `ipv6` | 双栈子网中为指定 provider 的网卡选择单一 IP 协议族 |
 | \<provider\>.kubernetes.io/dhcp-v4-options | String | 多网卡场景下指定 provider 的 DHCPv4 选项 |
+| \<provider\>.kubernetes.io/dhcp-v6-options | String | 多网卡场景下指定 provider 的 DHCPv6 选项 |
 | \<provider\>.kubernetes.io/port_security | `true` or `false` | 多网卡场景下指定 provider 的端口安全开关 |
+| \<provider\>.kubernetes.io/ingress_rate | Int | 多网卡场景下指定 provider 网卡的流入限速（Mbits/s） |
+| \<provider\>.kubernetes.io/egress_rate | Int | 多网卡场景下指定 provider 网卡的流出限速（Mbits/s） |
+| \<provider\>.kubernetes.io/ingress_burst | Int | 多网卡场景下指定 provider 网卡的流入 burst 上限 |
+| \<provider\>.kubernetes.io/egress_burst | Int | 多网卡场景下指定 provider 网卡的流出 burst 上限 |
+| \<provider\>.kubernetes.io/routed_subnet | `true` or `false` | 多网卡场景下指定 provider 网卡是否使用路由子网 |
+| \<provider\>.kubernetes.io/latency | Int | 多网卡场景下指定 provider 网卡注入的时延（ms） |
+| \<provider\>.kubernetes.io/limit | Int | 多网卡场景下指定 provider 网卡 qdisc 队列大小 |
+| \<provider\>.kubernetes.io/loss | Float | 多网卡场景下指定 provider 网卡模拟丢包率 |
+| \<provider\>.kubernetes.io/jitter | Int | 多网卡场景下指定 provider 网卡注入抖动（ms） |
 
 ## Node Annotation
 
@@ -68,6 +85,7 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/logical_switch | String | Node `ovn0` 网卡所属子网 |
 | ovn.kubernetes.io/tunnel_interface | String | 隧道封装使用的网卡 |
 | ovn.kubernetes.io/node_networks | String | 节点上为 Pod 提供 attachment networks 的 NetworkAttachmentDefinition 列表 |
+| ovn.kubernetes.io/ovs_dp_type | `kernel` or `userspace` | 节点上 OVS 数据面类型，`userspace` 表示运行 OVS-DPDK |
 
 ## Namespace Annotation
 
@@ -93,6 +111,10 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/service_external_ip_from_subnet | `true` or `false` | Service 外部 IP 是否从子网分配 |
 | ovn.kubernetes.io/service_health_check | `true` or `false` | Service 是否启用健康检查 |
 | ovn.kubernetes.io/lb_svc_img | String | 负载均衡服务使用的镜像 |
+| ovn.kubernetes.io/router_lb_vip | String | 关联的 RouterLBRule VIP 地址 |
+| ovn.kubernetes.io/nftable-lb-svc-managed | `true` or `false` | 标识该 Service 是否由基于 nftables 的共享 DNAT/LB 控制器管理 |
+| ovn.kubernetes.io/nftable-lb-svc-name | String | 关联管理的 nftable LB Service 名称 |
+| ovn.kubernetes.io/nftable-lb-svc-ns | String | 关联管理的 nftable LB Service 命名空间 |
 
 ## Networkpolicy Annotation
 
@@ -103,3 +125,10 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/acl_log_meter_rate | Int | NetworkPolicy 日志输出的速率限制，单位为条/秒 |
 | ovn.kubernetes.io/network_policy_enforcement | `standard` or `lax` | 单个 NetworkPolicy 的执行模式，覆盖控制器默认 |
 | ovn.kubernetes.io/network_policy_for | String | 指定该 NetworkPolicy 作用于的多网卡 provider（格式 `<nadName>.<nadNamespace>.ovn`） |
+| ovn.kubernetes.io/policy-for | String | 指定该 NetworkPolicy 作用于的多网络 Pod 的 Provider / NAD 名称（官方标准注解） |
+
+## VIP Annotation
+
+| Key | Value | Description |
+| ------------------------------------------- | ----------------- | ----------------------------------------------------- |
+| ovn.kubernetes.io/vip-last-attach-subnets | String | 记录 VIP 上一次附加关联的子网名称列表，便于子网解绑或资源释放时的正确清理 |

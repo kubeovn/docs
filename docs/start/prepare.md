@@ -6,8 +6,8 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，其运行需要依赖 Kuber
 ## 软件版本
 
 - Kubernetes >= 1.29。
-- Docker >= 1.12.6, Containerd >= 1.3.4。
-- 操作系统: CentOS 7/8, Ubuntu 16.04/18.04/20.04。
+- 容器运行时: Containerd >= 1.6 或 CRI-O >= 1.24。如果使用旧版 Docker，需配合 cri-dockerd 使用。
+- 操作系统: Ubuntu 20.04/22.04/24.04, CentOS 7/8/9, Rocky Linux / AlmaLinux 8/9, openEuler, 麒麟操作系统等。
 - 其他 Linux 发行版，需要检查一下内核模块是否存在 `geneve`, `openvswitch`, `ip_tables` 和 `iptable_nat`，Kube-OVN 正常工作依赖上述模块。
 
 *注意事项*：
@@ -21,7 +21,9 @@ Kube-OVN 是一个符合 CNI 规范的网络组件，其运行需要依赖 Kuber
 
 - 内核启动需要开启 IPv6，如果内核启动参数包含 `ipv6.disable=1` 需要将其设置为 0。
 - `kube-proxy` 正常工作，Kube-OVN 可以通过 Service ClusterIP 访问到 `kube-apiserver`。
-- 确认 kubelet 配置参数开启了 CNI，并且配置在标准路径下, kubelet 启动时应包含如下参数 `--network-plugin=cni --cni-bin-dir=/opt/cni/bin --cni-conf-dir=/etc/cni/net.d`。
+- 确认容器运行时与 kubelet 开启了 CNI 支持，CNI 二进制与配置文件默认路径为 `/opt/cni/bin` 与 `/etc/cni/net.d`。
+    - 在 Kubernetes >= 1.24 中，dockershim 已被彻底移除，CNI 插件由底层的容器运行时（如 Containerd / CRI-O）直接管理，**请勿在 kubelet 启动参数中添加 `--network-plugin=cni`**，否则会导致 kubelet 报错退出。
+    - 仅在旧版本 Kubernetes (< 1.24) 且使用内置 dockershim 时，kubelet 启动才需要配置 `--network-plugin=cni --cni-bin-dir=/opt/cni/bin --cni-conf-dir=/etc/cni/net.d`。
 - 确认未安装其他网络插件，或者其他网络插件已经被清除，检查 `/etc/cni/net.d/` 路径下无其他网络插件配置文件。如果之前安装过其他网络插件，建议删除后重启机器清理残留网络资源。
 
 ## 端口信息
