@@ -18,6 +18,9 @@ kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/
 kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/cni-monitor.yaml
 # ovn metrics
 kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/ovn-monitor.yaml
+# bfd link monitoring and alerting rules (optional)
+kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/bfdd-monitor.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/bfdd-rules.yaml
 ```
 
 The default interval for Prometheus pull is 15s, if you need to adjust it, modify the `interval` value in yaml.

@@ -4,6 +4,11 @@ Kube-OVN supports the implementation of VPC and VPC gateway. For specific config
 
 Due to the complexity of using VPC gateways, the implementation based on VPC gateways has been simplified. It supports creating LoadBalancer type Services in the default VPC, allowing access to Services in the default VPC through LoadBalancerIP.
 
+Kube-OVN provides two operational modes for LoadBalancer Services:
+
+- **Shared nftables Mode (Recommended)**: Enabled by setting `--enable-nftable-lb-svc=true` in `kube-ovn-controller`. Multiple LoadBalancer Services share the gateway and port sets, utilizing in-kernel nftables rules for high-performance DNAT forwarding without launching dedicated Pods per Service.
+- **Dedicated Pod Mode**: Enabled via `--enable-lb-svc=true`. The controller deploys a dedicated `vpc-nat-gw` Pod per Service and handles traffic via macvlan (described below).
+
 First, make sure the following conditions are met in the environment:
 
 1. Install `multus-cni` and `macvlan cni`.
@@ -105,6 +110,8 @@ In the yaml, the annotation `ovn.kubernetes.io/attachmentprovider` is required, 
 The subnet used for multi-interface address allocation can be specified through an annotation. The annotation key format is `net-attach-def` resource's `Name.Namespace.kubernetes.io/logical_switch`. This configuration is `optional` and if LoadBalancerIP address is not specified, addresses will be dynamically allocated from this subnet and filled into the LoadBalancerIP field.
 
 If a static LoadBalancerIP address is required, the `spec.loadBalancerIP` field can be configured. The address must be within the specified subnet's address range.
+
+> Note: Kubernetes 1.24+ deprecated `service.spec.loadBalancerIP`. Kube-OVN maintains backward compatibility; when omitted, Kube-OVN automatically allocates an IP from the associated Subnet or IPPool and reports it under `service.status.loadBalancer.ingress`.
 
 After creating the Service using the YAML, you can see the Pod startup information in the same namespace as the Service:
 

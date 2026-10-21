@@ -1,20 +1,21 @@
 # Webhook 使用
 
-使用 Webhook 可以对 Kube-OVN 内的 CRD 资源进行校验，目前 Webhook 主要完成
-固定 IP 地址冲突检测和 Subnet CIDR 的冲突检测，并在这类资源创建冲突时提示错误。
+使用 Webhook 可以对 Kube-OVN 内的核心资源与 CRD 进行准入校验（Validating Webhook）。目前 Webhook 覆盖了以下维度的严格校验与防护：
+
+- **IP 与静态地址冲突校验**：拦截 Pod 静态 IP/MAC、IPPool 以及 IP CRD 的重复与冲突分配。
+- **子网（Subnet）合法性校验**：检测子网 CIDR 重叠、网关与排除 IP 合法性，以及 VLAN/ProviderNetwork 绑定的有效性。
+- **虚拟 IP（VIP）安全保护**：防止 VIP 冲突，保护被关联的子网免于误删除。
+- **VPC 与 VPC NAT 网关关联校验**：校验 VPC 路由器端口、VpcNatGateway 的 LAN IP 与引流子网配置的合法性，防止错误配置导致转发中断。
 
 由于 Webhook 会拦截所有的 Subnet 和 Pod 创建的请求，因此需要先部署 Kube-OVN
 后部署 Webhook 避免无法创建 Pod。
 
 ## Cert-Manager 安装
 
-Webhook 部署需要相关证书加密，我们使用 cert-manager 生成相关证书，我们需要在部署
-Webhook 前先部署 cert-manager。
-
-可以使用下面的命令来部署 cert-manager:
+Webhook 部署需要相关证书加密，我们使用 cert-manager 生成相关证书。部署 Webhook 前需先在集群中部署 cert-manager（建议使用 cert-manager 最新稳定版）：
 
 ```bash
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.2/cert-manager.yaml
 ```
 
 更多 cert-manager 使用请参考 [cert-manager 文档](https://cert-manager.io/docs/){: target = "_blank" }。

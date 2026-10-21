@@ -6,18 +6,19 @@
 
 对于多网卡 Pod，可以通过以下注解将策略限定到指定 Provider：
 
-- `ovn.kubernetes.io/network_policy_for`
+- `ovn.kubernetes.io/policy-for`（官方推荐标准注解）
+- `ovn.kubernetes.io/network_policy_for`（兼容注解）
 
 这样可以让一条策略只作用于指定接口，而不是 Pod 的全部接口。
 
 ## 注解格式
 
-注解值为逗号分隔：
+注解值为逗号分隔，支持 `policy-for` 或 `network_policy_for`：
 
 ```yaml
 metadata:
   annotations:
-    ovn.kubernetes.io/network_policy_for: "ovn,default/net-a,default/net-b"
+    ovn.kubernetes.io/policy-for: "ovn,default/net-a,default/net-b"
 ```
 
 支持的条目格式：
