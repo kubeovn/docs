@@ -1,11 +1,11 @@
 # Manage QoS
 
-Kube-OVN supports two types of Pod level QoS:
+Kube-OVN supports two levels of QoS configuration:
 
-- Maximum bandwidth limit QoS.
-- `linux-netem`, QoS for simulating latency and packet loss that can be used for simulation testing.
+- **Pod-level QoS**: Dynamically adjust individual Pod bandwidth limits via Pod annotations, or simulate network latency, jitter, and packet loss using `linux-netem`.
+- **Cluster and Subnet-level QoS Policies**: Apply unified shared bandwidth limits and traffic classifications across subnets, VPC NAT gateways, or workloads via the [QoSPolicy CRD](../reference/kube-ovn-api.en.md#qospolicy).
 
-> Currently, only Pod level QoS is supported, and QoS restrictions at the Namespace or Subnet level are not supported.
+> Note: For configuring shared QoS policies at the Subnet, Namespace, or NAT Gateway level, please refer to the [QoSPolicy API](../reference/kube-ovn-api.en.md#qospolicy). This document focuses on lightweight dynamic QoS via Pod annotations.
 
 ## Maximum Bandwidth Limit QoS
 
@@ -32,6 +32,13 @@ Use annotation to dynamically adjust QoS:
 ```bash
 kubectl annotate --overwrite  pod nginx-74d5899f46-d7qkn ovn.kubernetes.io/ingress_rate=3
 ```
+
+In multi-NIC scenarios via Multus, you can configure per-interface rate limits using the `<provider>.kubernetes.io/` prefix:
+
+- `<provider>.kubernetes.io/ingress_rate`: Ingress rate limit for the specified provider interface, in `Mbit/s`
+- `<provider>.kubernetes.io/egress_rate`: Egress rate limit for the specified provider interface, in `Mbit/s`
+- `<provider>.kubernetes.io/ingress_burst`: Ingress burst limit for the specified provider interface
+- `<provider>.kubernetes.io/egress_burst`: Egress burst limit for the specified provider interface
 
 ### Test QoS
 
@@ -137,3 +144,5 @@ Pod can use the following annotations to configure `linux-netem` type QoS. Due t
 - `ovn.kubernetes.io/jitter`: Set the Pod traffic jitter to an integer value in ms.
 - `ovn.kubernetes.io/limit`: Set the maximum number of packets that the `qdisc` queue can hold, and takes an integer value, such as 1000.
 - `ovn.kubernetes.io/loss`: Set packet loss probability, the value is float type, for example, the value is 20, then it is set 20% packet loss probability.
+
+In multi-NIC scenarios, you can inject network impairment to specific provider interfaces using `<provider>.kubernetes.io/latency`, `<provider>.kubernetes.io/jitter`, `<provider>.kubernetes.io/limit`, and `<provider>.kubernetes.io/loss`.

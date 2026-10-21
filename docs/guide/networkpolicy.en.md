@@ -164,7 +164,8 @@ The value of `ovn.kubernetes.io/log_acl_actions` can be:
 
 - `drop`: Only log denied traffic (default)
 - `allow`: Only log allowed traffic
-- `allow,drop`: Log both allowed and denied traffic
+- `pass`: Only log passed traffic evaluated by multi-tier policies
+- `allow,drop` or `allow,drop,pass`: Log combinations of specified actions
 
 View logs for allowed traffic:
 
