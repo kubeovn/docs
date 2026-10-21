@@ -128,10 +128,6 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/service_external_ip_from_subnet | `true` or `false` | Service 外部 IP 是否从子网分配 |
 | ovn.kubernetes.io/service_health_check | `true` or `false` | Service 是否启用健康检查 |
 | ovn.kubernetes.io/lb_svc_img | String | 负载均衡服务使用的镜像 |
-| ovn.kubernetes.io/router_lb_vip | String | 关联的 RouterLBRule VIP 地址 |
-| ovn.kubernetes.io/nftable-lb-svc-managed | `true` or `false` | 标识该 Service 是否由基于 nftables 的共享 DNAT/LB 控制器管理 |
-| ovn.kubernetes.io/nftable-lb-svc-name | String | 关联管理的 nftable LB Service 名称 |
-| ovn.kubernetes.io/nftable-lb-svc-ns | String | 关联管理的 nftable LB Service 命名空间 |
 
 ## Networkpolicy Annotation
 

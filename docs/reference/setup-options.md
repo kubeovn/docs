@@ -192,19 +192,6 @@ args:
 - --enable-lb-svc=true
 ```
 
-若需支持基于 VPC NAT 网关 nftables share DNAT 的负载均衡能力（支持多后端 Pod 共享同一个公网 EIP:Port 及 ClientIP 会话保持），可通过以下参数控制（默认开启）：
-
-```bash
-ENABLE_NFTABLE_LB_SVC=true
-```
-
-或者在安装后通过更改 `kube-ovn-controller` Deployment 的参数进行配置：
-
-```yaml
-args:
-- --enable-nftable-lb-svc=true
-```
-
 ## 集中式网关 ECMP 开启设置
 
 集中式网关支持主备和 ECMP 两种高可用模式，如果需要启用 ECMP 模式，
@@ -447,23 +434,6 @@ env:
   value: "false"
 ```
 
-## TProxy 透明代理开启设置
-
-在自定义非默认 VPC 场景下，业务 Pod 处于隔离网络中，宿主机 kubelet 默认无法直接通过 Node IP 访问 Pod 的私有地址，导致 Pod 的 Liveness/Readiness 存活探针失败。开启 TProxy 后，Kube-OVN 会在宿主机上借助透明代理重定向探测流量，确保探针正常工作。该功能默认关闭。
-
-可在安装脚本中开启：
-
-```bash
-ENABLE_TPROXY=true
-```
-
-也可在安装后修改 `kube-ovn-cni` DaemonSet 的启动参数：
-
-```yaml
-args:
-- --enable-tproxy=true
-```
-
 ## Underlay ARP IP 冲突检测设置
 
 在 Underlay 物理直通网络模式下，为防止向 Pod 分配的 IP 与物理网络中已存在的外部主机产生 IP 冲突，Kube-OVN 默认会在地址生效前主动发送 ARP 探测包检测地址是否已被占用。
@@ -479,42 +449,6 @@ ENABLE_ARP_DETECT_IP_CONFLICT=false
 ```yaml
 args:
 - --enable-arp-detect-ip-conflict=false
-```
-
-## 网关 Netfilter 后端模式设置
-
-Kube-OVN 节点守护进程需要通过内核 Netfilter 机制实现网关流量重定向与规则维护。该参数用于指定底层的 Netfilter 实现类型，可选值为 `auto`（默认自动探测）、`iptables` 或 `nftables`。在仅支持 nftables 的现代化 Linux 发行版（如 Debian 12、RHEL 9）中可显式指定。
-
-可在安装脚本中配置：
-
-```bash
-GATEWAY_NETFILTER_MODE=auto
-```
-
-也可通过修改 `kube-ovn-cni` DaemonSet 启动参数进行调整：
-
-```yaml
-args:
-- --gateway-netfilter-mode=auto
-```
-
-## 实验性 ACL 流量采样设置
-
-Kube-OVN 支持通过 OVN ACL 采样机制（ACL Sampling）捕获 NetworkPolicy 的流量事件（如允许通过、默认拒绝等），用于安全审计和网络可观测性。
-
-可在安装脚本中开启：
-
-```bash
-ENABLE_ACL_SAMPLING=true
-```
-
-开启后，可在 `kube-ovn-controller` Deployment 与 `kube-ovn-cni` DaemonSet 中配置如下参数：
-
-```yaml
-args:
-- --enable-acl-sampling=true
-- --acl-sampling-allow-probability-percent=100
-- --acl-sampling-default-deny-probability-percent=100
 ```
 
 ## 垃圾回收与巡检周期设置
