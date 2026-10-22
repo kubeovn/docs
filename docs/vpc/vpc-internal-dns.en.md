@@ -148,7 +148,8 @@ spec:
 
 * `vpc`: the name of the vpc used to deploy the dns component.
 * `subnet`: subnet name for deploying dns components.
-* `replicas`: vpc dns deployment replicas
+* `replicas`: vpc dns deployment replicas (1-3).
+* `corefile`: ConfigMap name for CoreDNS corefile configuration, defaults to `vpc-dns-corefile`.
 
 View information about deployed resources:
 

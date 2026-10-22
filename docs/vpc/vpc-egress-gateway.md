@@ -419,6 +419,10 @@ Spec：
 | `selectors` | `object array` | 是 | - | 通过 Namespace Selector 以及 Pod Selector 配置 Egress 策略。匹配到的 Pod 将开启 SNAT/MASQUERADE。可与 `policies` 同时配置。 | - |
 | `nodeSelector` | `object array` | 是 | - | 工作负载的节点选择器，工作负载（Deployment/Pod）将运行在被选择的节点上。 | - |
 | `trafficPolicy` | `string` | 是 | `Cluster` | 可选值：`Cluster`/`Local`。**仅开启 BFD 时生效**。 设置为 `Local` 时，Egress 流量将优先导向同节点上的 VPC Egress Gateway 实例。若同节点上的 VPC Egress Gateway 实例出现故障，Egress 流量将导向其它实例。 | `Local` |
+| `podAntiAffinity` | `string` | 是 | `Required` | 工作负载副本的 Pod 反亲和性模式，`Required`（默认，跨节点打散部署）或 `Preferred`（允许同一节点部署副本但不提供节点级高可用）。 | `Required` |
+| `tolerations` | `object array` | 是 | - | 应用于网关 Pod 的标准 Kubernetes 容忍度配置。 | - |
+| `priorityClassName` | `string` | 是 | - | 应用于网关 Pod 的 PriorityClass 名称；未指定时继承集群默认 Pod 优先级。 | `system-cluster-critical` |
+| `resources` | `object` | 是 | - | 容器资源限制（requests 与 limits）；未指定时控制器使用默认值。 | - |
 | `bandwidth` | `object` | 是 | - | 每个网关副本的入向和出向带宽限制。 | - |
 | `bandwidth.ingress` | `integer 或 string` | 是 | - | 从外部网络进入 VPC 的流量限制。 | `1024` / `1Gi` |
 | `bandwidth.egress` | `integer 或 string` | 是 | - | 从 VPC 发往外部网络的流量限制。 | `1024` / `1Gi` |

@@ -61,7 +61,7 @@ If no vlan is in use (vlan 0), the following startup vlan id does not need to be
 
 ```bash
 # When deploying you need to refer to the above scenario and specify the following parameters as needed according to the actual situation
-# 1. kube-ovn-controller Startup parameters to be configured：
+# 1. kube-ovn-controller Startup parameters to be configured:
           - --external-gateway-vlanid=204
           - --external-gateway-switch=external204
 

@@ -419,6 +419,10 @@ Spec:
 | `selectors` | `object array` | Yes | - | Configure Egress policies by namespace selectors and Pod selectors. SNAT/MASQUERADE will be applied to the matched Pods. Configurable when `policies` is configured. | - |
 | `nodeSelector` | `object array` | Yes | - | Node selector applied to the workload. The workload (Deployment/Pod) will run on the selected nodes. | - |
 | `trafficPolicy` | `string` | Yes | `Cluster` | Available values: `Cluster`/`Local`. **Effective only when BFD is enabled**. When set to `Local`, Egress traffic will be redirected to the VPC Egress Gateway instance running on the same node if available. If the instance is down, Egress traffic will be redirected to other instances. | `Local` |
+| `podAntiAffinity` | `string` | Yes | `Required` | Pod anti-affinity mode for gateway workload replicas: `Required` (default, spreads replicas across nodes) or `Preferred` (allows co-located replicas without node-level HA). | `Required` |
+| `tolerations` | `object array` | Yes | - | Standard Kubernetes tolerations applied to the gateway workload pods. | - |
+| `priorityClassName` | `string` | Yes | - | PriorityClass name to apply to the gateway workload pods; inherits cluster default when omitted. | `system-cluster-critical` |
+| `resources` | `object` | Yes | - | Container compute resource requirements (requests and limits); controller sets defaults when omitted. | - |
 | `bandwidth` | `object` | Yes | - | Per-replica ingress and egress bandwidth limits. | - |
 | `bandwidth.ingress` | `integer or string` | Yes | - | Limit for traffic entering the VPC from the external network. | `1024` / `1Gi` |
 | `bandwidth.egress` | `integer or string` | Yes | - | Limit for traffic leaving the VPC for the external network. | `1024` / `1Gi` |
