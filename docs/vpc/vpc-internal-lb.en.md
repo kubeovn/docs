@@ -91,8 +91,7 @@ Health checks are enabled by default on SLRs whether they use fields `selector` 
 
 ### How they work
 
-Kube-OVN uses the implementation of OVN for health checks:
-[[Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)](<https://www.ovn.org/support/dist-docs/ovn-nb.5.html>)
+Kube-OVN uses the implementation of OVN for health checks, refer to [Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html){: target="_blank" }.
 
 Here's how it happens when an SLR is created with health checks enabled:
 

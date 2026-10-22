@@ -91,8 +91,7 @@ spec:
 
 ### 工作原理
 
-Kube-OVN 使用 OVN 原生实现进行健康检查：
-[[Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)](https://www.ovn.org/support/dist-docs/ovn-nb.5.html){: target="_blank" }
+Kube-OVN 使用 OVN 原生实现进行健康检查，参考 [Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html){: target="_blank" }。
 
 当创建开启健康检查的 SLR 时，内部流程如下：
 
