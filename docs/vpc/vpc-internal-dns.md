@@ -147,9 +147,10 @@ spec:
   replicas: 2
 ```
 
-* `vpc` ： 用于部署 dns 组件的 vpc 名称。
+* `vpc`：用于部署 dns 组件的 vpc 名称。
 * `subnet`：用于部署 dns 组件的子网名称。
-* `replicas`: vpc dns deployment replicas
+* `replicas`：vpc dns 副本数量（支持 1-3）。
+* `corefile`：CoreDNS corefile 配置 ConfigMap 名称，默认为 `vpc-dns-corefile`。
 
 查看部署资源的信息：
 

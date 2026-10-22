@@ -73,25 +73,45 @@ spec:
 ```
 
 - `sessionAffinity` 和 `port` 使用方式同 Kubernetes Service。
-- `vip`：自定义负载均衡的 IP 地址。
+- `vip`：自定义负载均衡的 IP 地址，请参考[下文地址选择章节](#switchlbrule-vip-地址选择)选择正确的地址。
 - `namespace`：负载均衡后端所在命名空间。
 - `endpoints`：负载均衡后端 IP 列表。
 
-如果同时配置了 `selector` 和 `endpoints`, 会自动忽略 `selector` 配置。
+如果同时配置了 `selector` 和 `endpoints`，会自动忽略 `selector` 配置。
 
 ## 健康检查
 
-`OVN` 支持 `IPv4` 负载平衡器服务终端的运行状况检查。
-启用运行状况检查后，负载平衡器会对服务终端的状态进行检测维护，并仅使用运行状况良好的服务终端。
+`OVN` 支持 `IPv4` 负载均衡器服务终端的健康检查（仅支持 IPv4 负载均衡器，OVN 暂不支持 IPv6 健康检查）。
+启用健康检查后，负载均衡器会对服务终端的状态进行检测维护，并仅使用运行状况良好的服务终端。
+无论 SwitchLBRule 使用 `selector` 还是 `endpoints` 字段，健康检查默认均处于开启状态。
 
-[[Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)](<https://www.ovn.org/support/dist-docs/ovn-nb.5.html>)
+!!! note
 
-根据 `ovn` 负载均衡器的运行状况检查，对 `SwitchLBRule` 添加健康检查。在创建 `SwitchLBRule` 的同时，从对应的 `VPC` 和 `subnet` 中获取一个可复用的 `vip` 作为检测端点，并添加对应的 `ip_port_mappings` 和 `load_balancer_health_check` 到对应的负载均衡器上。
+    如果需要禁用健康检查，可以在 SLR 上添加注解 `ovn.kubernetes.io/service_health_check: false`。
 
-- 检测端点 `vip` 会自动在对应的 `subnet` 中判断是否存在，并且与 `subnet` 同名，如果不存在则会自动创建，并且在所有关联的 `SwitchLBRule` 被删除后自动被删除。
-- 暂时只支持通过 `Selector` 自动生成的负载均衡规则
+### 工作原理
 
-### 创建负载均衡规则
+Kube-OVN 使用 OVN 原生实现进行健康检查：
+[[Health Checks](https://www.ovn.org/support/dist-docs/ovn-nb.5.html)](https://www.ovn.org/support/dist-docs/ovn-nb.5.html){: target="_blank" }
+
+当创建开启健康检查的 SLR 时，内部流程如下：
+
+- 创建 `SwitchLBRule` 时，Kube-OVN 从对应的 `VPC` 和 `Subnet` 中获取一个可复用的 `VIP` 作为健康检查的源地址。在 Subnet 中创建 `VIP` 自定义资源，以便在 IPAM 中保留该 IP 并防止 Pod/VM 占用。
+- Kube-OVN 在负载均衡器上关联对应的 `IP_Port_Mappings` 和 `Load_Balancer_Health_Check`。
+
+> 用作检查源的 `VIP` 会优先复用与对应 `Subnet` 同名的已有 VIP。如果不存在则会自动创建，并在所有关联的 `SwitchLBRule` 被删除后自动清理。如果希望在 Subnet 内预留自定义 VIP，请在创建 SLR 之前先创建指定地址的 `IP` 自定义资源。
+
+## SwitchLBRule VIP 地址选择
+
+创建 SwitchLBRule 时，必须在 `vip` 字段中提供一个 VIP 地址。该虚拟 IP 用于接收需要负载均衡到 SLR 后端（通过 `selector` 或 `endpoints` 指定）的流量。
+
+根据 OVN 负载均衡器的实现机制，该 IP 地址**应当**位于尝试访问该负载均衡器的 Pod/VM 所在子网的 CIDR 网段之外。
+
+例如，如果子网 `10.0.0.0/24` 中的 Pod 需要访问该负载均衡器，则 VIP 不能配置为 `10.0.0.100`。此时使用非源网段的地址（如 `192.168.1.100`）可以正常工作。
+
+如果您希望使用源子网内的 IP 作为 VIP 地址，则必须在创建 SLR 之前先声明一个类型为 `switch_lb_rule` 的自定义资源 `Vip`。更多信息请参考[自定义 VIP 文档](../advance/vip.md#2-switchlbrule-vip)。
+
+## 创建 `SwitchLBRule`
 
 ```bash
 
