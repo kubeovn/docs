@@ -18,9 +18,6 @@ kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/
 kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/cni-monitor.yaml
 # ovn 相关监控指标
 kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/ovn-monitor.yaml
-# bfd 链路监控与告警规则（可选）
-kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/bfdd-monitor.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/monitoring/bfdd-rules.yaml
 ```
 
 Prometheus 拉取监控时间间隔默认为 15s，如果需要调整需要修改 yaml 中的 `interval` 字段。
