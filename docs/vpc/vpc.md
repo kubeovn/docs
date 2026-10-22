@@ -229,8 +229,14 @@ spec:
 
 其他可配参数：
 
-- `tolerations`：为 VPC 网关配置容忍度，具体配置参考 [污点和容忍度](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/taint-and-toleration/)。
-- `affinity`：为 VPC 网关 Pod 或节点配置亲和性，具体设置参考 [亲和性与反亲和性](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)。
+- `replicas`：网关副本数，默认为 1（StatefulSet 单副本兼容模式）；大于 1 时自动采用 Deployment 工作负载开启多实例高可用，并通过反亲和性打散部署。
+- `internalSubnets`：引流到该 NAT 网关的内部子网名称列表（自动解析为对应 CIDR 网段并将出网默认路由导向网关）。
+- `internalCIDRs`：引流到该 NAT 网关的内部 CIDR 网段列表，与 `internalSubnets` 累加生效。
+- `namespace`：指定 NAT 网关工作负载与 iptables-EIP 资源的部署命名空间（默认使用控制器所在命名空间，通常为 `kube-system`）。
+- `annotations`：注入到 NAT 网关 Pod 模板上的用户自定义 Annotation 注解。
+- `bfd`：高可用模式下的 BFD 链路健康检测配置（包含 `enabled`、`minRX`、`minTX`、`multiplier`）。
+- `tolerations`：为 VPC 网关配置容忍度，具体配置参考 [污点和容忍度](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/taint-and-toleration/){: target="_blank" }。
+- `affinity`：为 VPC 网关 Pod 或节点配置亲和性，具体设置参考 [亲和性与反亲和性](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity/){: target="_blank" }。
 
 在使用 VPC-NAT-GW 时需要注意：
 
