@@ -93,13 +93,16 @@ spec:
 根据 Chart 配置调整命名空间和 DNS 名称，并按证书策略添加有效期、续期、
 私钥、主题和用途等字段。
 
+请将下方命令中的 `<chart-namespace>` 替换为 Chart 配置的 `namespace` 值。
+该值必须与 `webhook-certificate.yaml` 中的 `metadata.namespace` 一致。
+
 对于新安装，请先创建 Certificate 并等待签发完成，再使用
 `validatingWebhook.certificate.create: false` 启用 Webhook：
 
 ```bash
 kubectl apply -f webhook-certificate.yaml
 kubectl wait --for=condition=Ready certificate/kube-ovn-webhook-serving-cert \
-  -n kube-system --timeout=120s
+  -n "<chart-namespace>" --timeout=120s
 ```
 
 Webhook 需要 `kube-ovn-webhook-secret` 中的 `tls.crt` 和 `tls.key` 才能提供
@@ -113,7 +116,7 @@ API server 使用该 CA 证书包验证 Webhook 的服务端证书。
 确认 Webhook Deployment 已就绪，且 CA 证书包不为空：
 
 ```bash
-kubectl rollout status deployment/kube-ovn-webhook -n kube-system
+kubectl rollout status deployment/kube-ovn-webhook -n "<chart-namespace>"
 kubectl get validatingwebhookconfiguration kube-ovn-webhook \
   -o jsonpath='{.webhooks[0].clientConfig.caBundle}'
 ```

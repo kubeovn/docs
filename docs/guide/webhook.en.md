@@ -93,13 +93,16 @@ Replace `existing-webhook-issuer` with your issuer name. For a ClusterIssuer, al
 `issuerRef.kind` to `ClusterIssuer`. Adjust the namespace and DNS names to match your chart values.
 Add any certificate lifetime, renewal, private key, subject, and usage fields required by your policy.
 
+Replace `<chart-namespace>` in the commands below with the chart's configured `namespace` value.
+It must match `metadata.namespace` in `webhook-certificate.yaml`.
+
 For a new installation, apply the Certificate and wait for issuance before enabling the webhook
 with `validatingWebhook.certificate.create: false`:
 
 ```bash
 kubectl apply -f webhook-certificate.yaml
 kubectl wait --for=condition=Ready certificate/kube-ovn-webhook-serving-cert \
-  -n kube-system --timeout=120s
+  -n "<chart-namespace>" --timeout=120s
 ```
 
 The webhook requires `tls.crt` and `tls.key` in `kube-ovn-webhook-secret`
@@ -113,7 +116,7 @@ It copies `ca.crt` from that Certificate's backing Secret into the webhook's
 Verify that the webhook Deployment is ready and that the CA bundle is populated:
 
 ```bash
-kubectl rollout status deployment/kube-ovn-webhook -n kube-system
+kubectl rollout status deployment/kube-ovn-webhook -n "<chart-namespace>"
 kubectl get validatingwebhookconfiguration kube-ovn-webhook \
   -o jsonpath='{.webhooks[0].clientConfig.caBundle}'
 ```
