@@ -22,7 +22,7 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/bgp | `true`, `cluster`, `local` | 是否对外通过 BGP 发布 Pod 地址 |
 | ovn.kubernetes.io/snat | String | Pod 访问集群外使用的 SNAT 地址 |
 | ovn.kubernetes.io/eip | String | Pod 访问集群外部和被集群外部访问所使用的 EIP 地址 |
-| ovn.kubernetes.io/vip | String | Pod 主网卡使用的预留 VIP，可通过该 Annotation 使用预先创建的 VIP 资源 |
+| ovn.kubernetes.io/vip | String | v1.17 起已移除。该 Annotation 会被忽略并记录告警；请使用 `ovn.kubernetes.io/ip_address`、`ovn.kubernetes.io/ip_pool` 或 IPPool 为 Pod 分配地址 |
 | ovn.kubernetes.io/aaps | String | Pod 主网卡的 AAPs (Additional Allowed Addresses Pairs) 配置 |
 | ovn.kubernetes.io/virtualmachine | String | Pod 主网卡所属的 VirtualMachineInstance |
 | ovn.kubernetes.io/activation_strategy | String | Pod 主网卡的激活策略 |
