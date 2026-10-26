@@ -139,7 +139,7 @@ Go CLI 保留诊断能力，但旧 Bash 命令名称和位置参数不是别名�
 | `kubectl ko vsctl NODE ARGS` | `kubectl ko exec vsctl --node NODE -- ARGS` |
 | `kubectl ko ofctl/dpctl/appctl NODE ARGS` | `kubectl ko exec TOOL --node NODE -- ARGS` |
 | `kubectl ko tcpdump POD ARGS` | `kubectl ko capture --pod POD -- ARGS` |
-| `kubectl ko trace ...` | `kubectl ko trace --pod POD|--node NODE --dst-ip IP ...` |
+| `kubectl ko trace ...` | `kubectl ko trace --pod POD or --node NODE --dst-ip IP ...` |
 | `kubectl ko reload` | `kubectl ko restart` |
 | `kubectl ko log ...` | `kubectl ko logs ...` |
 

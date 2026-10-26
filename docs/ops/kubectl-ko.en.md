@@ -151,7 +151,7 @@ selected by `--kube-ovn-namespace`, `KUBE_OVN_NS`, then `kube-system`.
 | Kubernetes exec | `exec` accepts `POD` or `TYPE/NAME`, `-c/--container`, `-l/--selector`, `-i/--stdin`, `-t/--tty`, `-q/--quiet`, and `--pod-running-timeout=1m`. A command must follow `--`. |
 | Raw tools / capture | `exec` OVS tools require `--node`; `capture` requires exactly one of `--pod`, `--vm`, or `--vmi`. All remote arguments must follow `--`. |
 | Network inspection | `network inspect` requires `--pod`; `--output=table` is the default and `--output=json` is intended for automation. |
-| Trace | Exactly one of `--pod` / `--node`; required `--dst-ip`; `--protocol=icmp`, `--engine=all`, optional `--dst-mac`. TCP/UDP require `--dst-port=1..65535`. ARP uses `--arp-op=request|reply` and IPv4. |
+| Trace | Use exactly one of `--pod` or `--node`; `--dst-ip` is required. `--protocol=icmp`, `--engine=all`, and `--dst-mac` are optional. TCP/UDP require `--dst-port=1..65535`; ARP uses `--arp-op=request` or `--arp-op=reply` with IPv4. |
 | Database backup | `--output FILE`; otherwise a unique DB-specific filename. |
 | Database recovery | Required `--source-node NODE` and either `--yes` or `--dry-run`. |
 | Diagnostics | Cluster/node/subnet accept `--read-only` to skip active probes and temporary resources. All configuration/probe modes accept `--skip-kube-proxy`, defaulting from `WITHOUT_KUBE_PROXY=true`. Subnet accepts `--tcp-port` / `--udp-port`, defaulting from `TCP_CONN_CHECK_PORT` / `UDP_CONN_CHECK_PORT`, then 8100 / 8101. Explicit flags override environment values. Connectivity requires one or more `--target tcp://IP:PORT` / `udp://IP:PORT`; IPv6 uses brackets. |
