@@ -1,21 +1,21 @@
 # Webhook
 
-Using Webhook, you can verify CRD resources within Kube-OVN. Currently,
-Webhook mainly performs fixed IP address conflict detection and Subnet CIDR conflict detection,
-and prompts errors when such conflicts happen.
+Using Webhook, you can perform admission validation (Validating Webhook) for core Kube-OVN resources and CRDs. Currently, Webhook covers comprehensive validation across the following dimensions:
+
+- **IP and Static Address Conflict Validation**: Intercept duplicate and conflicting assignments for Pod static IP/MAC, IPPools, and IP CRDs.
+- **Subnet Validity Validation**: Detect Subnet CIDR overlaps, gateway and excluded IP validity, and VLAN/ProviderNetwork binding integrity.
+- **Virtual IP (VIP) Safety Protection**: Prevent VIP conflicts and protect associated subnets from accidental deletion.
+- **VPC and VPC NAT Gateway Association Validation**: Validate VPC router ports, VpcNatGateway LAN IPs, and internal routed subnets to prevent routing disruptions caused by misconfigurations.
 
 Since Webhook intercepts all Subnet and Pod creation requests,
 you need to deploy Kube-OVN first and Webhook later.
 
 ## Install Cert-Manager
 
-Webhook deployment requires certificate, we use cert-manager to generate the associated certificate,
-we need to deploy cert-manager before deploying Webhook.
-
-You can use the following command to deploy cert-manager:
+Webhook deployment requires certificates; we use cert-manager to generate the required certificates. You need to deploy cert-manager before deploying Webhook (latest stable release recommended):
 
 ```bash
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.2/cert-manager.yaml
 ```
 
 For more cert-manager usage, please refer to [cert-manager document](https://cert-manager.io/docs/){: target="_blank" }.

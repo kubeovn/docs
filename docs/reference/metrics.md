@@ -36,6 +36,14 @@ OVN 自身状态监控指标：
 |Gauge|kube_ovn_cluster_outbound_connections_total|当前实例的出向连接数量。|
 |Gauge|kube_ovn_cluster_inbound_connections_error_total|当前实例的入向错误连接数量。|
 |Gauge|kube_ovn_cluster_outbound_connections_error_total|当前实例的出向错误连接数量。|
+|Gauge|kube_ovn_ovn_status_content|OVN 异常状态时的具体原因内容，值为 (1)，标签中包含 role 和 reason。|
+|Gauge|kube_ovn_cluster_peer_inbound_connections_info|Raft 集群中对端节点的入向连接状态信息，值为 (1)，标签中包含 role、server_id、address 和 status。|
+|Gauge|kube_ovn_cluster_peer_outbound_connections_info|Raft 集群中对端节点的出向连接状态信息，值为 (1)，标签中包含 role、server_id、address 和 status。|
+|Gauge|kube_ovn_cluster_peer_count|Raft 集群中已识别的 Peer 节点总数量。|
+|Gauge|kube_ovn_cluster_peer_next_index|Raft 集群中各 Peer 节点的 next_index。|
+|Gauge|kube_ovn_cluster_peer_match_index|Raft 集群中各 Peer 节点的 match_index。|
+|Gauge|kube_ovn_cluster_next_index|当前数据库节点维护的全局 next_index。|
+|Gauge|kube_ovn_cluster_match_index|当前数据库节点维护的全局 match_index。|
 
 ## ovs-monitor
 
@@ -79,6 +87,7 @@ OVN 自身状态监控指标：
 |Gauge|interface_tx_dropped|OVS Interface 发送包丢弃数量。|
 |Gauge|interface_tx_errors|OVS Interface 发送包错误数量。|
 |Gauge|interface_collisions|OVS interface 冲突数量。|
+|Gauge|interface_rx_multicast_packets|OVS Interface 接收的多播数据包数量。|
 
 ## kube-ovn-pinger
 
@@ -101,13 +110,13 @@ OVN 自身状态监控指标：
 |Gauge|pinger_external_dns_unhealthy|kube-ovn-pinger 无法解析外部域名。|
 |Histogram|pinger_external_dns_latency_ms|kube-ovn-pinger 解析外部域名延迟。|
 |Histogram|pinger_pod_ping_latency_ms|kube-ovn-pinger ping Pod 延迟。|
-|Gauge|pinger_pod_ping_lost_total|kube-ovn-pinger ping Pod 丢包数量。|
-|Gauge|pinger_pod_ping_count_total|kube-ovn-pinger ping Pod 数量。|
+|Counter|pinger_pod_ping_lost_total|kube-ovn-pinger ping Pod 丢包数量。|
+|Counter|pinger_pod_ping_count_total|kube-ovn-pinger ping Pod 数量。|
 |Histogram|pinger_node_ping_latency_ms|kube-ovn-pinger ping Node 延迟。|
-|Gauge|pinger_node_ping_lost_total|kube-ovn-pinger ping Node 丢包。|
-|Gauge|pinger_node_ping_count_total|kube-ovn-pinger ping Node 数量。|
+|Counter|pinger_node_ping_lost_total|kube-ovn-pinger ping Node 丢包。|
+|Counter|pinger_node_ping_count_total|kube-ovn-pinger ping Node 数量。|
 |Histogram|pinger_external_ping_latency_ms|kube-ovn-pinger ping 外部地址 延迟。|
-|Gauge|pinger_external_ping_lost_total|kube-ovn-pinger ping 外部丢包数量。|
+|Counter|pinger_external_ping_lost_total|kube-ovn-pinger ping 外部丢包数量。|
 
 ## kube-ovn-controller
 
@@ -128,6 +137,9 @@ OVN 自身状态监控指标：
 |Histogram|ovs_client_request_latency_milliseconds|请求 OVN 组件延迟。|
 |Gauge|subnet_available_ip_count|子网可用 IP 数量。|
 |Gauge|subnet_used_ip_count|子网已用 IP 数量。|
+|Gauge|centralized_subnet_info|集中式网关子网的路由与网关节点信息，值为 (1)，标签中包含 subnet_name、enable_ecmp、gateway_node、active_gateway、match、nexthops。|
+|Gauge|subnet_ipam_info|子网 IPAM 地址管理状态统计，值为 (1)，标签中包含 subnet_name、cidr、free、reserved、available、using。|
+|Gauge|subnet_ip_assign_info|子网中各 IP 地址分配绑定到 Pod 的具体信息，值为 (1)，标签中包含 subnet_name、ip、pod_name。|
 
 ## kube-ovn-cni
 
@@ -150,3 +162,66 @@ OVN 自身状态监控指标：
 |Summary|items_per_watch|API watch 返回结果数量。|
 |Gauge|last_resource_version|最新的 resource version。|
 |Histogram|ovs_client_request_latency_milliseconds|请求 OVN 组件延迟。|
+|Counter|ovn_subnet_gateway_packet_bytes|OVN 子网网关处理的流量字节数，标签中包含 hostname、subnet_name、cidr、direction、protocol。|
+|Counter|ovn_subnet_gateway_packets|OVN 子网网关处理的数据包数量，标签中包含 hostname、subnet_name、cidr、direction、protocol。|
+|Gauge|ip_local_port_range|主机内核参数 `/proc/sys/net/ipv4/ip_local_port_range` 取值，用于检测是否与 Kubernetes NodePort 范围冲突。|
+|Gauge|checksum_err_count|主机 `/proc/net/snmp` 中的 `InCsumErrors` 校验和错误计数，大于 0 说明存在网络丢包或校验和异常。|
+|Gauge|dns_search_domain|主机 `/etc/resolv.conf` 中的 search domain 数量及附加域信息。|
+|Gauge|tcp_tw_recycle|主机内核参数 `/proc/sys/net/ipv4/tcp_tw_recycle` 取值，推荐值为 0。|
+|Gauge|tcp_mtu_probing|主机内核参数 `/proc/sys/net/ipv4/tcp_mtu_probing` 取值，推荐值为 1。|
+|Gauge|nf_conntrack_tcp_be_liberal|主机内核参数 `/proc/sys/net/netfilter/nf_conntrack_tcp_be_liberal` 取值，推荐值为 1。|
+|Gauge|bridge_nf_call_iptables|主机内核参数 `/proc/sys/net/bridge/bridge-nf-call-iptables` 取值（Overlay 推荐 1，Underlay 推荐 0）。|
+|Gauge|tcp_mem|主机内核参数 `/proc/sys/net/ipv4/tcp_mem` 内存阈值（min, pressure, max）。|
+|Gauge|max_size|主机 IPv6 路由表最大容量限制 `/proc/sys/net/ipv6/route/max_size`，推荐至少 16384。|
+
+## kube-ovn-speaker
+
+`kube-ovn-speaker` 相关监控指标（BGP Speaker 与 BFD）：
+
+|类型|指标项|描述|
+|---|---|---|
+|Gauge|kube_ovn_speaker_bgp_peer_up|与对端节点的 BGP 会话是否建立，(1) 为已建立（Established），(0) 为未建立。|
+|Gauge|kube_ovn_speaker_bgp_peer_session_state|与对端节点的 BGP 状态机状态（0=unspecified, 1=idle, 2=connect, 3=active, 4=opensent, 5=openconfirm, 6=established）。|
+|Gauge|kube_ovn_speaker_bgp_peer_flap_count|与对端节点的 BGP 会话发生震荡（flap）的累计次数。|
+|Gauge|kube_ovn_speaker_bgp_peer_out_queue|当前等待发送给该 BGP Peer 的消息排队数量。|
+|Gauge|kube_ovn_speaker_bgp_peer_received_messages|从该 BGP Peer 接收到的各类 BGP 协议消息累计数量，按 type 标签区分。|
+|Gauge|kube_ovn_speaker_bgp_peer_sent_messages|向该 BGP Peer 发送的各类 BGP 协议消息累计数量，按 type 标签区分。|
+|Gauge|kube_ovn_speaker_bfd_server_received_packets|BFD 服务端接收到的 BFD 报文累计总数。|
+|Gauge|kube_ovn_speaker_bfd_server_received_drop|BFD 服务端丢弃的 BFD 报文累计总数。|
+|Gauge|kube_ovn_speaker_bfd_server_received_error|BFD 服务端接收到的错误 BFD 报文累计总数。|
+|Gauge|kube_ovn_speaker_bfd_server_invalid_packet|BFD 服务端收到的非法或格式无效 BFD 报文累计总数。|
+|Gauge|kube_ovn_speaker_bfd_server_unknown_peer|BFD 服务端收到来自未识别 Peer 的 BFD 报文累计总数。|
+|Gauge|kube_ovn_speaker_bfd_peer_up|与该对端节点的 BFD 会话是否处于 UP 状态，(1) 为正常，(0) 为异常。|
+|Gauge|kube_ovn_speaker_bfd_peer_session_state|本地与该 Peer 的 BFD 会话状态（0=unspecified, 1=up, 2=down, 3=admin_down, 4=init）。|
+|Gauge|kube_ovn_speaker_bfd_peer_remote_session_state|远端对该 Peer 报告的 BFD 会话状态（0=unspecified, 1=up, 2=down, 3=admin_down, 4=init）。|
+|Gauge|kube_ovn_speaker_bfd_peer_failure_transitions|该 Peer 的 BFD 会话转入故障状态的累计切换次数。|
+|Gauge|kube_ovn_speaker_bfd_peer_transmitted_packets|与该 Peer 建立的 BFD 异步会话中已发送的 BFD 报文累计总数。|
+|Gauge|kube_ovn_speaker_bfd_peer_received_packets|与该 Peer 建立的 BFD 异步会话中已接收的 BFD 报文累计总数。|
+
+## vpc-egress-gateway-observer
+
+VPC 出口网关（`VpcEgressGateway`）原生可观测性采集指标：
+
+|类型|指标项|描述|
+|---|---|---|
+|Gauge|kube_ovn_vpc_egress_gateway_observability_collector_up|网关 Observer 内部各 Collector 组件是否正常运行，(1) 为正常，(0) 为异常。|
+|Counter|kube_ovn_vpc_egress_gateway_observability_config_reload_total|Observer 动态重载配置文件的累计尝试次数，按 result 标签统计。|
+|Counter|kube_ovn_vpc_egress_gateway_observability_conntrack_events_total|Observer 监听并处理的 conntrack 连接跟踪事件累计总数，按 event 标签区分。|
+|Counter|kube_ovn_vpc_egress_gateway_observability_errors_total|Observer 采集器运行过程中遭遇的内部错误总数。|
+|Gauge|kube_ovn_vpc_egress_gateway_observability_conntrack_cache_entries|当前本地 conntrack 流缓存中的活动连接条目数。|
+|Gauge|kube_ovn_vpc_egress_gateway_observability_conntrack_cache_capacity|本地 conntrack 流缓存的最大容量上限。|
+|Counter|kube_ovn_vpc_egress_gateway_observability_conntrack_cache_evictions_total|因缓存满或超时导致的 conntrack 缓存项驱逐淘汰累计总数。|
+|Counter|kube_ovn_vpc_egress_gateway_observability_log_records_total|成功输出到标准输出的 JSON 格式 NAT 流日志记录累计条数。|
+|Counter|kube_ovn_vpc_egress_gateway_observability_log_drops_total|因限速或通道满等原因丢弃的流日志记录累计条数。|
+|Gauge|kube_ovn_vpc_egress_gateway_observability_conntrack_accounting_available|内核是否支持并启用了 conntrack 流量与数据包字节记账功能，(1) 为支持，(0) 为不支持。|
+|Counter|kube_ovn_vpc_egress_gateway_interface_rx_bytes_total|网关网络接口接收到的累计流量字节数，标签中包含 interface、type。|
+|Counter|kube_ovn_vpc_egress_gateway_interface_tx_bytes_total|网关网络接口发送出的累计流量字节数，标签中包含 interface、type。|
+|Counter|kube_ovn_vpc_egress_gateway_interface_rx_packets_total|网关网络接口接收到的累计数据包数量。|
+|Counter|kube_ovn_vpc_egress_gateway_interface_tx_packets_total|网关网络接口发送出的累计数据包数量。|
+|Counter|kube_ovn_vpc_egress_gateway_interface_drops_total|网关网络接口丢弃的数据包累计总数，按 direction 标签统计。|
+|Counter|kube_ovn_vpc_egress_gateway_interface_errors_total|网关网络接口发生错误的数据包累计总数，按 direction 标签统计。|
+|Gauge|kube_ovn_vpc_egress_gateway_conntrack_nat_flows_active|网关当前处于活跃状态的 NAT 连接跟踪流总数，标签中包含 address_family、protocol、nat_type。|
+|Counter|kube_ovn_vpc_egress_gateway_conntrack_nat_flows_started_total|网关累计新建启动的 NAT 连接跟踪流总数。|
+|Counter|kube_ovn_vpc_egress_gateway_conntrack_nat_flows_ended_total|网关累计结束关闭的 NAT 连接跟踪流总数。|
+|Counter|kube_ovn_vpc_egress_gateway_conntrack_nat_packets_total|启用内核记账时，NAT 连接跟踪流所统计的累计数据包数量。|
+|Counter|kube_ovn_vpc_egress_gateway_conntrack_nat_bytes_total|启用内核记账时，NAT 连接跟踪流所统计的累计流量字节数。|

@@ -1,11 +1,9 @@
 # 容器网络 QoS 配置
 
-Kube-OVN 支持基于单个 Pod 的两种不同类型的 QoS：
+Kube-OVN 支持两种层面的 QoS 配置：
 
-- 最大带宽限制 QoS。
-- `linux-netem`，模拟网络丢包、延迟等现象的 QoS，可用于模拟测试。
-
-> 目前只支持 Pod 级别 QoS 不支持 Namespace 或 Subnet 级别的 QoS 限制。
+- **Pod 级别 QoS**：通过 Pod Annotation 动态调整单个 Pod 的带宽限制，或通过 `linux-netem` 模拟网络时延、抖动与丢包。
+- **集群级与子网级 QoS 策略**：通过 [QoSPolicy CRD](../reference/kube-ovn-api.md#qospolicy) 对整个子网、VPC NAT 网关或特定工作负载应用统一的共享带宽限制与流分类。
 
 ## 基于最大带宽限制的 QoS
 

@@ -234,8 +234,14 @@ spec:
 
 Other configurable parameters:
 
-- `tolerations`: Configure tolerance for the VPC gateway. For details, see [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-nodes-by-condition)
-- `affinity`: Configure affinity for the Pod or node of the VPC gateway. For details, see [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
+- `replicas`: Number of gateway replicas, default is 1 (legacy StatefulSet single-replica mode); when > 1, automatically uses Deployment workload with pod anti-affinity to distribute instances across nodes.
+- `internalSubnets`: List of internal subnet names to route to the NAT gateway (resolved to CIDRs for OVN default route injection).
+- `internalCIDRs`: List of internal CIDRs to route to the NAT gateway, cumulative with `internalSubnets`.
+- `namespace`: Namespace where the NAT gateway workload and iptables-EIP custom resources will be created (defaults to controller namespace, typically `kube-system`).
+- `annotations`: User-defined annotations injected into the NAT gateway Pod template.
+- `bfd`: BFD configuration for health monitoring and automatic failover in HA mode (includes `enabled`, `minRX`, `minTX`, and `multiplier`).
+- `tolerations`: Configure tolerance for the VPC gateway. For details, see [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-nodes-by-condition){: target="_blank" }.
+- `affinity`: Configure affinity for the Pod or node of the VPC gateway. For details, see [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity){: target="_blank" }.
 
 Things to note when using VPC-NAT-GW:
 

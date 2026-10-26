@@ -44,12 +44,14 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | provider | String | Default value is `OVN`. In the case of multiple NICs, the value is `<name>.<namespace>` of the NetworkAttachmentDefinition, Kube-OVN will use this information to find the corresponding subnet resource |
 | gatewayType | String | The gateway type in overlay mode, either `distributed` or `centralized` |
 | gatewayNode | String | The gateway node when the gateway mode is centralized, node names can be comma-separated |
+| gatewayNodeSelectors | []LabelSelector | Selectors to choose gateway nodes dynamically based on node labels |
 | natOutgoing | Bool | Whether the outgoing traffic is NAT |
 | externalEgressGateway | String | The address of the external gateway. This parameter and the natOutgoing parameter cannot be set at the same time |
 | policyRoutingPriority | Uint32 | Policy route priority. Used to control the forwarding of traffic to the external gateway address after the subnet gateway |
 | policyRoutingTableID | Uint32 | The TableID of the local policy routing table, should be different for each subnet to avoid conflicts |
 | mtu | Uint32 | The MTU size of the subnet |
 | private | Bool | Whether the subnet is a private subnet, which denies access to addresses inside the subnet if the subnet is private |
+| routed | Bool | Routed configures pods with /32 (IPv4) or /128 (IPv6) addresses and forces same-subnet traffic through the OVN logical router |
 | allowSubnets | []String | If the subnet is a private subnet, the set of addresses that are allowed to access the subnet |
 | vlan | String | The name of vlan to which the subnet is bound |
 | vips | []String | The virtual-ip parameter information for virtual type lsp on the subnet |
@@ -66,12 +68,14 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | natOutgoingPolicyRules | []NatOutgoingPolicyRule | NAT outgoing policy rules |
 | u2oInterconnectionIP | String | The IP address used for Underlay/Overlay interconnection |
 | u2oInterconnection | Bool | Whether to enable interconnection mode for Overlay/Underlay |
+| u2oFeatures | U2OFeatures | Feature configurations for Underlay to Overlay interconnection |
 | enableLb | *Bool | Whether the logical-switch of the subnet is associated with load-balancer records |
 | enableEcmp | Bool | Centralized subnet, whether to enable ECMP routing |
 | enableMulticastSnoop | Bool | Whether to enable multicast snooping |
 | enableExternalLBAddress | Bool | Whether to enable external load balancer addresses |
 | routeTable | String | Route table name |
 | namespaceSelectors | []LabelSelector | Namespace selectors |
+| nodeNetwork | String | Name of the host underlying physical interface used for overlay encapsulation |
 
 ###### Acl
 
@@ -96,6 +100,12 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | srcIPs | String | Source IP address range |
 | dstIPs | String | Destination IP address range |
 
+###### U2OFeatures
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| overlayOnlyRouting | Bool | Controls whether only overlay CIDRs use U2O routing |
+
 ##### SubnetStatus
 
 | Property Name | Type | Description |
@@ -110,6 +120,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | v6usingIPs | BigInt | Number of used IPv6 IPs |
 | v6usingIPrange | String | Used IPv6 address ranges on the subnet |
 | activateGateway | String | The currently working gateway node in centralized subnet of master-backup mode |
+| gatewayMAC | String | The MAC address of the active gateway node in centralized gateway mode |
 | dhcpV4OptionsUUID | String | The DHCP_Options record identifier associated with the lsp dhcpv4_options on the subnet |
 | dhcpV6OptionsUUID | String | The DHCP_Options record identifier associated with the lsp dhcpv6_options on the subnet |
 | u2oInterconnectionIP | String | The IP address used for interconnection when Overlay/Underlay interconnection mode is enabled |
@@ -229,6 +240,15 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | enableExternal | Bool | Whether external connection is enabled |
 | extraExternalSubnets | []String | Extra external subnets |
 | enableBfd | Bool | Whether BFD is enabled |
+| bfdPort | BFDPortStatus | Status of the BFD port associated with the VPC in OVN |
+
+##### BFDPortStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| name | String | BFD port name |
+| ip | String | BFD port IP address |
+| nodes | []String | List of nodes where the BFD port is deployed |
 
 ## Underlay Network Configuration
 
@@ -276,6 +296,8 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | nodeSelector | LabelSelector | Select nodes for creating OVS bridges based on node labels, supports matchLabels and matchExpressions (once nodeSelector is used, excludeNodes will no longer take effect) |
 | excludeNodes | []String | The names of the nodes that will not be bound to this bridge network |
 | exchangeLinkName | Bool | Whether to exchange the bridge NIC and the corresponding OVS bridge name |
+| autoCreateVlanSubinterfaces | Bool | Automatically create VLAN subinterfaces on physical host nodes |
+| preserveVlanInterfaces | Bool | Enable automatic detection and preservation of existing VLAN interfaces on the host |
 
 ##### CustomInterface
 
@@ -313,6 +335,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | ingressRules | []SecurityGroupRule | Ingress security group rules |
 | egressRules | []SecurityGroupRule | Egress security group rules |
 | allowSameGroupTraffic | Bool | Whether to allow traffic within the same security group |
+| tier | Int | ACL tier to which the rules are added |
 
 ##### SecurityGroupRule
 
@@ -320,13 +343,16 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | --- | --- | --- |
 | ipVersion | String | IP version, can be `ipv4` or `ipv6` |
 | protocol | SgProtocol | Protocol type, can be `all`, `icmp`, `tcp` or `udp` |
-| priority | Int | Rule priority, range 1-200, smaller value means higher priority |
-| remoteType | SgRemoteType | Remote type, can be `address` or `securityGroup` |
-| remoteAddress | String | Remote address |
+| priority | Int | Rule priority, range 1-16384 |
+| remoteType | SgRemoteType | Remote type, can be `address`, `cidr` or `securityGroup` |
+| remoteAddress | String | Remote address or CIDR |
 | remoteSecurityGroup | String | Remote security group name |
-| portRangeMin | Int | Port range minimum value, minimum value is 1 |
-| portRangeMax | Int | Port range maximum value, maximum value is 65535 |
-| policy | SgPolicy | Policy action, can be `allow` or `drop` |
+| portRangeMin | Int | Destination port range minimum value, minimum value is 1 |
+| portRangeMax | Int | Destination port range maximum value, maximum value is 65535 |
+| localAddress | String | Local address or CIDR |
+| sourcePortRangeMin | Int | Source port range minimum value (1-65535) |
+| sourcePortRangeMax | Int | Source port range maximum value (1-65535) |
+| policy | SgPolicy | Policy action, can be `allow`, `drop` or `pass` |
 
 #### SecurityGroupStatus
 
@@ -448,6 +474,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | subnet | String | Subnet |
 | namespaces | []String | List of bound namespaces |
 | ips | []String | List of IP addresses |
+| enableAddressSet | Bool | Enable AddressSet to work with policy-based routing and ACL |
 
 #### IPPoolStatus
 
@@ -479,6 +506,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 
 | Property Name | Type | Description |
 | --- | --- | --- |
+| namespace | String | Namespace where the EIP resource is located (defaults to kube-ovn controller namespace when empty) |
 | v4ip | String | IPv4 address |
 | v6ip | String | IPv6 address |
 | macAddress | String | MAC address |
@@ -517,6 +545,18 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | macAddress | String | MAC address |
 | type | String | Type, can be lrp, lsp or nat |
 
+#### OvnEipStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ready | Boolean | Whether the EIP is ready |
+| type | String | Type of the OVN EIP |
+| nat | String | NAT configuration status |
+| v4Ip | String | Assigned IPv4 address |
+| v6Ip | String | Assigned IPv6 address |
+| macAddress | String | Assigned MAC address |
+| conditions | []Condition | List of latest observations of the EIP status |
+
 ### IptablesFIPRule
 
 | Property Name | Type | Description |
@@ -525,6 +565,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `IptablesFIPRule` |
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
 | spec | IptablesFIPRuleSpec | IptablesFIPRule specific configuration information |
+| status | IptablesFIPRuleStatus | IptablesFIPRule status information |
 
 #### IptablesFIPRuleSpec
 
@@ -532,6 +573,18 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | --- | --- | --- |
 | eip | String | Elastic IP address |
 | internalIP | String | Internal IP address |
+
+#### IptablesFIPRuleStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ready | Boolean | Whether the FIP rule is ready |
+| v4ip | String | Associated IPv4 EIP address |
+| v6ip | String | Associated IPv6 EIP address |
+| natGwDp | String | NAT gateway datapath where the FIP is configured |
+| redo | String | Redo operation status |
+| internalIp | String | Target internal IP address |
+| conditions | []Condition | List of latest observations of the rule status |
 
 ### OvnFip
 
@@ -555,6 +608,19 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | v6Ip | String | IPv6 address |
 | type | String | Type, can be distributed or centralized |
 
+#### OvnFipStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ready | Boolean | Whether the FIP rule is ready |
+| vpc | String | VPC name where the FIP is configured |
+| v4Eip | String | Associated IPv4 EIP address |
+| v6Eip | String | Associated IPv6 EIP address |
+| v4Ip | String | Mapped internal IPv4 address |
+| v6Ip | String | Mapped internal IPv6 address |
+| macAddress | String | MAC address of the FIP |
+| conditions | []Condition | List of latest observations of the FIP status |
+
 ### IptablesDnatRule
 
 | Property Name | Type | Description |
@@ -563,16 +629,35 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `IptablesDnatRule` |
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
 | spec | IptablesDnatRuleSpec | IptablesDnatRule specific configuration information |
+| status | IptablesDnatRuleStatus | IptablesDnatRule status information |
 
 #### IptablesDnatRuleSpec
 
 | Property Name | Type | Description |
 | --- | --- | --- |
-| eip | String | Elastic IP address |
-| externalPort | String | External port |
-| protocol | String | Protocol type |
-| internalIP | String | Internal IP address |
-| internalPort | String | Internal port |
+| eip | String | Elastic IP resource name |
+| externalPort | String | External mapped port |
+| protocol | String | Protocol type, either tcp or udp |
+| internalIp | String | Target internal IP address |
+| internalPort | String | Target internal port |
+| type | String | DNAT rule mode, either `exclusive` (default 1:1 port forwarding) or `share` (supports multiple backends sharing the same EIP:Port) |
+| sessionAffinity | String | Client-IP session affinity for share type DNAT, supports `ClientIP` or empty |
+| sessionAffinityTimeoutSeconds | Int32 | Sticky window in seconds for ClientIP affinity (default 10800, range 1-86400) |
+
+#### IptablesDnatRuleStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ready | Boolean | Whether the DNAT rule is ready |
+| v4ip | String | IPv4 address of the DNAT rule |
+| v6ip | String | IPv6 address of the DNAT rule |
+| natGwDp | String | NAT gateway datapath where the DNAT rule is configured |
+| redo | String | Redo operation status |
+| protocol | String | Protocol type of the DNAT rule |
+| internalIp | String | Target internal IP address configured in the DNAT rule |
+| internalPort | String | Target internal port configured in the DNAT rule |
+| externalPort | String | External port configured in the DNAT rule |
+| conditions | []Condition | List of latest observations of the rule status |
 
 ### OvnDnatRule
 
@@ -622,6 +707,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | kind | String | Standard Kubernetes resource type field, all instances of this resource will have the value `IptablesSnatRule` |
 | metadata | ObjectMeta | Standard Kubernetes resource metadata information |
 | spec | IptablesSnatRuleSpec | IptablesSnatRule specific configuration information |
+| status | IptablesSnatRuleStatus | IptablesSnatRule status information |
 
 #### IptablesSnatRuleSpec
 
@@ -629,6 +715,18 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | --- | --- | --- |
 | eip | String | Elastic IP address |
 | internalCIDR | String | Internal CIDR range |
+
+#### IptablesSnatRuleStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ready | Boolean | Whether the SNAT rule is ready |
+| v4ip | String | IPv4 address of the SNAT rule |
+| v6ip | String | IPv6 address of the SNAT rule |
+| natGwDp | String | NAT gateway datapath where the SNAT rule is configured |
+| redo | String | Redo operation status |
+| internalCIDR | String | Internal CIDR of the SNAT rule |
+| conditions | []Condition | List of latest observations of the rule status |
 
 ### OvnSnatRule
 
@@ -651,6 +749,18 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | v4IpCidr | String | IPv4 CIDR range |
 | v6IpCidr | String | IPv6 CIDR range |
 
+#### OvnSnatRuleStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| ready | Boolean | Whether the SNAT rule is ready |
+| vpc | String | VPC name where the SNAT rule is configured |
+| v4Eip | String | Associated IPv4 EIP address |
+| v6Eip | String | Associated IPv6 EIP address |
+| v4IpCidr | String | IPv4 CIDR of the SNAT rule |
+| v6IpCidr | String | IPv6 CIDR of the SNAT rule |
+| conditions | []Condition | List of latest observations of the rule status |
+
 ## VPC Advanced Features
 
 ### VpcNatGateway
@@ -667,16 +777,23 @@ In each CRD definition, the Condition field in Status follows the above format, 
 
 | Property Name | Type | Description |
 | --- | --- | --- |
+| namespace | String | Namespace where the gateway Pod or StatefulSet is created, defaults to controller namespace |
 | vpc | String | VPC name where the VPC gateway Pod is located |
 | subnet | String | Subnet name where the VPC gateway Pod belongs |
 | externalSubnets | []String | List of external subnets |
-| lanIp | String | Specified IP address allocated for the VPC gateway Pod |
+| lanIp | String | Static LAN IP address for the gateway in single-replica non-HA mode; ignored in multi-replica HA mode where addresses are allocated dynamically |
+| replicas | Int32 | Number of gateway replicas (defaults to 1 for legacy StatefulSet mode; when > 1 uses Deployment with anti-affinity for HA) |
 | selector | []String | Standard Kubernetes Selector matching information |
 | tolerations | []Toleration | Standard Kubernetes toleration information |
 | affinity | Affinity | Standard Kubernetes affinity configuration |
 | qosPolicy | String | QoS policy name |
 | bgpSpeaker | VpcBgpSpeaker | BGP speaker configuration |
+| bfd | VpcNatGatewayBFDConfig | BFD configuration for health monitoring and automatic failover (HA mode only) |
+| internalSubnets | []String | Internal subnets by name resolved to CIDRs for OVN default route injection to the gateway |
+| internalCIDRs | []String | Internal CIDRs for OVN default route injection to the gateway (cumulative with internalSubnets) |
 | routes | []Route | Route configuration list |
+| noDefaultEIP | Bool | Disable default secondary-interface EIP assignment when external IP is not needed |
+| annotations | Map<String, String> | User-defined annotations for the NAT gateway Pod template |
 
 ##### VpcBgpSpeaker
 
@@ -692,6 +809,15 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | enableGracefulRestart | Bool | Whether to enable graceful restart |
 | extraArgs | []String | Additional arguments list |
 
+##### VpcNatGatewayBFDConfig
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| enabled | Boolean | Whether to enable BFD health monitoring (also requires VPC `.spec.bfd.enabled=true`), defaults to false |
+| minRX | Int32 | Required minimum receive interval in milliseconds, defaults to 1000 |
+| minTX | Int32 | Desired minimum transmit interval in milliseconds, defaults to 1000 |
+| multiplier | Int32 | Detection multiplier before declaring the session down, defaults to 3 |
+
 ##### Route
 
 | Property Name | Type | Description |
@@ -703,11 +829,17 @@ In each CRD definition, the Condition field in Status follows the above format, 
 
 | Property Name | Type | Description |
 | --- | --- | --- |
+| ready | Bool | Ready state of the NAT gateway instances and routes |
+| replicas | Int32 | Number of ready gateway replicas |
+| lanIp | String | Observed LAN IP address(es) allocated to gateway Pods (comma-separated list in HA mode) |
 | qosPolicy | String | QoS policy name |
 | externalSubnets | []String | List of external subnets |
 | selector | []String | Standard Kubernetes Selector matching information |
 | tolerations | []Toleration | Standard Kubernetes toleration information |
 | affinity | Affinity | Standard Kubernetes affinity configuration |
+| workload | VpcNatWorkload | Workload information (Deployment or StatefulSet) |
+| internalSubnets | []String | Internal subnets configured for route injection |
+| internalCIDRs | []String | Internal CIDRs configured for route injection |
 
 ### VpcEgressGateway
 
@@ -737,10 +869,12 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | externalIPPool | String | Optional. Name of an `IPPool` used to allocate external addresses. Its subnet must match `externalSubnet`; mutually exclusive with `externalIPs` |
 | selectors | []VpcEgressGatewaySelector | Namespace/Pod selectors that pick the traffic sources handled by this gateway |
 | trafficPolicy | String | Optional. Traffic policy, `Cluster` (default) or `Local`; only effective for the default VPC |
+| podAntiAffinity | String | Optional. Pod anti-affinity mode for gateway workload replicas, `Required` (default, spreads replicas across nodes) or `Preferred` (allows co-located replicas without node-level HA) |
 | bfd | VpcEgressGatewayBFDConfig | BFD configuration |
 | policies | []VpcEgressGatewayPolicy | List of egress policies, with at least one entry |
 | nodeSelector | []VpcEgressGatewayNodeSelector | Optional. Node selector for the workload |
 | tolerations | []Toleration | Optional. Standard Kubernetes tolerations |
+| priorityClassName | String | Optional. PriorityClass name applied to the gateway pods; falls back to the cluster default Pod priority when unspecified |
 | resources | ResourceRequirements | Optional. Container resource limits; the controller uses defaults when unspecified |
 | bandwidth | BandwidthLimit | Optional. Per-replica ingress/egress bandwidth limit, expressed as integer Mbps or a supported bit-rate quantity |
 | observability | VpcEgressGatewayObservability | Optional. Native interface metrics, conntrack metrics, JSON flow logs, and ServiceMonitor metadata. All capabilities default to disabled |
@@ -990,3 +1124,11 @@ A cluster-scoped resource used by ANP/CNP domain-name matching when `enable-dns-
 | replicas | Int32 | Number of replicas |
 | vpc | String | VPC |
 | subnet | String | Subnet |
+| corefile | String | Name of the ConfigMap providing CoreDNS corefile configuration, defaults to `vpc-dns-corefile` |
+
+#### VpcDNSStatus
+
+| Property Name | Type | Description |
+| --- | --- | --- |
+| active | Boolean | Whether the VPC DNS service is active |
+| conditions | []Condition | List of latest observations of the VPC DNS status |

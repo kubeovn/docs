@@ -86,6 +86,13 @@ args:
 - --mtu=1333
 ```
 
+In addition, if the underlying host network enables Jumbo Frames (e.g., MTU 9000), the automatically calculated Pod MTU will also be large. When Pod traffic egresses to the external internet (where the path MTU is typically 1500), an overly large MTU can lead to fragmentation drops or PMTUD blackholes. You can apply an upper bound to the auto-computed Pod MTU via `--max-mtu` (set to 0 to disable the limit):
+
+```yaml
+args:
+- --max-mtu=1400
+```
+
 ## Global Traffic Mirroring Setting
 
 When global traffic mirroring is enabled, Kube-OVN will create a `mirror0` virtual NIC on each node
@@ -168,6 +175,23 @@ args:
 ```
 
 EIP and SNAT is enabled by default. More information can refer to [EIP and SNAT](../guide/eip-snat.en.md).
+
+## LoadBalancer Service Support Settings
+
+In the default VPC, you can enable this option to support `LoadBalancer` type Services. For detailed usage and other configurable parameters, please refer to [LoadBalancer Service](../guide/loadbalancer-service.md).
+
+This feature is disabled by default. It can be configured in the installation script:
+
+```bash
+ENABLE_LB_SVC=true
+```
+
+Or configured post-installation by modifying the arguments of the `kube-ovn-controller` Deployment:
+
+```yaml
+args:
+- --enable-lb-svc=true
+```
 
 ## Centralized Gateway ECMP Settings
 
@@ -393,3 +417,85 @@ args:
 ```
 
 It can also be configured via Helm with `cni_conf.NON_PRIMARY_CNI=true` (chart v1) or `cni.nonPrimaryCNI=true` (chart v2). See [Non-Primary CNI Mode](../start/non-primary-mode.en.md) for details.
+
+## Bind Local IP Settings
+
+Services including `kube-ovn-controller`, `kube-ovn-cni`, and `kube-ovn-monitor` support binding to the local IP address. This feature was designed primarily for security considerations in scenarios where services are not permitted to listen on `0.0.0.0` (for example, when a service is deployed on an edge gateway where external users could otherwise directly access it via a public IP and port). This feature is enabled by default and controlled by the following parameter in the installation script:
+
+```bash
+ENABLE_BIND_LOCAL_IP=true
+```
+
+Taking `kube-ovn-monitor` as an example, when enabled, the service will bind to the local Pod IP:
+
+```bash
+# netstat -tunlp |grep kube-ovn
+tcp        0      0 172.18.0.5:10661        0.0.0.0:*               LISTEN      2612/./kube-ovn-mon
+```
+
+After installation, it can also be adjusted by modifying the environment variable in the Deployment or DaemonSet of the corresponding service:
+
+```yaml
+env:
+- name: ENABLE_BIND_LOCAL_IP
+  value: "false"
+```
+
+## Underlay ARP IP Conflict Detection Settings
+
+In Underlay physical direct-connect mode, to prevent an assigned Pod IP from conflicting with an existing physical host on the network, Kube-OVN actively sends gratuitous ARP probe packets before activating the address to verify whether the IP is already in use.
+
+This feature is enabled by default. If strict network firewalls cause false positives, it can be adjusted in the installation script:
+
+```bash
+ENABLE_ARP_DETECT_IP_CONFLICT=false
+```
+
+Or modified post-installation in the `kube-ovn-cni` DaemonSet arguments:
+
+```yaml
+args:
+- --enable-arp-detect-ip-conflict=false
+```
+
+## Garbage Collection and Inspection Interval Settings
+
+The Kube-OVN controller runs background tasks for garbage collection (cleaning up orphaned LSP ports and unbound IPs) and periodic health inspections. You can tune their execution intervals via the following parameters:
+
+```yaml
+args:
+# Garbage collection interval in seconds; set to 0 to disable GC (default: 360)
+- --gc-interval=360
+# Inspection and state synchronization interval in seconds (default: 20)
+- --inspect-interval=20
+```
+
+## Controller Leader Election Tuning Settings
+
+In large-scale clusters, multi-zone deployments, or environments with elevated network latency, default leader election timeouts may trigger premature failovers due to transient jitter. You can fine-tune the controller HA leader election timings via:
+
+```yaml
+args:
+# Duration that non-leader candidates wait before attempting to acquire leadership (default: 30s)
+- --leader-elect-lease-duration=30s
+# Duration that the acting leader retries refreshing leadership before giving up (default: 20s)
+- --leader-elect-renew-deadline=20s
+# Interval between leader election retry attempts (default: 6s)
+- --leader-elect-retry-period=6s
+```
+
+## TLS Security Specification and Cipher Suites Settings
+
+When enabling secure serving for the API and metrics endpoint (`--secure-serving=true`), you can configure TLS protocol versions and cipher suites to comply with enterprise security baselines:
+
+```yaml
+args:
+- --secure-serving=true
+# Supported values: TLS10, TLS11, TLS12, TLS13
+- --tls-min-version=TLS12
+- --tls-max-version=TLS13
+# Permitted cipher suites (matching Go crypto/tls names, comma-separated)
+- --tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+```
+
+

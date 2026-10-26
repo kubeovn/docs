@@ -6,18 +6,19 @@ By default, Kube-OVN applies a NetworkPolicy to all OVN interfaces selected by `
 
 For multi-network pods, you can scope a policy to specific providers with:
 
-- `ovn.kubernetes.io/network_policy_for`
+- `ovn.kubernetes.io/policy-for` (officially recommended standard annotation)
+- `ovn.kubernetes.io/network_policy_for` (compatible alias)
 
 This lets one policy affect only selected interfaces instead of all interfaces on the pod.
 
 ## Annotation format
 
-Use comma-separated entries:
+Use comma-separated entries, supporting either `policy-for` or `network_policy_for`:
 
 ```yaml
 metadata:
   annotations:
-    ovn.kubernetes.io/network_policy_for: "ovn,default/net-a,default/net-b"
+    ovn.kubernetes.io/policy-for: "ovn,default/net-a,default/net-b"
 ```
 
 Supported entry formats:
