@@ -438,3 +438,20 @@ controller:
     renewDeadline: "20s"
     retryPeriod: "6s"
 ```
+## kube-ovn-monitor replicas
+
+`kube-ovn-monitor` runs with one replica by default. Configure the monitor Deployment replica count through Helm:
+
+```yaml
+# classic chart
+kube-ovn-monitor:
+  replicas: 1
+
+# v2 chart
+monitor:
+  replicas: 1
+```
+
+The classic chart uses `kube-ovn-monitor.replicas`, while the v2 chart uses `monitor.replicas`; both default to `1`. In an HA OVN central deployment, set the replica count to the number of central nodes that need to be observed so `kube-ovn-monitor` can collect the local OVN Raft role from each node.
+
+During an upgrade, Helm renders the Deployment with the configured replica count instead of resetting it to `1`. Manage this value in Helm values rather than relying only on a temporary `kubectl scale` change.
