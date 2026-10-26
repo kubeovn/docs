@@ -404,6 +404,50 @@ args:
 
 或通过 Helm `cni_conf.NON_PRIMARY_CNI=true`（chart v1）/`cni.nonPrimaryCNI=true`（chart v2）配置。详见 [Non-Primary CNI 模式](../start/non-primary-mode.md)。
 
+## Controller Leader Election 时间配置
+
+controller 使用 Kubernetes leader election。可以通过以下 duration 参数调整当前 leader 停止续租后备用 controller 接管所需的时间：
+
+```yaml
+args:
+- --leader-elect-lease-duration=30s
+- --leader-elect-renew-deadline=20s
+- --leader-elect-retry-period=6s
+```
+
+默认值分别为 `30s`、`20s` 和 `6s`。所有值都必须是正 duration。controller 会在创建 Kubernetes client 前校验这些参数的关系：
+
+- `lease-duration` 必须大于 `renew-deadline`。
+- `renew-deadline` 必须大于 `retry-period` 乘以 Kubernetes client-go leader election 的 jitter factor。
+
+可以通过安装脚本设置：
+
+```bash
+LEADER_ELECT_LEASE_DURATION=30s
+LEADER_ELECT_RENEW_DEADLINE=20s
+LEADER_ELECT_RETRY_PERIOD=6s
+```
+
+Helm 配置默认值为空，只有设置后 chart 才会渲染这些参数。classic chart 使用 `kube-ovn-controller.leaderElection`：
+
+```yaml
+kube-ovn-controller:
+  leaderElection:
+    leaseDuration: "30s"
+    renewDeadline: "20s"
+    retryPeriod: "6s"
+```
+
+v2 chart 使用 `controller.leaderElection`：
+
+```yaml
+controller:
+  leaderElection:
+    leaseDuration: "30s"
+    renewDeadline: "20s"
+    retryPeriod: "6s"
+```
+
 ## 绑定本地 ip
 
 kube-ovn-controller/kube-ovn-cni/kube-ovn-monitor 这些服务支持绑定本地 ip，该功能设计原因主要是因为某些场景下出于安全考虑不允许服务绑定 0.0.0.0 （比如该服务部署在某个对外网关上，外部用户可以直接通过公网 ip 并指定端口去访问到该服务），该功能默认是打开的，由安装脚本中如下参数控制：
