@@ -60,6 +60,59 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/y
 kubectl apply -f speaker.yaml
 ```
 
+### 按节点使用 YAML 配置
+
+除直接在启动参数中配置外，`kube-ovn-speaker` 还支持从 YAML 文件读取配置。通过 `--config=/etc/kube-ovn/$(NODE_NAME).yaml` 指定文件路径，或者设置环境变量 `KUBE_OVN_BGP_SPEAKER_CONFIG_FILE`。环境变量的值会作为 `--config` 的默认值。
+
+可以将每个节点的配置文件作为 ConfigMap 的独立 key 挂载。key 名称就是挂载后的文件名：
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-ovn-bgp-speaker-config
+  namespace: kube-system
+data:
+  speaker-node-1.yaml: |
+    cluster-as: 65000
+    neighbor-address:
+      - 10.32.32.254
+    neighbor-as: 65030
+    router-id: 10.32.32.2
+  speaker-node-2.yaml: |
+    cluster-as: 65001
+    neighbor-address:
+      - 10.32.32.254
+    neighbor-as: 65030
+    router-id: 10.32.32.3
+```
+
+使用 v2 Helm Chart 时，通过 `bgpSpeaker.configMap` 挂载 ConfigMap，并通过 `bgpSpeaker.extraEnv` 让每个 Pod 根据 Downward API 的 `NODE_NAME` 选择对应文件：
+
+```yaml
+bgpSpeaker:
+  enabled: true
+  configMap: kube-ovn-bgp-speaker-config
+  configMapMountPath: /etc/kube-ovn/
+  extraEnv:
+    - name: KUBE_OVN_BGP_SPEAKER_CONFIG_FILE
+      value: /etc/kube-ovn/$(NODE_NAME).yaml
+```
+
+使用其他部署清单时，需要以相同方式将 ConfigMap 挂载到 speaker 容器，并设置 `--config` 或上述环境变量。配置文件只能包含一个 YAML 文档，未知字段会导致 speaker 启动失败。
+
+文件中的字段名使用参数名去掉前缀后的 kebab-case 形式。常用字段格式如下：
+
+- `neighbor-address` 和 `neighbor-ipv6-address`：IPv4 或 IPv6 地址列表。
+- `allowed-source-addresses` 和 `allowed-source-ipv6-addresses`：源地址白名单列表。
+- `cluster-as` 和 `neighbor-as`：AS 号，使用整数。
+- `grpc-host`、`router-id` 和 `node-ips`：IP 字符串；`node-ips` 使用 `IPv4`、`IPv6` 映射。
+- `holdtime`、`graceful-restart-time` 和 `graceful-restart-deferral-time`：持续时间字符串（如 `90s`、`5m`、`1h`），也可以使用整数秒。
+- `announce-cluster-ip`、`graceful-restart`、`passivemode`、`extended-nexthop`、`nat-gw-mode`、`enable-metrics` 和 `enable-bfd`：布尔值。
+- `bfd-min-tx`、`bfd-min-rx` 和 `bfd-detection-multiplier`：整数。
+
+配置文件中明确设置的字段会覆盖同名 CLI 参数和默认值；未出现的字段继续使用 CLI 参数或默认值。需要清空 CLI 列表时，可在文件中设置为空列表。
+
 ## 发布 Pod/Subnet 路由
 
 如需使用 BGP 对外发布路由，首先需要将对应 Subnet 的 `natOutgoing` 设置为 `false`，使得 Pod IP 可以直接进入底层网络。
