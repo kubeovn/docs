@@ -709,6 +709,8 @@
 | tolerations | []Toleration | 标准 Kubernetes 容忍信息 |
 | affinity | Affinity | 标准 Kubernetes 亲和性配置 |
 
+`VpcNatGateway` 的 `spec.lanIp` 可以留空。单副本模式下 controller 会动态分配地址并将实际地址持久化到 `spec.lanIp`，持久化后不可修改；`spec.replicas` 大于 1 时每个副本独立动态分配地址，`spec.lanIp` 不用于固定地址。`status.lanIp` 记录观察到的地址，HA 模式下为按排序排列、逗号分隔的地址列表；`status.replicas` 和 `status.ready` 分别表示就绪副本数和网关就绪状态。
+
 ### VpcEgressGateway
 
 | 属性名称 | 类型 | 描述 |

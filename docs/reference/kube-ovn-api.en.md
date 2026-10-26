@@ -709,6 +709,8 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | tolerations | []Toleration | Standard Kubernetes toleration information |
 | affinity | Affinity | Standard Kubernetes affinity configuration |
 
+`VpcNatGateway.spec.lanIp` may be left empty. In single-replica mode, the controller allocates an address dynamically and persists the observed value to `spec.lanIp`; the field is immutable after persistence. When `spec.replicas` is greater than 1, each replica allocates its own address and `spec.lanIp` cannot pin an address. `status.lanIp` records the observed addresses as one address in single-replica mode or a sorted comma-separated list in HA mode; `status.replicas` and `status.ready` report the ready replica count and gateway readiness.
+
 ### VpcEgressGateway
 
 | Property Name | Type | Description |
