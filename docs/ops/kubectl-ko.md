@@ -1,844 +1,153 @@
-# kubectl 插件使用
+# kubectl-ko 插件
 
-为了方便日常的运维操作，Kube-OVN 提供了 kubectl 插件工具，网络管理员
-可以通过该命令进行日常操作，例如：查看 OVN 数据库信息和状态，OVN 数据库
-备份和恢复，OVS 相关信息查看，tcpdump 特定容器，特定链路逻辑拓扑展示，
-网络问题诊断和性能优化。
+`kubectl-ko` 是用于操作和诊断 Kube-OVN 的 Go 编写的 kubectl 插件。它通过
+Kubernetes API 获取资源，并将需要节点权限的操作转发给独立的
+`kubectl-ko-node-agent` DaemonSet。节点 agent 不是 `kube-ovn-cni`、`ovs`、
+`ovs-ovn` 或 `ovn-central` 容器，也不依赖这些容器中的 shell、OVN/OVS 工具或
+`tcpdump`。
 
-## 插件安装
+## 安装
 
-Kube-OVN 安装时默认会部署插件到每个节点，若执行 kubectl 的机器不在集群内，
-或需要重装插件，可参考下面的步骤：
+Kube-OVN 镜像和 CNI 安装脚本会将插件安装到已有的
+`/usr/local/bin/kubectl-ko` 路径。集群外的工作站可从匹配 Kube-OVN 版本的
+GitHub Release 下载 `kubectl-ko-<os>-<arch>.tar.gz`（Linux/macOS）或
+`kubectl-ko-windows-<arch>.zip`，同时下载 `kubectl-ko-checksums.txt` 校验
+SHA256，再将插件放入 `PATH`。工作站必须使用对应操作系统和架构的文件；节点
+侧的 OVN/OVS 操作仍然只能在 Linux 节点执行。
 
-下载 `kubectl-ko` 文件：
+需要访问节点的命令依赖 `kubectl-ko-node-agent` DaemonSet。使用 Helm Chart
+安装 Kube-OVN 后等待该 DaemonSet 就绪，再运行节点诊断。插件通过 Kubernetes
+`pods/exec` 启动 agent helper，agent 使用自身挂载的节点 socket 和网络命名空间
+完成操作，不会进入 Kube-OVN 组件容器。
 
-```bash
-wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/dist/images/kubectl-ko
+插件版本可在不访问集群的情况下查看：
+
+```console
+kubectl ko version
+kubectl plugin list
 ```
 
-将该文件移动至 `$PATH` 目录下：
+## 命令结构
 
-```bash
-mv kubectl-ko /usr/local/bin/kubectl-ko
+```text
+kubectl ko
+  exec
+    (POD | TYPE/NAME) [-c CONTAINER] [flags] -- COMMAND [args...]
+    -l SELECTOR -- COMMAND [args...]
+    nbctl | sbctl | ic-nbctl | ic-sbctl -- [TOOL_ARGS...]
+    vsctl | ofctl | dpctl | appctl --node NODE -- [TOOL_ARGS...]
+  db
+    health
+    nb
+      status | backup | kick SERVER_ID | restore
+    sb
+      status | backup | kick SERVER_ID
+  trace --pod POD|--node NODE --dst-ip IP [OPTIONS]
+  capture (--pod POD | --vm VM | --vmi VMI) -- [TCPDUMP_ARGS...]
+  network inspect --pod POD [--output table|json]
+  diagnose
+    cluster | node NODE | subnet SUBNET
+    connectivity --target PROTOCOL://IP:PORT [--target ...]
+    environment
+  logs [OPTIONS]
+  restart
+  perf run [OPTIONS] | recovery --yes
+  acl decode COOKIE | listen --node NODE
+  version | completion bash|zsh|fish|powershell
 ```
 
-增加可执行权限：
+| 命令 | 作用 |
+| --- | --- |
+| `exec POD -- COMMAND`、`exec deploy/NAME -- COMMAND`、`exec svc/NAME -- COMMAND` | 使用 Kubernetes selector 找到一个 Running Pod，再通过 `pods/exec` 执行命令。支持 `po`、`deploy`、`svc`、`ds`、`sts`、`rs`、`rc` 和 `job` 别名。 |
+| `exec -l SELECTOR -- COMMAND` | 通过 label selector 选择一个 Running Pod，不能和资源引用同时使用。 |
+| `exec nbctl`、`exec sbctl`、`exec ic-nbctl`、`exec ic-sbctl` | 通过 agent 找到对应 OVN 数据库或 interconnection leader，在节点 socket 上执行客户端命令。 |
+| `exec vsctl/ofctl/dpctl/appctl --node NODE` | 通过 agent 在指定节点执行 OVS 工具。写入类命令可能改变运行中的状态。 |
+| `db health`、`db nb/sb status`、`db nb/sb backup`、`db nb kick`、`db nb restore` | 检查、备份、恢复或维护 OVN Northbound/Southbound 数据库。 |
+| `trace` | 解析 Pod 或节点地址、MAC 和逻辑端口，执行 OVN/OVS trace；支持 IPv4、IPv6、ARP、TCP、UDP、Underlay、U2O 和 VM 端口。 |
+| `capture` | 在 Pod 或 KubeVirt launcher 的网络命名空间抓包，支持 `--pod`、`--vm` 或 `--vmi` 三选一。 |
+| `network inspect` | 查看 Pod 网络命名空间中的接口、地址、MTU、状态、统计信息以及主机侧 veth 对端。 |
+| `diagnose` | 检查集群、节点、子网、指定 TCP/UDP endpoint 或 Linux 节点环境。 |
+| `logs`、`restart`、`perf`、`acl` | 收集组件和节点日志、按依赖顺序重启组件、运行性能/恢复测试、解码或监听 ACL sampling。 |
 
-```bash
-chmod +x /usr/local/bin/kubectl-ko
+## Workload exec
+
+`exec` 的第一个参数可以是 Pod 名称或 Kubernetes workload 引用。workload
+引用通过 selector 选择一个 Running Pod，不会在一次调用中执行到多个 Pod。
+`-l/--selector` 是另一种选择方式，不能和资源引用同时使用。
+
+支持的 Kubernetes 风格参数包括 `-c/--container`、`-i/--stdin`、
+`-t/--tty`、`-q/--quiet`、`--pod-running-timeout` 和 `-n/--namespace`。
+命令与远端参数之间必须使用 `--` 分隔。插件只移除一次该分隔符，之后的
+`--help`、`--timeout`、`-n`、`-c` 以及引号都原样传给远端工具：
+
+```console
+kubectl ko exec deploy/web -- date
+kubectl ko exec svc/web -c app -- sh -c 'echo ready'
+kubectl ko exec -n app -l app=web -- curl http://localhost:8080/healthz
+kubectl ko exec nbctl -- --format=json show
+kubectl ko exec vsctl --node worker-a -- --timeout=5 show
 ```
 
-检查插件是否可以正常使用：
+`exec nbctl --help` 显示插件本地帮助，`exec nbctl -- --help` 才会显示远端
+`ovn-nbctl` 帮助。省略分隔符时插件会拒绝请求，不猜测远端参数边界。
 
-```bash
-# kubectl plugin list
-The following compatible plugins are available:
+## Pod、VM 和 VMI 抓包
 
-/usr/local/bin/kubectl-ko
+`capture` 必须且只能指定一个目标：`--pod`、`--vm` 或 `--vmi`。支持的抓包
+参数包括 `-D`（列出接口）、`-i`、`-c`、`-s`、`-nn` 和 `-w -`。使用
+`-w -` 时 pcap 写入本地 stdout，诊断信息写入 stderr：
+
+```console
+kubectl ko capture --namespace app --pod web -- -w - > capture.pcap
+kubectl ko capture --vm app/database -- -w - > vm.pcap
+kubectl ko capture --namespace app --vmi database -- -c 10
 ```
 
-## 插件使用
-
-运行 `kubectl ko` 会展示该插件所有可用的命令和用法描述，如下所示：
-
-```bash
-# kubectl ko
-kubectl ko {subcommand} [option...]
-Available Subcommands:
-  [nb|sb] [status|kick|backup|dbstatus|restore]     ovn-db operations show cluster status, kick stale server, backup database, get db consistency status or restore ovn nb db when met 'inconsistent data' error
-  nbctl [ovn-nbctl options ...]    invoke ovn-nbctl
-  sbctl [ovn-sbctl options ...]    invoke ovn-sbctl
-  vsctl {nodeName} [ovs-vsctl options ...]   invoke ovs-vsctl on the specified node
-  ofctl {nodeName} [ovs-ofctl options ...]   invoke ovs-ofctl on the specified node
-  dpctl {nodeName} [ovs-dpctl options ...]   invoke ovs-dpctl on the specified node
-  appctl {nodeName} [ovs-appctl options ...]   invoke ovs-appctl on the specified node
-  tcpdump {namespace/podname} [tcpdump options ...]     capture pod traffic
-  {trace|ovn-trace} ...    trace ovn microflow of specific packet
-    {trace|ovn-trace} {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]    trace ICMP/TCP/UDP
-    {trace|ovn-trace} {namespace/podname} {target ip address} [target mac address] arp {request|reply}                     trace ARP request/reply
-    {trace|ovn-trace} {node//nodename} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]       trace ICMP/TCP/UDP
-    {trace|ovn-trace} {node//nodename} {target ip address} [target mac address] arp {request|reply}                        trace ARP request/reply
-  diagnose {all|node|subnet|IPPorts} [nodename|subnetName|{proto1}-{IP1}-{Port1},{proto2}-{IP2}-{Port2}]    diagnose connectivity of all nodes or a specific node or specify subnet's ds pod or IPPorts like 'tcp-172.18.0.2-53,udp-172.18.0.3-53'
-  env-check    check the environment configuration
-  reload    restart all kube-ovn components
-  log {kube-ovn|ovn|ovs|linux|all}    save log to ./kubectl-ko-log/
-  perf [image] performance test default image is docker.io/kubeovn/test:v1.13.0
-  icnbctl [ovn-nbctl options ...]    invoke ovn-ic-nbctl
-  icsbctl [ovn-sbctl options ...]    invoke ovn-ic-sbctl
-```
-
-下面将介绍每个命令的具体功能和使用。
-
-### [nb | sb] [status | kick | backup | dbstatus | restore]
-
-该子命令主要对 OVN 北向或南向数据库进行操作，包括数据库集群状态查看，数据库节点下线，
-数据库备份，数据库存储状态查看和数据库修复。
-
-#### 数据库集群状态查看
-
-该命令会在对应 OVN 数据库的 leader 节点执行 `ovs-appctl cluster/status` 展示集群状态:
-
-```bash
-# kubectl ko nb status
-306b
-Name: OVN_Northbound
-Cluster ID: 9a87 (9a872522-3e7d-47ca-83a3-d74333e1a7ca)
-Server ID: 306b (306b256b-b5e1-4eb0-be91-4ca96adf6bad)
-Address: tcp:[172.18.0.2]:6643
-Status: cluster member
-Role: leader
-Term: 1
-Leader: self
-Vote: self
-
-Last Election started 280309 ms ago, reason: timeout
-Last Election won: 280309 ms ago
-Election timer: 5000
-Log: [139, 139]
-Entries not yet committed: 0
-Entries not yet applied: 0
-Connections: <-8723 ->8723 <-85d6 ->85d6
-Disconnections: 0
-Servers:
-    85d6 (85d6 at tcp:[172.18.0.4]:6643) next_index=139 match_index=138 last msg 763 ms ago
-    8723 (8723 at tcp:[172.18.0.3]:6643) next_index=139 match_index=138 last msg 763 ms ago
-    306b (306b at tcp:[172.18.0.2]:6643) (self) next_index=2 match_index=138
-status: ok
-```
-
-若 `Server` 下的 `match_index` 出现较大差别，且 `last msg` 时间较长，则对应 Server 可能长时间没有响应，
-需要进一步查看。
-
-#### 数据库节点下线
-
-该命令会将某个节点从 OVN 数据库中移除，在节点下线或更换节点时需要用到。
-下面将以上一条命令所查看到的集群状态为例，下线 `172.18.0.3` 节点:
-
-```bash
-# kubectl ko nb kick 8723
-started removal
-```
-
-再次查看数据库集群状态确认节点已移除：
-
-```bash
-# kubectl ko nb status
-306b
-Name: OVN_Northbound
-Cluster ID: 9a87 (9a872522-3e7d-47ca-83a3-d74333e1a7ca)
-Server ID: 306b (306b256b-b5e1-4eb0-be91-4ca96adf6bad)
-Address: tcp:[172.18.0.2]:6643
-Status: cluster member
-Role: leader
-Term: 1
-Leader: self
-Vote: self
-
-Last Election started 324356 ms ago, reason: timeout
-Last Election won: 324356 ms ago
-Election timer: 5000
-Log: [140, 140]
-Entries not yet committed: 0
-Entries not yet applied: 0
-Connections: <-85d6 ->85d6
-Disconnections: 2
-Servers:
-    85d6 (85d6 at tcp:[172.18.0.4]:6643) next_index=140 match_index=139 last msg 848 ms ago
-    306b (306b at tcp:[172.18.0.2]:6643) (self) next_index=2 match_index=139
-status: ok
-```
-
-#### 数据库备份
-
-该子命令会备份当前 OVN 数据库至本地，可用于灾备和恢复：
-
-```bash
-# kubectl ko nb backup
-tar: Removing leading `/' from member names
-backup ovn-nb db to /root/ovnnb_db.060223191654183154.backup
-```
-
-#### 数据库存储状态查看
-
-该命令用来查看数据库文件是否存在损坏：
-
-```bash
-# kubectl ko nb dbstatus
-status: ok
-```
-
-若异常则显示 `inconsistent data` 需要使用下面的命令进行修复。
-
-#### 数据库修复
-
-若数据库状态进入 `inconsistent data` 可使用该命令进行修复：
-
-```bash
-# kubectl ko nb restore
-deployment.apps/ovn-central scaled
-ovn-central original replicas is 3
-first nodeIP is 172.18.0.5
-ovs-ovn pod on node 172.18.0.5 is ovs-ovn-8jxv9
-ovs-ovn pod on node 172.18.0.3 is ovs-ovn-sjzb6
-ovs-ovn pod on node 172.18.0.4 is ovs-ovn-t87zk
-backup nb db file
-restore nb db file, operate in pod ovs-ovn-8jxv9
-deployment.apps/ovn-central scaled
-finish restore nb db file and ovn-central replicas
-recreate ovs-ovn pods
-pod "ovs-ovn-8jxv9" deleted
-pod "ovs-ovn-sjzb6" deleted
-pod "ovs-ovn-t87zk" deleted
-```
-
-### [nbctl | sbctl] [options ...]
-
-该子命令会直接进入 OVN 北向数据库或南向数据库 的 leader 节点分别执行 `ovn-nbctl` 和 `ovn-sbctl` 命令。
-更多该命令的详细用法请查询上游 OVN 的官方文档 [ovn-nbctl(8)](https://man7.org/linux/man-pages/man8/ovn-nbctl.8.html){: target="_blank" } 和 [ovn-sbctl(8)](https://man7.org/linux/man-pages/man8/ovn-sbctl.8.html){: target="_blank" }。
-
-```bash
-# kubectl ko nbctl show
-switch c7cd17e8-ceee-4a91-9bb3-e5a313fe1ece (snat)
-    port snat-ovn-cluster
-        type: router
-        router-port: ovn-cluster-snat
-switch 20e0c6d0-023a-4756-aec5-200e0c60f95d (join)
-    port node-liumengxin-ovn3-192.168.137.178
-        addresses: ["00:00:00:64:FF:A8 100.64.0.4"]
-    port node-liumengxin-ovn1-192.168.137.176
-        addresses: ["00:00:00:AF:98:62 100.64.0.2"]
-    port node-liumengxin-ovn2-192.168.137.177
-        addresses: ["00:00:00:D9:58:B8 100.64.0.3"]
-    port join-ovn-cluster
-        type: router
-        router-port: ovn-cluster-join
-switch 0191705c-f827-427b-9de3-3c3b7d971ba5 (central)
-    port central-ovn-cluster
-        type: router
-        router-port: ovn-cluster-central
-switch 2a45ff05-388d-4f85-9daf-e6fccd5833dc (ovn-default)
-    port alertmanager-main-0.monitoring
-        addresses: ["00:00:00:6C:DF:A3 10.16.0.19"]
-    port kube-state-metrics-5d6885d89-4nf8h.monitoring
-        addresses: ["00:00:00:6F:02:1C 10.16.0.15"]
-    port fake-kubelet-67c55dfd89-pv86k.kube-system
-        addresses: ["00:00:00:5C:12:E8 10.16.19.177"]
-    port ovn-default-ovn-cluster
-        type: router
-        router-port: ovn-cluster-ovn-default
-router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
-    port ovn-cluster-snat
-        mac: "00:00:00:7A:82:8F"
-        networks: ["172.22.0.1/16"]
-    port ovn-cluster-join
-        mac: "00:00:00:F8:18:5A"
-        networks: ["100.64.0.1/16"]
-    port ovn-cluster-central
-        mac: "00:00:00:4D:8C:F5"
-        networks: ["192.101.0.1/16"]
-    port ovn-cluster-ovn-default
-        mac: "00:00:00:A3:F8:18"
-        networks: ["10.16.0.1/16"]
-```
-
-### vsctl {nodeName} [options ...]
-
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-vsctl` 命令，查询并配置 `vswitchd`。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-vsctl(8)](https://man7.org/linux/man-pages/man8/ovs-vsctl.8.html){: target="_blank" }。
-
-```bash
-# kubectl ko vsctl kube-ovn-01 show
-0d4c4675-c9cc-440a-8c1a-878e17f81b88
-    Bridge br-int
-        fail_mode: secure
-        datapath_type: system
-        Port a2c1a8a8b83a_h
-            Interface a2c1a8a8b83a_h
-        Port "4fa5c4cbb1a5_h"
-            Interface "4fa5c4cbb1a5_h"
-        Port ovn-eef07d-0
-            Interface ovn-eef07d-0
-                type: stt
-                options: {csum="true", key=flow, remote_ip="192.168.137.178"}
-        Port ovn0
-            Interface ovn0
-                type: internal
-        Port mirror0
-            Interface mirror0
-                type: internal
-        Port ovn-efa253-0
-            Interface ovn-efa253-0
-                type: stt
-                options: {csum="true", key=flow, remote_ip="192.168.137.177"}
-        Port br-int
-            Interface br-int
-                type: internal
-    ovs_version: "2.17.2"
-```
-
-### ofctl {nodeName} [options ...]
-
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-ofctl` 命令，查询或管理 OpenFlow。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-ofctl(8)](https://man7.org/linux/man-pages/man8/ovs-ofctl.8.html){: target="_blank" }。
-
-```bash
-# kubectl ko ofctl kube-ovn-01 dump-flows br-int
-NXST_FLOW reply (xid=0x4): flags=[more]
- cookie=0xcf3429e6, duration=671791.432s, table=0, n_packets=0, n_bytes=0, idle_age=65534, hard_age=65534, priority=100,in_port=2 actions=load:0x4->NXM_NX_REG13[],load:0x9->NXM_NX_REG11[],load:0xb->NXM_NX_REG12[],load:0x4->OXM_OF_METADATA[],load:0x1->NXM_NX_REG14[],resubmit(,8)
- cookie=0xc91413c6, duration=671791.431s, table=0, n_packets=907489, n_bytes=99978275, idle_age=0, hard_age=65534, priority=100,in_port=7 actions=load:0x1->NXM_NX_REG13[],load:0x9->NXM_NX_REG11[],load:0xb->NXM_NX_REG12[],load:0x4->OXM_OF_METADATA[],load:0x4->NXM_NX_REG14[],resubmit(,8)
- cookie=0xf180459, duration=671791.431s, table=0, n_packets=17348582, n_bytes=2667811214, idle_age=0, hard_age=65534, priority=100,in_port=6317 actions=load:0xa->NXM_NX_REG13[],load:0x9->NXM_NX_REG11[],load:0xb->NXM_NX_REG12[],load:0x4->OXM_OF_METADATA[],load:0x9->NXM_NX_REG14[],resubmit(,8)
- cookie=0x7806dd90, duration=671791.431s, table=0, n_packets=3235428, n_bytes=833821312, idle_age=0, hard_age=65534, priority=100,in_port=1 actions=load:0xd->NXM_NX_REG13[],load:0x9->NXM_NX_REG11[],load:0xb->NXM_NX_REG12[],load:0x4->OXM_OF_METADATA[],load:0x3->NXM_NX_REG14[],resubmit(,8)
-...
-```
-
-### dpctl {nodeName} [options ...]
-
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-dpctl` 命令，查询或管理 OVS datapath。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-dpctl(8)](https://man7.org/linux/man-pages/man8/ovs-dpctl.8.html){: target="_blank" }。
-
-```bash
-# kubectl ko dpctl kube-ovn-01 show
-system@ovs-system:
-  lookups: hit:350805055 missed:21983648 lost:73
-  flows: 105
-  masks: hit:1970748791 total:22 hit/pkt:5.29
-  port 0: ovs-system (internal)
-  port 1: ovn0 (internal)
-  port 2: mirror0 (internal)
-  port 3: br-int (internal)
-  port 4: stt_sys_7471 (stt: packet_type=ptap)
-  port 5: eeb4d9e51b5d_h
-  port 6: a2c1a8a8b83a_h
-  port 7: 4fa5c4cbb1a5_h
-```
-
-### appctl {nodeName} [options ...]
-
-该命令会进入对应 `nodeName` 上的 `ovs-ovn` 容器，并执行相应的 `ovs-appctl` 命令，来操作相关 daemon 进程。
-更多该命令的详细用法请查询上游 OVS 的官方文档 [ovs-appctl(8)](https://man7.org/linux/man-pages/man8/ovs-appctl.8.html){: target="_blank" }。
-
-```bash
-# kubectl ko appctl kube-ovn-01 vlog/list
-                 console    syslog    file
-                 -------    ------    ------
-backtrace          OFF        ERR       INFO
-bfd                OFF        ERR       INFO
-bond               OFF        ERR       INFO
-bridge             OFF        ERR       INFO
-bundle             OFF        ERR       INFO
-bundles            OFF        ERR       INFO
-...
-```
-
-### tcpdump {namespace/podname} [tcpdump options ...]
-
-该命令会进入 `namespace/podname` 所在机器的 `kube-ovn-cni` 容器，并执行 `tcpdump` 抓取对应容器 veth 网卡
-端的流量，可以方便排查网络相关问题，如下所示：
-
-```bash
-# kubectl ko tcpdump default/ds1-l6n7p icmp
-+ kubectl exec -it kube-ovn-cni-wlg4s -n kube-ovn -- tcpdump -nn -i d7176fe7b4e0_h icmp
-tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
-listening on d7176fe7b4e0_h, link-type EN10MB (Ethernet), capture size 262144 bytes
-06:52:36.619688 IP 100.64.0.3 > 10.16.0.4: ICMP echo request, id 2, seq 1, length 64
-06:52:36.619746 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 1, length 64
-06:52:37.619588 IP 100.64.0.3 > 10.16.0.4: ICMP echo request, id 2, seq 2, length 64
-06:52:37.619630 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 2, length 64
-06:52:38.619933 IP 100.64.0.3 > 10.16.0.4: ICMP echo request, id 2, seq 3, length 64
-06:52:38.619973 IP 10.16.0.4 > 100.64.0.3: ICMP echo reply, id 2, seq 3, length 64
-```
-
-### trace [arguments ...]
-
-该命令将会打印 Pod 或节点通过特定协议访问某地址时对应的 OVN 逻辑流表和最终的 Openflow 流表，
-方便开发或运维时定位流表相关问题。
-
-支持的命令：
-
-```bash
-kubectl ko trace {namespace/podname} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]
-kubectl ko trace {namespace/podname} {target ip address} [target mac address] arp {request|reply}
-kubectl ko trace {node//nodename} {target ip address} [target mac address] {icmp|tcp|udp} [target tcp/udp port]
-kubectl ko trace {node//nodename} {target ip address} [target mac address] arp {request|reply}
-```
-
-示例：
-
-```bash
-# kubectl ko trace default/ds1-l6n7p 8.8.8.8 icmp
-+ kubectl exec ovn-central-5bc494cb5-np9hm -n kube-ovn -- ovn-trace --ct=new ovn-default 'inport == "ds1-l6n7p.default" && ip.ttl == 64 && icmp && eth.src == 0a:00:00:10:00:05 && ip4.src == 10.16.0.4 && eth.dst == 00:00:00:B8:CA:43 && ip4.dst == 8.8.8.8'
-# icmp,reg14=0xf,vlan_tci=0x0000,dl_src=0a:00:00:10:00:05,dl_dst=00:00:00:b8:ca:43,nw_src=10.16.0.4,nw_dst=8.8.8.8,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=0,icmp_code=0
-
-ingress(dp="ovn-default", inport="ds1-l6n7p.default")
------------------------------------------------------
- 0. ls_in_port_sec_l2 (ovn-northd.c:4143): inport == "ds1-l6n7p.default" && eth.src == {0a:00:00:10:00:05}, priority 50, uuid 39453393
-    next;
- 1. ls_in_port_sec_ip (ovn-northd.c:2898): inport == "ds1-l6n7p.default" && eth.src == 0a:00:00:10:00:05 && ip4.src == {10.16.0.4}, priority 90, uuid 81bcd485
-    next;
- 3. ls_in_pre_acl (ovn-northd.c:3269): ip, priority 100, uuid 7b4f4971
-    reg0[0] = 1;
-    next;
- 5. ls_in_pre_stateful (ovn-northd.c:3396): reg0[0] == 1, priority 100, uuid 36cdd577
-    ct_next;
-
-ct_next(ct_state=new|trk)
--------------------------
- 6. ls_in_acl (ovn-northd.c:3759): ip && (!ct.est || (ct.est && ct_label.blocked == 1)), priority 1, uuid 7608af5b
-    reg0[1] = 1;
-    next;
-10. ls_in_stateful (ovn-northd.c:3995): reg0[1] == 1, priority 100, uuid 2aba1b90
-    ct_commit(ct_label=0/0x1);
-    next;
-16. ls_in_l2_lkup (ovn-northd.c:4470): eth.dst == 00:00:00:b8:ca:43, priority 50, uuid 5c9c3c9f
-    outport = "ovn-default-ovn-cluster";
-    output;
-
-...
-```
-
-若 trace 对象为运行于 Underlay 网络下的虚拟机，需要添加额外参数来指定目的 Mac 地址：
-
-```bash
-kubectl ko trace default/virt-handler-7lvml 8.8.8.8 82:7c:9f:83:8c:01 icmp
-```
-
-### diagnose {all|node|subnet|IPPorts} [nodename|subnetName|{proto1}-{IP1}-{Port1},{proto2}-{IP2}-{Port2}]
-
-诊断集群网络组件状态，并去对应节点的 `kube-ovn-pinger` 检测当前节点到其他节点和关键服务的连通性和网络延迟：
-
-```bash
-# kubectl ko diagnose all
-switch c7cd17e8-ceee-4a91-9bb3-e5a313fe1ece (snat)
-    port snat-ovn-cluster
-        type: router
-        router-port: ovn-cluster-snat
-switch 20e0c6d0-023a-4756-aec5-200e0c60f95d (join)
-    port node-liumengxin-ovn3-192.168.137.178
-        addresses: ["00:00:00:64:FF:A8 100.64.0.4"]
-    port node-liumengxin-ovn1-192.168.137.176
-        addresses: ["00:00:00:AF:98:62 100.64.0.2"]
-    port join-ovn-cluster
-        type: router
-        router-port: ovn-cluster-join
-switch 0191705c-f827-427b-9de3-3c3b7d971ba5 (central)
-    port central-ovn-cluster
-        type: router
-        router-port: ovn-cluster-central
-switch 2a45ff05-388d-4f85-9daf-e6fccd5833dc (ovn-default)
-    port ovn-default-ovn-cluster
-        type: router
-        router-port: ovn-cluster-ovn-default
-    port prometheus-k8s-1.monitoring
-        addresses: ["00:00:00:AA:37:DF 10.16.0.23"]
-router 212f73dd-d63d-4d72-864b-a537e9afbee1 (ovn-cluster)
-    port ovn-cluster-snat
-        mac: "00:00:00:7A:82:8F"
-        networks: ["172.22.0.1/16"]
-    port ovn-cluster-join
-        mac: "00:00:00:F8:18:5A"
-        networks: ["100.64.0.1/16"]
-    port ovn-cluster-central
-        mac: "00:00:00:4D:8C:F5"
-        networks: ["192.101.0.1/16"]
-    port ovn-cluster-ovn-default
-        mac: "00:00:00:A3:F8:18"
-        networks: ["10.16.0.1/16"]
-Routing Policies
-     31000                            ip4.dst == 10.16.0.0/16           allow
-     31000                           ip4.dst == 100.64.0.0/16           allow
-     30000                         ip4.dst == 192.168.137.177         reroute                100.64.0.3
-     30000                         ip4.dst == 192.168.137.178         reroute                100.64.0.4
-     29000                 ip4.src == $ovn.default.fake.6_ip4         reroute               100.64.0.22
-     29000                 ip4.src == $ovn.default.fake.7_ip4         reroute               100.64.0.21
-     29000                 ip4.src == $ovn.default.fake.8_ip4         reroute               100.64.0.23
-     29000 ip4.src == $ovn.default.liumengxin.ovn3.192.168.137.178_ip4         reroute                100.64.0.4
-     20000 ip4.src == $ovn.default.liumengxin.ovn1.192.168.137.176_ip4 && ip4.dst != $ovn.cluster.overlay.subnets.IPv4         reroute                100.64.0.2
-     20000 ip4.src == $ovn.default.liumengxin.ovn2.192.168.137.177_ip4 && ip4.dst != $ovn.cluster.overlay.subnets.IPv4         reroute                100.64.0.3
-     20000 ip4.src == $ovn.default.liumengxin.ovn3.192.168.137.178_ip4 && ip4.dst != $ovn.cluster.overlay.subnets.IPv4         reroute                100.64.0.4
-IPv4 Routes
-Route Table <main>:
-                0.0.0.0/0                100.64.0.1 dst-ip
-UUID                                    LB                  PROTO      VIP                     IPs
-e9bcfd9d-793e-4431-9073-6dec96b75d71    cluster-tcp-load    tcp        10.100.209.132:10660    192.168.137.176:10660
-                                                            tcp        10.101.239.192:6641     192.168.137.177:6641
-                                                            tcp        10.101.240.101:3000     10.16.0.7:3000
-                                                            tcp        10.103.184.186:6642     192.168.137.177:6642
-35d2b7a5-e3a7-485a-a4b7-b4970eb0e63b    cluster-tcp-sess    tcp        10.100.158.128:8080     10.16.0.10:8080,10.16.0.5:8080,10.16.63.30:8080
-                                                            tcp        10.107.26.215:8080      10.16.0.19:8080,10.16.0.20:8080,10.16.0.21:8080
-                                                            tcp        10.107.26.215:9093      10.16.0.19:9093,10.16.0.20:9093,10.16.0.21:9093
-                                                            tcp        10.98.187.99:8080       10.16.0.22:8080,10.16.0.23:8080
-                                                            tcp        10.98.187.99:9090       10.16.0.22:9090,10.16.0.23:9090
-f43303e4-89aa-4d3e-a3dc-278a552fe27b    cluster-udp-load    udp        10.96.0.10:53           10.16.0.4:53,10.16.0.9:53
-_uuid               : 06776304-5a96-43ed-90c4-c4854c251699
-addresses           : []
-external_ids        : {vendor=kube-ovn}
-name                : node_liumengxin_ovn2_192.168.137.177_underlay_v6
-
-_uuid               : 62690625-87d5-491c-8675-9fd83b1f433c
-addresses           : []
-external_ids        : {vendor=kube-ovn}
-name                : node_liumengxin_ovn1_192.168.137.176_underlay_v6
-
-_uuid               : b03a9bae-94d5-4562-b34c-b5f6198e180b
-addresses           : ["10.16.0.0/16", "100.64.0.0/16", "172.22.0.0/16", "192.101.0.0/16"]
-external_ids        : {vendor=kube-ovn}
-name                : ovn.cluster.overlay.subnets.IPv4
-
-_uuid               : e1056f3a-24cc-4666-8a91-75ee6c3c2426
-addresses           : []
-external_ids        : {vendor=kube-ovn}
-name                : ovn.cluster.overlay.subnets.IPv6
-
-_uuid               : 3e5d5fff-e670-47b2-a2f5-a39f4698a8c5
-addresses           : []
-external_ids        : {vendor=kube-ovn}
-name                : node_liumengxin_ovn3_192.168.137.178_underlay_v6
-_uuid               : 2d85dbdc-d0db-4abe-b19e-cc806d32b492
-action              : drop
-direction           : from-lport
-external_ids        : {}
-label               : 0
-log                 : false
-match               : "inport==@ovn.sg.kubeovn_deny_all && ip"
-meter               : []
-name                : []
-options             : {}
-priority            : 2003
-severity            : []
-
-_uuid               : de790cc8-f155-405f-bb32-5a51f30c545f
-action              : drop
-direction           : to-lport
-external_ids        : {}
-label               : 0
-log                 : false
-match               : "outport==@ovn.sg.kubeovn_deny_all && ip"
-meter               : []
-name                : []
-options             : {}
-priority            : 2003
-severity            : []
-Chassis "e15ed4d4-1780-4d50-b09e-ea8372ed48b8"
-    hostname: liumengxin-ovn1-192.168.137.176
-    Encap stt
-        ip: "192.168.137.176"
-        options: {csum="true"}
-    Port_Binding node-liumengxin-ovn1-192.168.137.176
-    Port_Binding perf-6vxkn.default
-    Port_Binding kube-state-metrics-5d6885d89-4nf8h.monitoring
-    Port_Binding alertmanager-main-0.monitoring
-    Port_Binding kube-ovn-pinger-6ftdf.kube-system
-    Port_Binding fake-kubelet-67c55dfd89-pv86k.kube-system
-    Port_Binding prometheus-k8s-0.monitoring
-Chassis "eef07da1-f8ad-4775-b14d-bd6a3b4eb0d5"
-    hostname: liumengxin-ovn3-192.168.137.178
-    Encap stt
-        ip: "192.168.137.178"
-        options: {csum="true"}
-    Port_Binding kube-ovn-pinger-7twb4.kube-system
-    Port_Binding prometheus-adapter-86df476d87-rl88g.monitoring
-    Port_Binding prometheus-k8s-1.monitoring
-    Port_Binding node-liumengxin-ovn3-192.168.137.178
-    Port_Binding perf-ff475.default
-    Port_Binding alertmanager-main-1.monitoring
-    Port_Binding blackbox-exporter-676d976865-tvsjd.monitoring
-Chassis "efa253c9-494d-4719-83ae-b48ab0f11c03"
-    hostname: liumengxin-ovn2-192.168.137.177
-    Encap stt
-        ip: "192.168.137.177"
-        options: {csum="true"}
-    Port_Binding grafana-6c4c6b8fb7-pzd2c.monitoring
-    Port_Binding node-liumengxin-ovn2-192.168.137.177
-    Port_Binding alertmanager-main-2.monitoring
-    Port_Binding coredns-6789c94dd8-9jqsz.kube-system
-    Port_Binding coredns-6789c94dd8-25d4r.kube-system
-    Port_Binding prometheus-operator-7bbc99fc8b-wgjm4.monitoring
-    Port_Binding prometheus-adapter-86df476d87-gdxmc.monitoring
-    Port_Binding perf-fjnws.default
-    Port_Binding kube-ovn-pinger-vh2xg.kube-system
-ds kube-proxy ready
-kube-proxy ready
-deployment ovn-central ready
-deployment kube-ovn-controller ready
-ds kube-ovn-cni ready
-ds ovs-ovn ready
-deployment coredns ready
-ovn-nb leader check ok
-ovn-sb leader check ok
-ovn-northd leader check ok
-### kube-ovn-controller recent log
-
-### start to diagnose node liumengxin-ovn1-192.168.137.176
-#### ovn-controller log:
-2022-06-03T00:56:44.897Z|16722|inc_proc_eng|INFO|User triggered force recompute.
-2022-06-03T01:06:44.912Z|16723|inc_proc_eng|INFO|User triggered force recompute.
-2022-06-03T01:16:44.925Z|16724|inc_proc_eng|INFO|User triggered force recompute.
-2022-06-03T01:26:44.936Z|16725|inc_proc_eng|INFO|User triggered force recompute.
-2022-06-03T01:36:44.959Z|16726|inc_proc_eng|INFO|User triggered force recompute.
-2022-06-03T01:46:44.974Z|16727|inc_proc_eng|INFO|User triggered force recompute.
-2022-06-03T01:56:44.988Z|16728|inc_proc_eng|INFO|User triggered force recompute.
-2022-06-03T02:06:45.001Z|16729|inc_proc_eng|INFO|User triggered force recompute.
-2022-06-03T02:16:45.025Z|16730|inc_proc_eng|INFO|User triggered force recompute.
-2022-06-03T02:26:45.040Z|16731|inc_proc_eng|INFO|User triggered force recompute.
-
-#### ovs-vswitchd log:
-2022-06-02T23:03:00.137Z|00079|dpif(handler1)|WARN|system@ovs-system: execute ct(commit,zone=14,label=0/0x1,nat(src)),8 failed (Invalid argument) on packet icmp,vlan_tci=0x0000,dl_src=00:00:00:f8:07:c8,dl_dst=00:00:00:fa:1e:50,nw_src=10.16.0.5,nw_dst=10.16.0.10,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0 icmp_csum:f9d1
- with metadata skb_priority(0),tunnel(tun_id=0x160017000004,src=192.168.137.177,dst=192.168.137.176,ttl=64,tp_src=38881,tp_dst=7471,flags(csum|key)),skb_mark(0),ct_state(0x21),ct_zone(0xe),ct_tuple4(src=10.16.0.5,dst=10.16.0.10,proto=1,tp_src=8,tp_dst=0),in_port(4) mtu 0
-2022-06-02T23:23:31.840Z|00080|dpif(handler1)|WARN|system@ovs-system: execute ct(commit,zone=14,label=0/0x1,nat(src)),8 failed (Invalid argument) on packet icmp,vlan_tci=0x0000,dl_src=00:00:00:f8:07:c8,dl_dst=00:00:00:fa:1e:50,nw_src=10.16.0.5,nw_dst=10.16.0.10,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0 icmp_csum:15b2
- with metadata skb_priority(0),tunnel(tun_id=0x160017000004,src=192.168.137.177,dst=192.168.137.176,ttl=64,tp_src=38881,tp_dst=7471,flags(csum|key)),skb_mark(0),ct_state(0x21),ct_zone(0xe),ct_tuple4(src=10.16.0.5,dst=10.16.0.10,proto=1,tp_src=8,tp_dst=0),in_port(4) mtu 0
-2022-06-03T00:09:15.659Z|00081|dpif(handler1)|WARN|system@ovs-system: execute ct(commit,zone=14,label=0/0x1,nat(src)),8 failed (Invalid argument) on packet icmp,vlan_tci=0x0000,dl_src=00:00:00:dc:e3:63,dl_dst=00:00:00:fa:1e:50,nw_src=10.16.63.30,nw_dst=10.16.0.10,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0 icmp_csum:e5a5
- with metadata skb_priority(0),tunnel(tun_id=0x150017000004,src=192.168.137.178,dst=192.168.137.176,ttl=64,tp_src=9239,tp_dst=7471,flags(csum|key)),skb_mark(0),ct_state(0x21),ct_zone(0xe),ct_tuple4(src=10.16.63.30,dst=10.16.0.10,proto=1,tp_src=8,tp_dst=0),in_port(4) mtu 0
-2022-06-03T00:30:13.409Z|00064|dpif(handler2)|WARN|system@ovs-system: execute ct(commit,zone=14,label=0/0x1,nat(src)),8 failed (Invalid argument) on packet icmp,vlan_tci=0x0000,dl_src=00:00:00:f8:07:c8,dl_dst=00:00:00:fa:1e:50,nw_src=10.16.0.5,nw_dst=10.16.0.10,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0 icmp_csum:6b4a
- with metadata skb_priority(0),tunnel(tun_id=0x160017000004,src=192.168.137.177,dst=192.168.137.176,ttl=64,tp_src=38881,tp_dst=7471,flags(csum|key)),skb_mark(0),ct_state(0x21),ct_zone(0xe),ct_tuple4(src=10.16.0.5,dst=10.16.0.10,proto=1,tp_src=8,tp_dst=0),in_port(4) mtu 0
-2022-06-03T02:02:33.832Z|00082|dpif(handler1)|WARN|system@ovs-system: execute ct(commit,zone=14,label=0/0x1,nat(src)),8 failed (Invalid argument) on packet icmp,vlan_tci=0x0000,dl_src=00:00:00:f8:07:c8,dl_dst=00:00:00:fa:1e:50,nw_src=10.16.0.5,nw_dst=10.16.0.10,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0 icmp_csum:a819
- with metadata skb_priority(0),tunnel(tun_id=0x160017000004,src=192.168.137.177,dst=192.168.137.176,ttl=64,tp_src=38881,tp_dst=7471,flags(csum|key)),skb_mark(0),ct_state(0x21),ct_zone(0xe),ct_tuple4(src=10.16.0.5,dst=10.16.0.10,proto=1,tp_src=8,tp_dst=0),in_port(4) mtu 0
-
-#### ovs-vsctl show results:
-0d4c4675-c9cc-440a-8c1a-878e17f81b88
-    Bridge br-int
-        fail_mode: secure
-        datapath_type: system
-        Port a2c1a8a8b83a_h
-            Interface a2c1a8a8b83a_h
-        Port "4fa5c4cbb1a5_h"
-            Interface "4fa5c4cbb1a5_h"
-        Port ovn-eef07d-0
-            Interface ovn-eef07d-0
-                type: stt
-                options: {csum="true", key=flow, remote_ip="192.168.137.178"}
-        Port ovn0
-            Interface ovn0
-                type: internal
-        Port "04d03360e9a0_h"
-            Interface "04d03360e9a0_h"
-        Port eeb4d9e51b5d_h
-            Interface eeb4d9e51b5d_h
-        Port mirror0
-            Interface mirror0
-                type: internal
-        Port "8e5d887ccd80_h"
-            Interface "8e5d887ccd80_h"
-        Port ovn-efa253-0
-            Interface ovn-efa253-0
-                type: stt
-                options: {csum="true", key=flow, remote_ip="192.168.137.177"}
-        Port "17512d5be1f1_h"
-            Interface "17512d5be1f1_h"
-        Port br-int
-            Interface br-int
-                type: internal
-    ovs_version: "2.17.2"
-
-#### pinger diagnose results:
-I0603 10:35:04.349404   17619 pinger.go:19]
--------------------------------------------------------------------------------
-Kube-OVN:
-  Version:       {{ variables.version }}
-  Build:         2022-04-24_08:02:50
-  Commit:        git-73f9d15
-  Go Version:    go1.17.8
-  Arch:          amd64
--------------------------------------------------------------------------------
-I0603 10:35:04.376797   17619 config.go:166] pinger config is &{KubeConfigFile: KubeClient:0xc000493380 Port:8080 DaemonSetNamespace:kube-system DaemonSetName:kube-ovn-pinger Interval:5 Mode:job ExitCode:0 InternalDNS:kubernetes.default ExternalDNS: NodeName:liumengxin-ovn1-192.168.137.176 HostIP:192.168.137.176 PodName:kube-ovn-pinger-6ftdf PodIP:10.16.0.10 PodProtocols:[IPv4] ExternalAddress: NetworkMode:kube-ovn PollTimeout:2 PollInterval:15 SystemRunDir:/var/run/openvswitch DatabaseVswitchName:Open_vSwitch DatabaseVswitchSocketRemote:unix:/var/run/openvswitch/db.sock DatabaseVswitchFileDataPath:/etc/openvswitch/conf.db DatabaseVswitchFileLogPath:/var/log/openvswitch/ovsdb-server.log DatabaseVswitchFilePidPath:/var/run/openvswitch/ovsdb-server.pid DatabaseVswitchFileSystemIDPath:/etc/openvswitch/system-id.conf ServiceVswitchdFileLogPath:/var/log/openvswitch/ovs-vswitchd.log ServiceVswitchdFilePidPath:/var/run/openvswitch/ovs-vswitchd.pid ServiceOvnControllerFileLogPath:/var/log/ovn/ovn-controller.log ServiceOvnControllerFilePidPath:/var/run/ovn/ovn-controller.pid}
-I0603 10:35:04.449166   17619 exporter.go:75] liumengxin-ovn1-192.168.137.176: exporter connect successfully
-I0603 10:35:04.554011   17619 ovn.go:21] ovs-vswitchd and ovsdb are up
-I0603 10:35:04.651293   17619 ovn.go:33] ovn_controller is up
-I0603 10:35:04.651342   17619 ovn.go:39] start to check port binding
-I0603 10:35:04.749613   17619 ovn.go:135] chassis id is 1d7f3d6c-eec5-4b3c-adca-2969d9cdfd80
-I0603 10:35:04.763487   17619 ovn.go:49] port in sb is [node-liumengxin-ovn1-192.168.137.176 perf-6vxkn.default kube-state-metrics-5d6885d89-4nf8h.monitoring alertmanager-main-0.monitoring kube-ovn-pinger-6ftdf.kube-system fake-kubelet-67c55dfd89-pv86k.kube-system prometheus-k8s-0.monitoring]
-I0603 10:35:04.763583   17619 ovn.go:61] ovs and ovn-sb binding check passed
-I0603 10:35:05.049309   17619 ping.go:259] start to check apiserver connectivity
-I0603 10:35:05.053666   17619 ping.go:268] connect to apiserver success in 4.27ms
-I0603 10:35:05.053786   17619 ping.go:129] start to check pod connectivity
-I0603 10:35:05.249590   17619 ping.go:159] ping pod: kube-ovn-pinger-6ftdf 10.16.0.10, count: 3, loss count 0, average rtt 16.30ms
-I0603 10:35:05.354135   17619 ping.go:159] ping pod: kube-ovn-pinger-7twb4 10.16.63.30, count: 3, loss count 0, average rtt 1.81ms
-I0603 10:35:05.458460   17619 ping.go:159] ping pod: kube-ovn-pinger-vh2xg 10.16.0.5, count: 3, loss count 0, average rtt 1.92ms
-I0603 10:35:05.458523   17619 ping.go:83] start to check node connectivity
-```
-
-如果 diagnose 的目标指定为 subnet 该脚本会在 subnet 上建立 daemonset，由 `kube-ovn-pinger` 去探测这个 daemonset 的所有 pod 的连通性和网络延时，测试完后自动销毁该 daemonset。
-
-如果 diagnose 的目标指定为 IPPorts 该脚本会让每个 `kube-ovn-pinger` pod 去探测目标协议，IP，Port 是否可达。
-
-### reload
-
-该命令重启所有 Kube-OVN 相关组件：
-
-```bash
-# kubectl ko reload
-pod "ovn-central-8684dd94bd-vzgcr" deleted
-Waiting for deployment "ovn-central" rollout to finish: 0 of 1 updated replicas are available...
-deployment "ovn-central" successfully rolled out
-pod "ovs-ovn-bsnvz" deleted
-pod "ovs-ovn-m9b98" deleted
-pod "kube-ovn-controller-8459db5ff4-64c62" deleted
-Waiting for deployment "kube-ovn-controller" rollout to finish: 0 of 1 updated replicas are available...
-deployment "kube-ovn-controller" successfully rolled out
-pod "kube-ovn-cni-2klnh" deleted
-pod "kube-ovn-cni-t2jz4" deleted
-Waiting for daemon set "kube-ovn-cni" rollout to finish: 0 of 2 updated pods are available...
-Waiting for daemon set "kube-ovn-cni" rollout to finish: 1 of 2 updated pods are available...
-daemon set "kube-ovn-cni" successfully rolled out
-pod "kube-ovn-pinger-ln72z" deleted
-pod "kube-ovn-pinger-w8lrk" deleted
-Waiting for daemon set "kube-ovn-pinger" rollout to finish: 0 of 2 updated pods are available...
-Waiting for daemon set "kube-ovn-pinger" rollout to finish: 1 of 2 updated pods are available...
-daemon set "kube-ovn-pinger" successfully rolled out
-pod "kube-ovn-monitor-7fb67d5488-7q6zb" deleted
-Waiting for deployment "kube-ovn-monitor" rollout to finish: 0 of 1 updated replicas are available...
-deployment "kube-ovn-monitor" successfully rolled out
-```
-
-### log {kube-ovn|ovn|ovs|linux|all}
-
-使用该命令会抓取 kube-ovn 所有节点上的 Kube-OVN，OVN，Open vSwitch 的 log 以及 linux 常用的一些 debug 信息。
-
-```bash
-# kubectl ko log all
-Collecting kube-ovn logging files
-Collecting ovn logging files
-Collecting openvswitch logging files
-Collecting linux dmesg files
-Collecting linux iptables-legacy files
-Collecting linux iptables-nft files
-Collecting linux route files
-Collecting linux link files
-Collecting linux neigh files
-Collecting linux memory files
-Collecting linux top files
-Collecting linux sysctl files
-Collecting linux netstat files
-Collecting linux addr files
-Collecting linux ipset files
-Collecting linux tcp files
-Collected files have been saved in the directory /root/kubectl-ko-log
-```
-
-目录如下：
-
-```bash
-# tree kubectl-ko-log/
-kubectl-ko-log/
-|-- kube-ovn-control-plane
-|   |-- kube-ovn
-|   |   |-- kube-ovn-cni.log
-|   |   |-- kube-ovn-monitor.log
-|   |   `-- kube-ovn-pinger.log
-|   |-- linux
-|   |   |-- addr.log
-|   |   |-- dmesg.log
-|   |   |-- ipset.log
-|   |   |-- iptables-legacy.log
-|   |   |-- iptables-nft.log
-|   |   |-- link.log
-|   |   |-- memory.log
-|   |   |-- neigh.log
-|   |   |-- netstat.log
-|   |   |-- route.log
-|   |   |-- sysctl.log
-|   |   |-- tcp.log
-|   |   `-- top.log
-|   |-- openvswitch
-|   |   |-- ovs-vswitchd.log
-|   |   `-- ovsdb-server.log
-|   `-- ovn
-|       |-- ovn-controller.log
-|       |-- ovn-northd.log
-|       |-- ovsdb-server-nb.log
-|       `-- ovsdb-server-sb.log
-```
-
-### perf [image]
-
-该命令会去测试 Kube-OVN 的一些性能指标如下：
-
-1. 容器网络的性能指标；
-2. Hostnetwork 网络性能指标；
-3. 容器网络组播报文性能指标；
-4. OVN-NB, OVN-SB, OVN-Northd leader 删除恢复所需时间。
-
-参数 image 用于指定性能测试 Pod 使用的镜像，默认为 `docker.io/kubeovn/test:v1.13.0`。该参数主要用于离线场景，当镜像拉取到内网环境时，可能需要修改镜像名称。
-
-```bash
-# kubectl ko perf
-============================== Prepareing Performance Test Resources ===============================
-pod/test-client created
-pod/test-host-client created
-pod/test-server created
-pod/test-host-server created
-service/test-server created
-pod/test-client condition met
-pod/test-host-client condition met
-pod/test-host-server condition met
-pod/test-server condition met
-====================================================================================================
-============================ Start Pod Network Unicast Performance Test ============================
-Size            TCP Latency     TCP Bandwidth   UDP Latency     UDP Lost Rate   UDP Bandwidth
-64              82.8 us         97.7 Mbits/sec  67.6 us         (0%)            8.42 Mbits/sec
-128             85.4 us         167 Mbits/sec   67.2 us         (0%)            17.2 Mbits/sec
-512             85.8 us         440 Mbits/sec   68.7 us         (0%)            68.4 Mbits/sec
-1k              85.1 us         567 Mbits/sec   68.7 us         (0%)            134 Mbits/sec
-4k              138 us          826 Mbits/sec   78.1 us         (1.4%)          503 Mbits/sec
-====================================================================================================
-=============================== Start Host Network Performance Test ================================
-Size            TCP Latency     TCP Bandwidth   UDP Latency     UDP Lost Rate   UDP Bandwidth
-64              49.7 us         120 Mbits/sec   37.9 us         (0%)            18.6 Mbits/sec
-128             49.7 us         200 Mbits/sec   38.1 us         (0%)            35.5 Mbits/sec
-512             51.9 us         588 Mbits/sec   38.9 us         (0%)            142 Mbits/sec
-1k              51.7 us         944 Mbits/sec   37.2 us         (0%)            279 Mbits/sec
-4k              74.9 us         1.66 Gbits/sec  39.9 us         (0%)            1.20 Gbits/sec
-====================================================================================================
-============================== Start Service Network Performance Test ==============================
-Size            TCP Latency     TCP Bandwidth   UDP Latency     UDP Lost Rate   UDP Bandwidth
-64              111 us          96.3 Mbits/sec  88.4 us         (0%)            7.59 Mbits/sec
-128             83.7 us         150 Mbits/sec   69.2 us         (0%)            16.9 Mbits/sec
-512             87.4 us         374 Mbits/sec   75.8 us         (0%)            60.9 Mbits/sec
-1k              88.2 us         521 Mbits/sec   73.1 us         (0%)            123 Mbits/sec
-4k              148 us          813 Mbits/sec   77.6 us         (0.0044%)       451 Mbits/sec
-====================================================================================================
-=========================== Start Pod Multicast Network Performance Test ===========================
-Size            UDP Latency     UDP Lost Rate   UDP Bandwidth
-64              0.014 ms        (0.17%)         5.80 Mbits/sec
-128             0.012 ms        (0%)            11.4 Mbits/sec
-512             0.016 ms        (0%)            46.1 Mbits/sec
-1k              0.023 ms        (0.073%)        89.8 Mbits/sec
-4k              0.035 ms        (1.3%)          126 Mbits/sec
-====================================================================================================
-============================= Start Host Multicast Network Performance =============================
-Size            UDP Latency     UDP Lost Rate   UDP Bandwidth
-64              0.007 ms        (0%)            9.95 Mbits/sec
-128             0.005 ms        (0%)            21.8 Mbits/sec
-512             0.008 ms        (0%)            86.8 Mbits/sec
-1k              0.013 ms        (0.045%)        168 Mbits/sec
-4k              0.010 ms        (0.31%)         242 Mbits/sec
-====================================================================================================
-================================== Start Leader Recover Time Test ==================================
-Delete ovn central nb pod
-pod "ovn-central-5cb9c67d75-tlz9w" deleted
-Waiting for ovn central nb pod running
-=============================== OVN nb Recovery takes 3.305236803 s ================================
-Delete ovn central sb pod
-pod "ovn-central-5cb9c67d75-szx4c" deleted
-Waiting for ovn central sb pod running
-=============================== OVN sb Recovery takes 3.462698535 s ================================
-Delete ovn central northd pod
-pod "ovn-central-5cb9c67d75-zqmqv" deleted
-Waiting for ovn central northd pod running
-============================= OVN northd Recovery takes 2.691291403 s ==============================
-====================================================================================================
-================================= Remove Performance Test Resource =================================
-rm -f unicast-test-client.log
-rm -f unicast-test-host-client.log
-rm -f unicast-test-client.log
-kubectl ko nbctl lb-del test-server
-rm -f multicast-test-server.log
-kubectl exec ovs-ovn-gxdrf -n kube-system -- ip maddr del 01:00:5e:00:00:64 dev eth0
-kubectl exec ovs-ovn-h57bf -n kube-system -- ip maddr del 01:00:5e:00:00:64 dev eth0
-rm -f multicast-test-host-server.log
-pod "test-client" deleted
-pod "test-host-client" deleted
-pod "test-host-server" deleted
-pod "test-server" deleted
-service "test-server" deleted
-====================================================================================================
-```
+节点 agent 在目标网络命名空间中直接使用 Linux `AF_PACKET` socket 和
+`setns(2)`，不会启动 `tcpdump`、`nsenter` 或 shell。当前只有 Ethernet 接口
+支持 pcap 输出；不支持的过滤表达式会在打开远端请求前失败。
+
+### KubeVirt 迁移期间的选择规则
+
+- `--vm` 会校验 VMI 由指定 VM 控制；`--vmi` 也支持没有 VM 控制器的独立 VMI。
+- 插件依据 VMI controller UID、节点和运行状态选择当前 launcher Pod。
+- 迁移进行中一直使用源 launcher；迁移成功后才选择目标 launcher。失败的迁移仍使用源 launcher。
+- launcher 必须处于 Running 且没有删除时间戳。缺失或存在多个候选 launcher，或请求开始前 VMI/Pod 状态发生变化时，命令会明确失败；状态稳定后重试，或直接使用 `--pod` 指定 launcher。
+- 已建立的抓包会一直留在开始时选定的网络命名空间，不会随着后续迁移切换。
+
+## 节点 agent 与权限
+
+每个节点操作都通过 Kubernetes `pods/exec` 在独立 agent helper 中执行。请求
+使用版本化 gRPC 流，多个并发请求使用独立流，不会重启 agent。agent 只挂载
+执行所需的节点 socket、网络命名空间和日志路径，不挂载 service-account token，
+也不会在 `kube-ovn-cni`、`ovs-ovn` 或 `ovn-central` 容器中执行命令。
+
+使用插件的账号需要读取目标资源；节点操作还需要访问 agent 的 `pods/exec`。
+数据库恢复、组件重启和性能恢复操作需要额外的 workload 修改权限。请按组织的
+最小权限策略授予这些权限。
+
+## 旧命令迁移
+
+Go CLI 保留诊断能力，但旧 Bash 命令名称和位置参数不是别名：
+
+| 旧形式 | 新形式 |
+| --- | --- |
+| `kubectl ko nbctl ARGS` | `kubectl ko exec nbctl -- ARGS` |
+| `kubectl ko sbctl ARGS` | `kubectl ko exec sbctl -- ARGS` |
+| `kubectl ko icnbctl ARGS` | `kubectl ko exec ic-nbctl -- ARGS` |
+| `kubectl ko icsbctl ARGS` | `kubectl ko exec ic-sbctl -- ARGS` |
+| `kubectl ko vsctl NODE ARGS` | `kubectl ko exec vsctl --node NODE -- ARGS` |
+| `kubectl ko ofctl/dpctl/appctl NODE ARGS` | `kubectl ko exec TOOL --node NODE -- ARGS` |
+| `kubectl ko tcpdump POD ARGS` | `kubectl ko capture --pod POD -- ARGS` |
+| `kubectl ko trace ...` | `kubectl ko trace --pod POD|--node NODE --dst-ip IP ...` |
+| `kubectl ko reload` | `kubectl ko restart` |
+| `kubectl ko log ...` | `kubectl ko logs ...` |
+
+生产镜像不再依赖 `tcpdump`、`ncat`/`netcat` 和 `net-tools`。使用
+`kubectl ko capture` 抓包，使用 `kubectl ko diagnose connectivity` 检查
+TCP/UDP endpoint，使用 `network inspect`、`trace`、`logs` 和 `perf` 获取结构化
+诊断信息。需要交互式调试工具时使用 DEBUG 镜像；DEBUG 镜像仍可提供 `gdb`、
+`valgrind` 和抓包工具。
+
+上面的替代关系适用于生产镜像；需要完整的工具边界和权限说明时，以当前版本
+的 `kubectl ko` 命令帮助和 Helm values 为准。
