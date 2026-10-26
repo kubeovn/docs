@@ -296,7 +296,7 @@ To solve this problem, it is necessary to turn off hairpin (or modify the releva
 
 ### When there are a large number of Pods, gateway check for new Pods fails
 
-If there are a large number of Pods running on the same node (more than 300), it may cause packet loss due to the OVS flow table resubmit times exceeding the upper limit of ARP broadcast packets.
+In a large Underlay Layer 2 network, broadcast ARP or IPv6 ND requests can exceed OVS's 4096 resubmit limit, causing gateway checks or packet forwarding to fail. Older versions may show logs such as the following:
 
 ```txt
 2022-11-13T08:43:46.782Z|00222|ofproto_dpif_upcall(handler5)|WARN|Flow: arp,in_port=331,vlan_tci=0x0000,dl_src=00:00:00:25:eb:39,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.131.240,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:25:eb:39,arp_tha=ff:ff:ff:ff:ff:ff
@@ -313,8 +313,20 @@ Datapath actions: drop
 2022-11-13T08:44:34.077Z|00224|ofproto_dpif_xlate(handler5)|WARN|over 4096 resubmit actions on bridge br-int while processing arp,in_port=13483,vlan_tci=0x0000,dl_src=00:00:00:59:ef:13,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.152.3,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:59:ef:13,arp_tha=ff:ff:ff:ff:ff:ff
 ```
 
-To solve this issue, modify the OVN NB option `bcast_arp_req_flood` to `false`:
+Images that include kubeovn/kube-ovn#7549 default `NB_Global.options:bcast_arp_nd_req_flood` to `false`, so a manual command to disable flooding is no longer required for every cluster. With the option disabled, the L2 unknown stage suppresses Layer 2 flooding for broadcast ARP and IPv6 NS requests, avoiding the OVS resubmit limit in large Underlay networks.
+
+Router-owned address resolution remains available:
+
+- Router-owned ARP/ND requests use priority 95, above the suppression rule, and still reach the logical router for NAT and Load Balancer address resolution.
+- IPv4 GARP uses a priority-105 exception and is sent to `MC_FLOOD_L2` so all Layer 2 ports can learn the address.
+- Other router-owned ARP/ND requests use `MC_UNKNOWN`, so unknown IPv6 NS requests do not enter multicast-snooping flood rules.
+
+After upgrading to a Kube-OVN image that includes #7549, remove init scripts or manual commands that set this option. Images from before this fix do not include these defaults and router-address exceptions, so their behavior is not covered by this section.
+
+If the physical network requires traditional Layer 2 ARP/ND flooding, explicitly restore the old behavior:
 
 ```sh
-kubectl ko nbctl set NB_Global . options:bcast_arp_req_flood=false
+kubectl ko nbctl set NB_Global . options:bcast_arp_nd_req_flood=true
 ```
+
+This setting allows broadcast ARP/ND Layer 2 flooding again and can reintroduce the resubmit limit in large Underlay networks. Use it only when the network requires it.
