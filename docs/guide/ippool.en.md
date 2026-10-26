@@ -48,13 +48,36 @@ spec:
         image: docker.io/library/nginx:alpine
 ```
 
+## Use a Named IPPool
+
+When the value of `ovn.kubernetes.io/ip_pool` is an IPPool name, such as `pool-1`, the Pod does
+not need to set `ovn.kubernetes.io/logical_switch`. The controller uses `pool-1.spec.subnet` as
+the Pod subnet and sets the Pod's `logical_switch`, `cidr`, and `gateway` annotations:
+
+```yaml
+metadata:
+  annotations:
+    ovn.kubernetes.io/ip_pool: pool-1
+```
+
+For a multi-NIC Pod, use `<provider>.kubernetes.io/ip_pool` to select a named IPPool for a
+specific provider. The IPPool subnet must match the subnet used by that provider. If an explicitly
+set `<provider>.kubernetes.io/logical_switch` conflicts with the IPPool subnet, admission or the
+controller rejects the Pod. A single IP, comma-separated IP list, or semicolon-separated dual-stack
+IP list is still treated as a fixed-IP annotation and is not parsed as an IPPool name.
+
+When `spec.namespaces` is non-empty, it is a namespace allowlist: only Pods in the listed
+namespaces can allocate addresses from the IPPool. An empty list preserves the compatible behavior.
+Deleting a Pod or Workload releases its allocated addresses back to the IPPool and reduces the
+usage counters in `status`.
+
 Field description:
 
 | Field | Usage | Comment |
 | :--------: | :------------------------------------- | :------------------------------------------------------------------ |
 | subnet | Specify the subnet to which it belongs | Required |
 | ips | Specify IP ranges | Support three formats: <IP>, <CIDR> and <IP1>..<IP2>. Support IPv6. |
-| namespaces | Specifies the bound namespaces | Optional. Pods in a bound namespace will only get IPs from the bound pool(s), not other ranges in the subnet. |
+| namespaces | Specifies the bound namespaces | Optional. When non-empty, this is an allowlist; Pods in the listed namespaces allocate from the bound IPPool. An empty list preserves the compatible behavior. |
 | enableAddressSet | Whether to automatically create an AddressSet with the same name | Default false. When set to true, ACL and policy routing can use the corresponding AddressSet for policy control |
 
 ## Precautions
