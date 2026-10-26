@@ -282,7 +282,7 @@ nmcli -t -f GENERAL.STATE device show eth0 | grep -qw unmanaged || nmcli device 
 
 ### Pod 数量较多时新建 Pod 网关检查失败
 
-若同一个节点上运行的 Pod 数量较多（大于 300），可能会出现 ARP 广播包的 OVS 流表 resubmit 次数超过上限导致丢包的现象：
+在较大的 Underlay 二层网络中，广播 ARP 或 IPv6 ND 请求可能使 OVS 流表的 resubmit 次数超过 4096，导致网关检查失败或丢包。旧版本可能看到类似以下日志：
 
 ```txt
 2022-11-13T08:43:46.782Z|00222|ofproto_dpif_upcall(handler5)|WARN|Flow: arp,in_port=331,vlan_tci=0x0000,dl_src=00:00:00:25:eb:39,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.131.240,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:25:eb:39,arp_tha=ff:ff:ff:ff:ff:ff
@@ -299,8 +299,20 @@ Datapath actions: drop
 2022-11-13T08:44:34.077Z|00224|ofproto_dpif_xlate(handler5)|WARN|over 4096 resubmit actions on bridge br-int while processing arp,in_port=13483,vlan_tci=0x0000,dl_src=00:00:00:59:ef:13,dl_dst=ff:ff:ff:ff:ff:ff,arp_spa=10.213.152.3,arp_tpa=10.213.159.254,arp_op=1,arp_sha=00:00:00:59:ef:13,arp_tha=ff:ff:ff:ff:ff:ff
 ```
 
-要解决此问题，可修改 OVN NB 选项 `bcast_arp_req_flood` 为 `false`：
+包含 kubeovn/kube-ovn#7549 的镜像已经默认将 `NB_Global.options:bcast_arp_nd_req_flood` 设为 `false`，不再需要为所有集群手工执行关闭泛洪的命令。该选项关闭后，L2 unknown 阶段会抑制广播 ARP 和 IPv6 NS 的二层泛洪，避免大规模 Underlay 网络触发 OVS 的 resubmit 限制。
+
+该行为仍保留路由器拥有地址的解析路径：
+
+- router-owned ARP/ND 请求使用高于抑制规则的 priority 95，仍会送入逻辑路由器，用于 NAT、Load Balancer 等地址解析。
+- IPv4 GARP 使用 priority 105 的例外流，发送到 `MC_FLOOD_L2`，以便所有二层端口学习地址。
+- 其他 router-owned ARP/ND 请求使用 `MC_UNKNOWN`，不会把未知 IPv6 NS 交给会触发多播 snooping 泛洪的规则。
+
+升级到包含 #7549 的 Kube-OVN 镜像后，可以删除旧版本中用于设置该选项的 init 脚本或手工命令。升级前的镜像不包含这套默认值和路由器地址例外，不能直接套用本节的行为描述。
+
+如果底层网络确实要求传统的 ARP/ND 二层泛洪，可以显式恢复旧行为：
 
 ```sh
-kubectl ko nbctl set NB_Global . options:bcast_arp_req_flood=false
+kubectl ko nbctl set NB_Global . options:bcast_arp_nd_req_flood=true
 ```
+
+该设置会重新允许广播 ARP/ND 的 L2 泛洪，在大规模 Underlay 网络中可能再次触发 resubmit 限制；只有确认网络需要时使用。
