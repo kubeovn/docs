@@ -199,7 +199,7 @@
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
 | remoteVpc | String | 远程 VPC 名称 |
-| localConnectIP | String | 本地连接 IP 地址 |
+| localConnectIP | String | 必填。本地互联端点 IP 地址和 CIDR，例如 `169.254.0.1/30`；两端必须属于同一 CIDR，且不能与已有子网冲突。 |
 
 ###### BFDPort
 
