@@ -257,6 +257,25 @@ ENABLE_SSL=true
 
 The SSL is disabled by default.
 
+When SSL is enabled, `kube-ovn-controller` manages the `kube-ovn-tls` Secret. The Secret keeps the existing `cacert`, `cert`, and `key` data keys. If the Secret already exists without the Kube-OVN certificate hash annotation, the controller adopts it first instead of replacing the certificate immediately after an upgrade.
+
+Automatic checks and rotation are controlled by `KUBE_OVN_TLS_ROTATION_INTERVAL`. The default is `8760h` (one year), and setting it to `0` disables automatic rotation. This value is the check interval, not a forced renewal period; a new certificate is generated only after the current certificate passes the halfway point of its validity period. Set it in the installation script as follows:
+
+```bash
+ENABLE_SSL=true
+KUBE_OVN_TLS_ROTATION_INTERVAL=8760h
+```
+
+For a Helm installation, set the same interval under `networking`:
+
+```yaml
+networking:
+  enableSsl: true
+  kubeOvnTlsRotationInterval: 8760h
+```
+
+After the Secret is updated, the OVN processes in `ovn-central` and `ovs-ovn`, together with Kube-OVN Go clients, reload the mounted certificate files or read the new certificate during the next TLS handshake. Kube-OVN Pods do not need to restart. To verify adoption or rotation, inspect the `kube-ovn.io/kube-ovn-tls-cert-hash` annotation on `kube-ovn-tls`, component logs, and container restart counts.
+
 ## Conntrack-skip Destination CIDR List
 
 For destinations that need to bypass conntrack processing (for example, side traffic that already has NAT or session affinity handled elsewhere), a skip list can be configured in the installation script or as a `kube-ovn-controller` flag. Multiple CIDRs are comma-separated:
