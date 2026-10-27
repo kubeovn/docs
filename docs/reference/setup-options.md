@@ -76,6 +76,28 @@ kubectl annotate node no1 ovn.kubernetes.io/tunnel_interface=ethx
 
 如需为不同子网指定不同的封装网卡，请参考 [Overlay 网络封装网卡选择](../advance/node-network.md)。
 
+### 使用 `/32` 地址作为隧道源
+
+部分云平台会为主机网卡分配 `/32` 地址。默认情况下，Kube-OVN 不会选择这类地址作为 Overlay 隧道源；如果节点间的隧道网络使用该地址，可以开启 `/32` 地址选择：
+
+```bash
+HOST_TUNNEL_SRC=true
+```
+
+使用安装脚本安装时设置 `HOST_TUNNEL_SRC=true`，该值会传递给节点上的 Kube-OVN daemon。使用 Helm 安装时，根据使用的 chart 设置对应字段：
+
+```yaml
+# charts/kube-ovn
+func:
+  HOST_TUNNEL_SRC: true
+
+# charts/kube-ovn-v2
+features:
+  enableHostTunnelSrc: true
+```
+
+两个 Helm 字段和安装脚本变量的默认值均为 `false`。启用后，daemon 会将符合条件的 `/32` 地址纳入隧道源地址选择；本机回环地址仍不会被选择，除非显式允许。请确认每个节点上的 `/32` 地址可用于节点间隧道通信，并在启用后验证节点之间的 Overlay 连通性。
+
 ## MTU 设置
 
 由于 Overlay 封装需要占据额外的空间，Kube-OVN 在创建容器网卡时会根据选择网卡的 MTU 进行容器网卡的 MTU 调整，
