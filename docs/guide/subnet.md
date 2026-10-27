@@ -353,6 +353,38 @@ spec:
 - `logicalGateway`: 一些 Underlay 环境为纯二层网络，不存在物理的三层网关。在这种情况下可以借助 OVN 本身的能力设置一个虚拟网关，将 Underlay
   和 Overlay 网络打通。默认值为：`false`。
 
+### 仅分配 MAC 的 Underlay 子网（外部 DHCP）
+
+对于由外部 DHCP 或虚拟机客户机自行获取 IP 的网络，可以创建一个不配置 CIDR 的 Underlay 子网。该模式要求 `vlan` 非空且 `cidrBlock` 为空，Kube-OVN 会将子网协议标记为 `Mac`（`ProtocolMac`），为每个 Pod 网卡通过 IPAM 分配并追踪 MAC，不分配 IP。客户机随后从外部 DHCP 获取 IP。
+
+由于没有地址池，`gateway` 和 `excludeIps` 必须为空；该子网不应配置依赖 CIDR 的网关、路由或 NAT。CNI 在拿到 MAC 后会跳过 IP、路由和网关连通性等待，接口只配置 MAC，避免把外部 DHCP 尚未完成误判为地址分配失败。
+
+`vlan` 必须引用已配置到目标 `ProviderNetwork` 的 `Vlan`。例如：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: dhcp-underlay
+spec:
+  vlan: vlan-dhcp
+  provider: dhcp-provider
+  cidrBlock: ""
+  gateway: ""
+  excludeIps: []
+```
+
+Pod 可以使用 provider 级 MAC annotation 指定固定 MAC。主网卡使用 `ovn.kubernetes.io/mac_address`，附属网卡使用 `<nadName>.<nadNamespace>.kubernetes.io/mac_address`；当同一个 NAD 挂载多个接口时，可进一步使用 `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>`，按接口指定 MAC。按接口 annotation 优先于 provider 级 annotation，未指定时由 IPAM 随机分配并在重试中保持不变。
+
+```yaml
+metadata:
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[{"name":"dhcp-net","namespace":"default","interface":"net1"}]'
+    dhcp-net.default.kubernetes.io/mac_address.net1: "02:00:00:00:10:01"
+```
+
+MAC-only 子网的 IP CR 会记录 MAC 和空 IP；删除 Pod 或释放网卡时，IPAM 会同时移除该 NIC 的 MAC 映射。已有 CIDR 的子网不能通过更新清空 `cidrBlock`，MAC-only 子网也不能再添加 CIDR；需要变更网络模式时请创建新的 Subnet。
+
 ## 网关检查设置
 
 默认情况下 `kube-ovn-cni` 在启动 Pod 后会使用 ICMP 或 ARP 协议请求网关并等待返回，
