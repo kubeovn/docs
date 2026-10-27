@@ -248,14 +248,74 @@ Please refer to [Tunneling Protocol Selection](../reference/tunnel-protocol.en.m
 
 ## SSL Settings
 
-The OVN DB API interface supports SSL encryption to secure the connection.
-To enable it, adjust the following parameters in the installation script:
+The OVN NB/SB database API and Kube-OVN secure-serving endpoints support TLS.
+TLS is disabled by default. The installation script accepts the following
+environment variables:
 
 ```bash
 ENABLE_SSL=true
+TLS_MIN_VERSION="TLS12"
+TLS_MAX_VERSION="TLS13"
+TLS_CIPHER_SUITES="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_AES_128_GCM_SHA256"
 ```
 
-The SSL is disabled by default.
+`TLS_MIN_VERSION` and `TLS_MAX_VERSION` support `TLS10`, `TLS11`, `TLS12`, and
+`TLS13`. An empty value uses the component default. If both values are set,
+the minimum must be less than or equal to the maximum. The selected protocol
+range is applied to the OVN NB/SB database servers and Kube-OVN secure-serving
+endpoints.
+
+`TLS_CIPHER_SUITES` is a comma-separated list of Go TLS cipher suite names.
+The OVN DB server only accepts suites that the installation script maps to
+OpenSSL names. The accepted names are:
+
+```text
+TLS_AES_128_GCM_SHA256
+TLS_AES_256_GCM_SHA384
+TLS_CHACHA20_POLY1305_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+```
+
+For the classic Helm chart, set the values under `networking`:
+
+```yaml
+networking:
+  ENABLE_SSL: true
+  TLS_MIN_VERSION: TLS12
+  TLS_MAX_VERSION: TLS13
+  TLS_CIPHER_SUITES:
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_AES_128_GCM_SHA256
+```
+
+For the v2 Helm chart, use the equivalent camelCase values:
+
+```yaml
+networking:
+  enableSsl: true
+  tlsMinVersion: TLS12
+  tlsMaxVersion: TLS13
+  tlsCipherSuites:
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_AES_128_GCM_SHA256
+```
+
+When `ENABLE_SSL=true` (or `networking.enableSsl=true`), Kube-OVN uses the
+`kube-ovn-tls` Secret. The Secret contains `cacert`, `cert`, and `key`, which
+are mounted under `/var/run/tls`. A regular installation creates this Secret
+when it does not already exist. In `installMode: dataPlaneOnly`, do not create
+a local self-signed Secret: pre-create `kube-ovn-tls` with the same CA,
+certificate, and key used by the management cluster's OVN central, or NB/SB
+connections will fail certificate verification.
 
 ## Conntrack-skip Destination CIDR List
 

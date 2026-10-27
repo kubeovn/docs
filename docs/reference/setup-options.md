@@ -259,13 +259,69 @@ env:
 
 ## SSL 设置
 
-OVN DB 的 API 接口支持 SSL 加密来保证连接安全，如要开启可调整安装脚本中的如下参数:
+OVN NB/SB 数据库 API 和 Kube-OVN secure-serving 端点支持 TLS。TLS 默认关闭，
+可以通过安装脚本设置以下环境变量：
 
 ```bash
 ENABLE_SSL=true
+TLS_MIN_VERSION="TLS12"
+TLS_MAX_VERSION="TLS13"
+TLS_CIPHER_SUITES="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_AES_128_GCM_SHA256"
 ```
 
-SSL 功能默认安装下为关闭模式。
+`TLS_MIN_VERSION` 和 `TLS_MAX_VERSION` 支持 `TLS10`、`TLS11`、`TLS12` 和 `TLS13`。
+留空时使用组件默认值。如果同时设置，最小版本必须小于或等于最大版本。选定的
+协议范围会应用于 OVN NB/SB 数据库服务器和 Kube-OVN secure-serving 端点。
+
+`TLS_CIPHER_SUITES` 使用逗号分隔的 Go TLS cipher suite 名称。OVN DB 服务器只接受
+安装脚本映射到 OpenSSL 名称的套件。支持的名称如下：
+
+```text
+TLS_AES_128_GCM_SHA256
+TLS_AES_256_GCM_SHA384
+TLS_CHACHA20_POLY1305_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+```
+
+classic Helm chart 在 `networking` 下配置以下值：
+
+```yaml
+networking:
+  ENABLE_SSL: true
+  TLS_MIN_VERSION: TLS12
+  TLS_MAX_VERSION: TLS13
+  TLS_CIPHER_SUITES:
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_AES_128_GCM_SHA256
+```
+
+v2 Helm chart 使用对应的 camelCase 配置：
+
+```yaml
+networking:
+  enableSsl: true
+  tlsMinVersion: TLS12
+  tlsMaxVersion: TLS13
+  tlsCipherSuites:
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_AES_128_GCM_SHA256
+```
+
+当 `ENABLE_SSL=true`（或 `networking.enableSsl=true`）时，Kube-OVN 使用
+`kube-ovn-tls` Secret。该 Secret 包含 `cacert`、`cert` 和 `key`，并挂载到
+`/var/run/tls`。普通安装在 Secret 不存在时会自动创建它。在
+`installMode: dataPlaneOnly` 场景下不要创建本地自签名 Secret：必须预先创建
+`kube-ovn-tls`，并使用管理集群 OVN central 使用的同一 CA、证书和密钥，否则 NB/SB
+连接会因证书校验失败而不可用。
 
 ## 跳过 conntrack 的目的 CIDR 列表
 
