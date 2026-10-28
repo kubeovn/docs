@@ -311,13 +311,88 @@ env:
 
 ## SSL 设置
 
-OVN DB 的 API 接口支持 SSL 加密来保证连接安全，如要开启可调整安装脚本中的如下参数:
+OVN NB/SB 数据库 API 和 Kube-OVN secure-serving 端点都支持 TLS。TLS 默认关闭。
+安装脚本中的以下环境变量用于配置 OVN central/DB 的 TLS，不会为 secure-serving 端点设置
+TLS 版本或 cipher suites：
 
 ```bash
 ENABLE_SSL=true
+TLS_MIN_VERSION="TLS12"
+TLS_MAX_VERSION="TLS13"
+TLS_CIPHER_SUITES="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_AES_128_GCM_SHA256"
 ```
 
-SSL 功能默认安装下为关闭模式。
+`TLS_MIN_VERSION` 和 `TLS_MAX_VERSION` 支持 `TLS10`、`TLS11`、`TLS12` 和 `TLS13`。
+留空时使用组件默认值。如果同时设置，最小版本必须小于或等于最大版本。选定的
+协议范围会应用于 OVN NB/SB 数据库服务器。
+
+`TLS_CIPHER_SUITES` 使用逗号分隔的 Go TLS cipher suite 名称。OVN DB 服务器只接受
+安装脚本映射到 OpenSSL 名称的套件。支持的名称如下：
+
+```text
+TLS_AES_128_GCM_SHA256
+TLS_AES_256_GCM_SHA384
+TLS_CHACHA20_POLY1305_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+```
+
+选择 cipher suites 时必须与 `kube-ovn-tls` Secret 中证书的密钥类型匹配。默认生成的
+`kube-ovn-tls` 使用 RSA 证书，因此仅配置 ECDSA cipher suites 而继续使用默认 RSA
+证书会导致 TLS 握手失败；如需使用 ECDSA-only suites，请先提供匹配的 ECDSA 证书和
+密钥。
+
+以下 Helm 配置会由 chart 的 `componentTLSArgs` 模板转换为各组件的
+`--tls-min-version`、`--tls-max-version` 和 `--tls-cipher-suites` 参数，这些参数用于
+配置 secure-serving 端点。安装脚本中的同名 `TLS_*` 变量不会注入这些组件参数。
+仅设置这些 TLS 参数不会启用 secure-serving；必须同时设置 chart 对应的开关。
+classic chart 使用 `func.SECURE_SERVING`，v2 chart 使用
+`features.enableSecureServing`，而 TLS 版本和 cipher suites 仍位于 `networking`。
+
+classic Helm chart 配置以下值：
+
+```yaml
+func:
+  SECURE_SERVING: true
+networking:
+  ENABLE_SSL: true
+  TLS_MIN_VERSION: TLS12
+  TLS_MAX_VERSION: TLS13
+  TLS_CIPHER_SUITES:
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_AES_128_GCM_SHA256
+```
+
+v2 Helm chart 使用以下配置：
+
+```yaml
+features:
+  enableSecureServing: true
+networking:
+  enableSsl: true
+  tlsMinVersion: TLS12
+  tlsMaxVersion: TLS13
+  tlsCipherSuites:
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_AES_128_GCM_SHA256
+```
+
+当 `ENABLE_SSL=true`（或 `networking.enableSsl=true`）时，Kube-OVN 使用
+`kube-ovn-tls` Secret。该 Secret 包含 `cacert`、`cert` 和 `key`，并挂载到
+`/var/run/tls`。classic Helm chart 的普通安装和 v2 Helm chart 在 Secret 不存在时会
+自动创建它。仅 classic Helm chart 的 `installMode: dataPlaneOnly` 有特殊规则：当
+`networking.ENABLE_SSL=true` 时，必须预先在目标命名空间创建 `kube-ovn-tls`，并使用
+管理集群 OVN central 使用的同一 CA、证书和密钥；classic chart 模板在缺少该 Secret
+时会直接失败，也不会渲染本地 Secret。v2 Helm chart 没有
+`installMode: dataPlaneOnly` 这个值，不能将上述预置规则套用于 v2 chart。
 
 ## 跳过 conntrack 的目的 CIDR 列表
 

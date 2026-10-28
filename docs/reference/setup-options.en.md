@@ -300,14 +300,97 @@ Please refer to [Tunneling Protocol Selection](../reference/tunnel-protocol.en.m
 
 ## SSL Settings
 
-The OVN DB API interface supports SSL encryption to secure the connection.
-To enable it, adjust the following parameters in the installation script:
+The OVN NB/SB database API and Kube-OVN secure-serving endpoints both support TLS.
+TLS is disabled by default. The following installation script environment variables
+configure TLS for OVN central/DB; they do not set the TLS version or cipher suites
+for secure-serving endpoints:
 
 ```bash
 ENABLE_SSL=true
+TLS_MIN_VERSION="TLS12"
+TLS_MAX_VERSION="TLS13"
+TLS_CIPHER_SUITES="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_AES_128_GCM_SHA256"
 ```
 
-The SSL is disabled by default.
+`TLS_MIN_VERSION` and `TLS_MAX_VERSION` support `TLS10`, `TLS11`, `TLS12`, and
+`TLS13`. An empty value uses the component default. If both values are set,
+the minimum must be less than or equal to the maximum. The selected protocol
+range is applied to the OVN NB/SB database servers.
+
+`TLS_CIPHER_SUITES` is a comma-separated list of Go TLS cipher suite names.
+The OVN DB server only accepts suites that the installation script maps to
+OpenSSL names. The accepted names are:
+
+```text
+TLS_AES_128_GCM_SHA256
+TLS_AES_256_GCM_SHA384
+TLS_CHACHA20_POLY1305_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+```
+
+Cipher suites must match the key type of the certificate in the `kube-ovn-tls`
+Secret. The default generated `kube-ovn-tls` uses an RSA certificate, so using
+only ECDSA cipher suites with the default RSA certificate causes TLS handshakes to
+fail. To use ECDSA-only suites, provide a matching ECDSA certificate and key first.
+
+The following Helm settings are converted by the chart's `componentTLSArgs`
+template into the `--tls-min-version`, `--tls-max-version`, and
+`--tls-cipher-suites` arguments for each component. These arguments configure
+secure-serving endpoints. The installation script's `TLS_*` variables do not
+inject these component arguments.
+Setting only these TLS parameters does not enable secure-serving; the chart's
+secure-serving switch must also be enabled. The classic chart uses
+`func.SECURE_SERVING`, while the v2 chart uses `features.enableSecureServing`;
+TLS versions and cipher suites remain under `networking`.
+
+For the classic Helm chart, set the following values:
+
+```yaml
+func:
+  SECURE_SERVING: true
+networking:
+  ENABLE_SSL: true
+  TLS_MIN_VERSION: TLS12
+  TLS_MAX_VERSION: TLS13
+  TLS_CIPHER_SUITES:
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_AES_128_GCM_SHA256
+```
+
+For the v2 Helm chart, use the following values:
+
+```yaml
+features:
+  enableSecureServing: true
+networking:
+  enableSsl: true
+  tlsMinVersion: TLS12
+  tlsMaxVersion: TLS13
+  tlsCipherSuites:
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_AES_128_GCM_SHA256
+```
+
+When `ENABLE_SSL=true` (or `networking.enableSsl=true`), Kube-OVN uses the
+`kube-ovn-tls` Secret. The Secret contains `cacert`, `cert`, and `key`, which
+are mounted under `/var/run/tls`. The classic Helm chart's regular installation
+and the v2 Helm chart create this Secret when it does not already exist. Only the
+classic Helm chart has a special rule for `installMode: dataPlaneOnly`: when
+`networking.ENABLE_SSL=true`, pre-create `kube-ovn-tls` in the target namespace
+with the same CA, certificate, and key used by the management cluster's OVN
+central. The classic chart template fails when this Secret is missing and does
+not render a local Secret. The v2 Helm chart does not define an
+`installMode: dataPlaneOnly` value, so this pre-seeding rule does not apply to
+the v2 chart.
 
 ## Conntrack-skip Destination CIDR List
 
