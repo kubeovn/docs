@@ -66,6 +66,73 @@ Apply the YAML:
 kubectl apply -f speaker.yaml
 ```
 
+### Per-node YAML configuration
+
+In addition to command-line flags, `kube-ovn-speaker` can load its configuration from a YAML file. Set `--config=/etc/kube-ovn/$(NODE_NAME).yaml`, or set `KUBE_OVN_BGP_SPEAKER_CONFIG_FILE`. The environment variable supplies the default value for `--config`.
+
+Mount one file for each node from a ConfigMap. Each key becomes the mounted file name and must be `<spec.nodeName>.yaml`, so removing the `.yaml` suffix from the key matches the corresponding Pod's `spec.nodeName`; `speaker-node-1` and `speaker-node-2` below are example node names:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-ovn-bgp-speaker-config
+  namespace: kube-system
+data:
+  speaker-node-1.yaml: |
+    cluster-as: 65000
+    neighbor-address:
+      - 10.32.32.254
+    neighbor-as: 65030
+    router-id: 10.32.32.2
+  speaker-node-2.yaml: |
+    cluster-as: 65001
+    neighbor-address:
+      - 10.32.32.254
+    neighbor-as: 65030
+    router-id: 10.32.32.3
+```
+
+With the v2 Helm chart, set `bgpSpeaker.configMap` to mount the ConfigMap and use `bgpSpeaker.extraEnv` to select the file that matches the node name exposed through the Downward API:
+
+```yaml
+bgpSpeaker:
+  enabled: true
+  configMap: kube-ovn-bgp-speaker-config
+  configMapMountPath: /etc/kube-ovn/
+  extraEnv:
+    - name: KUBE_OVN_BGP_SPEAKER_CONFIG_FILE
+      value: /etc/kube-ovn/$(NODE_NAME).yaml
+```
+
+For other manifests, mount the ConfigMap into the speaker container and define `NODE_NAME` and the config file environment variable in this order:
+
+```yaml
+env:
+  - name: NODE_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
+  - name: KUBE_OVN_BGP_SPEAKER_CONFIG_FILE
+    value: /etc/kube-ovn/$(NODE_NAME).yaml
+```
+
+You can also set `--config` directly to the actual absolute path of a mounted file. The file must contain one YAML document; unknown fields cause the speaker to fail during startup.
+
+Configuration keys use the kebab-case flag name without the leading `--`. Common field formats are:
+
+- `neighbor-address` and `neighbor-ipv6-address`: lists of IPv4 or IPv6 addresses.
+- `allowed-source-addresses` and `allowed-source-ipv6-addresses`: source address allowlists.
+- `cluster-as` and `neighbor-as`: integer AS numbers.
+- `grpc-host`: an IPv4 or IPv6 address string.
+- `router-id`: an IPv4 address string; BGP router IDs do not support IPv6.
+- `node-ips`: a map whose keys are `IPv4` or `IPv6` and whose values must match the corresponding address family.
+- `holdtime`, `graceful-restart-time`, and `graceful-restart-deferral-time`: duration strings such as `90s`, `5m`, or `1h`, or integer seconds.
+- `announce-cluster-ip`, `graceful-restart`, `passivemode`, `extended-nexthop`, `nat-gw-mode`, `enable-metrics`, and `enable-bfd`: booleans.
+- `bfd-min-tx`, `bfd-min-rx`, and `bfd-detection-multiplier`: integers.
+
+Fields explicitly set in the file override the same CLI flags and defaults. Omitted fields keep their CLI or default values. Set a list to `[]` in the file to clear a CLI list.
+
 ## Publishing Pod/Subnet Routes
 
 To use BGP for external routing on subnets, first set `natOutgoing` to `false` for the corresponding Subnet to allow the Pod IP to enter the underlying network directly.
