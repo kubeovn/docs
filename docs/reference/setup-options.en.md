@@ -408,14 +408,15 @@ args:
 The defaults are `30s`, `20s`, and `6s` respectively. All values must be positive durations. The controller validates the relationship before creating Kubernetes clients:
 
 - `lease-duration` must be greater than `renew-deadline`.
-- `renew-deadline` must be greater than `retry-period` multiplied by the Kubernetes client-go leader-election jitter factor.
+- `renew-deadline` must be greater than `retry-period` multiplied by the Kubernetes client-go leader-election jitter factor (`1.2`).
 
 You can set the values through the installation script:
 
 ```bash
-LEADER_ELECT_LEASE_DURATION=30s
-LEADER_ELECT_RENEW_DEADLINE=20s
-LEADER_ELECT_RETRY_PERIOD=6s
+export LEADER_ELECT_LEASE_DURATION=1m
+export LEADER_ELECT_RENEW_DEADLINE=40s
+export LEADER_ELECT_RETRY_PERIOD=10s
+bash install.sh
 ```
 
 The Helm values are empty by default, so a chart only renders these flags when you set them. Use `kube-ovn-controller.leaderElection` in the classic chart:

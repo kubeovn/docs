@@ -418,14 +418,15 @@ args:
 默认值分别为 `30s`、`20s` 和 `6s`。所有值都必须是正 duration。controller 会在创建 Kubernetes client 前校验这些参数的关系：
 
 - `lease-duration` 必须大于 `renew-deadline`。
-- `renew-deadline` 必须大于 `retry-period` 乘以 Kubernetes client-go leader election 的 jitter factor。
+- `renew-deadline` 必须大于 `retry-period` 乘以 Kubernetes client-go leader election 的 jitter factor（`1.2`）。
 
 可以通过安装脚本设置：
 
 ```bash
-LEADER_ELECT_LEASE_DURATION=30s
-LEADER_ELECT_RENEW_DEADLINE=20s
-LEADER_ELECT_RETRY_PERIOD=6s
+export LEADER_ELECT_LEASE_DURATION=1m
+export LEADER_ELECT_RENEW_DEADLINE=40s
+export LEADER_ELECT_RETRY_PERIOD=10s
+bash install.sh
 ```
 
 Helm 配置默认值为空，只有设置后 chart 才会渲染这些参数。classic chart 使用 `kube-ovn-controller.leaderElection`：
