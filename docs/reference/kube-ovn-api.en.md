@@ -446,7 +446,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | Property Name | Type | Description |
 | --- | --- | --- |
 | subnet | String | Subnet |
-| namespaces | []String | List of bound namespaces |
+| namespaces | []String | Namespaces where the IPPool is eligible for automatic selection; does not restrict Pods that explicitly name the IPPool |
 | ips | []String | List of IP addresses |
 
 #### IPPoolStatus

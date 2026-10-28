@@ -48,13 +48,38 @@ spec:
         image: docker.io/library/nginx:alpine
 ```
 
+## 使用命名 IP 池
+
+当 `ovn.kubernetes.io/ip_pool` 的值是 IPPool 名称（例如 `pool-1`）时，默认网络的 Pod 可以不设置
+`ovn.kubernetes.io/logical_switch`。控制器会使用 `pool-1.spec.subnet` 作为 Pod 的子网，
+并设置 Pod 的 `logical_switch`、`cidr` 和 `gateway` 注解：
+
+```yaml
+metadata:
+  annotations:
+    ovn.kubernetes.io/ip_pool: pool-1
+```
+
+如果显式设置 `ovn.kubernetes.io/logical_switch`，应确保它与 `IPPool.spec.subnet` 一致；
+子网不一致未必会被拒绝。
+
+对于多网卡 Pod，可以使用 `<provider>.kubernetes.io/ip_pool` 为指定 provider 选择命名 IP
+池。provider 的子网独立于 IPPool 选择；应确保两者一致，包括显式设置
+`<provider>.kubernetes.io/logical_switch` 时。子网不一致未必会被拒绝。值为单个 IP、
+逗号分隔的 IP 列表，或每组 IPv4、IPv6 地址以逗号配对且各组以分号分隔的双栈列表时，
+仍按固定 IP 注解处理，而不是按 IPPool 名称解析。
+
+`spec.namespaces` 指定该 IPPool 可参与自动选池的命名空间，不限制显式指定该 IPPool 的 Pod。
+列表为空时不会自动选择该池。普通 Pod 删除后，其地址会释放，IPPool 的使用计数也会更新；
+StatefulSet 和 VM 的 Pod 可能保留地址，直到所属 Workload 被删除。
+
 字段说明：
 
 | 名称 | 用途 | 备注 |
 | :--------: | :----------------- | :-------------------------------------------------------- |
 | subnet | 指定所属子网 | 必填 |
 | ips | 指定包含的 IP 范围 | 支持 <IP>、<CIDR> 以及 <IP1>..<IP2> 三种格式，支持 IPv6。 |
-| namespaces | 绑定命名空间 | 可选。绑定的命名空间下的 Pod 将只会从绑定的 IP 池中分配 IP，而不会从子网内其他范围分配。 |
+| namespaces | 绑定命名空间 | 可选。列出该 IPPool 可参与自动选池的命名空间，不限制显式指定该池的 Pod。 |
 | enableAddressSet | 是否自动创建同名的 AddressSet | 默认 false，设置为 true 后 ACL 和策略路由可以使用对应 AddressSet 进行策略控制 |
 
 ## 注意事项
