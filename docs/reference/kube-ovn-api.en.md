@@ -200,7 +200,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | Property Name | Type | Description |
 | --- | --- | --- |
 | remoteVpc | String | Remote VPC name |
-| localConnectIP | String | Local connection IP address |
+| localConnectIP | String | Required. One or more local peering endpoint IP addresses with CIDRs, separated by commas, for example `169.254.0.1/30` or `169.254.0.1/30,fd00::1/64`; each endpoint CIDR should match the corresponding remote endpoint and should not overlap an existing subnet. |
 
 ###### BFDPort
 
