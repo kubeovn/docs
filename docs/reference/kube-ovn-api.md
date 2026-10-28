@@ -36,7 +36,7 @@
 | --- | --- | --- |
 | default | Bool | 该子网是否为默认子网 |
 | vpc | String | 子网所属 VPC，默认为 ovn-cluster |
-| protocol | String | IP 协议，取值可以为 `IPv4`，`IPv6` 或 `Dual` |
+| protocol | String | IP 协议，取值可以为 `IPv4`、`IPv6`、`Dual` 或仅分配 MAC 的 Underlay 子网使用的 `Mac` |
 | namespaces | []String | 该子网所绑定的 namespace 列表 |
 | cidrBlock | String | 子网的网段范围，如 10.16.0.0/16 |
 | gateway | String | 子网网关地址，默认为该子网 CIDRBlock 下的第一个可用地址 |

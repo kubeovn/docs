@@ -366,6 +366,40 @@ spec:
 - `vlan`: If an Underlay network is used, this field is used to control which Vlan CR the Subnet is bound to. This option defaults to the empty string, meaning that the Underlay network is not used.
 - `logicalGateway`: Some Underlay environments are pure Layer 2 networks, with no physical Layer 3 gateway. In this case a virtual gateway can be set up with the OVN to connect the Underlay and Overlay networks. The default value is: `false`.
 
+### MAC-only Underlay Subnet (External DHCP)
+
+For networks where an external DHCP server or the guest VM assigns the IP address, create an Underlay Subnet without a CIDR. This mode requires a non-empty `vlan` and an empty `cidrBlock`. Kube-OVN classifies it as protocol `Mac` (`ProtocolMac`) and allocates and tracks only one MAC address per Pod interface through IPAM. The guest then obtains its IP from the external DHCP server.
+
+A MAC-only Subnet cannot be used as the primary interface of a regular Pod: without an IP on `eth0`, the CRI cannot complete Pod creation and the Pod remains Pending. Use this mode for a Multus secondary interface or a KubeVirt VM whose guest configures its own network.
+
+Because there is no address pool, `gateway` and `excludeIps` must be empty. Do not configure gateway, route, or NAT settings that depend on a CIDR. After the MAC and allocation marker are ready, the CNI skips IP, route, and gateway-check waits and configures only the interface MAC, so an external DHCP delay does not look like an address allocation failure.
+
+The `vlan` must reference a `Vlan` configured on the target `ProviderNetwork`. For example:
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: dhcp-underlay
+spec:
+  vlan: vlan-dhcp
+  provider: dhcp-net.default.ovn
+  cidrBlock: ""
+  gateway: ""
+  excludeIps: []
+```
+
+Use a provider-level MAC annotation to request a fixed MAC. The primary interface uses `ovn.kubernetes.io/mac_address`; an OVN secondary interface uses `<nadName>.<nadNamespace>.ovn.kubernetes.io/mac_address`. When the same NAD is attached more than once, use `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>` to select a MAC per interface. A per-interface annotation takes precedence over the provider-level annotation. If neither is set, IPAM generates a MAC and keeps it stable across retries.
+
+```yaml
+metadata:
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[{"name":"dhcp-net","namespace":"default","interface":"net1"}]'
+    dhcp-net.default.kubernetes.io/mac_address.net1: "02:00:00:00:10:01"
+```
+
+The IP CR for a MAC-only Subnet records the MAC with an empty IP. When a Pod or interface is released, IPAM removes the NIC-to-MAC mapping as well. An existing CIDR Subnet cannot be converted by clearing `cidrBlock`, and a MAC-only Subnet cannot later receive a CIDR; create a new Subnet when changing network mode.
+
 ## Gateway Check Settings
 
 By default `kube-ovn-cni` will request the gateway using ICMP or ARP protocol after starting the

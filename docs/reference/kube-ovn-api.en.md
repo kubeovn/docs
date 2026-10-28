@@ -36,7 +36,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | --- | --- | --- |
 | default | Bool | Whether this subnet is the default subnet |
 | vpc | String | The vpc which the subnet belongs to, default is ovn-cluster |
-| protocol | String | IP protocol, the value is in the range of `IPv4`, `IPv6` or `Dual` |
+| protocol | String | IP protocol: `IPv4`, `IPv6`, `Dual`, or `Mac` for an Underlay Subnet that allocates only MAC addresses |
 | namespaces | []String | The list of namespaces bound to this subnet |
 | cidrBlock | String | The range of the subnet, e.g. 10.16.0.0/16 |
 | gateway | String | The gateway address of the subnet, the default value is the first available address under the CIDRBlock of the subnet |
