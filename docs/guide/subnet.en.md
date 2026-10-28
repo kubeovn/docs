@@ -370,6 +370,8 @@ spec:
 
 For networks where an external DHCP server or the guest VM assigns the IP address, create an Underlay Subnet without a CIDR. This mode requires a non-empty `vlan` and an empty `cidrBlock`. Kube-OVN classifies it as protocol `Mac` (`ProtocolMac`) and allocates and tracks only one MAC address per Pod interface through IPAM. The guest then obtains its IP from the external DHCP server.
 
+A MAC-only Subnet cannot be used as the primary interface of a regular Pod: without an IP on `eth0`, the CRI cannot complete Pod creation and the Pod remains Pending. Use this mode for a Multus secondary interface or a KubeVirt VM whose guest configures its own network.
+
 Because there is no address pool, `gateway` and `excludeIps` must be empty. Do not configure gateway, route, or NAT settings that depend on a CIDR. After the MAC and allocation marker are ready, the CNI skips IP, route, and gateway-check waits and configures only the interface MAC, so an external DHCP delay does not look like an address allocation failure.
 
 The `vlan` must reference a `Vlan` configured on the target `ProviderNetwork`. For example:
@@ -381,13 +383,13 @@ metadata:
   name: dhcp-underlay
 spec:
   vlan: vlan-dhcp
-  provider: dhcp-provider
+  provider: dhcp-net.default.ovn
   cidrBlock: ""
   gateway: ""
   excludeIps: []
 ```
 
-Use a provider-level MAC annotation to request a fixed MAC. The primary interface uses `ovn.kubernetes.io/mac_address`; a secondary interface uses `<nadName>.<nadNamespace>.kubernetes.io/mac_address`. When the same NAD is attached more than once, use `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>` to select a MAC per interface. A per-interface annotation takes precedence over the provider-level annotation. If neither is set, IPAM generates a MAC and keeps it stable across retries.
+Use a provider-level MAC annotation to request a fixed MAC. The primary interface uses `ovn.kubernetes.io/mac_address`; an OVN secondary interface uses `<nadName>.<nadNamespace>.ovn.kubernetes.io/mac_address`. When the same NAD is attached more than once, use `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>` to select a MAC per interface. A per-interface annotation takes precedence over the provider-level annotation. If neither is set, IPAM generates a MAC and keeps it stable across retries.
 
 ```yaml
 metadata:

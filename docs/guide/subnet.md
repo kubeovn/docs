@@ -357,6 +357,8 @@ spec:
 
 对于由外部 DHCP 或虚拟机客户机自行获取 IP 的网络，可以创建一个不配置 CIDR 的 Underlay 子网。该模式要求 `vlan` 非空且 `cidrBlock` 为空，Kube-OVN 会将子网协议标记为 `Mac`（`ProtocolMac`），为每个 Pod 网卡通过 IPAM 分配并追踪 MAC，不分配 IP。客户机随后从外部 DHCP 获取 IP。
 
+MAC-only 子网不能作为普通 Pod 的主网卡：主网卡没有 IP 时，CRI 无法完成 Pod 创建，Pod 会保持 Pending。请将该模式用于 Multus 附属网卡，或用于由客户机自行配置网络的 KubeVirt VM。
+
 由于没有地址池，`gateway` 和 `excludeIps` 必须为空；该子网不应配置依赖 CIDR 的网关、路由或 NAT。CNI 在拿到 MAC 后会跳过 IP、路由和网关连通性等待，接口只配置 MAC，避免把外部 DHCP 尚未完成误判为地址分配失败。
 
 `vlan` 必须引用已配置到目标 `ProviderNetwork` 的 `Vlan`。例如：
@@ -368,13 +370,13 @@ metadata:
   name: dhcp-underlay
 spec:
   vlan: vlan-dhcp
-  provider: dhcp-provider
+  provider: dhcp-net.default.ovn
   cidrBlock: ""
   gateway: ""
   excludeIps: []
 ```
 
-Pod 可以使用 provider 级 MAC annotation 指定固定 MAC。主网卡使用 `ovn.kubernetes.io/mac_address`，附属网卡使用 `<nadName>.<nadNamespace>.kubernetes.io/mac_address`；当同一个 NAD 挂载多个接口时，可进一步使用 `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>`，按接口指定 MAC。按接口 annotation 优先于 provider 级 annotation，未指定时由 IPAM 随机分配并在重试中保持不变。
+Pod 可以使用 provider 级 MAC annotation 指定固定 MAC。主网卡使用 `ovn.kubernetes.io/mac_address`，OVN 附属网卡使用 `<nadName>.<nadNamespace>.ovn.kubernetes.io/mac_address`；当同一个 NAD 挂载多个接口时，可进一步使用 `<nadName>.<nadNamespace>.kubernetes.io/mac_address.<interfaceName>`，按接口指定 MAC。按接口 annotation 优先于 provider 级 annotation，未指定时由 IPAM 随机分配并在重试中保持不变。
 
 ```yaml
 metadata:
