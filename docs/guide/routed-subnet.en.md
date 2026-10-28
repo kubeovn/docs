@@ -19,7 +19,7 @@ spec:
   routed: true
 ```
 
-`spec.cidrBlock` is still used for IPAM allocation. `routed` only changes the Pod interface mask and routes. For a Pod with address `10.0.0.5`, CNI configures:
+`spec.cidrBlock` is still used for IPAM allocation. Routed mode changes the Pod interface mask and routes, and installs a routed allow-list/default-deny ACL policy on the logical switch so traffic is forced through the OVN logical router. For a Pod with address `10.0.0.5`, CNI configures:
 
 ```text
 ip addr add 10.0.0.5/32 dev eth0
@@ -42,7 +42,7 @@ When `private: true`, ingress through the logical router is further limited to s
 
 ## Route Annotations
 
-Provider route annotations, such as `ovn.kubernetes.io/routes`, are supported on non-DPDK interfaces. In a routed subnet, every annotated route must use the subnet gateway as its next hop. With U2O interconnection, the corresponding U2O interconnection IP can be used. Destinations must be valid CIDRs; CNI ADD fails when a route cannot be parsed or installed.
+Provider route annotations, such as `ovn.kubernetes.io/routes`, are supported on non-DPDK interfaces. In a routed subnet, every annotated route must use the subnet gateway as its next hop. With U2O interconnection, the corresponding U2O interconnection IP can be used. A route destination must be a valid CIDR, or it may be omitted to represent a default route; CNI ADD fails when a route cannot be parsed or installed.
 
 Other next hops are rejected because routed subnets only allow Pods to resolve the subnet gateway. `ovn.kubernetes.io/routed` is a separate Pod annotation that only indicates OVN routes are ready for the Pod; it does not enable routed-subnet mode.
 

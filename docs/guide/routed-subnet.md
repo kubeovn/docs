@@ -19,7 +19,7 @@ spec:
   routed: true
 ```
 
-`spec.cidrBlock` 仍然用于 IPAM 地址分配，`routed` 只改变 Pod 网卡的地址掩码和路由。以地址 `10.0.0.5` 的 Pod 为例，CNI 会配置：
+`spec.cidrBlock` 仍然用于 IPAM 地址分配。路由子网模式会改变 Pod 网卡的地址掩码和路由，并在逻辑交换机上安装路由子网的允许列表和默认拒绝 ACL，使流量强制经过 OVN 逻辑路由器。以地址 `10.0.0.5` 的 Pod 为例，CNI 会配置：
 
 ```text
 ip addr add 10.0.0.5/32 dev eth0
@@ -42,7 +42,7 @@ IPv6 Pod 使用 `/128` 地址和对应的 IPv6 网关主机路由。
 
 ## 路由注解
 
-非 DPDK 网卡支持 Provider 路由注解（例如 `ovn.kubernetes.io/routes`）。在路由子网中，每条注解路由的下一跳必须是子网网关；使用 U2O 互联时，可以使用对应的 U2O 互联 IP。路由目的地址必须是合法的 CIDR，路由无法解析或安装时 CNI ADD 会失败。
+非 DPDK 网卡支持 Provider 路由注解（例如 `ovn.kubernetes.io/routes`）。在路由子网中，每条注解路由的下一跳必须是子网网关；使用 U2O 互联时，可以使用对应的 U2O 互联 IP。路由目的地址必须是合法的 CIDR，也可以省略以表示默认路由；路由无法解析或安装时 CNI ADD 会失败。
 
 由于路由子网只允许 Pod 解析子网网关，其他下一跳会被拒绝。`ovn.kubernetes.io/routed` 是另一个独立的 Pod 注解，仅表示 OVN 路由已经为 Pod 准备完成，不用于开启路由子网模式。
 

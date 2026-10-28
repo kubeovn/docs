@@ -4,6 +4,7 @@ This document lists the features merged into the master branch for the next mino
 
 ## Post-v1.16.0
 
+- Add routed subnet mode with `/32` IPv4 or `/128` IPv6 Pod addresses and gateway hairpinning through the OVN logical router. [#7294](https://github.com/kubeovn/kube-ovn/pull/7294)
 - QoS: support configurable ingress/egress burst limits via per-NIC annotations (`ovn.kubernetes.io/ingress_burst`). [#6628](https://github.com/kubeovn/kube-ovn/pull/6628)
 - VPC Egress Gateway: accept integer Mbps values and `M`, `Mi`, `G`, or `Gi` bit-rate quantities for per-replica bandwidth limits. [#7115](https://github.com/kubeovn/kube-ovn/pull/7115)
 - VPC NAT Gateway: allow placing the NAT gateway StatefulSet and its iptables-EIP custom resources in a user-specified namespace. [#6595](https://github.com/kubeovn/kube-ovn/pull/6595)
@@ -12,7 +13,6 @@ This document lists the features merged into the master branch for the next mino
 
 ## Post-v1.15.0
 
-- Add routed subnet mode with `/32` IPv4 or `/128` IPv6 Pod addresses and gateway hairpinning through the OVN logical router. [#7294](https://github.com/kubeovn/kube-ovn/pull/7294)
 - NetworkPolicy now supports provider-scoped policies for multi-network pods using the `ovn.kubernetes.io/policy-for` annotation. [#6223](https://github.com/kubeovn/kube-ovn/pull/6223)
 - Support static IP/MAC for multiple interfaces on the same logical switch. [#6060](https://github.com/kubeovn/kube-ovn/pull/6060)
 - MetalLB underlay integration now supports IPv6 and dual-stack. [#6159](https://github.com/kubeovn/kube-ovn/pull/6159)
