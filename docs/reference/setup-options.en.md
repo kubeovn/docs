@@ -393,3 +393,48 @@ args:
 ```
 
 It can also be configured via Helm with `cni_conf.NON_PRIMARY_CNI=true` (chart v1) or `cni.nonPrimaryCNI=true` (chart v2). See [Non-Primary CNI Mode](../start/non-primary-mode.en.md) for details.
+
+## Controller Leader Election Timing
+
+The controller uses Kubernetes leader election. The following duration flags can be used to tune how quickly a standby controller takes over when the current leader stops renewing its lease:
+
+```yaml
+args:
+- --leader-elect-lease-duration=30s
+- --leader-elect-renew-deadline=20s
+- --leader-elect-retry-period=6s
+```
+
+The defaults are `30s`, `20s`, and `6s` respectively. All values must be positive durations. The controller validates the relationship before creating Kubernetes clients:
+
+- `lease-duration` must be greater than `renew-deadline`.
+- `renew-deadline` must be greater than `retry-period` multiplied by the Kubernetes client-go leader-election jitter factor (`1.2`).
+
+You can set the values through the installation script:
+
+```bash
+export LEADER_ELECT_LEASE_DURATION=1m
+export LEADER_ELECT_RENEW_DEADLINE=40s
+export LEADER_ELECT_RETRY_PERIOD=10s
+bash install.sh
+```
+
+The Helm values are empty by default, so a chart only renders these flags when you set them. Use `kube-ovn-controller.leaderElection` in the classic chart:
+
+```yaml
+kube-ovn-controller:
+  leaderElection:
+    leaseDuration: "30s"
+    renewDeadline: "20s"
+    retryPeriod: "6s"
+```
+
+Use `controller.leaderElection` in the v2 chart:
+
+```yaml
+controller:
+  leaderElection:
+    leaseDuration: "30s"
+    renewDeadline: "20s"
+    retryPeriod: "6s"
+```
