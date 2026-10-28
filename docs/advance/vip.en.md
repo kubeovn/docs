@@ -206,8 +206,9 @@ spec:
 v1.17 removes assigning fixed Pod IP addresses through `ovn.kubernetes.io/vip` and removes the `kube_host_vm_vip` type. Before upgrading, delete Pods that use this annotation or delete their corresponding VIPs to avoid conflicts between old VIP reservations and the IPAM address restored for the Pod.
 
 - After the upgrade, Pods that use `ovn.kubernetes.io/vip` receive regular IPAM addresses. The annotation is ignored and a warning is logged.
+- Deleting such a Pod after the upgrade releases its IPAM address, but does not release the VIP or hand the address back to it. Another Pod can claim the address. The VIP is only reconsidered after a controller restart, and only if the address is still free.
 - `kube_host_vm_vip` no longer creates or reconciles a normal logical switch port. Leftover ports are reclaimed after two garbage-collection sweeps; move any external workload that still uses one to an externally managed port before upgrading.
-- The `ip_reserved` label left on pre-v1.17 VIPs is inert and is not removed automatically. While an old Pod still holds the address, the Subnet `UsingIPs` value can temporarily exceed actual usage.
+- The `ip_reserved` label left on pre-v1.17 VIPs is inert and is not removed automatically. While an old Pod still holds the address, the Subnet `UsingIPs` value can temporarily exceed actual usage. After the Pod and its IP record are removed, this extra count disappears and the VIP's own reservation is counted normally.
 
 To reserve or assign a Pod address, use [IPPool](../guide/ippool.en.md) or [Pod annotations](../guide/static-ip-mac.en.md). VIPs for AAP and Switch LB remain supported.
 
