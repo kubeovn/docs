@@ -266,7 +266,17 @@ ENABLE_SSL=true
 KUBE_OVN_TLS_ROTATION_INTERVAL=8760h
 ```
 
-For a Helm installation, set the same interval under `networking`:
+For a Helm installation, the values depend on the chart version. The classic chart (`charts/kube-ovn`) uses uppercase keys:
+
+```yaml
+networking:
+  ENABLE_SSL: true
+  KUBE_OVN_TLS_ROTATION_INTERVAL: 8760h
+```
+
+When the classic chart is installed with `installMode: dataPlaneOnly`, it forces this interval to `0` because the management cluster owns `kube-ovn-tls` and must perform the rotation.
+
+The v2 chart (`charts/kube-ovn-v2`) uses camel-case keys:
 
 ```yaml
 networking:

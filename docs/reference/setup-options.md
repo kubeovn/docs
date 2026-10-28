@@ -276,7 +276,17 @@ ENABLE_SSL=true
 KUBE_OVN_TLS_ROTATION_INTERVAL=8760h
 ```
 
-使用 Helm 安装时，在 `networking` 下设置相同的间隔：
+使用 Helm 安装时，配置键取决于 Chart 版本。classic Chart（`charts/kube-ovn`）使用大写键：
+
+```yaml
+networking:
+  ENABLE_SSL: true
+  KUBE_OVN_TLS_ROTATION_INTERVAL: 8760h
+```
+
+classic Chart 使用 `installMode: dataPlaneOnly` 时会强制将该间隔设为 `0`，因为 `kube-ovn-tls` 由管理集群维护并负责轮转。
+
+v2 Chart（`charts/kube-ovn-v2`）使用 camel case 键：
 
 ```yaml
 networking:
