@@ -237,5 +237,5 @@ spec:
 
 ## 另请参阅
 
-- [ACL sampling](./acl-sampling.md)
+- [ACL 采样](./acl-sampling.md)
 - [多网络 NetworkPolicy](./multi-network-policy.md)

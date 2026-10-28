@@ -66,6 +66,30 @@ Use `./charts/kube-ovn` instead to configure the classic chart. Keep the
 controller and CNI agent values identical across split or independently
 managed deployments.
 
+For the manifest-based installer, set the ACL sampling environment variables
+before running the installer. The installer defaults match the Helm example:
+
+```bash
+ENABLE_ACL_SAMPLING=true \
+ACL_SAMPLING_SET_ID=142 \
+ACL_SAMPLING_LOCAL_GROUP_ID=142 \
+ACL_SAMPLING_APP_ID_NEW=102 \
+ACL_SAMPLING_APP_ID_ESTABLISHED=103 \
+ACL_SAMPLING_COLLECTOR_ID_ALLOW=1 \
+ACL_SAMPLING_COLLECTOR_ID_DEFAULT_DENY=2 \
+ACL_SAMPLING_ALLOW_PROBABILITY_PERCENT=1 \
+ACL_SAMPLING_DEFAULT_DENY_PROBABILITY_PERCENT=100 \
+bash dist/images/install.sh
+```
+
+The variables are `ENABLE_ACL_SAMPLING`, `ACL_SAMPLING_SET_ID`,
+`ACL_SAMPLING_LOCAL_GROUP_ID`, `ACL_SAMPLING_APP_ID_NEW`,
+`ACL_SAMPLING_APP_ID_ESTABLISHED`, `ACL_SAMPLING_COLLECTOR_ID_ALLOW`,
+`ACL_SAMPLING_COLLECTOR_ID_DEFAULT_DENY`,
+`ACL_SAMPLING_ALLOW_PROBABILITY_PERCENT`, and
+`ACL_SAMPLING_DEFAULT_DENY_PROBABILITY_PERCENT`. Override the values when
+another collector set or sampling rate is required.
+
 The configuration fields have the following semantics:
 
 | Field | Constraint | Purpose |
@@ -92,18 +116,23 @@ sets make sampling unavailable and leave those objects unchanged.
 
 ## Decode and listen
 
+The image includes a standalone `/kube-ovn/kube-ovn-acl-sample` binary for
+both subcommands. It is built separately from the `kube-ovn` CNI plugin.
+`kubectl ko acl` invokes this binary in the selected Pod. For `decode`, the
+wrapper supplies the OVN northbound socket address automatically.
+
 Decode a decimal or `0x`-prefixed hexadecimal sample metadata value or OVS
 user cookie:
 
 ```bash
-kubectl ko acl-sample decode 0x640abcde000000c8
+kubectl ko acl decode 0x640abcde000000c8
 ```
 
 Listen on one node and decode each received event through the OVN northbound
 leader:
 
 ```bash
-kubectl ko acl-sample listen --node worker-1
+kubectl ko acl listen --node worker-1
 ```
 
 The listener reads the enabled CNI DaemonSet's `localGroupID`, selects a
@@ -137,7 +166,7 @@ uses `policyOwner`, sets `reason: network-policy-default-deny` and
 Linux psample messages include captured packet bytes. The current debug
 command only emits the cookie and decoded policy event, but the node-local
 process still receives packet data from the kernel. Access to
-`kubectl ko acl-sample listen` therefore grants a packet-observation
+`kubectl ko acl listen` therefore grants a packet-observation
 capability and should be limited to authorized operators. Use the lowest
 practical sampling probabilities, protect command output as sensitive data,
 and stop the listener when troubleshooting is complete.
