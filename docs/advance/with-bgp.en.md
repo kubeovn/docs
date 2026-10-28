@@ -70,7 +70,7 @@ kubectl apply -f speaker.yaml
 
 In addition to command-line flags, `kube-ovn-speaker` can load its configuration from a YAML file. Set `--config=/etc/kube-ovn/$(NODE_NAME).yaml`, or set `KUBE_OVN_BGP_SPEAKER_CONFIG_FILE`. The environment variable supplies the default value for `--config`.
 
-Mount one file for each node from a ConfigMap. Each key becomes the mounted file name:
+Mount one file for each node from a ConfigMap. Each key becomes the mounted file name and must exactly match the corresponding Pod's `spec.nodeName`; `speaker-node-1` and `speaker-node-2` below are example node names:
 
 ```yaml
 apiVersion: v1
@@ -105,14 +105,28 @@ bgpSpeaker:
       value: /etc/kube-ovn/$(NODE_NAME).yaml
 ```
 
-For other manifests, mount the ConfigMap into the speaker container and set `--config` or the environment variable above. The file must contain one YAML document; unknown fields cause the speaker to fail during startup.
+For other manifests, mount the ConfigMap into the speaker container and define `NODE_NAME` and the config file environment variable in this order:
+
+```yaml
+env:
+  - name: NODE_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
+  - name: KUBE_OVN_BGP_SPEAKER_CONFIG_FILE
+    value: /etc/kube-ovn/$(NODE_NAME).yaml
+```
+
+You can also set `--config` directly to the actual absolute path of a mounted file. The file must contain one YAML document; unknown fields cause the speaker to fail during startup.
 
 Configuration keys use the kebab-case flag name without the leading `--`. Common field formats are:
 
 - `neighbor-address` and `neighbor-ipv6-address`: lists of IPv4 or IPv6 addresses.
 - `allowed-source-addresses` and `allowed-source-ipv6-addresses`: source address allowlists.
 - `cluster-as` and `neighbor-as`: integer AS numbers.
-- `grpc-host`, `router-id`, and `node-ips`: IP strings; `node-ips` is a map with `IPv4` and `IPv6` keys.
+- `grpc-host`: an IPv4 or IPv6 address string.
+- `router-id`: an IPv4 address string; BGP router IDs do not support IPv6.
+- `node-ips`: a map whose keys are `IPv4` or `IPv6` and whose values must match the corresponding address family.
 - `holdtime`, `graceful-restart-time`, and `graceful-restart-deferral-time`: duration strings such as `90s`, `5m`, or `1h`, or integer seconds.
 - `announce-cluster-ip`, `graceful-restart`, `passivemode`, `extended-nexthop`, `nat-gw-mode`, `enable-metrics`, and `enable-bfd`: booleans.
 - `bfd-min-tx`, `bfd-min-rx`, and `bfd-detection-multiplier`: integers.
