@@ -74,6 +74,28 @@ kubectl annotate node no1 ovn.kubernetes.io/tunnel_interface=ethx
 
 To specify different encapsulation NICs for different subnets, please refer to [Overlay Encapsulation NIC Selection](../advance/node-network.en.md).
 
+### Use a `/32` Address as the Tunnel Source
+
+Some cloud platforms assign a `/32` or `/128` address to the host interface. A single eligible full-mask address is selected by default. If it shares the interface with other usable addresses of the same family, Kube-OVN may treat it as a virtual IP and skip it; set `HOST_TUNNEL_SRC=true` to include it as a tunnel source:
+
+```bash
+HOST_TUNNEL_SRC=true
+```
+
+Set `HOST_TUNNEL_SRC=true` when installing with the installation script. The value is passed to the Kube-OVN daemon on each node. When installing with Helm, set the field for the chart in use:
+
+```yaml
+# charts/kube-ovn
+func:
+  HOST_TUNNEL_SRC: true
+
+# charts/kube-ovn-v2
+features:
+  enableHostTunnelSrc: true
+```
+
+Both Helm fields and the installation script variable default to `false`. When enabled, the daemon includes eligible full-mask addresses when selecting a tunnel source; loopback addresses are always excluded. Make sure that the address on every node is usable for node-to-node tunnel communication, and verify Overlay connectivity after enabling the option.
+
 ## Config MTU
 
 Since Overlay encapsulation requires additional space, Kube-OVN will adjust the MTU of the container NIC based on the MTU of the selected NIC when creating the container NIC.
