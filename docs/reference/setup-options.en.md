@@ -76,7 +76,7 @@ To specify different encapsulation NICs for different subnets, please refer to [
 
 ### Use a `/32` Address as the Tunnel Source
 
-Some cloud platforms assign a `/32` address to the host interface. By default, Kube-OVN does not select this type of address as the Overlay tunnel source. If the node-to-node tunnel network uses the `/32` address, enable `/32` address selection:
+Some cloud platforms assign a `/32` or `/128` address to the host interface. A single eligible full-mask address is selected by default. If it shares the interface with other usable addresses of the same family, Kube-OVN may treat it as a virtual IP and skip it; set `HOST_TUNNEL_SRC=true` to include it as a tunnel source:
 
 ```bash
 HOST_TUNNEL_SRC=true
@@ -94,7 +94,7 @@ features:
   enableHostTunnelSrc: true
 ```
 
-Both Helm fields and the installation script variable default to `false`. When enabled, the daemon includes eligible `/32` addresses when selecting a tunnel source; localhost addresses are still excluded unless explicitly allowed. Make sure that the `/32` address on every node is usable for node-to-node tunnel communication, and verify Overlay connectivity after enabling the option.
+Both Helm fields and the installation script variable default to `false`. When enabled, the daemon includes eligible full-mask addresses when selecting a tunnel source; loopback addresses are always excluded. Make sure that the address on every node is usable for node-to-node tunnel communication, and verify Overlay connectivity after enabling the option.
 
 ## Config MTU
 
