@@ -471,6 +471,26 @@ controller:
     retryPeriod: "6s"
 ```
 
+## kube-ovn-monitor 副本数
+
+`kube-ovn-monitor` 默认运行一个副本。可以通过 Helm 配置监控 Deployment 的副本数：
+
+```yaml
+# classic chart
+kube-ovn-monitor:
+  replicas: 1
+
+# v2 chart
+monitor:
+  replicas: 1
+```
+
+classic chart 使用 `kube-ovn-monitor.replicas`，v2 chart 使用 `monitor.replicas`，默认值均为 `1`。在 OVN central 高可用部署中，可以将副本数设置为需要观测的 central 节点数，使每个节点的本地 OVN Raft 角色都能被 `kube-ovn-monitor` 采集。
+
+由于该 Deployment 只会调度到符合条件的 master 节点，并使用按主机名的强制 Pod 反亲和性，副本数不要超过可调度的 master 或 central 节点数，否则多出的 Pod 会一直处于 `Pending` 状态。
+
+升级时 Helm 会按照配置的副本数渲染 Deployment，不会因 chart 升级将已配置的副本数覆盖回 `1`。建议通过 Helm values 管理该设置，而不是只使用 `kubectl scale` 临时修改 Deployment。
+
 ## 绑定本地 ip
 
 kube-ovn-controller/kube-ovn-cni/kube-ovn-monitor 这些服务支持绑定本地 ip，该功能设计原因主要是因为某些场景下出于安全考虑不允许服务绑定 0.0.0.0 （比如该服务部署在某个对外网关上，外部用户可以直接通过公网 ip 并指定端口去访问到该服务），该功能默认是打开的，由安装脚本中如下参数控制：
