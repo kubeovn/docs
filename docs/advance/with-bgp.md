@@ -64,7 +64,7 @@ kubectl apply -f speaker.yaml
 
 除直接在启动参数中配置外，`kube-ovn-speaker` 还支持从 YAML 文件读取配置。通过 `--config=/etc/kube-ovn/$(NODE_NAME).yaml` 指定文件路径，或者设置环境变量 `KUBE_OVN_BGP_SPEAKER_CONFIG_FILE`。环境变量的值会作为 `--config` 的默认值。
 
-可以将每个节点的配置文件作为 ConfigMap 的独立 key 挂载。key 名称就是挂载后的文件名，并且必须与对应 Pod 的 `spec.nodeName` 完全一致；下面的 `speaker-node-1` 和 `speaker-node-2` 是节点名示例：
+可以将每个节点的配置文件作为 ConfigMap 的独立 key 挂载。key 名称就是挂载后的文件名，格式必须为 `<spec.nodeName>.yaml`，去掉 `.yaml` 后缀后才与对应 Pod 的 `spec.nodeName` 匹配；下面的 `speaker-node-1` 和 `speaker-node-2` 是节点名示例：
 
 ```yaml
 apiVersion: v1

@@ -70,7 +70,7 @@ kubectl apply -f speaker.yaml
 
 In addition to command-line flags, `kube-ovn-speaker` can load its configuration from a YAML file. Set `--config=/etc/kube-ovn/$(NODE_NAME).yaml`, or set `KUBE_OVN_BGP_SPEAKER_CONFIG_FILE`. The environment variable supplies the default value for `--config`.
 
-Mount one file for each node from a ConfigMap. Each key becomes the mounted file name and must exactly match the corresponding Pod's `spec.nodeName`; `speaker-node-1` and `speaker-node-2` below are example node names:
+Mount one file for each node from a ConfigMap. Each key becomes the mounted file name and must be `<spec.nodeName>.yaml`, so removing the `.yaml` suffix from the key matches the corresponding Pod's `spec.nodeName`; `speaker-node-1` and `speaker-node-2` below are example node names:
 
 ```yaml
 apiVersion: v1
