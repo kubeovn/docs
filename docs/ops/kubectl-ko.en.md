@@ -38,7 +38,8 @@ Expand-Archive .\kubectl-ko-windows-arm64.zip .\kubectl-ko-windows-arm64
 Use the amd64 archive instead on x64 Windows. `kubectl ko version` and
 `kubectl plugin list` confirm discovery once its directory is on PATH. WSL,
 Bash and local OVN/OVS installations are not required. Use PowerShell 7.4 or
-later (or cmd.exe) when redirecting binary stdout such as `tcpdump -w -`;
+later (or cmd.exe) when redirecting binary stdout such as
+`kubectl ko capture --pod web -- -w -`;
 older PowerShell versions can decode and corrupt native command output.
 
 For a source checkout, run `make build-kubectl-ko`; the results are
@@ -141,9 +142,12 @@ addresses for an allocated family are reported as errors.
 Standard Kubernetes connection flags are accepted before or after subcommands,
 up to the explicit `--` remote-argument separator. The kubeconfig loader supports
 `--kubeconfig`, `KUBECONFIG`, context, TLS, authentication plugins and impersonation.
-Workload namespace selection is `namespace/name`, then `--namespace/-n`, then
-kubeconfig namespace, then `default`. The deployment namespace is independently
-selected by `--kube-ovn-namespace`, `KUBE_OVN_NS`, then `kube-system`.
+Workload `exec` uses `--namespace/-n`, then the kubeconfig namespace, then
+`default`; the slash in `TYPE/NAME` separates the resource type from its name,
+not the namespace. Other commands that accept a Pod, VM, or VMI name can use
+`namespace/name` to override that namespace. The deployment namespace is
+independently selected by `--kube-ovn-namespace`, `KUBE_OVN_NS`, then
+`kube-system`.
 
 | Scope | Parameters and defaults |
 | --- | --- |
@@ -161,6 +165,7 @@ selected by `--kube-ovn-namespace`, `KUBE_OVN_NS`, then `kube-system`.
 
 ```console
 kubectl ko exec deploy/web -- date
+kubectl ko exec -n app pod/web -- date
 kubectl ko exec svc/web -c app -- sh -c 'echo ready'
 kubectl ko exec -n app -l app=web -- curl http://localhost:8080/healthz
 kubectl ko exec nbctl --context staging -- --format=json show
