@@ -50,9 +50,10 @@ spec:
 
 ## Use a Named IPPool
 
-When the value of `ovn.kubernetes.io/ip_pool` is an IPPool name, such as `pool-1`, the Pod does
-not need to set `ovn.kubernetes.io/logical_switch`. The controller uses `pool-1.spec.subnet` as
-the Pod subnet and sets the Pod's `logical_switch`, `cidr`, and `gateway` annotations:
+When the value of `ovn.kubernetes.io/ip_pool` is an IPPool name, such as `pool-1`, a Pod on the
+default network does not need to set `ovn.kubernetes.io/logical_switch`. The controller uses
+`pool-1.spec.subnet` as the Pod subnet and sets its `logical_switch`, `cidr`, and `gateway`
+annotations:
 
 ```yaml
 metadata:
@@ -60,16 +61,20 @@ metadata:
     ovn.kubernetes.io/ip_pool: pool-1
 ```
 
-For a multi-NIC Pod, use `<provider>.kubernetes.io/ip_pool` to select a named IPPool for a
-specific provider. The IPPool subnet must match the subnet used by that provider. If an explicitly
-set `<provider>.kubernetes.io/logical_switch` conflicts with the IPPool subnet, admission or the
-controller rejects the Pod. A single IP, comma-separated IP list, or semicolon-separated dual-stack
-IP list is still treated as a fixed-IP annotation and is not parsed as an IPPool name.
+If `ovn.kubernetes.io/logical_switch` is set explicitly, ensure it matches `IPPool.spec.subnet`.
+A mismatch is not reliably rejected.
 
-When `spec.namespaces` is non-empty, it is a namespace allowlist: only Pods in the listed
-namespaces can allocate addresses from the IPPool. An empty list preserves the compatible behavior.
-Deleting a Pod or Workload releases its allocated addresses back to the IPPool and reduces the
-usage counters in `status`.
+For a multi-NIC Pod, use `<provider>.kubernetes.io/ip_pool` to select a named IPPool for a
+specific provider. The provider's subnet is selected independently of the IPPool; ensure it
+matches `IPPool.spec.subnet`, including when setting `<provider>.kubernetes.io/logical_switch`
+explicitly. A subnet mismatch is not reliably rejected. A single IP, comma-separated IP list,
+or dual-stack list of comma-paired IPv4 and IPv6 addresses separated by semicolons remains a
+fixed-IP annotation rather than an IPPool name.
+
+`spec.namespaces` makes the IPPool eligible for automatic selection in the listed namespaces.
+It does not restrict Pods that explicitly name the IPPool. An empty list does not enable automatic
+selection. Deleting an ordinary Pod releases its addresses and updates the IPPool usage counters;
+StatefulSet and VM Pods can retain their addresses until the owning Workload is removed.
 
 Field description:
 
@@ -77,7 +82,7 @@ Field description:
 | :--------: | :------------------------------------- | :------------------------------------------------------------------ |
 | subnet | Specify the subnet to which it belongs | Required |
 | ips | Specify IP ranges | Support three formats: <IP>, <CIDR> and <IP1>..<IP2>. Support IPv6. |
-| namespaces | Specifies the bound namespaces | Optional. When non-empty, this is an allowlist; Pods in the listed namespaces allocate from the bound IPPool. An empty list preserves the compatible behavior. |
+| namespaces | Specifies the bound namespaces | Optional. Lists namespaces where the IPPool is eligible for automatic selection; does not restrict explicit references to the pool. |
 | enableAddressSet | Whether to automatically create an AddressSet with the same name | Default false. When set to true, ACL and policy routing can use the corresponding AddressSet for policy control |
 
 ## Precautions

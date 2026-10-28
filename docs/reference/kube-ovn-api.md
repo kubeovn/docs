@@ -446,7 +446,7 @@
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
 | subnet | String | 所属子网 |
-| namespaces | []String | 绑定的命名空间列表。非空时作为 allowlist，只有列表中的 Pod 可从该 IPPool 分配地址；空列表保持兼容行为 |
+| namespaces | []String | 该 IPPool 可参与自动选池的命名空间列表，不限制显式指定该 IPPool 的 Pod |
 | ips | []String | IP 地址列表 |
 
 #### IPPoolStatus
