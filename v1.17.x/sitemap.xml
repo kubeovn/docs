@@ -274,6 +274,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.xen/guide/qos/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.17.x/guide/routed-subnet/</loc>
+        <lastmod>2026-10-28</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.x/guide/routed-subnet/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.xen/guide/routed-subnet/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.17.x/guide/static-ip-mac/</loc>
         <lastmod>2026-10-28</lastmod>
         <changefreq>daily</changefreq>
@@ -874,6 +881,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.x/en/guide/qos/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.xguide/qos/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.17.x/en/guide/routed-subnet/</loc>
+        <lastmod>2026-10-28</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.x/en/guide/routed-subnet/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.xguide/routed-subnet/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.17.x/en/guide/static-ip-mac/</loc>
