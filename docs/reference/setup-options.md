@@ -259,6 +259,36 @@ args:
 - --cni-conf-name=01-kube-ovn.conflist
 ```
 
+独立安装脚本默认还会安装随 Kube-OVN 镜像提供的 `loopback`、`portmap`、`macvlan` 和 `ipvlan` 等 CNI 插件。如果节点已经由其他组件提供这些插件，可以在安装时设置：
+
+```bash
+INSTALL_CNI_PLUGINS=false
+```
+
+设置为 `false` 只跳过这些捆绑插件，Kube-OVN 自身的 CNI 二进制和配置仍会安装。使用 Helm v1 时配置 `cni_conf.INSTALL_CNI_PLUGINS: false`；使用 Helm v2 时配置 `cni.installCNIPlugins: false`。
+
+## CNI 周期 recompute
+
+`kube-ovn-cni` DaemonSet 中的周期性 OVN controller recompute 默认关闭。需要定期执行该操作时，可以在独立安装脚本中显式开启：
+
+```bash
+ENABLE_RECOMPUTE=true
+```
+
+Helm v1 和 Helm v2 分别使用以下配置：
+
+```yaml
+# Helm v1
+func:
+  ENABLE_RECOMPUTE: true
+
+# Helm v2
+features:
+  enableRecompute: true
+```
+
+安装后也可以在 `kube-ovn-cni` DaemonSet 中设置 `--enable-recompute=true`。开启后，daemon 每 10 分钟执行一次周期 recompute；保持默认值 `false` 时不会启动该周期任务，其他事件驱动的处理不受此开关影响。
+
 ## 隧道类型设置
 
 Kube-OVN 默认 Overlay 的封装模式为 Geneve，如果想更换为 Vxlan 或 STT，可以通过安装脚本的下列参数进行调整：

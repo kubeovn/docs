@@ -246,6 +246,36 @@ args:
 - --cni-conf-name=01-kube-ovn.conflist
 ```
 
+The standalone installation script also installs the `loopback`, `portmap`, `macvlan`, and `ipvlan` plugins bundled in the Kube-OVN image by default. If another component already provides these plugins on the nodes, set the following during installation:
+
+```bash
+INSTALL_CNI_PLUGINS=false
+```
+
+Setting this to `false` skips only the bundled plugins; the Kube-OVN CNI binary and configuration are still installed. With Helm v1, set `cni_conf.INSTALL_CNI_PLUGINS: false`; with Helm v2, set `cni.installCNIPlugins: false`.
+
+## Periodic CNI recompute
+
+Periodic OVN controller recompute in the `kube-ovn-cni` DaemonSet is disabled by default. To run this periodic operation, explicitly enable it in the standalone installation script:
+
+```bash
+ENABLE_RECOMPUTE=true
+```
+
+Helm v1 and Helm v2 use the following values respectively:
+
+```yaml
+# Helm v1
+func:
+  ENABLE_RECOMPUTE: true
+
+# Helm v2
+features:
+  enableRecompute: true
+```
+
+After installation, you can also set `--enable-recompute=true` in the `kube-ovn-cni` DaemonSet. When enabled, the daemon runs a periodic recompute every 10 minutes. With the default `false` value, this periodic worker is not started; other event-driven processing is unchanged.
+
 ## Tunnel Type Settings
 
 The default encapsulation mode of Kube-OVN Overlay is Geneve,
