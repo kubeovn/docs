@@ -295,10 +295,16 @@ template into the `--tls-min-version`, `--tls-max-version`, and
 `--tls-cipher-suites` arguments for each component. These arguments configure
 secure-serving endpoints. The installation script's `TLS_*` variables do not
 inject these component arguments.
+Setting only these TLS parameters does not enable secure-serving; the chart's
+secure-serving switch must also be enabled. The classic chart uses
+`func.SECURE_SERVING`, while the v2 chart uses `features.enableSecureServing`;
+TLS versions and cipher suites remain under `networking`.
 
-For the classic Helm chart, set the values under `networking`:
+For the classic Helm chart, set the following values:
 
 ```yaml
+func:
+  SECURE_SERVING: true
 networking:
   ENABLE_SSL: true
   TLS_MIN_VERSION: TLS12
@@ -308,9 +314,11 @@ networking:
     - TLS_AES_128_GCM_SHA256
 ```
 
-For the v2 Helm chart, use the equivalent camelCase values:
+For the v2 Helm chart, use the following values:
 
 ```yaml
+features:
+  enableSecureServing: true
 networking:
   enableSsl: true
   tlsMinVersion: TLS12

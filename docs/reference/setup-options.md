@@ -301,10 +301,15 @@ TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
 以下 Helm 配置会由 chart 的 `componentTLSArgs` 模板转换为各组件的
 `--tls-min-version`、`--tls-max-version` 和 `--tls-cipher-suites` 参数，这些参数用于
 配置 secure-serving 端点。安装脚本中的同名 `TLS_*` 变量不会注入这些组件参数。
+仅设置这些 TLS 参数不会启用 secure-serving；必须同时设置 chart 对应的开关。
+classic chart 使用 `func.SECURE_SERVING`，v2 chart 使用
+`features.enableSecureServing`，而 TLS 版本和 cipher suites 仍位于 `networking`。
 
-classic Helm chart 在 `networking` 下配置以下值：
+classic Helm chart 配置以下值：
 
 ```yaml
+func:
+  SECURE_SERVING: true
 networking:
   ENABLE_SSL: true
   TLS_MIN_VERSION: TLS12
@@ -314,9 +319,11 @@ networking:
     - TLS_AES_128_GCM_SHA256
 ```
 
-v2 Helm chart 使用对应的 camelCase 配置：
+v2 Helm chart 使用以下配置：
 
 ```yaml
+features:
+  enableSecureServing: true
 networking:
   enableSsl: true
   tlsMinVersion: TLS12
