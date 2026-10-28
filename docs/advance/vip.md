@@ -1,14 +1,11 @@
 # VIP 预留 IP
 
-VIP 即虚拟 IP，用于预留 IP 资源。之所以设计 VIP 是因为 kube-ovn 的 IP 和 POD 在命名上直接关联，所以无法基于 IP 直接实现预留 IP 的功能。
-VIP 设计之初参考了 Openstack neutron Allowed-Address-Pairs（AAP） 的功能，可以用于 Openstack octavia 负载均衡器项目。 也可以用于提供虚拟机内部的应用（POD）IP，这点可以参考 aliyun terway 项目。
-另外，由于 neutron 有预留 IP 的功能，所以对 VIP 进行了一定扩展，使得 VIP 可以直接用于为 POD 预留 IP，但由于这种设计会导致 VIP 和 IP 的功能变得模糊，在实现上并不是一个优雅的方式，所以不推荐在生产环境中使用。
-而且， 由于 OVN 的 Switch LB 可以提供一种以子网内部 IP 为 LB 前端 VIP 的功能，所以又对 VIP 在子网内使用 OVN Switch LB Rule 场景进行了扩展。
-总之，目前 VIP 在设计上只有三种使用场景：
+VIP 即虚拟 IP，用于预留 IP 资源。VIP 设计之初参考了 OpenStack Neutron Allowed-Address-Pairs（AAP）的功能，后来又扩展支持在子网内为 OVN Switch LB Rule 提供前端 VIP。
+Pod 地址分配由 `IP` 资源和 IPAM 管理，VIP 不再用于为 Pod 固定地址。
+目前 VIP 只有两种使用场景：
 
 - Allowed-Address-Pairs VIP
 - Switch LB rule VIP
-- Pod 使用 VIP 来固定 IP
 
 ## 1. Allowed-Address-Pairs VIP
 
@@ -190,38 +187,16 @@ spec:
 - `subnet`: 将从该 Subnet 中预留 IP。
 - `type`: 目前支持两种类型，为空表示仅用于 ipam ip 占位，`switch_lb_vip` 表示该 vip 仅用于 switch lb 前端 vip 和后端 ip 需处于同一子网。
 
-## 3. Pod 使用 VIP 来固定 IP
+## 3. 从 v1.17 之前的版本升级
 
-> 该功能从 v1.12 开始支持，计划在 v1.17 弃用。弃用范围仅限通过 `ovn.kubernetes.io/vip` 固定 Pod IP 的用法，不影响 VIP 的 AAP 和 SwitchLB 功能。
+v1.17 移除了通过 `ovn.kubernetes.io/vip` 为 Pod 固定 IP 的功能，以及 `kube_host_vm_vip` 类型。升级前请删除使用该 annotation 的 Pod 或对应的 VIP，避免旧的 VIP 预留与 Pod 重新分配的 IP 发生冲突。
 
-不推荐在生产环境中使用该功能。关于 IP 预留和固定，推荐使用 [IPPool](../guide/ippool.md) 或者 [Pod annotation](../guide/static-ip-mac.md)。
+- 升级后，使用 `ovn.kubernetes.io/vip` 的 Pod 会获得普通 IPAM 地址；该 annotation 会被忽略并记录告警。
+- 升级后删除这类 Pod 会释放其 IPAM 地址，但不会释放 VIP，也不会将地址交还给 VIP；其他 Pod 可能先占用该地址。只有 controller 重启且地址仍空闲时，VIP 才可能重新占用该地址。
+- `kube_host_vm_vip` 不再创建或维护普通逻辑交换机端口。遗留端口会在两轮垃圾回收后被清理；如果外部工作负载仍在使用，请在升级前改用外部方式管理该端口。
+- v1.17 之前 VIP 上遗留的 `ip_reserved` 标签不会自动删除，也不再参与地址预留。旧 Pod 仍占用地址时，Subnet 的 `UsingIPs` 可能暂时比实际使用量高；Pod 及其 IP 记录删除后，这个额外计数会消失，VIP 自身的预留仍会正常计数。
 
-```yaml
-apiVersion: kubeovn.io/v1
-kind: Vip
-metadata:
-  name: pod-use-vip
-spec:
-  subnet: ovn-default
-  type: ""
-```
-
-可以使用 annotation 将某个 VIP 分配给一个 Pod：
-
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: static-ip
-  annotations:
-    ovn.kubernetes.io/vip: pod-use-vip # 指定 vip
-  namespace: default
-spec:
-  containers:
-    - name: static-ip
-      image: docker.io/library/nginx:alpine
-
-```
+需要为 Pod 预留或固定地址时，请使用 [IPPool](../guide/ippool.md) 或 [Pod annotation](../guide/static-ip-mac.md)。AAP 和 Switch LB 仍继续使用 VIP。
 
 ## 4. StatefulSet 和 Kubevirt VM 保留 IP
 

@@ -22,7 +22,7 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/bgp | `true`, `cluster`, `local` | Enable Pod address BGP advertisement |
 | ovn.kubernetes.io/snat | String | SNAT address for accessing external address |
 | ovn.kubernetes.io/eip | String | EIP address that Pod accesses external clusters and is accessed from external. |
-| ovn.kubernetes.io/vip | String | VIP allocated to Pod primary interface |
+| ovn.kubernetes.io/vip | String | Removed in v1.17. The annotation is ignored and a warning is logged; use `ovn.kubernetes.io/ip_address`, `ovn.kubernetes.io/ip_pool`, or an IPPool to assign a Pod address |
 | ovn.kubernetes.io/aaps | String | AAPs (Additional Allowed Addresses Pairs) configuration for Pod primary interface |
 | ovn.kubernetes.io/virtualmachine | String | The VirtualMachineInstance that the Pod primary interface belongs to |
 | ovn.kubernetes.io/activation_strategy | String | Activation strategy for Pod primary interface |

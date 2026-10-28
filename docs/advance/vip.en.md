@@ -1,11 +1,11 @@
 # VIP reserved IP
 
-VIP Virtual IP addresses are reserved for IP addresses. The reason for the design of VIP is that the IP and POD of kube-ovn are directly related in naming, so the function of reserving IP cannot be realized directly based on IP. At the beginning of the design, VIP refers to the function of Openstack neutron Allowed-Address-Pairs(AAP), which can be used for Openstack octavia load balancer projects. It can also be used to provide in-machine application (POD) IP, as seen in the aliyun terway project. In addition, because neutron has the function of reserving IP, VIP has been extended to a certain extent, so that VIP can be directly used to reserve IP for POD, but this design will lead to the function of VIP and IP become blurred, which is not an elegant way to achieve, so it is not recommended to use in production. In addition, since the Switch LB of OVN can provide a function of using the internal IP address of the subnet as the front-end VIP of the LB, the scenario of using the OVN Switch LB Rule in the subnet for the VIP is extended.
-In short, there are only three use cases for VIP design at present:
+VIPs reserve virtual IP addresses. VIP was originally modeled after OpenStack Neutron Allowed-Address-Pairs (AAP), and was later extended to provide a front-end VIP for an OVN Switch LB Rule in the same subnet.
+Pod address allocation is owned by the `IP` resource and IPAM. VIPs are no longer used to assign fixed Pod addresses.
+VIPs currently have two use cases:
 
 - Allowed-Address-Pairs VIP
 - Switch LB rule VIP
-- Pod uses VIP to fix IP
 
 ## 1. Allowed-Address-Pairs VIP
 
@@ -201,38 +201,16 @@ spec:
 - `v4ip`: optional argument to use a specific IP within the subnet (SLRs only support IPv4)
 - `type`: `switch_lb_vip` indicates that this VIP is used by a SwitchLB
 
-## 3. Use VIP to Assign a Fixed Pod IP
+## 3. Upgrade from a Version Before v1.17
 
-> This feature has been supported since v1.12 and is planned for deprecation in v1.17. Only assigning fixed Pod IP addresses through `ovn.kubernetes.io/vip` is affected; VIP functionality for AAP and SwitchLB is unaffected.
+v1.17 removes assigning fixed Pod IP addresses through `ovn.kubernetes.io/vip` and removes the `kube_host_vm_vip` type. Before upgrading, delete Pods that use this annotation or delete their corresponding VIPs to avoid conflicts between old VIP reservations and the IPAM address restored for the Pod.
 
-This feature is not recommended for production use. To reserve or assign fixed IP addresses, use [IPPool](../guide/ippool.en.md) or [Pod annotations](../guide/static-ip-mac.en.md) instead.
+- After the upgrade, Pods that use `ovn.kubernetes.io/vip` receive regular IPAM addresses. The annotation is ignored and a warning is logged.
+- Deleting such a Pod after the upgrade releases its IPAM address, but does not release the VIP or hand the address back to it. Another Pod can claim the address. The VIP is only reconsidered after a controller restart, and only if the address is still free.
+- `kube_host_vm_vip` no longer creates or reconciles a normal logical switch port. Leftover ports are reclaimed after two garbage-collection sweeps; move any external workload that still uses one to an externally managed port before upgrading.
+- The `ip_reserved` label left on pre-v1.17 VIPs is inert and is not removed automatically. While an old Pod still holds the address, the Subnet `UsingIPs` value can temporarily exceed actual usage. After the Pod and its IP record are removed, this extra count disappears and the VIP's own reservation is counted normally.
 
-```yaml
-apiVersion: kubeovn.io/v1
-kind: Vip
-metadata:
-  name: pod-use-vip
-spec:
-  subnet: ovn-default
-  type: ""
-```
-
-You can use annotations to assign a VIP to a Pod, which will then use the VIP's IP address:
-
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: static-ip
-  annotations:
-    ovn.kubernetes.io/vip: pod-use-vip # use vip name
-  namespace: default
-spec:
-  containers:
-    - name: static-ip
-      image: docker.io/library/nginx:alpine
-
-```
+To reserve or assign a Pod address, use [IPPool](../guide/ippool.en.md) or [Pod annotations](../guide/static-ip-mac.en.md). VIPs for AAP and Switch LB remain supported.
 
 ## 4. StatefulSet and Kubevirt VM Retain IP Addresses
 
