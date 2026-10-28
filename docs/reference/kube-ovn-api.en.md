@@ -50,6 +50,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | policyRoutingTableID | Uint32 | The TableID of the local policy routing table, should be different for each subnet to avoid conflicts |
 | mtu | Uint32 | The MTU size of the subnet |
 | private | Bool | Whether the subnet is a private subnet, which denies access to addresses inside the subnet if the subnet is private |
+| routed | Bool | Whether to enable routed-subnet mode. Pods use `/32` (IPv4) or `/128` (IPv6) addresses and access the subnet through its gateway; an OVN logical router port is required |
 | allowSubnets | []String | If the subnet is a private subnet, the set of addresses that are allowed to access the subnet |
 | vlan | String | The name of vlan to which the subnet is bound |
 | vips | []String | The virtual-ip parameter information for virtual type lsp on the subnet |
