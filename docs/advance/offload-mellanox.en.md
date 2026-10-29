@@ -621,7 +621,7 @@ spec:
 
 - `v1.multus-cni.io/default-network`: is the {namespace}/{name} of `NetworkAttachmentDefinition` in the previous step.
 
-> Note: In the above example, multus is used to create a Pod using VF as the secondary network card, and VF is used as the default route of the Pod. You can also use VF as the main network card of the Pod. For more details on multus configuration, see [Multiple Network Card Management](./multi-nic.md).
+> Note: In the above example, multus is used to create a Pod using VF as the secondary network card, and VF is used as the default route of the Pod. You can also use VF as the main network card of the Pod. For more details on multus configuration, see [Multiple Network Card Management](./multi-nic.en.md).
 
 ```yaml
 apiVersion: v1

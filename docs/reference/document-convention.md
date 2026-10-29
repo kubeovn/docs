@@ -194,7 +194,7 @@ mv /etc/origin/ovn/ovnsb_db.db /tmp
 </td><td>
 
 ```markdown
-安装前请参考[准备工作](./prepare.md)。
+安装前请参考[准备工作](../start/prepare.md)。
 ```
 
 </td></tr>

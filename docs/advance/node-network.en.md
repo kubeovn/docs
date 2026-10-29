@@ -171,7 +171,7 @@ The network traffic of this Pod will be forwarded through the storage NIC (`eth1
 
 1. Ensure all nodes within the same network plane can communicate with each other.
 2. The IPs configured in node annotations must be valid IP addresses that actually exist on that node.
-3. This feature only applies to Overlay type subnets; Underlay subnets do not support this configuration. For Underlay network configuration, please refer to [Underlay Network Installation](../start/underlay.md).
+3. This feature only applies to Overlay type subnets; Underlay subnets do not support this configuration. For Underlay network configuration, please refer to [Underlay Network Installation](../start/underlay.en.md).
 4. If a subnet does not have `nodeNetwork` configured, or if the configured network name does not exist on the node, the default encapsulation IP will be used.
 5. If a Pod is scheduled to a node that does not have the annotation corresponding to the subnet's `nodeNetwork`, the Pod will fail to run. Ensure all nodes that may be scheduled have the corresponding network annotations configured.
 6. When adding nodes or adjusting node networks, update the `ovn.kubernetes.io/node_networks` annotation on the corresponding nodes promptly to avoid Pod failures.

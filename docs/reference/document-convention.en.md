@@ -194,7 +194,7 @@ Please refer to [Preparation](http://kubeovn.github.io/prepare) before installat
 </td><td>
 
 ```markdown
-Please refer to [Preparation](./prepare.md) before installation.
+Please refer to [Preparation](../start/prepare.en.md) before installation.
 ```
 
 </td></tr>
