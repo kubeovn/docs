@@ -200,7 +200,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | Property Name | Type | Description |
 | --- | --- | --- |
 | remoteVpc | String | Remote VPC name |
-| localConnectIP | String | Local connection IP address |
+| localConnectIP | String | Required. One or more local peering endpoint IP addresses with CIDRs, separated by commas, for example `169.254.0.1/30` or `169.254.0.1/30,fd00::1/64`; each endpoint CIDR should match the corresponding remote endpoint and should not overlap an existing subnet. |
 
 ###### BFDPort
 
@@ -671,7 +671,8 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | vpc | String | VPC name where the VPC gateway Pod is located |
 | subnet | String | Subnet name where the VPC gateway Pod belongs |
 | externalSubnets | []String | List of external subnets |
-| lanIp | String | Specified IP address allocated for the VPC gateway Pod |
+| lanIp | String | Optional LAN IP. In non-HA mode, leave empty for dynamic allocation; the observed address is persisted here. Ignored in HA mode. |
+| replicas | Int32 | Number of gateway replicas. Defaults to 1 when omitted; values greater than 1 use a Deployment for high availability. |
 | selector | []String | Standard Kubernetes Selector matching information |
 | tolerations | []Toleration | Standard Kubernetes toleration information |
 | affinity | Affinity | Standard Kubernetes affinity configuration |
@@ -709,6 +710,11 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | selector | []String | Standard Kubernetes Selector matching information |
 | tolerations | []Toleration | Standard Kubernetes toleration information |
 | affinity | Affinity | Standard Kubernetes affinity configuration |
+| lanIp | String | Observed LAN address. In HA mode, observed addresses are sorted and joined with commas. |
+| replicas | Int32 | Configured `spec.replicas` value. When `spec.replicas` is omitted, the workload uses one effective replica while this status field may remain 0. |
+| ready | Bool | Whether the gateway workload is ready. |
+
+`VpcNatGateway.spec.lanIp` may be left empty. In single-replica mode, the controller allocates an address dynamically and persists the observed value to `spec.lanIp`; the field is immutable after persistence. When `spec.replicas` is greater than 1, each replica allocates its own address and `spec.lanIp` cannot pin an address. `status.lanIp` records the observed addresses as one address in single-replica mode or a sorted comma-separated list in HA mode; `status.replicas` reflects the configured `spec.replicas` value, while `status.ready` reports whether the gateway workload is ready. When `spec.replicas` is omitted, the workload uses one effective replica but `status.replicas` may remain 0.
 
 ### VpcEgressGateway
 
@@ -730,13 +736,13 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | replicas | Int32 | Number of gateway replicas. Defaults to 1 |
 | prefix | String | Optional. Name prefix for the workload. The final name is `<prefix><veg-name>` |
 | image | String | Optional. Image used by the workload. Falls back to the kube-ovn-controller default when unspecified |
-| internalSubnet | String | Optional. Internal subnet. Falls back to the VPC default subnet when unspecified |
+| internalSubnet | String | Optional. Internal subnet. Falls back to the VPC default subnet when unspecified. In non-primary CNI mode, its provider must be `<nad-name>.<nad-namespace>.ovn`, and the referenced NetworkAttachmentDefinition must exist |
 | externalSubnet | String | Required. Name of the external subnet |
 | internalIPs | []String | Optional. List of internal IPs (must be no fewer than the replica count; in dual-stack mode, each entry takes the form `v4,v6`) |
 | externalIPs | []String | Optional. List of external IPs (must be no fewer than the replica count; in dual-stack mode, each entry takes the form `v4,v6`) |
 | internalIPPool | String | Optional. Name of an `IPPool` used to allocate internal addresses. Its subnet must match `internalSubnet`; mutually exclusive with `internalIPs` |
 | externalIPPool | String | Optional. Name of an `IPPool` used to allocate external addresses. Its subnet must match `externalSubnet`; mutually exclusive with `externalIPs` |
-| selectors | []VpcEgressGatewaySelector | Namespace/Pod selectors that pick the traffic sources handled by this gateway |
+| selectors | []VpcEgressGatewaySelector | Namespace/Pod selectors that pick the traffic sources handled by this gateway. Not supported in non-primary CNI mode; use `policies` instead |
 | trafficPolicy | String | Optional. Traffic policy, `Cluster` (default) or `Local`; only effective for the default VPC |
 | bfd | VpcEgressGatewayBFDConfig | BFD configuration |
 | policies | []VpcEgressGatewayPolicy | List of egress policies, with at least one entry |

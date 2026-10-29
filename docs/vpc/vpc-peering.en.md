@@ -8,6 +8,7 @@ can access each other through private addresses as if they were on the same priv
 1. This feature is only available for customized VPCs.
 2. To avoid route overlap the subnet CIDRs within the two VPCs cannot overlap.
 3. Currently, only interconnection of two VPCs is supported.
+4. Every `vpcPeerings` entry must set `localConnectIP` to one or more endpoint IP addresses with CIDRs, separated by commas, for example `169.254.0.1/30` or `169.254.0.1/30,fd00::1/64`. Each endpoint CIDR should match the corresponding remote endpoint and should not overlap an existing subnet.
 
 ## Usage
 
@@ -75,9 +76,19 @@ spec:
 ```
 
 - `remoteVpc`: the name of another peering VPC.
-- `localConnectIP`: as the IP address and CIDR of the interconnection endpoint. Note that both IPs should belong to the same CIDR and should not conflict with existing subnets.
+- `localConnectIP`: Required. One or more IP addresses with CIDRs for the interconnection endpoints, separated by commas, for example `169.254.0.1/30` or `169.254.0.1/30,fd00::1/64`. Each endpoint CIDR should match the corresponding remote endpoint and should not overlap an existing subnet.
 - `cidr`: CIDR of the peering Subnet.
 - `nextHopIP`: the `localConnectIP` on the other end of the peering VPC.
+
+### Parameter validation
+
+When a VPC is created or updated, the admission webhook validates `localConnectIP` for every peering entry. An empty value is rejected with an error similar to:
+
+```text
+localConnectIP is required for vpc peering with vpc-2, e.g. 169.254.0.1/30
+```
+
+Non-empty values must also be valid CIDRs; each comma-separated value is checked separately. Validation failure prevents the interconnection logical router port from being created. If the admission webhook is disabled, the VPC controller repeats the required-field and CIDR checks during reconciliation and stops processing the VPC on failure. Set `localConnectIP` explicitly in every peering entry.
 
 Create Pods under the two Subnets
 

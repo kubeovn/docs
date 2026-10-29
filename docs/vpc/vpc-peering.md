@@ -8,6 +8,7 @@ VPC 互联提供了一种将两个 VPC 网络通过逻辑路由打通的机制�
 1. 该功能只适用于用户自定义 VPC。
 2. 为了避免路由重叠两个 VPC 内的子网 CIDR 不能重叠。
 3. 目前只支持两个 VPC 的互联，更多组 VPC 之间的互联暂不支持。
+4. 每个 `vpcPeerings` 条目都必须设置 `localConnectIP`，填写一个或多个带掩码的端点 IP 地址和 CIDR，多个值用逗号分隔，例如 `169.254.0.1/30` 或 `169.254.0.1/30,fd00::1/64`。每个端点的 CIDR 应与远端对应端点匹配，且不应与已有子网冲突。
 
 ## 使用方式
 
@@ -74,9 +75,19 @@ spec:
 ```
 
 - `remoteVpc`: 互联的另一个 VPC 的名字。
-- `localConnectIP`: 作为互联端点的 IP 地址和 CIDR，注意两端 IP 应属于同一 CIDR，且不能和已有子网冲突。
+- `localConnectIP`: 必填，作为互联端点的一个或多个 IP 地址和 CIDR，多个值用逗号分隔，例如 `169.254.0.1/30` 或 `169.254.0.1/30,fd00::1/64`。每个端点的 CIDR 应与远端对应端点匹配，且不应与已有子网冲突。
 - `cidr`：另一端 Subnet 的 CIDR。
 - `nextHopIP`：互联 VPC 另一端的 `localConnectIP`。
+
+### 参数校验
+
+创建或更新 VPC 时，admission webhook 会校验每个 peering 条目的 `localConnectIP`。留空时请求会被拒绝，并返回类似以下错误：
+
+```text
+localConnectIP is required for vpc peering with vpc-2, e.g. 169.254.0.1/30
+```
+
+非空值还必须是有效的 CIDR，逗号分隔的每个值都会分别校验；校验失败时不会创建互联逻辑路由端口。如果 admission webhook 被禁用，VPC controller 在 reconcile 时会执行相同的必填和 CIDR 校验并停止本次处理，因此必须在每个条目中显式填写 `localConnectIP`。
 
 分别在两个 Subnet 下创建 Pod
 
