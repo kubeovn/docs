@@ -1,6 +1,76 @@
-# Iptables 规则
+# 网关 Netfilter 规则
 
-Kube-OVN 使用 ipset 及 iptables 辅助实现默认 VPC 下容器网络（Overlay）网关 NAT 的功能。
+Kube-OVN 使用网关 Netfilter 后端实现默认 VPC 下容器网络（Overlay）的网关 NAT 功能。
+后端可以使用 `iptables` 或 `nftables`，本文同时保留 iptables 后端的规则参考。
+
+## 网关后端选择
+
+`kube-ovn-cni` daemon 支持三种网关 Netfilter 模式：
+
+| 模式 | 行为 |
+| :--- | :--- |
+| `auto` | 自动检测本地 kube-proxy 模式。`iptables` 和 `ipvs` 使用 iptables 后端，`nftables` 使用 nftables 后端。 |
+| `iptables` | 始终使用 Kube-OVN 的 iptables 和 ipset 规则。 |
+| `nftables` | 始终使用 Kube-OVN 的 nftables 表和规则。 |
+
+默认模式为 `auto`。冷启动时会轮询 kube-proxy 的 `proxyMode` 接口；如果在检测超时前接口不可用，则读取 `kube-system` 中的 `kube-proxy` ConfigMap。默认接口为 `http://localhost:10249/proxyMode`，默认超时为 30 秒。运行期间连续三次观察到模式变化后才会切换后端，避免一次临时响应触发切换。
+
+运行 `bash install.sh` 前，可以通过环境变量设置模式和检测参数；也可以在 `kube-ovn-cni` DaemonSet 中设置：
+
+```bash
+export GATEWAY_NETFILTER_MODE=auto
+export KUBE_PROXY_MODE_ENDPOINT=http://localhost:10249/proxyMode
+export GATEWAY_NETFILTER_DETECT_TIMEOUT=30s
+```
+
+```yaml
+args:
+- --gateway-netfilter-mode=auto
+- --kube-proxy-mode-endpoint=http://localhost:10249/proxyMode
+- --gateway-netfilter-detect-timeout=30s
+```
+
+使用 Helm 安装时，根据 Chart 版本设置对应的值：
+
+```yaml
+# charts/kube-ovn
+networking:
+  GATEWAY_NETFILTER_MODE: auto
+  KUBE_PROXY_MODE_ENDPOINT: http://localhost:10249/proxyMode
+  GATEWAY_NETFILTER_DETECT_TIMEOUT: 30s
+```
+
+```yaml
+# charts/kube-ovn-v2
+agent:
+  gatewayNetfilterMode: auto
+  kubeProxyModeEndpoint: http://localhost:10249/proxyMode
+  gatewayNetfilterDetectTimeout: 30s
+```
+
+nftables 后端在适用的 IPv4、IPv6 nftables family 中分别管理 Kube-OVN 自有的 `kube-ovn` 表，用于 Service 和 NodePort NAT、子网 NAT、NAT policy、TProxy、filter 和 mangle 规则以及子网流量统计。它不会读取或修改 kube-proxy 私有的 nftables 对象或标记，也不会清理 conntrack 表项。
+
+后端切换时，Kube-OVN 会先准备并同步目标后端，再清理旧后端。切换和卸载时只清理 Kube-OVN 自有的 iptables、ipset 和 nftables 对象。如果清理失败，会保留当前后端并在后续 reconcile 中重试。
+
+## Nftable LoadBalancer Service
+
+控制器参数 `--enable-nftable-lb-svc` 用于启用由 VPC NAT Gateway nftable share-DNAT 实现的 LoadBalancer Service。当前 master 中该参数默认值为 `true`，且需要全局参数 `--enable-lb=true` 才能生效。
+
+对应的 Helm 配置键如下：
+
+```yaml
+# charts/kube-ovn
+func:
+  ENABLE_NFTABLE_LB_SVC: true
+
+# charts/kube-ovn-v2
+features:
+  enableNftableLoadbalancerService: false
+```
+
+v2 chart 仅在 `enableNftableLoadbalancerService` 为 true 时渲染控制器参数。当该值为 false 时会省略参数，而控制器默认值仍为 true；在 chart 提供有效的关闭方式前，如需关闭应显式设置控制器参数。
+
+nftable LoadBalancer Service 进入终止状态时，会立即释放其 `EIP:port:protocol` 标识。后续 Service 可以复用该标识并被编程，无需等待已删除 Service 的 finalizer 完成。
 
 使用的 ipset 如下表所示：
 
