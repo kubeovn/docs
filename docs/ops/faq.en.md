@@ -1,100 +1,5 @@
 # FAQ
 
-For a better understanding of how to troubleshoot issues, see the [architecture overview](../reference/architecture.en.md) for Kube-OVN components and their interactions.
-
-## General Troubleshooting Steps
-
-1. Identify which network paths are affected:
-    - Test connectivity between Pods.
-    - Test connectivity between Pods and nodes.
-    - Test access to Services from Pods.
-    - Test DNS resolution from Pods.
-    - Test access to external networks from Pods.
-    - Check the `kube-ovn-pinger` logs on the affected node for network failures.
-2. Check component logs for errors:
-    - Check Pod logs for network failures.
-    - Check kube-ovn-cni logs on the node for CNI errors.
-    - Check ovs-ovn logs on the node for OVS errors.
-    - Check kube-ovn-controller logs for controller errors.
-    - Check ovn-central logs for OVN errors.
-    - Check the node's dmesg output for kernel errors.
-    - Check the node's `netstat -s` output for network errors.
-3. Check component metrics for unusual CPU, memory, and I/O usage.
-
-Use `kubectl ko log` to collect the logs and information above.
-
-## Pod Creation Fails with an IP Conflict Event
-
-### Behavior
-
-The Pod does not reach the Running state. `kubectl describe pod` shows `duplicate IPv4 address <ip> found on logical switch port <port>`.
-
-### Solution
-
-1. Check whether the Pod uses a static IP. If it does, the address is already in use; choose another address or remove the Pod using it.
-2. Search kube-ovn-controller logs for allocation and release events involving the conflicting IP.
-3. Check whether a kube-ovn-controller restart or leader transition caused incorrect IP reclamation.
-4. Run `kubectl ko nbctl show` to inspect the ports and IPs in the OVN database.
-5. If an IP port remains in OVN but no longer exists in Kubernetes, remove the stale port with `kubectl ko nbctl lsp-del <port>`.
-
-## Pod Creation Fails with a Gateway Ping Event
-
-### Behavior
-
-The Pod does not reach the Running state. `kubectl describe pod` shows `network <ip> with gateway <gw ip> is not ready for interface eth0 after 30 checks`.
-
-### Solution
-
-1. Run `kubectl ko sbctl show` to check whether the Pod port exists.
-2. If it does not, collect ovn-central and ovs-ovn logs, check for errors, and restart those components before retrying.
-3. If it does, check whether a network policy blocks the Pod from reaching its gateway.
-4. For an Underlay network, ask the network administrator about restrictions on the physical network and see the [Underlay installation guide](../start/underlay.en.md).
-
-## Pod Cannot Access an External Network
-
-### Behavior
-
-The Pod can reach destinations inside the cluster's default VPC but cannot reach external destinations.
-
-### Solution
-
-1. Use `kubectl ko trace` to check whether an ACL blocks traffic in the OVN logical flow path.
-2. Adjust the ACL policy if one blocks the traffic.
-3. Otherwise, inspect Subnet status to confirm the gateway node and its network connectivity.
-4. If the gateway node is wrong or its network is unavailable, update the gateway node in the Subnet spec.
-5. Check kube-ovn-controller logs for errors during gateway changes.
-
-## Pod IP Is Outside the Specified CIDR
-
-### Behavior
-
-The Pod starts, but its IP address is outside the specified CIDR.
-
-### Solution
-
-1. Check `/etc/cni/net.d/` on the host for CNI configuration files other than Kube-OVN's.
-2. Rename or remove any conflicting configuration files.
-3. Restart kubelet and all Pods on the affected node.
-
-## Debug Pod Fails to Start
-
-### Behavior
-
-A Pod created with `kubectl debug` remains in ContainerCreating. Its events report `network not ready` or `no address allocated`.
-
-### Solution
-
-Export the debug Pod's YAML and remove these annotations:
-
-```yaml
-ovn.kubernetes.io/ip_address
-ovn.kubernetes.io/mac_address
-ovn.kubernetes.io/allocated
-ovn.kubernetes.io/routed
-```
-
-Delete the debug Pod and recreate it with the modified YAML.
-
 ## Kylin ARM system cross-host container access intermittently fails
 
 ### Behavior
@@ -140,7 +45,7 @@ A temporary solution would be to turn off `tx offload` on the physical NIC, but 
 ethtool -K eth0 tx off
 ```
 
-Community feedback indicates that both CentOS 7 and Kylin may exhibit this issue. On Kylin, kernel `4.19.90-25.16.v2101` resolves it.
+From the community feedback, the problem can be solved by the `4.19.90-25.16.v2101` kernel.
 
 ## Pod cannot Access Service
 
@@ -164,7 +69,7 @@ This log indicates that the in-kernel OVS version is too low to support the corr
 
 ### Behavior
 
-Starting from v1.11.x, in a cluster with 10,000 or more Pods, frequent OVN NB or SB leader elections may be caused by Kube-OVN periodically running ovsdb-server/compact, which affects leader election.
+Starting from the v1.11.x version, in a cluster with 1w Pod or more, if OVN NB or SB frequently elects the master, the possible reason is that Kube-OVN periodically performs the ovsdb-server/compact action, which affects the master selection logic.
 
 ### Solution
 
