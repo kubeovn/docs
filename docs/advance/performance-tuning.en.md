@@ -181,7 +181,7 @@ The `FastPath` module can reduce CPU overhead by bypassing netfilter, since in m
 
 Since kernel modules are kernel version dependent, it is not possible to provide a single kernel module artifact that adapts to all kernels.
 
-You need to compile it manually, see [Compiling FastPath Module](./fastpath.en.md)
+You need to compile it manually, see [Compiling FastPath Module](./fastpath.md)
 
 After obtaining the kernel module, you can load the `FastPath` module on each node
 using `insmod kube_ovn_fastpath.ko` and verify that the module was loaded successfully using `dmesg`:
