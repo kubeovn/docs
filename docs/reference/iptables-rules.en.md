@@ -15,12 +15,12 @@ The `kube-ovn-cni` daemon supports three gateway Netfilter modes:
 
 `auto` is the default. During a cold start it polls the kube-proxy `proxyMode` endpoint and, if that endpoint is unavailable before the detection timeout, reads the `kube-proxy` ConfigMap in `kube-system`. The default endpoint is `http://localhost:10249/proxyMode` and the default timeout is 30 seconds. At runtime, a mode change is accepted after three consecutive observations so a transient response does not switch the backend.
 
-Set the mode and detection options in the installation environment or the `kube-ovn-cni` DaemonSet:
+Set the mode and detection options in the environment before running `bash install.sh`, or in the `kube-ovn-cni` DaemonSet:
 
 ```bash
-GATEWAY_NETFILTER_MODE=auto
-KUBE_PROXY_MODE_ENDPOINT=http://localhost:10249/proxyMode
-GATEWAY_NETFILTER_DETECT_TIMEOUT=30s
+export GATEWAY_NETFILTER_MODE=auto
+export KUBE_PROXY_MODE_ENDPOINT=http://localhost:10249/proxyMode
+export GATEWAY_NETFILTER_DETECT_TIMEOUT=30s
 ```
 
 ```yaml
@@ -30,7 +30,25 @@ args:
 - --gateway-netfilter-detect-timeout=30s
 ```
 
-The nftables backend manages the Kube-OVN-owned `kube-ovn` table for Service and NodePort NAT, subnet NAT, NAT policy, TProxy, filter and mangle rules, and subnet traffic accounting. It does not read or modify kube-proxy-private nftables objects or marks, and it does not flush conntrack entries.
+For Helm installations, use the values for the chart in use:
+
+```yaml
+# charts/kube-ovn
+networking:
+  GATEWAY_NETFILTER_MODE: auto
+  KUBE_PROXY_MODE_ENDPOINT: http://localhost:10249/proxyMode
+  GATEWAY_NETFILTER_DETECT_TIMEOUT: 30s
+```
+
+```yaml
+# charts/kube-ovn-v2
+agent:
+  gatewayNetfilterMode: auto
+  kubeProxyModeEndpoint: http://localhost:10249/proxyMode
+  gatewayNetfilterDetectTimeout: 30s
+```
+
+The nftables backend manages Kube-OVN-owned `kube-ovn` tables in the IPv4 and IPv6 nftables families, as applicable, for Service and NodePort NAT, subnet NAT, NAT policy, TProxy, filter and mangle rules, and subnet traffic accounting. It does not read or modify kube-proxy-private nftables objects or marks, and it does not flush conntrack entries.
 
 When the backend changes, Kube-OVN prepares and reconciles the target backend before cleaning the old backend. Switching and uninstall cleanup remove only Kube-OVN-owned iptables, ipset, and nftables objects. If cleanup fails, the active backend is retained and cleanup is retried during later reconciliation.
 

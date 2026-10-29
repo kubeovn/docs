@@ -15,12 +15,12 @@ Kube-OVN 使用网关 Netfilter 后端实现默认 VPC 下容器网络（Overlay
 
 默认模式为 `auto`。冷启动时会轮询 kube-proxy 的 `proxyMode` 接口；如果在检测超时前接口不可用，则读取 `kube-system` 中的 `kube-proxy` ConfigMap。默认接口为 `http://localhost:10249/proxyMode`，默认超时为 30 秒。运行期间连续三次观察到模式变化后才会切换后端，避免一次临时响应触发切换。
 
-可以在安装环境变量或 `kube-ovn-cni` DaemonSet 中设置模式和检测参数：
+运行 `bash install.sh` 前，可以通过环境变量设置模式和检测参数；也可以在 `kube-ovn-cni` DaemonSet 中设置：
 
 ```bash
-GATEWAY_NETFILTER_MODE=auto
-KUBE_PROXY_MODE_ENDPOINT=http://localhost:10249/proxyMode
-GATEWAY_NETFILTER_DETECT_TIMEOUT=30s
+export GATEWAY_NETFILTER_MODE=auto
+export KUBE_PROXY_MODE_ENDPOINT=http://localhost:10249/proxyMode
+export GATEWAY_NETFILTER_DETECT_TIMEOUT=30s
 ```
 
 ```yaml
@@ -30,7 +30,25 @@ args:
 - --gateway-netfilter-detect-timeout=30s
 ```
 
-nftables 后端管理 Kube-OVN 自有的 `kube-ovn` 表，用于 Service 和 NodePort NAT、子网 NAT、NAT policy、TProxy、filter 和 mangle 规则以及子网流量统计。它不会读取或修改 kube-proxy 私有的 nftables 对象或标记，也不会清理 conntrack 表项。
+使用 Helm 安装时，根据 Chart 版本设置对应的值：
+
+```yaml
+# charts/kube-ovn
+networking:
+  GATEWAY_NETFILTER_MODE: auto
+  KUBE_PROXY_MODE_ENDPOINT: http://localhost:10249/proxyMode
+  GATEWAY_NETFILTER_DETECT_TIMEOUT: 30s
+```
+
+```yaml
+# charts/kube-ovn-v2
+agent:
+  gatewayNetfilterMode: auto
+  kubeProxyModeEndpoint: http://localhost:10249/proxyMode
+  gatewayNetfilterDetectTimeout: 30s
+```
+
+nftables 后端在适用的 IPv4、IPv6 nftables family 中分别管理 Kube-OVN 自有的 `kube-ovn` 表，用于 Service 和 NodePort NAT、子网 NAT、NAT policy、TProxy、filter 和 mangle 规则以及子网流量统计。它不会读取或修改 kube-proxy 私有的 nftables 对象或标记，也不会清理 conntrack 表项。
 
 后端切换时，Kube-OVN 会先准备并同步目标后端，再清理旧后端。切换和卸载时只清理 Kube-OVN 自有的 iptables、ipset 和 nftables 对象。如果清理失败，会保留当前后端并在后续 reconcile 中重试。
 
