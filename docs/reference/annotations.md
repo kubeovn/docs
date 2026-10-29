@@ -33,6 +33,8 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/vlan_id | Int | Pod 主网卡所属子网的 Vlan ID |
 | ovn.kubernetes.io/ingress_rate | Int | Pod 主网卡流入方向限速，单位为 Mbits/s |
 | ovn.kubernetes.io/egress_rate | Int | Pod 主网卡流出方向限速，单位为 Mbits/s |
+| ovn.kubernetes.io/ingress_burst | Int | Pod 主网卡流入方向 burst，单位为 Mbit；省略时默认为入口速率的 80%，设置为 `0` 可关闭 burst |
+| ovn.kubernetes.io/egress_burst | Int | Pod 主网卡流出方向 burst，单位为 Mbit；省略时默认为出口速率的 80%，设置为 `0` 可关闭 burst |
 | ovn.kubernetes.io/security_groups | String 列表，使用逗号分隔 | Pod 主网卡所属的 Security Group |
 | ovn.kubernetes.io/default_route | `true` or `false` | 是否将主网卡设置为默认路由网卡 |
 | ovn.kubernetes.io/provider_network | String | Pod 主网卡所属的 ProviderNetwork |
@@ -44,7 +46,6 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | ovn.kubernetes.io/jitter | Int | Pod 主网卡注入抖动延迟，单位为 ms |
 | ovn.kubernetes.io/generate-hash | `true` or `false` | 是否为 Pod 生成哈希值 |
 | ovn.kubernetes.io/attachmentprovider | String | Pod 的附件提供者 |
-| ovn.kubernetes.io/ingress_burst | Int | Pod 主网卡流入方向 burst 上限 |
 | ovn.kubernetes.io/vpc_nat_gw | String | VPC NAT Gateway Pod 标识，由控制器写入 |
 | ovn.kubernetes.io/vpc_nat_gw_init | `true` or `false` | VPC NAT Gateway Pod 内部初始化是否完成 |
 | ovn.kubernetes.io/vpc_nat_gw_container_restarted | `true` or `false` | VPC NAT Gateway 主容器是否重启过，触发规则下发 |
@@ -53,6 +54,8 @@ Kube-OVN 使用了大量的 Pod 和 Node Annotation 进行功能设置和信息�
 | \<provider\>.kubernetes.io/ip_family | `ipv4` or `ipv6` | 双栈子网中为指定 provider 的网卡选择单一 IP 协议族 |
 | \<provider\>.kubernetes.io/dhcp-v4-options | String | 多网卡场景下指定 provider 的 DHCPv4 选项 |
 | \<provider\>.kubernetes.io/port_security | `true` or `false` | 多网卡场景下指定 provider 的端口安全开关 |
+| \<provider\>.kubernetes.io/ingress_burst | Int | 多网卡场景下指定 provider 网卡的入口 burst，单位为 Mbit |
+| \<provider\>.kubernetes.io/egress_burst | Int | 多网卡场景下指定 provider 网卡的出口 burst，单位为 Mbit |
 
 ## Node Annotation
 

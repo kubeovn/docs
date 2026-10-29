@@ -33,6 +33,8 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/vlan_id | Int | The VlanID that the Pod primary interface belongs to |
 | ovn.kubernetes.io/ingress_rate | Int | Pod primary interface ingress rate limit, measured in Mbits/s |
 | ovn.kubernetes.io/egress_rate | Int | Pod primary interface egress rate limit, measured in Mbits/s |
+| ovn.kubernetes.io/ingress_burst | Int | Pod primary interface ingress burst, measured in Mbit; defaults to 80% of the ingress rate when omitted, or disable it with `0` |
+| ovn.kubernetes.io/egress_burst | Int | Pod primary interface egress burst, measured in Mbit; defaults to 80% of the egress rate when omitted, or disable it with `0` |
 | ovn.kubernetes.io/security_groups | String list, separated by comma | The SecurityGroup that the Pod primary interface belongs to |
 | ovn.kubernetes.io/default_route | `true` or `false` | Set the default route to the Pod primary interface. |
 | ovn.kubernetes.io/provider_network | String | The ProviderNetwork that the Pod primary interface belongs to |
@@ -44,7 +46,6 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | ovn.kubernetes.io/jitter | Int | The jitter of packet latency on the Pod primary interface, measured in milliseconds |
 | ovn.kubernetes.io/generate-hash | `true` or `false` | Whether to generate hash for Pod |
 | ovn.kubernetes.io/attachmentprovider | String | Attachment provider for Pod |
-| ovn.kubernetes.io/ingress_burst | Int | Ingress burst limit for the Pod primary interface |
 | ovn.kubernetes.io/vpc_nat_gw | String | Identifier for the VPC NAT Gateway Pod, written by the controller |
 | ovn.kubernetes.io/vpc_nat_gw_init | `true` or `false` | Whether the in-Pod initialization of the VPC NAT Gateway has finished |
 | ovn.kubernetes.io/vpc_nat_gw_container_restarted | `true` or `false` | Whether the main container of the VPC NAT Gateway has been restarted, used to trigger rule re-application |
@@ -53,6 +54,8 @@ Kube-OVN uses a large number of Pod and Node Annotations for configuring functio
 | \<provider\>.kubernetes.io/ip_family | `ipv4` or `ipv6` | Select a single IP family for the specified provider interface in a dual-stack subnet |
 | \<provider\>.kubernetes.io/dhcp-v4-options | String | DHCPv4 options for the specified provider in multi-NIC scenarios |
 | \<provider\>.kubernetes.io/port_security | `true` or `false` | Port security toggle for the specified provider in multi-NIC scenarios |
+| \<provider\>.kubernetes.io/ingress_burst | Int | Ingress burst for the specified provider interface in multi-NIC scenarios, measured in Mbit |
+| \<provider\>.kubernetes.io/egress_burst | Int | Egress burst for the specified provider interface in multi-NIC scenarios, measured in Mbit |
 
 ## Node Annotation
 
