@@ -175,7 +175,7 @@ spec:
 
 ### 开启 VPC 网关功能
 
-VPC 网关功能需要通过 `kube-system` 命名空间下的 `ovn-vpc-nat-gw-config` 配置开启。同时，`ovn-vpc-nat-config` ConfigMap 中可以配置 `image`（网关 Pod 所使用的镜像）、`imagePullSecret`（私有镜像仓库凭据）以及 `nodeSelector`（注意：此 `nodeSelector` 仅用于 `LoadBalancer` 类型 Service 的 lb-svc 部署，VpcNATGateway Pod 的调度由 `VpcNatGateway.spec.selector` 字段决定）。如果网关镜像位于私有仓库，需要先在 `kube-system` 命名空间创建 Docker registry Secret，再在该 ConfigMap 中填写 Secret 名称：
+VPC 网关功能需要通过 `kube-system` 命名空间下的 `ovn-vpc-nat-gw-config` 配置开启。同时，`ovn-vpc-nat-config` ConfigMap 中可以配置 `image`（网关 Pod 所使用的镜像）、`imagePullSecret`（私有镜像仓库凭据）以及 `nodeSelector`（注意：此 `nodeSelector` 仅用于 `LoadBalancer` 类型 Service 的 lb-svc 部署，VpcNATGateway Pod 的调度由 `VpcNatGateway.spec.selector` 字段决定）。如果网关镜像位于私有仓库，需要先在 NAT 网关 workload 所在的命名空间创建 Docker registry Secret，再在该 ConfigMap 中填写 Secret 名称。默认 workload 命名空间为 `kube-system`；如果设置了 `spec.namespace`，则需要使用对应的命名空间：
 
 ```yaml
 ---
@@ -200,7 +200,7 @@ data:
 ```
 
 - `image`: 网关 Pod 所使用的镜像。
-- `imagePullSecret`：可选的 Docker registry Secret 名称。Secret 必须已存在于 `kube-system` 命名空间，网关 StatefulSet/Deployment 会将其用于拉取私有镜像。
+- `imagePullSecret`：可选的 Docker registry Secret 名称。Secret 必须已存在于 NAT 网关 workload 所在的命名空间，网关 StatefulSet/Deployment 会将其用于拉取私有镜像。
 - `enable-vpc-nat-gw`：控制是否启用 VPC 网关功能。
 
 例如，使用私有仓库时可以执行以下命令创建凭据（请替换为实际仓库信息）：
@@ -252,7 +252,7 @@ spec:
 
 `spec.lanIp` 可以留空。单副本模式（`replicas` 为 1 或未设置）下，controller 会从子网动态分配 LAN IP，将实际地址写回 `spec.lanIp`；写回后该字段不可变。单副本模式使用 StatefulSet。
 
-当 `spec.replicas` 大于 1 时，网关使用 Deployment 运行高可用副本，每个 Pod 动态分配自己的 LAN IP，此时 `spec.lanIp` 不用于固定地址。controller 会在副本替换后重新指向 OVN 策略路由和 BFD 会话。`status.lanIp` 记录实际观察到的地址：单副本为单个地址，高可用模式为按排序排列、逗号分隔的地址列表；`status.replicas` 和 `status.ready` 可用于确认就绪副本数及网关就绪状态。
+当 `spec.replicas` 大于 1 时，网关使用 Deployment 运行高可用副本，每个 Pod 动态分配自己的 LAN IP，此时 `spec.lanIp` 不用于固定地址。controller 会在副本替换后重新指向 OVN 策略路由和 BFD 会话。`status.lanIp` 记录实际观察到的地址：单副本为单个地址，高可用模式为按排序排列、逗号分隔的地址列表；`status.replicas` 反映配置的 `spec.replicas` 值，`status.ready` 单独表示网关 workload 是否就绪。未设置 `spec.replicas` 时 workload 实际使用 1 个副本，但 `status.replicas` 可能仍为 0。
 
 下面的配置启用两个高可用副本并让每个副本自动分配 LAN IP：
 

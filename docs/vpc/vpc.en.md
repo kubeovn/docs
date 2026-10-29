@@ -180,7 +180,7 @@ Vlan and security policy in the underlying network device in advance.
 
 ### Enabling the VPC Gateway
 
-The VPC gateway functionality is enabled by configuring `ovn-vpc-nat-gw-config` in the `kube-system` namespace. In addition, the `ovn-vpc-nat-config` ConfigMap can configure `image` (the image used by the gateway Pod), `imagePullSecret` (private registry credentials), and `nodeSelector` (note: this `nodeSelector` is only used for the lb-svc deployment of `LoadBalancer` type Services; the scheduling of VpcNATGateway Pods is determined by the `VpcNatGateway.spec.selector` field). When the gateway image is in a private registry, create a Docker registry Secret in the `kube-system` namespace before setting its name in this ConfigMap:
+The VPC gateway functionality is enabled by configuring `ovn-vpc-nat-gw-config` in the `kube-system` namespace. In addition, the `ovn-vpc-nat-config` ConfigMap can configure `image` (the image used by the gateway Pod), `imagePullSecret` (private registry credentials), and `nodeSelector` (note: this `nodeSelector` is only used for the lb-svc deployment of `LoadBalancer` type Services; the scheduling of VpcNATGateway Pods is determined by the `VpcNatGateway.spec.selector` field). When the gateway image is in a private registry, create a Docker registry Secret in the same namespace as the NAT gateway workload before setting its name in this ConfigMap. The default workload namespace is `kube-system`; if `spec.namespace` is set, use that namespace instead:
 
 ```yaml
 ---
@@ -205,7 +205,7 @@ data:
 ```
 
 - `image`: The image used by the Gateway Pod.
-- `imagePullSecret`: Optional Docker registry Secret name. The Secret must already exist in the `kube-system` namespace; the gateway StatefulSet/Deployment uses it to pull private images.
+- `imagePullSecret`: Optional Docker registry Secret name. The Secret must already exist in the NAT gateway workload namespace; the gateway StatefulSet/Deployment uses it to pull private images.
 - `enable-vpc-nat-gw`: Controls whether the VPC Gateway feature is enabled.
 
 For example, create the registry credentials with the following command (replace the registry details with your own):
@@ -257,7 +257,7 @@ Things to note when using VPC-NAT-GW:
 
 `spec.lanIp` may be left empty. In single-replica mode (`replicas` is 1 or unset), the controller allocates a LAN IP from the subnet and persists the observed address to `spec.lanIp`; the field is immutable after it is persisted. Single-replica mode uses a StatefulSet.
 
-When `spec.replicas` is greater than 1, the gateway runs as a Deployment for high availability. Each Pod allocates its own LAN IP, so `spec.lanIp` is ignored and cannot pin an address. The controller repoints OVN policy routes and BFD sessions when a replica is replaced. `status.lanIp` records the observed addresses: one address in single-replica mode, or a sorted comma-separated list in high-availability mode. Use `status.replicas` and `status.ready` to check the ready replica count and gateway readiness.
+When `spec.replicas` is greater than 1, the gateway runs as a Deployment for high availability. Each Pod allocates its own LAN IP, so `spec.lanIp` is ignored and cannot pin an address. The controller repoints OVN policy routes and BFD sessions when a replica is replaced. `status.lanIp` records the observed addresses: one address in single-replica mode, or a sorted comma-separated list in high-availability mode. `status.replicas` reflects the configured `spec.replicas` value, while `status.ready` reports whether the gateway workload is ready. When `spec.replicas` is omitted, the workload uses one effective replica but `status.replicas` may remain 0.
 
 The following configuration enables two high-availability replicas with dynamically allocated LAN IPs:
 
