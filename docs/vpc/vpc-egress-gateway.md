@@ -78,7 +78,7 @@ spec:
   gateway: 192.168.0.1
 ```
 
-在 VPC Egress Gateway 中通过 `internalSubnet` 引用该子网。主 CNI 继续提供 `eth0`；控制器会将内部 NetworkAttachmentDefinition 作为第一个 Kube-OVN 网络附加，并将其选为工作负载的默认网络，同时将 `externalSubnet` 网络作为外部接口附加。在此模式下请使用 `policies` 选择流量来源；启用非主 CNI 模式时不支持 `selectors`。如果 provider 格式无效或找不到 NetworkAttachmentDefinition，网关工作负载将无法完成 reconcile。
+在 VPC Egress Gateway 中通过 `internalSubnet` 引用该子网。在此特殊场景中，Multus 会将内部 NetworkAttachmentDefinition 作为 Pod 的默认网络，因此网关 Pod 的内部租户网络接口为 `eth0`；`externalSubnet` 引用的外部 NetworkAttachmentDefinition 作为 `net1` 附加并提供默认路由。通用的主 CNI `eth0` 布局不适用于该网关 Pod。在此模式下请使用 `policies` 选择流量来源；启用非主 CNI 模式时不支持 `selectors`。如果 provider 格式无效或找不到 NetworkAttachmentDefinition，网关工作负载将无法完成 reconcile。
 
 ## 使用方法
 
@@ -143,6 +143,25 @@ spec:
 ```
 
 上述资源会在 default 命名空间下为 VPC `ovn-cluster` 创建一个名为 gateway1 的单副本 VPC Egress Gateway，`ovn-cluster` 下 `ovn-default` 子网（10.16.0.0/16）下的所有 Pod 将通过 `macvlan1` 子网以 SNAT 的方式访问外部网络。
+
+对于上面的非主 CNI 示例，请显式指定内部子网，并使用策略而不是选择器创建网关：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: VpcEgressGateway
+metadata:
+  name: gateway-nonprimary
+  namespace: default
+spec:
+  vpc: vpc1
+  replicas: 1
+  internalSubnet: veg-internal-subnet
+  externalSubnet: macvlan1
+  policies:
+    - snat: true
+      subnets:
+        - veg-internal-subnet
+```
 
 创建完成后，查看 VPC Egress Gateway：
 

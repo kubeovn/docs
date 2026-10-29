@@ -78,7 +78,7 @@ spec:
   gateway: 192.168.0.1
 ```
 
-Reference this subnet with `internalSubnet` in the VPC Egress Gateway. The primary CNI continues to provide `eth0`; the controller attaches the internal NetworkAttachmentDefinition as the first Kube-OVN network and selects it as the workload's default network, while the `externalSubnet` network is attached as the external interface. Use `policies` to select traffic sources in this mode; `selectors` are not supported when non-primary CNI mode is enabled. If the provider format is invalid or the NetworkAttachmentDefinition is missing, the gateway workload cannot be reconciled.
+Reference this subnet with `internalSubnet` in the VPC Egress Gateway. In this special case, Multus uses the internal NetworkAttachmentDefinition as the Pod's default network, so the gateway Pod's internal tenant network is `eth0`; the external NetworkAttachmentDefinition referenced by `externalSubnet` is attached as `net1` and provides the default route. The usual primary-CNI `eth0` layout does not apply to this gateway Pod. Use `policies` to select traffic sources in this mode; `selectors` are not supported when non-primary CNI mode is enabled. If the provider format is invalid or the NetworkAttachmentDefinition is missing, the gateway workload cannot be reconciled.
 
 ## Usage
 
@@ -143,6 +143,25 @@ spec:
 ```
 
 The above resource creates a VPC Egress Gateway named gateway1 for VPC `ovn-cluster` under the default namespace, and all Pods under the `ovn-default` subnet (10.16.0.0/16) within `ovn-cluster` VPC will access the external network via the `macvlan1` subnet with SNAT applied.
+
+For the non-primary CNI example above, create the gateway with the internal subnet explicitly selected and use a policy instead of selectors:
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: VpcEgressGateway
+metadata:
+  name: gateway-nonprimary
+  namespace: default
+spec:
+  vpc: vpc1
+  replicas: 1
+  internalSubnet: veg-internal-subnet
+  externalSubnet: macvlan1
+  policies:
+    - snat: true
+      subnets:
+        - veg-internal-subnet
+```
 
 After the creation is complete, check out the VPC Egress Gateway resource:
 
