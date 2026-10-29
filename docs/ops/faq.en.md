@@ -1,5 +1,69 @@
 # FAQ
 
+For an overview of the components involved in troubleshooting, see the [architecture](../reference/architecture.en.md).
+
+## General troubleshooting
+
+1. Narrow down the failing path: test Pod-to-Pod, Pod-to-node, Pod-to-Service, DNS, and external connectivity separately. Check the `kube-ovn-pinger` logs on affected nodes.
+2. Check the affected Pod and the `kube-ovn-cni`, `ovs-ovn`, `kube-ovn-controller`, and `ovn-central` logs. Inspect node `dmesg` and `netstat -s` output for kernel or network errors.
+3. Check CPU, memory, and I/O metrics for the affected components. Use `kubectl ko log all` to collect component logs and node diagnostics; see the [CLI guide](./kubectl-ko.en.md).
+
+## Pod creation fails with an IP conflict
+
+### Behavior
+
+The Pod does not become Running, and its events report an address conflict on a logical switch port.
+
+### Solution
+
+1. Check whether the Pod requests a static IP and whether another Pod already uses it. If so, assign a different IP or resolve the conflicting workload.
+2. Inspect `kube-ovn-controller` logs for allocations and releases of the address, including controller restarts or leader changes.
+3. Compare the Kubernetes Pod and IP allocation records with the ports shown by `kubectl ko nbctl show`. Remove an orphaned OVN port only after confirming that no active workload owns it.
+
+## Pod creation fails during the gateway connectivity check
+
+### Behavior
+
+The Pod does not become Running, and its events contain `network <ip> with gateway <gw ip> is not ready for interface eth0 after <n> checks`.
+
+### Solution
+
+1. Use `kubectl ko sbctl show` to check whether the Pod's logical port has propagated to the OVN southbound database.
+2. If the port is missing, inspect the `ovn-central` and `ovs-ovn` logs for synchronization errors.
+3. If the port is present, check whether network policies prevent the Pod from reaching its gateway. For an Underlay subnet, also check physical network restrictions with the network administrator and see the [Underlay installation guide](../start/underlay.en.md).
+
+## Pod cannot reach an external network
+
+### Behavior
+
+A Pod in the default VPC can reach destinations inside the cluster but cannot reach external destinations.
+
+### Solution
+
+1. Use `kubectl ko trace` to identify any ACL that blocks the traffic. Adjust the policy if it is responsible.
+2. Check the Subnet status and gateway node selection, then verify the gateway node's external connectivity. If the configured gateway node is unavailable, update the Subnet gateway node configuration.
+3. Check `kube-ovn-controller` logs for errors during gateway changes.
+
+## Pod IP is outside the expected CIDR
+
+### Behavior
+
+The Pod starts, but its IP is outside the configured Subnet CIDR.
+
+### Solution
+
+Check `/etc/cni/net.d/` on the node for other CNI configuration files and determine which CNI handled the Pod. If another configuration took precedence, correct the CNI configuration and recreate the affected Pod after confirming the node's intended network setup.
+
+## Debug Pod fails to start
+
+### Behavior
+
+A Pod created with `kubectl debug` remains in ContainerCreating, and its events report `network not ready` or `no address allocated`.
+
+### Solution
+
+If the debug Pod inherited the original Pod's Kube-OVN allocation annotations, export its manifest and remove the stale `ovn.kubernetes.io/ip_address`, `ovn.kubernetes.io/mac_address`, `ovn.kubernetes.io/allocated`, and `ovn.kubernetes.io/routed` annotations. Recreate the debug Pod from the corrected manifest so Kube-OVN can allocate its own address.
+
 ## Kylin ARM system cross-host container access intermittently fails
 
 ### Behavior
