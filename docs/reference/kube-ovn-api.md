@@ -486,6 +486,7 @@
 | natGwDp | String | NAT 网关数据路径 |
 | qosPolicy | String | QoS 策略 |
 | externalSubnet | String | 外部子网 |
+| namespace | String | NAT 网关 StatefulSet/Pod 所在的 Namespace；为空时从引用的 VpcNatGateway 或 controller Namespace 推导 |
 
 #### IptablesEIPStatus
 
@@ -670,6 +671,7 @@
 | --- | --- | --- |
 | vpc | String | VPC 网关 Pod 所在的 VPC 名称 |
 | subnet | String | VPC 网关 Pod 所属的子网名称 |
+| namespace | String | VPC 网关 StatefulSet/Pod 所在的 Namespace；为空时使用 controller 所在的 Namespace |
 | externalSubnets | []String | 外部子网列表 |
 | lanIp | String | VPC 网关 Pod 指定分配的 IP 地址 |
 | selector | []String | 标准 Kubernetes Selector 匹配信息 |

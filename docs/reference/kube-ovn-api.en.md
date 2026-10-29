@@ -486,6 +486,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | natGwDp | String | NAT gateway data path |
 | qosPolicy | String | QoS policy |
 | externalSubnet | String | External subnet |
+| namespace | String | Namespace of the NAT gateway StatefulSet/Pod; when empty, inferred from the referenced VpcNatGateway or the controller Namespace |
 
 #### IptablesEIPStatus
 
@@ -670,6 +671,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | --- | --- | --- |
 | vpc | String | VPC name where the VPC gateway Pod is located |
 | subnet | String | Subnet name where the VPC gateway Pod belongs |
+| namespace | String | Namespace where the VPC gateway StatefulSet/Pod is created; defaults to the controller Namespace when empty |
 | externalSubnets | []String | List of external subnets |
 | lanIp | String | Specified IP address allocated for the VPC gateway Pod |
 | selector | []String | Standard Kubernetes Selector matching information |
