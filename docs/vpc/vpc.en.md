@@ -180,7 +180,7 @@ Vlan and security policy in the underlying network device in advance.
 
 ### Enabling the VPC Gateway
 
-The VPC gateway functionality is enabled by configuring `ovn-vpc-nat-gw-config` in the `kube-system` namespace. In addition, the `ovn-vpc-nat-config` ConfigMap can configure `image` (the image used by the gateway Pod) and `nodeSelector` (note: this `nodeSelector` is only used for the lb-svc deployment of `LoadBalancer` type Services; the scheduling of VpcNATGateway Pods is determined by the `VpcNatGateway.spec.selector` field):
+The VPC gateway functionality is enabled by configuring `ovn-vpc-nat-gw-config` in the `kube-system` namespace. In addition, the `ovn-vpc-nat-config` ConfigMap can configure `image` (the image used by the gateway Pod), `imagePullSecret` (private registry credentials), and `nodeSelector` (note: this `nodeSelector` is only used for the lb-svc deployment of `LoadBalancer` type Services; the scheduling of VpcNATGateway Pods is determined by the `VpcNatGateway.spec.selector` field). When the gateway image is in a private registry, create a Docker registry Secret in the same namespace as the NAT gateway workload before setting its name in this ConfigMap. The default workload namespace is `kube-system`; if `spec.namespace` is set, use that namespace instead:
 
 ```yaml
 ---
@@ -191,6 +191,7 @@ metadata:
   namespace: kube-system
 data:
   image: docker.io/kubeovn/vpc-nat-gateway:{{ variables.version }}
+  imagePullSecret: vpc-nat-registry
   nodeSelector: |
     kubernetes.io/hostname: kube-ovn-control-plane
 ---
@@ -204,7 +205,18 @@ data:
 ```
 
 - `image`: The image used by the Gateway Pod.
+- `imagePullSecret`: Optional Docker registry Secret name. The Secret must already exist in the NAT gateway workload namespace; the gateway StatefulSet/Deployment uses it to pull private images.
 - `enable-vpc-nat-gw`: Controls whether the VPC Gateway feature is enabled.
+
+For example, create the registry credentials with the following command (replace the registry details with your own):
+
+```bash
+kubectl create secret docker-registry vpc-nat-registry \
+  --namespace kube-system \
+  --docker-server=registry.example.com \
+  --docker-username='<username>' \
+  --docker-password='<password>'
+```
 
 ### Create VPC Gateway
 
@@ -256,6 +268,20 @@ spec:
 Things to note when using VPC-NAT-GW:
 
 1. After the nat gw pod is created, the nic net1 arp is disabled and the physical gateway cannot be pinged. After creating the eip, the arp will be automatically enabled and the ping to underlay gateway should be ok.
+
+### Dynamic LAN IP and high availability
+
+`spec.lanIp` may be left empty. In single-replica mode (`replicas` is 1 or unset), the controller allocates a LAN IP from the subnet and persists the observed address to `spec.lanIp`; the field is immutable after it is persisted. Single-replica mode uses a StatefulSet.
+
+When `spec.replicas` is greater than 1, the gateway runs as a Deployment for high availability. Each Pod allocates its own LAN IP, so `spec.lanIp` is ignored and cannot pin an address. The controller repoints OVN policy routes and BFD sessions when a replica is replaced. `status.lanIp` records the observed addresses: one address in single-replica mode, or a sorted comma-separated list in high-availability mode. `status.replicas` reflects the configured `spec.replicas` value, while `status.ready` reports whether the gateway workload is ready. When `spec.replicas` is omitted, the workload uses one effective replica but `status.replicas` may remain 0.
+
+The following configuration enables two high-availability replicas with dynamically allocated LAN IPs:
+
+```yaml
+spec:
+  replicas: 2
+  # Leave lanIp empty so the controller allocates one address per replica.
+```
 
 ### Create EIP
 

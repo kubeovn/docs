@@ -394,6 +394,35 @@ networking:
 时会直接失败，也不会渲染本地 Secret。v2 Helm chart 没有
 `installMode: dataPlaneOnly` 这个值，不能将上述预置规则套用于 v2 chart。
 
+启用 SSL 后，`kube-ovn-controller` 会负责维护名为 `kube-ovn-tls` 的 Secret。该 Secret 保持现有的 `cacert`、`cert` 和 `key` 数据项；如果 Secret 已经存在但没有 Kube-OVN 的证书 hash annotation，controller 会先接管它，不会因为升级立即更换证书。
+
+自动检查和轮转由 `KUBE_OVN_TLS_ROTATION_INTERVAL` 控制，默认值为 `8760h`（一年），设置为 `0` 可以关闭自动轮转。该值是检查间隔，不是强制换证周期；只有证书有效期已经过半时才会生成并写入新证书。安装脚本可以这样设置：
+
+```bash
+ENABLE_SSL=true
+KUBE_OVN_TLS_ROTATION_INTERVAL=8760h
+```
+
+使用 Helm 安装时，配置键取决于 Chart 版本。classic Chart（`charts/kube-ovn`）使用大写键：
+
+```yaml
+networking:
+  ENABLE_SSL: true
+  KUBE_OVN_TLS_ROTATION_INTERVAL: 8760h
+```
+
+classic Chart 使用 `installMode: dataPlaneOnly` 时会强制将该间隔设为 `0`，因为 `kube-ovn-tls` 由管理集群维护并负责轮转。
+
+v2 Chart（`charts/kube-ovn-v2`）使用 camel case 键：
+
+```yaml
+networking:
+  enableSsl: true
+  kubeOvnTlsRotationInterval: 8760h
+```
+
+Secret 更新后，`ovn-central`、`ovs-ovn` 中的 OVN 进程以及 Kube-OVN 的 Go client 会重新加载挂载的证书文件或在下一次 TLS 握手时读取新证书。该过程不需要重启 Kube-OVN Pod；可以检查 `kube-ovn-tls` 的 `kube-ovn.io/kube-ovn-tls-cert-hash` annotation、组件日志和 Pod 的容器重启次数，确认 adoption 或轮转已经生效。
+
 ## 跳过 conntrack 的目的 CIDR 列表
 
 针对部分需要绕过 conntrack 处理的目的网段（例如已通过其他方式做 NAT/会话保持的旁路流量），可在安装脚本或 `kube-ovn-controller` 启动参数中配置跳过列表，多个 CIDR 以逗号分隔：

@@ -200,7 +200,7 @@
 | 属性名称 | 类型 | 描述 |
 | --- | --- | --- |
 | remoteVpc | String | 远程 VPC 名称 |
-| localConnectIP | String | 本地连接 IP 地址 |
+| localConnectIP | String | 必填。一个或多个本地互联端点 IP 地址和 CIDR，多个值用逗号分隔，例如 `169.254.0.1/30` 或 `169.254.0.1/30,fd00::1/64`；每个端点的 CIDR 应与远端对应端点匹配，且不应与已有子网冲突。 |
 
 ###### BFDPort
 
@@ -673,7 +673,8 @@
 | subnet | String | VPC 网关 Pod 所属的子网名称 |
 | namespace | String | VPC 网关 StatefulSet/Pod 所在的 Namespace；为空时使用 controller 所在的 Namespace |
 | externalSubnets | []String | 外部子网列表 |
-| lanIp | String | VPC 网关 Pod 指定分配的 IP 地址 |
+| lanIp | String | 可选的 LAN IP。非 HA 模式下留空可动态分配，观察到的地址会持久化到此字段；HA 模式下忽略此字段。 |
+| replicas | Int32 | 网关副本数。未设置时默认使用 1 个副本；大于 1 时使用 Deployment 实现高可用。 |
 | selector | []String | 标准 Kubernetes Selector 匹配信息 |
 | tolerations | []Toleration | 标准 Kubernetes 容忍信息 |
 | affinity | Affinity | 标准 Kubernetes 亲和性配置 |
@@ -711,6 +712,11 @@
 | selector | []String | 标准 Kubernetes Selector 匹配信息 |
 | tolerations | []Toleration | 标准 Kubernetes 容忍信息 |
 | affinity | Affinity | 标准 Kubernetes 亲和性配置 |
+| lanIp | String | 观察到的 LAN 地址。HA 模式下多个地址按排序后以逗号分隔。 |
+| replicas | Int32 | 配置的 `spec.replicas` 值。未设置 `spec.replicas` 时 workload 实际使用 1 个副本，但此状态字段可能仍为 0。 |
+| ready | Bool | 网关 workload 是否就绪。 |
+
+`VpcNatGateway` 的 `spec.lanIp` 可以留空。单副本模式下 controller 会动态分配地址并将实际地址持久化到 `spec.lanIp`，持久化后不可修改；`spec.replicas` 大于 1 时每个副本独立动态分配地址，`spec.lanIp` 不用于固定地址。`status.lanIp` 记录观察到的地址，HA 模式下为按排序排列、逗号分隔的地址列表；`status.replicas` 反映配置的 `spec.replicas` 值，`status.ready` 单独表示网关 workload 是否就绪。未设置 `spec.replicas` 时 workload 实际使用 1 个副本，但 `status.replicas` 可能仍为 0。
 
 ### VpcEgressGateway
 

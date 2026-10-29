@@ -1,6 +1,76 @@
-# Iptables Rules
+# Gateway Netfilter Rules
 
-Kube-OVN uses `ipset` and `iptables` to implement gateway NAT functionality in the default VPC overlay Subnets.
+Kube-OVN uses a gateway Netfilter backend to implement gateway NAT functionality in the default VPC overlay Subnets.
+The backend can use either `iptables` or `nftables`, while this page also retains the rule reference for the iptables backend.
+
+## Gateway backend selection
+
+The `kube-ovn-cni` daemon supports three gateway Netfilter modes:
+
+| Mode | Behavior |
+| :--- | :--- |
+| `auto` | Detect the local kube-proxy mode. `iptables` and `ipvs` use the iptables backend; `nftables` uses the nftables backend. |
+| `iptables` | Always use Kube-OVN's iptables and ipset rules. |
+| `nftables` | Always use Kube-OVN's nftables table and rules. |
+
+`auto` is the default. During a cold start it polls the kube-proxy `proxyMode` endpoint and, if that endpoint is unavailable before the detection timeout, reads the `kube-proxy` ConfigMap in `kube-system`. The default endpoint is `http://localhost:10249/proxyMode` and the default timeout is 30 seconds. At runtime, a mode change is accepted after three consecutive observations so a transient response does not switch the backend.
+
+Set the mode and detection options in the environment before running `bash install.sh`, or in the `kube-ovn-cni` DaemonSet:
+
+```bash
+export GATEWAY_NETFILTER_MODE=auto
+export KUBE_PROXY_MODE_ENDPOINT=http://localhost:10249/proxyMode
+export GATEWAY_NETFILTER_DETECT_TIMEOUT=30s
+```
+
+```yaml
+args:
+- --gateway-netfilter-mode=auto
+- --kube-proxy-mode-endpoint=http://localhost:10249/proxyMode
+- --gateway-netfilter-detect-timeout=30s
+```
+
+For Helm installations, use the values for the chart in use:
+
+```yaml
+# charts/kube-ovn
+networking:
+  GATEWAY_NETFILTER_MODE: auto
+  KUBE_PROXY_MODE_ENDPOINT: http://localhost:10249/proxyMode
+  GATEWAY_NETFILTER_DETECT_TIMEOUT: 30s
+```
+
+```yaml
+# charts/kube-ovn-v2
+agent:
+  gatewayNetfilterMode: auto
+  kubeProxyModeEndpoint: http://localhost:10249/proxyMode
+  gatewayNetfilterDetectTimeout: 30s
+```
+
+The nftables backend manages Kube-OVN-owned `kube-ovn` tables in the IPv4 and IPv6 nftables families, as applicable, for Service and NodePort NAT, subnet NAT, NAT policy, TProxy, filter and mangle rules, and subnet traffic accounting. It does not read or modify kube-proxy-private nftables objects or marks, and it does not flush conntrack entries.
+
+When the backend changes, Kube-OVN prepares and reconciles the target backend before cleaning the old backend. Switching and uninstall cleanup remove only Kube-OVN-owned iptables, ipset, and nftables objects. If cleanup fails, the active backend is retained and cleanup is retried during later reconciliation.
+
+## Nftable LoadBalancer Service
+
+The controller flag `--enable-nftable-lb-svc` enables LoadBalancer Services backed by the VPC NAT gateway's nftable share-DNAT implementation. In current master this flag defaults to `true`, and it requires the global `--enable-lb=true` switch.
+
+The corresponding Helm values are:
+
+```yaml
+# charts/kube-ovn
+func:
+  ENABLE_NFTABLE_LB_SVC: true
+
+# charts/kube-ovn-v2
+features:
+  enableNftableLoadbalancerService: false
+```
+
+The v2 chart only renders the controller flag when `enableNftableLoadbalancerService` is true. When it is false, the flag is omitted and the controller default remains true; use the controller argument explicitly if an installation must opt out until the chart exposes an effective opt-out.
+
+When an nftable LoadBalancer Service is terminating, its `EIP:port:protocol` identity is released immediately. A replacement Service can therefore reuse the identity and be programmed without waiting for the deleted Service's finalizers to disappear.
 
 The ipset used is shown in the following table:
 
