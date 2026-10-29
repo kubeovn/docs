@@ -22,6 +22,36 @@ kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/
 
 The default interval for Prometheus pull is 15s, if you need to adjust it, modify the `interval` value in yaml.
 
+## Deploy Monitoring Resources with the kube-ovn-v2 Helm Chart
+
+The `kube-ovn-v2` Helm chart can create the bundled `PrometheusRule` and Grafana dashboard ConfigMaps. Both features are disabled by default. Install the Prometheus Operator CRDs first; dashboard ConfigMaps also require the kube-prometheus-stack Grafana sidecar to watch the `grafana_dashboard: "1"` label.
+
+The following values enable both features and place their resources in the `monitoring` namespace:
+
+```yaml
+prometheusRule:
+  enabled: true
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+grafanaDashboards:
+  enabled: true
+  namespace: monitoring
+  datasource: Prometheus
+```
+
+Pass this file when installing or upgrading the chart:
+
+```bash
+helm upgrade --install kube-ovn oci://ghcr.io/kubeovn/charts/kube-ovn-v2 \
+  --namespace kube-system \
+  --values monitoring-values.yaml
+```
+
+`prometheusRule` includes the baseline Kube-OVN alert rules. These alerts depend on metrics being scraped from the controller, OVN monitor, pinger, and agent; enable the matching component `serviceMonitor.enabled` values in the chart or configure an external scrape. Use `prometheusRule.additionalGroups` to append custom groups that follow the `PrometheusRule.spec.groups[]` schema.
+
+`grafanaDashboards.datasource` must contain only letters, numbers, dots, underscores, or hyphens. It defaults to `Prometheus`. The chart replaces the `${DS_PROMETHEUS}` placeholders in the bundled dashboards with this name.
+
 ## Import Grafana Dashboard
 
 Kube-OVN provides a predefined Grafana Dashboard to display control plane and data plane related metrics.

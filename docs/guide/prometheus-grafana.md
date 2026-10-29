@@ -22,6 +22,36 @@ kubectl apply -f https://raw.githubusercontent.com/kubeovn/kube-ovn/master/dist/
 
 Prometheus 拉取监控时间间隔默认为 15s，如果需要调整需要修改 yaml 中的 `interval` 字段。
 
+## 使用 kube-ovn-v2 Helm Chart 部署监控资源
+
+`kube-ovn-v2` Helm Chart 可以创建内置的 `PrometheusRule` 和 Grafana Dashboard ConfigMap。两项功能默认关闭，需要先安装 Prometheus Operator CRD；Dashboard ConfigMap 还需要集群中的 kube-prometheus-stack Grafana sidecar 监听 `grafana_dashboard: "1"` 标签。
+
+下面的配置会启用两项功能，并把资源放到 `monitoring` 命名空间：
+
+```yaml
+prometheusRule:
+  enabled: true
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+grafanaDashboards:
+  enabled: true
+  namespace: monitoring
+  datasource: Prometheus
+```
+
+安装或升级时传入该文件：
+
+```bash
+helm upgrade --install kube-ovn oci://ghcr.io/kubeovn/charts/kube-ovn-v2 \
+  --namespace kube-system \
+  --values monitoring-values.yaml
+```
+
+`prometheusRule` 包含 Kube-OVN 的基础告警规则。告警依赖控制器、OVN monitor、pinger 和 agent 的指标采集；可以通过 Chart 中各组件的 `serviceMonitor.enabled` 开启采集，也可以配置外部抓取。可以使用 `prometheusRule.additionalGroups` 追加符合 `PrometheusRule.spec.groups[]` 格式的自定义规则。
+
+`grafanaDashboards.datasource` 必须使用只包含字母、数字、点、下划线或连字符的 Prometheus 数据源名称，默认值为 `Prometheus`。Chart 会把内置 Dashboard 中的 `${DS_PROMETHEUS}` 占位符替换为该名称。
+
 ## 加载 Grafana 面板
 
 Kube-OVN 还提供了预先定义好的 Grafana Dashboard 展示控制平面和数据平面相关信息。
