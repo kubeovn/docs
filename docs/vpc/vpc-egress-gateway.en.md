@@ -49,6 +49,37 @@ The VPC Egress Gateway is the same as the VPC NAT Gateway in that it requires [M
 
 > No ConfigMap needs to be configured to use VPC Egress Gateway.
 
+When Kube-OVN runs in [non-primary CNI mode](../start/non-primary-mode.en.md), configure the internal subnet as a Kube-OVN network provided by a NetworkAttachmentDefinition. The internal subnet provider must use the format `<nad-name>.<nad-namespace>.ovn`, and the referenced NetworkAttachmentDefinition must already exist. For example:
+
+```yaml
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: veg-internal
+  namespace: default
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "type": "kube-ovn",
+      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
+      "provider": "veg-internal.default.ovn"
+    }
+---
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: veg-internal-subnet
+spec:
+  vpc: vpc1
+  provider: veg-internal.default.ovn
+  protocol: IPv4
+  cidrBlock: 192.168.0.0/24
+  gateway: 192.168.0.1
+```
+
+Reference this subnet with `internalSubnet` in the VPC Egress Gateway. The primary CNI continues to provide `eth0`; the controller attaches the internal NetworkAttachmentDefinition as the first Kube-OVN network and selects it as the workload's default network, while the `externalSubnet` network is attached as the external interface. Use `policies` to select traffic sources in this mode; `selectors` are not supported when non-primary CNI mode is enabled. If the provider format is invalid or the NetworkAttachmentDefinition is missing, the gateway workload cannot be reconciled.
+
 ## Usage
 
 ### Creating a Network Attachment Definition

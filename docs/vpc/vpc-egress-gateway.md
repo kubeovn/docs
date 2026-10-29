@@ -49,6 +49,37 @@ VPC Egress Gateway 与 VPC NAT Gateway 相同，都需要先在集群中 [部署
 
 > 使用 VPC Egress Gateway 无需配置任何 ConfigMap。
 
+当 Kube-OVN 运行在[非主 CNI 模式](../start/non-primary-mode.md)下时，需要将内部子网配置为由 NetworkAttachmentDefinition 提供的 Kube-OVN 网络。内部子网的 provider 必须使用 `<nad-name>.<nad-namespace>.ovn` 格式，且引用的 NetworkAttachmentDefinition 必须已经存在。例如：
+
+```yaml
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: veg-internal
+  namespace: default
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "type": "kube-ovn",
+      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
+      "provider": "veg-internal.default.ovn"
+    }
+---
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: veg-internal-subnet
+spec:
+  vpc: vpc1
+  provider: veg-internal.default.ovn
+  protocol: IPv4
+  cidrBlock: 192.168.0.0/24
+  gateway: 192.168.0.1
+```
+
+在 VPC Egress Gateway 中通过 `internalSubnet` 引用该子网。主 CNI 继续提供 `eth0`；控制器会将内部 NetworkAttachmentDefinition 作为第一个 Kube-OVN 网络附加，并将其选为工作负载的默认网络，同时将 `externalSubnet` 网络作为外部接口附加。在此模式下请使用 `policies` 选择流量来源；启用非主 CNI 模式时不支持 `selectors`。如果 provider 格式无效或找不到 NetworkAttachmentDefinition，网关工作负载将无法完成 reconcile。
+
 ## 使用方法
 
 ### 创建 NetworkAttachmentDefinition
