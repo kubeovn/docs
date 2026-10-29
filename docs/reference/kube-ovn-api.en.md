@@ -486,6 +486,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | natGwDp | String | NAT gateway data path |
 | qosPolicy | String | QoS policy |
 | externalSubnet | String | External subnet |
+| namespace | String | Namespace of the NAT gateway workload (Deployment or StatefulSet) and Pod; when empty, inferred from the referenced VpcNatGateway or the controller Namespace; when set, it must match the gateway's effective Namespace |
 
 #### IptablesEIPStatus
 
@@ -670,6 +671,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | --- | --- | --- |
 | vpc | String | VPC name where the VPC gateway Pod is located |
 | subnet | String | Subnet name where the VPC gateway Pod belongs |
+| namespace | String | Namespace where the VPC gateway workload (Deployment or StatefulSet) and Pod are created; defaults to the controller Namespace when empty; immutable after creation |
 | externalSubnets | []String | List of external subnets |
 | lanIp | String | Optional LAN IP. In non-HA mode, leave empty for dynamic allocation; the observed address is persisted here. Ignored in HA mode. |
 | replicas | Int32 | Number of gateway replicas. Defaults to 1 when omitted; values greater than 1 use a Deployment for high availability. |

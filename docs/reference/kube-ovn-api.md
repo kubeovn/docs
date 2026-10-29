@@ -486,6 +486,7 @@
 | natGwDp | String | NAT 网关数据路径 |
 | qosPolicy | String | QoS 策略 |
 | externalSubnet | String | 外部子网 |
+| namespace | String | NAT 网关工作负载（Deployment 或 StatefulSet）及 Pod 所在的 Namespace；为空时从引用的 VpcNatGateway 或 controller 所在的 Namespace 推导；显式设置时必须与网关的有效 Namespace 一致 |
 
 #### IptablesEIPStatus
 
@@ -670,6 +671,7 @@
 | --- | --- | --- |
 | vpc | String | VPC 网关 Pod 所在的 VPC 名称 |
 | subnet | String | VPC 网关 Pod 所属的子网名称 |
+| namespace | String | VPC 网关工作负载（Deployment 或 StatefulSet）及 Pod 所在的 Namespace；为空时使用 controller 所在的 Namespace；创建后不可修改 |
 | externalSubnets | []String | 外部子网列表 |
 | lanIp | String | 可选的 LAN IP。非 HA 模式下留空可动态分配，观察到的地址会持久化到此字段；HA 模式下忽略此字段。 |
 | replicas | Int32 | 网关副本数。未设置时默认使用 1 个副本；大于 1 时使用 Deployment 实现高可用。 |

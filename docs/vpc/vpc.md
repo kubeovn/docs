@@ -234,6 +234,7 @@ spec:
 
 - `vpc`：该 VpcNatGateway 所属的 VPC。
 - `subnet`：为 VPC 内某个 Subnet 名，VPC 网关 Pod 会在该子网下用 `lanIp` 来连接租户网络。
+- `namespace`：可选，VPC 网关工作负载（Deployment 或 StatefulSet）及其 Pod 所在的 Namespace。未设置时使用 kube-ovn-controller 所在的 Namespace（通常为 `kube-system`）。`VpcNatGateway` 创建后该字段不可修改。`VpcNatGateway` 本身是集群级资源，因此该字段位于 `spec` 而不是 `metadata.namespace`。
 - `lanIp`：`subnet` 内某个未被使用的 IP，VPC 网关 Pod 最终会使用该 IP。当 VPC 配置路由需要指向当前 VpcNatGateway 时 `nextHopIP` 需要设置为这个 `lanIp`。
 - `selector`：VpcNatGateway Pod 的节点选择器，格式和 Kubernetes 中的 NodeSelector 格式相同。
 - `externalSubnets`：VPC 网关使用的外部网络，如果不配置则默认使用 `ovn-vpc-external-network`，当前版本只支持配置一个外部网络。
@@ -243,6 +244,21 @@ spec:
 
 - `tolerations`：为 VPC 网关配置容忍度，具体配置参考 [污点和容忍度](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/taint-and-toleration/)。
 - `affinity`：为 VPC 网关 Pod 或节点配置亲和性，具体设置参考 [亲和性与反亲和性](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)。
+
+需要将 VPC 网关 Pod 放入自定义 Namespace 时，在 `spec.namespace` 中指定已存在的 Namespace：
+
+```yaml
+kind: VpcNatGateway
+apiVersion: kubeovn.io/v1
+metadata:
+  name: gw1
+spec:
+  namespace: tenant-network
+  vpc: test-vpc-1
+  subnet: net1
+  externalSubnets:
+    - ovn-vpc-external-network
+```
 
 在使用 VPC-NAT-GW 时需要注意：
 
@@ -303,6 +319,19 @@ spec:
 ```
 
 - `externalSubnet`：EIP 所在外部网络名称，如果不指定则默认为 `ovn-vpc-external-network`。IptablesEIP 的外部网络和 VpcNatGateway 的 `externalSubnets` 是完全独立的，EIP 可以使用任意有效的外部子网，无需和网关的外部网络保持一致。
+- `namespace`：可选，EIP 所引用的 NAT 网关工作负载及 Pod 所在 Namespace。未设置时从 `natGwDp` 引用的 VpcNatGateway 推导（网关的 `spec.namespace` 为空时使用 controller 所在的 Namespace）；显式设置时必须与该网关的有效 Namespace 一致。`IptablesEIP` 是集群级资源，该字段位于 `spec` 而不是 `metadata.namespace`。
+
+需要显式指定 EIP 的 NAT 网关工作负载 Namespace 时，在 `spec.namespace` 中填写与所引用 VpcNatGateway 相同的 Namespace：
+
+```yaml
+kind: IptablesEIP
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-tenant
+spec:
+  natGwDp: gw1
+  namespace: tenant-network
+```
 
 ### 创建 DNAT 规则
 
