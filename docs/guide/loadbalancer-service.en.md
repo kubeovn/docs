@@ -4,6 +4,87 @@ Kube-OVN supports the implementation of VPC and VPC gateway. For specific config
 
 Due to the complexity of using VPC gateways, the implementation based on VPC gateways has been simplified. It supports creating LoadBalancer type Services in the default VPC, allowing access to Services in the default VPC through LoadBalancerIP.
 
+## Service-scoped OVN load balancing
+
+For ordinary Kubernetes Services, Kube-OVN reconciles an OVN load balancer scoped to the Service. This is the default path for ordinary `ClusterIP` Services and for the service VIP of `LoadBalancer` Services. It does not require a Kube-OVN annotation or a separate CRD.
+
+### ClusterIP Services
+
+`sessionAffinity: ClientIP` is supported. You can set `sessionAffinityConfig.clientIP.timeoutSeconds` from 1 to 65535 seconds; values outside this range are rejected before the OVN state is changed.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: ClusterIP
+  selector:
+    app: web
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 900
+```
+
+For `ClusterIP` Services, `spec.trafficDistribution` expresses a preference for where traffic is sent:
+
+- `PreferSameNode` prefers endpoints on the node receiving the traffic, then the node's zone, then the whole cluster.
+- `PreferSameZone` prefers endpoints in the node's zone, then the whole cluster.
+- `PreferClose` uses the same zone-first preference.
+
+Kubernetes publishes the locality in EndpointSlice hints (`forNodes` and `forZones`). Kube-OVN consumes those hints when they are complete and falls back to all eligible endpoints when the hints are missing, incomplete, or do not match the receiving node or zone. The preference is only used for `ClusterIP` Services; it does not change the endpoint scope of `LoadBalancer` Services.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: zone-aware-web
+spec:
+  type: ClusterIP
+  trafficDistribution: PreferSameZone
+  selector:
+    app: web
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+```
+
+Use `internalTrafficPolicy: Local` when traffic must stay on the receiving node. This is a strict locality requirement: a node without a local endpoint does not use a remote endpoint. `trafficDistribution` preferences do not widen this local-only scope.
+
+### LoadBalancer Services
+
+For a `LoadBalancer` Service, Kube-OVN maintains separate service-scoped handling for internal and external traffic. Set `externalTrafficPolicy: Local` to keep the standard Kubernetes local-endpoint behavior and preserve the client source address at the receiving node:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: public-web
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    app: web
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+```
+
+No Kube-OVN-specific locality annotation is needed. The EndpointSlice controller remains the source of endpoint and locality hints.
+
+### Upgrade compatibility
+
+After upgrading to a version with service-scoped load balancers, Kube-OVN may move Service VIPs from legacy shared VPC load balancers to per-Service load balancers and garbage-collect empty legacy objects. Existing Service manifests continue to be the source of truth; do not edit OVN load balancer records directly or depend on their generated names.
+
+The service-scoped path described here is separate from the default-VPC gateway LoadBalancer Service procedure below, which uses `--enable-lb-svc` and a VPC NAT gateway Pod.
+
 First, make sure the following conditions are met in the environment:
 
 1. Install `multus-cni` and `macvlan cni`.

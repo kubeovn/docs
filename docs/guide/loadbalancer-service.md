@@ -4,6 +4,87 @@ Kube-OVN 已经支持了 VPC 和 VPC 网关的实现，具体配置可以参考 
 
 由于 VPC 网关的使用比较复杂，基于 VPC 网关的实现做了简化，支持在默认 VPC 下创建 `LoadBalancer` 类型的 Service，实现通过 LoadBalancerIP 来访问默认 VPC 下的 Service。
 
+## 按 Service 管理的 OVN 负载均衡
+
+对于普通 Kubernetes Service，Kube-OVN 会维护一个按 Service 管理的 OVN 负载均衡器。这是普通 `ClusterIP` Service 以及 `LoadBalancer` Service VIP 的默认路径，不需要 Kube-OVN annotation 或额外的 CRD。
+
+### ClusterIP Service
+
+支持 `sessionAffinity: ClientIP`。可以将 `sessionAffinityConfig.clientIP.timeoutSeconds` 设置为 1 至 65535 秒；超出该范围的值会在修改 OVN 状态前被拒绝。
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: ClusterIP
+  selector:
+    app: web
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 900
+```
+
+对于 `ClusterIP` Service，`spec.trafficDistribution` 用于表达流量转发位置偏好：
+
+- `PreferSameNode` 优先选择接收流量节点上的 Endpoint，然后依次退回到该节点所在的 zone 和整个集群。
+- `PreferSameZone` 优先选择节点所在 zone 的 Endpoint，然后退回到整个集群。
+- `PreferClose` 使用相同的 zone 优先策略。
+
+Kubernetes 会在 EndpointSlice hints（`forNodes` 和 `forZones`）中发布位置关系。Kube-OVN 在 hints 完整时使用这些信息；如果 hints 缺失、不完整，或与接收流量的节点和 zone 不匹配，则退回到所有可用 Endpoint。该偏好只用于 `ClusterIP` Service，不会改变 `LoadBalancer` Service 的 Endpoint 范围。
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: zone-aware-web
+spec:
+  type: ClusterIP
+  trafficDistribution: PreferSameZone
+  selector:
+    app: web
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+```
+
+如果必须让流量停留在接收节点，请使用 `internalTrafficPolicy: Local`。这是严格的本地性要求：节点没有本地 Endpoint 时不会使用远端 Endpoint。`trafficDistribution` 偏好不会扩大这个仅本地的范围。
+
+### LoadBalancer Service
+
+对于 `LoadBalancer` Service，Kube-OVN 会分别维护内部和外部流量的按 Service 负载均衡。设置 `externalTrafficPolicy: Local` 可以保持 Kubernetes 标准的本地 Endpoint 行为，并在接收流量的节点保留客户端源地址：
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: public-web
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    app: web
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+```
+
+不需要额外的 Kube-OVN 本地性 annotation，EndpointSlice controller 仍然是 Endpoint 和位置 hints 的来源。
+
+### 升级兼容性
+
+升级到支持按 Service 管理负载均衡的版本后，Kube-OVN 可能会将 Service VIP 从旧的 VPC 共享负载均衡迁移到按 Service 管理的负载均衡，并回收空的旧对象。现有 Service manifest 仍是事实来源；不要直接编辑 OVN 负载均衡记录，也不要依赖自动生成的记录名称。
+
+本文本节描述的按 Service 管理路径与下文的默认 VPC 网关 LoadBalancer Service 流程相互独立，后者使用 `--enable-lb-svc` 和 VPC NAT Gateway Pod。
+
 首先确认环境上满足以下条件：
 
 1. 安装了 `multus-cni` 和 `macvlan cni`。
