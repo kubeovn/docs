@@ -12,6 +12,8 @@ Kube-OVN supports two types of Pod level QoS:
 This type of QoS can be dynamically configured via Pod annotation and can be adjusted without restarting running Pod.
 Bandwidth speed limit unit is `Mbit/s`.
 
+The optional `ovn.kubernetes.io/ingress_burst` and `ovn.kubernetes.io/egress_burst` annotations set ingress and egress burst values independently, in `Mbit`. When omitted, a burst defaults to 80% of the corresponding rate; set it to `0` to disable the burst. Burst values must be non-negative integers, and invalid values are rejected. For multi-NIC Pods, use `<provider>.kubernetes.io/ingress_burst` and `<provider>.kubernetes.io/egress_burst` to set the burst for a specific provider interface.
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -21,6 +23,8 @@ metadata:
   annotations:
     ovn.kubernetes.io/ingress_rate: "3"
     ovn.kubernetes.io/egress_rate: "1"
+    ovn.kubernetes.io/ingress_burst: "2"
+    ovn.kubernetes.io/egress_burst: "0"
 spec:
   containers:
   - name: qos
@@ -31,6 +35,8 @@ Use annotation to dynamically adjust QoS:
 
 ```bash
 kubectl annotate --overwrite  pod nginx-74d5899f46-d7qkn ovn.kubernetes.io/ingress_rate=3
+# You can also update ingress and egress burst values independently (in Mbit).
+kubectl annotate --overwrite pod nginx-74d5899f46-d7qkn ovn.kubernetes.io/ingress_burst=2 ovn.kubernetes.io/egress_burst=0
 ```
 
 ### Test QoS

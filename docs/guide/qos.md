@@ -12,6 +12,8 @@ Kube-OVN 支持基于单个 Pod 的两种不同类型的 QoS：
 该类型的 QoS 可以通过 Pod annotation 动态配置，可以在不中断 Pod 运行的情况下进行调整。
 带宽限速的单位为 `Mbit/s`。
 
+可选的 `ovn.kubernetes.io/ingress_burst` 和 `ovn.kubernetes.io/egress_burst` 注解用于分别设置入口和出口 burst，单位为 `Mbit`。未设置时，burst 默认按对应速率的 80% 计算；设置为 `0` 可关闭 burst。burst 必须是非负整数，非法值会被拒绝。多网卡 Pod 也可以使用 `<provider>.kubernetes.io/ingress_burst` 和 `<provider>.kubernetes.io/egress_burst` 为指定 provider 的网卡设置 burst。
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -21,6 +23,8 @@ metadata:
   annotations:
     ovn.kubernetes.io/ingress_rate: "3"
     ovn.kubernetes.io/egress_rate: "1"
+    ovn.kubernetes.io/ingress_burst: "2"
+    ovn.kubernetes.io/egress_burst: "0"
 spec:
   containers:
   - name: qos
@@ -31,6 +35,8 @@ spec:
 
 ```bash
 kubectl annotate --overwrite  pod nginx-74d5899f46-d7qkn ovn.kubernetes.io/ingress_rate=3
+# 也可以单独调整入口和出口 burst（单位：Mbit）
+kubectl annotate --overwrite pod nginx-74d5899f46-d7qkn ovn.kubernetes.io/ingress_burst=2 ovn.kubernetes.io/egress_burst=0
 ```
 
 ### 测试 QoS 调整
