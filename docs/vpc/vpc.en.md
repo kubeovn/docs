@@ -239,7 +239,7 @@ spec:
 
 - `vpc`: The VPC to which this VpcNatGateway belongs.
 - `subnet`: A Subnet within the VPC, the VPC Gateway Pod will use `lanIp` to connect to the tenant network under that subnet.
-- `namespace`: Optional Namespace where the VPC gateway StatefulSet and Pod are created. If omitted, the Namespace of `kube-ovn-controller` is used (usually `kube-system`). `VpcNatGateway` is cluster-scoped, so this field belongs in `spec` rather than `metadata.namespace`.
+- `namespace`: Optional Namespace where the VPC gateway workload (Deployment or StatefulSet) and its Pod are created. If omitted, the Namespace of `kube-ovn-controller` is used (usually `kube-system`). This field is immutable after the `VpcNatGateway` is created. `VpcNatGateway` is cluster-scoped, so this field belongs in `spec` rather than `metadata.namespace`.
 - `lanIp`: An unused IP within the `subnet` that the VPC Gateway Pod will eventually use. When configuring routing for a VPC, the  `nextHopIP` needs to be set to the `lanIp` of the current VpcNatGateway.
 - `selector`: The node selector for VpcNatGateway Pod has the same format as NodeSelector in Kubernetes.
 - `externalSubnets`: External network used by the VPC gateway, if not configured, `ovn-vpc-external-network` is used by default, and only one external network is supported in the current version.
@@ -323,7 +323,19 @@ spec:
 ```
 
 - `externalSubnet`: The name of the external network on which the EIP is located. If not specified, it defaults to `ovn-vpc-external-network`. The external network of IptablesEIP is completely independent of the VpcNatGateway's `externalSubnets`. EIP can use any valid external subnet without needing to match the gateway's external network.
-- `namespace`: Optional Namespace where the NAT gateway Pod referenced by the EIP resides. If omitted, it is inferred from the VpcNatGateway referenced by `natGwDp`; when set explicitly, it should match that gateway's `spec.namespace`. `IptablesEIP` is cluster-scoped, so this field belongs in `spec` rather than `metadata.namespace`.
+- `namespace`: Optional Namespace where the NAT gateway workload and Pod referenced by the EIP reside. If omitted, it is inferred from the VpcNatGateway referenced by `natGwDp` (or the controller Namespace when the gateway's `spec.namespace` is empty). When set explicitly, it must match that gateway's effective Namespace. `IptablesEIP` is cluster-scoped, so this field belongs in `spec` rather than `metadata.namespace`.
+
+To explicitly set the Namespace for the EIP's NAT gateway workload, set `spec.namespace` to the same Namespace as the referenced VpcNatGateway:
+
+```yaml
+kind: IptablesEIP
+apiVersion: kubeovn.io/v1
+metadata:
+  name: eip-tenant
+spec:
+  natGwDp: gw1
+  namespace: tenant-network
+```
 
 ### Create DNAT Rules
 
