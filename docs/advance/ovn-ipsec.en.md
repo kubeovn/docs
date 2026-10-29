@@ -45,7 +45,7 @@ The install script can enable IPsec with:
 ENABLE_OVN_IPSEC=true
 ```
 
-The v1 chart uses `ENABLE_OVN_IPSEC`; the v2 chart uses
+The v1 chart uses `func.ENABLE_OVN_IPSEC`; the v2 chart uses
 `features.enableOvnIpsec`. For cert-manager signing, also enable
 `--cert-manager-ipsec-cert=true` (v1) or the chart's
 `ipsec.certManager.enabled` and set the dedicated issuer name. Certificate
@@ -78,8 +78,10 @@ renew at the same midpoint. A failed renewal does not replace an existing valid
 identity. The agent supervises foreground IKE and monitor processes and backs off
 runtime failures from one to thirty seconds.
 
-Status and readiness expose only the Node UID, chassis, generation, and public
-certificate/trust digests. They never expose PEM data, private keys, or SA keys.
+Status and readiness expose phase, reason, `configurationApplied`,
+`runtimeHealthy`, `protectionArmed`, and `expires`, along with the Node UID,
+chassis, generation, and public certificate/trust digests. They never expose PEM
+data, private keys, or SA keys.
 `readyz` requires an unexpired certificate, healthy processes, read-back kernel
 protection, and acknowledgement of the current trust digest by the local monitor.
 This confirms a configuration refresh, not that every old peer SA has been
@@ -131,8 +133,9 @@ failure keeps that node protected for a controlled retry.
 - With cert-manager, dedicate the ClusterIssuer to Kube-OVN IPsec. The controller
   validates the issuer, namespace, requester ServiceAccount, usages, lifetime, and
   returned chain. Generic cert-manager auto-approval cannot bypass this path.
-- Controller Secret, CSR, and cert-manager permissions are restricted to its
-  configured namespace. CNI must not be allowed to create CertificateRequests.
+- Controller Secret and CertificateRequest permissions are restricted to its
+  configured namespace. CSR is cluster-scoped; signer and identity checks
+  constrain its access. CNI must not be allowed to create CertificateRequests.
 - When `ovs-appctl ipsec/show` or agent `readyz` fails, check certificate digests,
   monitor read-back, kernel guards, and UDP 500/4500 connectivity before reading
   OVN/OVS logs.

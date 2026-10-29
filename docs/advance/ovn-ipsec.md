@@ -38,7 +38,7 @@ CNI ServiceAccount 没有创建 CertificateRequest 的权限，只有 controller
 ENABLE_OVN_IPSEC=true
 ```
 
-使用 Helm 时，v1 chart 使用 `ENABLE_OVN_IPSEC`，v2 chart 使用
+使用 Helm 时，v1 chart 使用 `func.ENABLE_OVN_IPSEC`，v2 chart 使用
 `features.enableOvnIpsec`。如果通过 cert-manager 签发，还需启用
 `--cert-manager-ipsec-cert=true`（v1）或 chart 中的 `ipsec.certManager.enabled`
 并设置专用 issuer 名称。证书有效期、请求超时、优先级和资源限制位于 chart 的
@@ -65,7 +65,8 @@ IPsec agent 持久化待处理私钥、CSR 绑定和当前身份 generation。�
 已有有效身份时，失败的续期不会覆盖它。agent 监督 IKE 和 monitor 前台进程，
 运行时故障采用 1 到 30 秒退避。
 
-状态和就绪检查只公开 Node UID、chassis、generation 以及证书/信任摘要，不包含
+状态和就绪检查会公开 phase、reason、configurationApplied、runtimeHealthy、
+protectionArmed、expires，以及 Node UID、chassis、generation 和证书/信任摘要；不包含
 PEM、私钥或 SA key。`readyz` 需要当前证书未过期、进程健康、内核保护已读回，
 以及当前信任摘要已由本地 monitor 确认；这表示配置刷新完成，不表示每一条旧 SA
 都已重新建立。IPsec 就绪失败会让 Pod 整体 NotReady，但不会重启 CNI 容器。
@@ -111,8 +112,9 @@ controller 不创建额外 DaemonSet，也不需要新增 Kubernetes 权限。�
 - 使用 cert-manager 时，ClusterIssuer 应专用于 Kube-OVN IPsec。controller 会
   校验 issuer、namespace、请求者 ServiceAccount、用途、有效期和返回证书链；
   泛化的 cert-manager 自动 approver 不能绕过该路径。
-- controller 的 Secret、CSR 和 cert-manager 权限限制在其配置的 namespace；
-  CNI 不应获得创建 CertificateRequest 的权限。
+- controller 的 Secret 和 CertificateRequest 权限限制在其配置的 namespace；CSR
+  是集群级资源，其访问由 signer 和身份校验约束。CNI 不应获得创建
+  CertificateRequest 的权限。
 - 运行 `ovs-appctl ipsec/show` 或 agent 的 `readyz` 失败时，先检查证书摘要、
   monitor readback、内核 guard 以及 UDP 500/4500 连通性，再检查 OVN/OVS 日志。
 - 不要手工删除 XFRM SA、IPsec 密钥目录或 `ovn-ipsec-coordination` ConfigMap；
