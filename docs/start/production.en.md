@@ -11,7 +11,7 @@ Open-source software may suddenly stop releasing versions, restrict usage, delet
 - [EMQX restricts community users to single-node deployments in production](https://www.emqx.com/en/news/emqx-adopts-business-source-license){: target="_blank" }
 - [KubeSphere stops open-source downloads](https://github.com/kubesphere/kubesphere/issues/6550){: target="_blank" }
 
-You need a complete offline copy of the code, images, and documentation, and you must ensure you can rebuild the images in your own environment. Use the [backup script](https://github.com/kubeovn/kube-ovn/blob/master/hack/backup.sh){: target="_blank" } to download the code, images, and documentation for the corresponding version. Refer to the [Development and Contribution Guide](../reference/dev-env.en.md) to learn how to build images from the code.
+You need a complete offline copy of the code, images, and documentation, and you must ensure you can rebuild the images in your own environment. Use the [backup script](https://github.com/kubeovn/kube-ovn/blob/master/hack/backup.sh){: target="_blank" } to download the code, images, and documentation for the corresponding version. Refer to the [Development and Contribution Guide](../reference/dev-env.md) to learn how to build images from the code.
 
 ## Learn OpenVswitch/OVN
 
