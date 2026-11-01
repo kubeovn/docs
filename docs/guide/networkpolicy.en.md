@@ -51,7 +51,7 @@ Kube-OVN supports multiple network access control mechanisms:
 These mechanisms are all implemented through OVN ACLs at the underlying level. Although NetworkPolicy and Network Policy API are designed with rule layering to avoid priority conflicts,
 using multiple access control mechanisms simultaneously may lead to complex rule management and priority conflicts. **It is recommended not to use multiple access control rules simultaneously.**
 
-### Named Port Limitations
+### Named Ports
 
 The NetworkPolicy specification supports using Named Ports to specify ports, for example:
 
@@ -61,12 +61,22 @@ ports:
   port: http
 ```
 
-Kube-OVN has limitations on Named Port support: **Currently only Named Ports mapping to the same port number are supported**.
+Kube-OVN resolves a named port against each destination Pod and the rule's protocol.
+For example, if two selected Pods declare `http` as TCP port 8080 and TCP port 8081,
+the rule matches the corresponding port on each Pod. A Pod can also use the same
+name for different protocols. Ingress uses the Pods selected by the policy;
+egress uses the destination Pods selected by the rule, including Pods in other
+namespaces. A named-port rule does not match a destination that has no Pod with
+the matching name and protocol. An egress `ipBlock` alone does not identify
+destination Pods from which a named port can be resolved.
 
-If multiple Pods in the cluster use the same Named Port name but map to different port numbers, NetworkPolicy will not work correctly and may cause errors.
-For example, if Pod A's `http` port maps to 8080 while Pod B's `http` port maps to 8081, NetworkPolicy rules using `port: http` will have issues.
-
-It is recommended to ensure that all relevant Pods' ports with the same name map to the same port number when using Named Ports, or use numeric port numbers directly to avoid this issue.
+AdminNetworkPolicy and BaselineAdminNetworkPolicy use `ports[].namedPort` for
+ingress and egress. ClusterNetworkPolicy uses
+`protocols[].destinationNamedPort`. These policies also resolve named ports
+against selected destination Pods. CNP matches all protocols exposed by the
+named port; `destinationNamedPort` cannot be combined with a TCP, UDP, or SCTP
+transport field. Named ports cannot be resolved for Node, Network, or domain-name
+peers that do not select destination Pods.
 
 ### Performance Impact of IPBlock Except Rules
 
