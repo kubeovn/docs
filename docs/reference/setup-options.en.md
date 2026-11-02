@@ -191,6 +191,23 @@ args:
 
 EIP and SNAT is enabled by default. More information can refer to [EIP and SNAT](../guide/eip-snat.en.md).
 
+## LoadBalancer Service Settings
+
+Enable this option to support LoadBalancer Services in the default VPC. For usage and other configuration options, see [LoadBalancer Type Service](../guide/loadbalancer-service.en.md).
+
+This feature is disabled by default. To enable it in the installation script, set:
+
+```bash
+ENABLE_LB_SVC=true
+```
+
+It can also be enabled after installation by changing the args of the `kube-ovn-controller` Deployment:
+
+```yaml
+args:
+- --enable-lb-svc=true
+```
+
 ## Centralized Gateway ECMP Settings
 
 The centralized gateway supports two mode of high availability, primary-backup and ECMP.
