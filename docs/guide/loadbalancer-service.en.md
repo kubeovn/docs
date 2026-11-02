@@ -183,8 +183,8 @@ kind: Service
 metadata:
    annotations:
      kubectl.kubernetes.io/last-applied-configuration: |
-       {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"test-service.default.kubernetes.io/logical_switch":"attach-subnet"},"labels ":{"app":"dynamic"},"name":"test-service","namespace":"default"},"spec":{"ports":[{"name":"test", "port":80,"protocol":"TCP","targetPort":80}],"selector":{"app":"dynamic"},"sessionAffinity":"None","type":"LoadBalancer "}}
-     ovn.kubernetes.io/vpc:ovn-cluster
+       {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"test-service.default.kubernetes.io/logical_switch":"attach-subnet"},"labels":{"app":"dynamic"},"name":"test-service","namespace":"default"},"spec":{"ports":[{"name":"test","port":80,"protocol":"TCP","targetPort":80}],"selector":{"app":"dynamic"},"sessionAffinity":"None","type":"LoadBalancer"}}
+     ovn.kubernetes.io/vpc: ovn-cluster
      test-service.default.kubernetes.io/logical_switch: attach-subnet
    creationTimestamp: "2022-06-15T09:01:58Z"
    labels:
