@@ -193,7 +193,7 @@ EIP and SNAT is enabled by default. More information can refer to [EIP and SNAT]
 
 ## LoadBalancer Service Settings
 
-Enable this option to support LoadBalancer Services in the default VPC. For usage and other configuration options, see [LoadBalancer Type Service](../guide/loadbalancer-service.en.md).
+Enable this option to support LoadBalancer Services in the default VPC. For usage and other configuration options, see [LoadBalancer Type Service](../guide/loadbalancer-service.md).
 
 This feature is disabled by default. To enable it in the installation script, set:
 
