@@ -6,7 +6,7 @@ For an overview of the components involved in troubleshooting, see the [architec
 
 1. Narrow down the failing path: test Pod-to-Pod, Pod-to-node, Pod-to-Service, DNS, and external connectivity separately. Check the `kube-ovn-pinger` logs on affected nodes.
 2. Check the affected Pod and the `kube-ovn-cni`, `ovs-ovn`, `kube-ovn-controller`, and `ovn-central` logs. Inspect node `dmesg` and `netstat -s` output for kernel or network errors.
-3. Check CPU, memory, and I/O metrics for the affected components. Use `kubectl ko log all` to collect component logs and node diagnostics; see the [CLI guide](./kubectl-ko.md).
+3. Check CPU, memory, and I/O metrics for the affected components. Use `kubectl ko logs` to collect component logs and node diagnostics; see the [CLI guide](./kubectl-ko.md).
 
 ## Pod creation fails with an IP conflict
 
