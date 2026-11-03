@@ -51,7 +51,7 @@ Kube-OVN 同时支持多种网络访问控制机制：
 这些机制在底层都是通过 OVN ACL 实现的。虽然 NetworkPolicy 和 Network Policy API 在设计时考虑了规则分层以避免优先级冲突，
 但同时使用多种访问控制机制可能导致规则管理复杂和优先级冲突。**建议不要同时使用多种访问控制规则。**
 
-### Named Port 的使用限制
+### Named Port
 
 NetworkPolicy 规范支持使用 Named Port 来指定端口，例如：
 
@@ -61,12 +61,17 @@ ports:
   port: http
 ```
 
-Kube-OVN 对 Named Port 的支持存在限制：**当前只支持 Named Port 映射到同一个端口号**。
+Kube-OVN 根据每个目标 Pod 和规则指定的协议解析 Named Port。
+例如，两个被选中的 Pod 可以分别将 `http` 声明为 TCP 8080 和 TCP 8081，
+规则会匹配各自的端口。同一个名称也可以用于不同协议的端口。
+Ingress 使用策略选中的目标 Pod；Egress 使用规则选中的目标 Pod，
+包括其他命名空间中的 Pod。如果目标没有声明匹配名称和协议的端口，
+Named Port 规则不会匹配该目标。仅有 `ipBlock` 的 Egress 规则无法确定用于解析 Named Port 的目标 Pod。
 
-如果集群中存在多个 Pod 使用相同的 Named Port 名称但映射到不同的端口号，NetworkPolicy 将无法正确工作并可能出现错误。
-例如，如果 Pod A 的 `http` 端口映射到 8080，而 Pod B 的 `http` 端口映射到 8081，则使用 `port: http` 的 NetworkPolicy 规则会出现问题。
-
-建议在使用 Named Port 时，确保所有相关 Pod 的同名端口映射到相同的端口号，或者直接使用数字端口号来避免此问题。
+AdminNetworkPolicy 和 BaselineAdminNetworkPolicy 在 Ingress 和 Egress 中使用 `ports[].namedPort`，
+ClusterNetworkPolicy 使用 `protocols[].destinationNamedPort`。这些策略同样针对被选中的目标 Pod 解析 Named Port。
+CNP 会匹配该名称对应的所有协议；`destinationNamedPort` 不能与 TCP、UDP 或 SCTP 协议字段组合。
+Node、Network 和域名类型的 Peer 不选择目标 Pod，因此无法解析 Named Port。
 
 ### IPBlock Except 规则的性能影响
 
