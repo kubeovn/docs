@@ -398,37 +398,13 @@ spec:
 
 #### DNAT 共享负载均衡（share 类型）
 
-`type: share` 允许多个 DNAT 规则共享同一个 EIP:Port 标识，每个规则贡献一个后端，流量通过 nftables 随机负载均衡分发到多个后端：
+`type: share` 用于 **VPC NAT 网关接管 Kubernetes Service** 场景：网关将流量负载均衡分发到多个后端 Pod。
 
-```yaml
-kind: IptablesDnatRule
-apiVersion: kubeovn.io/v1
-metadata:
-  name: dnat-share-1
-spec:
-  eip: eipd01
-  externalPort: '80'
-  internalIp: 10.0.1.10
-  internalPort: '8080'
-  protocol: tcp
-  type: share
-  sessionAffinity: ClientIP
----
-kind: IptablesDnatRule
-apiVersion: kubeovn.io/v1
-metadata:
-  name: dnat-share-2
-spec:
-  eip: eipd01
-  externalPort: '80'
-  internalIp: 10.0.1.11
-  internalPort: '8080'
-  protocol: tcp
-  type: share
-  sessionAffinity: ClientIP
-```
+**share 类型的 IptablesDnatRule 由控制器自动管理，不支持手动创建。** 使用方式见下方「VPC NAT 网关接管 Kubernetes Service」章节。
 
-- `type`：`exclusive`（默认）为独占模式，一个 EIP:Port 只能被一个 DNAT 规则使用；`share` 为共享模式，允许多个后端使用同一个 EIP:Port。
+字段说明：
+
+- `type`：`exclusive`（默认）为独占模式，一个 EIP:Port 只能被一个 DNAT 规则使用；`share` 由控制器在 Service 接管场景下自动生成，允许多个后端共享同一个 EIP:Port。
 - `sessionAffinity`：仅 `share` 类型支持。设置为 `ClientIP` 后，同一客户端 IP 的连接会被固定到同一个后端，默认超时 10800 秒（3 小时），可通过 `sessionAffinityTimeoutSeconds` 指定。
 
 #### 使用 ClusterIP 实现 VPC 内访问
