@@ -526,6 +526,7 @@ spec:
 The controller automatically creates `IptablesDnatRule` (type: share) entries for each Service port/backend combination and programs nftables rules on the gateway Pod. Cleanup is automatic when the Service is deleted.
 
 **Characteristics:**
+
 - Supports both LoadBalancer and ClusterIP Service types
 - Both in-cluster (ClusterIP) and external (EIP) traffic are load-balanced by the gateway
 - Only supports ExternalTrafficPolicy: Cluster; Local mode is not supported

@@ -522,6 +522,7 @@ spec:
 控制器会自动为每个 Service 端口和后端组合创建对应的 `IptablesDnatRule`（`type: share`），并在网关 Pod 上编程 nftables 规则。Service 删除时自动清理。
 
 **特性说明：**
+
 - 同时支持 `LoadBalancer` 和 `ClusterIP` 类型的 Service
 - 集群内流量（ClusterIP）和外部流量（EIP）均由网关负载均衡
 - 只支持 `ExternalTrafficPolicy: Cluster`，不支持 Local 模式
