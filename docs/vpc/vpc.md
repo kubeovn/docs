@@ -407,23 +407,6 @@ spec:
 - `type`：`exclusive`（默认）为独占模式，一个 EIP:Port 只能被一个 DNAT 规则使用；`share` 由控制器在 Service 接管场景下自动生成，允许多个后端共享同一个 EIP:Port。
 - `sessionAffinity`：仅 `share` 类型支持。设置为 `ClientIP` 后，同一客户端 IP 的连接会被固定到同一个后端，默认超时 10800 秒（3 小时），可通过 `sessionAffinityTimeoutSeconds` 指定。
 
-#### 使用 ClusterIP 实现 VPC 内访问
-
-当只需要 VPC 内部通过 Service ClusterIP 访问 DNAT 规则时，可以不指定 `eip`，仅使用 `clusterIP`：
-
-```yaml
-kind: IptablesDnatRule
-apiVersion: kubeovn.io/v1
-metadata:
-  name: dnat-clusterip
-spec:
-  clusterIP: 10.96.0.100
-  externalPort: '80'
-  internalIp: 10.0.1.10
-  internalPort: '8080'
-  protocol: tcp
-```
-
 ### 创建 SNAT 规则
 
 通过 SNAT 规则，VPC 内的 Pod 访问外部的地址时将会通过对应 EIP 进行 SNAT。
