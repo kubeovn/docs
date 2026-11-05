@@ -475,9 +475,30 @@ spec:
 
 ### VPC NAT Gateway Taking Over Kubernetes Services
 
-> Requires the controller flag `--enable-gw-nftable-lb-svc=true`.
+This feature involves the following controller flags:
 
-The VPC NAT gateway can take over Kubernetes Services of type LoadBalancer and ClusterIP. The gateway Pod's nftables implements kube-proxy-style load balancing, distributing traffic directly to backend Pods.
+| Flag | Default | Purpose |
+|------|---------|---------|
+| `--enable-lb` | true | OVN load balancer, handles ClusterIP / NodePort / LoadBalancer Service traffic forwarding |
+| `--enable-gw-nftable-lb-svc` | false | Gateway handles LoadBalancer Services via nftables load balancing, requires `ovn.kubernetes.io/eip` annotation |
+| `--enable-gw-nftable-svc-cluster-ip` | false | Sync Service ClusterIPs to gateway nftables for gateway-side ClusterIP load balancing |
+| `--enable-lb-svc` | false | Pod-mode LoadBalancer: one dedicated Pod per LoadBalancer Service, DNATs EIP to ClusterIP. Mutually exclusive with `--enable-gw-nftable-lb-svc`. Requires `--enable-lb` or `--enable-gw-nftable-svc-cluster-ip` as the ClusterIP data plane |
+
+**Flag combinations:**
+
+| Combination | Use case |
+|-------------|----------|
+| `--enable-lb` only (default) | OVN load balancer handles all Service traffic |
+| `--enable-lb` + `--enable-gw-nftable-lb-svc` | OVN handles ClusterIP, gateway handles LoadBalancer EIP ingress traffic |
+| `--enable-gw-nftable-lb-svc` + `--enable-gw-nftable-svc-cluster-ip` | Gateway handles both EIP and ClusterIP, OVN LB can be disabled |
+| `--enable-gw-nftable-svc-cluster-ip` only | Gateway handles ClusterIP only (no EIP), can coexist with `--enable-lb` |
+| `--enable-lb-svc` + `--enable-lb` | Pod-mode handles EIP, OVN LB handles ClusterIP |
+| `--enable-lb-svc` + `--enable-gw-nftable-svc-cluster-ip` | Pod-mode handles EIP, gateway handles ClusterIP |
+
+**Mutual exclusivity:**
+
+- `--enable-lb-svc` and `--enable-gw-nftable-lb-svc` are mutually exclusive (both handle LoadBalancer Service EIP ingress).
+- A single Service cannot combine `ovn.kubernetes.io/vpc-nat-gw` with `ovn.kubernetes.io/service_external_ip_from_subnet` (rejected by webhook) to prevent two data planes from fighting over the LoadBalancer ingress IP.
 
 **Usage:** Add the annotation `ovn.kubernetes.io/vpc-nat-gw` to the Service naming the gateway. For LoadBalancer Services, also add `ovn.kubernetes.io/eip` to specify the EIP as the ingress address.
 

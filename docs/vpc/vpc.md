@@ -471,9 +471,30 @@ spec:
 
 ### VPC NAT 网关接管 Kubernetes Service
 
-> 需要启用 `--enable-gw-nftable-lb-svc=true` 控制器启动参数。
+该功能涉及以下控制器启动参数：
 
-VPC NAT 网关可以接管 Kubernetes LoadBalancer 和 ClusterIP 类型的 Service，由网关 Pod 内的 nftables 实现类似 kube-proxy 的负载均衡，将流量直接分发到后端 Pod。
+| 参数 | 默认值 | 功能 |
+|------|--------|------|
+| `--enable-lb` | true | OVN 负载均衡器，负责 ClusterIP / NodePort / LoadBalancer 类型 Service 的流量转发 |
+| `--enable-gw-nftable-lb-svc` | false | VPC NAT 网关接管 LoadBalancer 类型 Service，通过网关 nftables 实现负载均衡，需配合 `ovn.kubernetes.io/eip` annotation |
+| `--enable-gw-nftable-svc-cluster-ip` | false | 将 Service ClusterIP 同步到网关 nftables，实现网关侧 ClusterIP 负载均衡 |
+| `--enable-lb-svc` | false | Pod 模式 LoadBalancer：每个 LoadBalancer Service 启动专用 Pod，DNAT EIP 到 ClusterIP。与 `--enable-gw-nftable-lb-svc` 互斥。需搭配 `--enable-lb` 或 `--enable-gw-nftable-svc-cluster-ip` 作为 ClusterIP 数据面 |
+
+**参数组合说明：**
+
+| 组合 | 适用场景 |
+|------|---------|
+| 仅 `--enable-lb`（默认） | OVN 负载均衡器处理所有 Service 流量 |
+| `--enable-lb` + `--enable-gw-nftable-lb-svc` | OVN 处理 ClusterIP，网关处理 LoadBalancer 的 EIP 入口流量 |
+| `--enable-gw-nftable-lb-svc` + `--enable-gw-nftable-svc-cluster-ip` | 网关同时处理 EIP 和 ClusterIP，OVN LB 可关闭 |
+| 仅 `--enable-gw-nftable-svc-cluster-ip` | 网关仅处理 ClusterIP（无 EIP），可与 `--enable-lb` 共存 |
+| `--enable-lb-svc` + `--enable-lb` | Pod 模式处理 EIP，OVN 负载均衡器处理 ClusterIP |
+| `--enable-lb-svc` + `--enable-gw-nftable-svc-cluster-ip` | Pod 模式处理 EIP，网关处理 ClusterIP |
+
+**互斥关系：**
+
+- `--enable-lb-svc` 与 `--enable-gw-nftable-lb-svc` 互斥（都处理 LoadBalancer Service 的 EIP 入口）。
+- 同一 Service 不能同时使用 `ovn.kubernetes.io/vpc-nat-gw` 和 `ovn.kubernetes.io/service_external_ip_from_subnet` annotation（webhook 拒绝），避免两个数据面争抢 LoadBalancer ingress IP。
 
 **使用方式：** 为 Service 添加 annotation `ovn.kubernetes.io/vpc-nat-gw` 指定网关名称，LoadBalancer 类型的 Service 还需通过 `ovn.kubernetes.io/eip` 指定 EIP 作为入口地址。
 
