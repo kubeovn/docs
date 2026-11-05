@@ -300,7 +300,7 @@
 | exchangeLinkName | Bool | 是否交换桥接网卡和对应 OVS 网桥名称 |
 | autoCreateVlanSubinterfaces | Bool | 是否自动创建 VLAN 子接口 |
 | preserveVlanInterfaces | Bool | 是否启用自动检测并保留 VLAN 接口 |
-| vlanInterfaces | []String | 要保留的 VLAN 接口名称列表（如 eth0.10, bond0.20）|
+| vlanInterfaces | []String | 要保留的 VLAN 接口名称列表（如 eth0.10, bond0.20） |
 
 ##### CustomInterface
 
@@ -506,8 +506,8 @@
 | --- | --- | --- |
 | name | String | 规则名称 |
 | interface | String | 网卡接口名称 |
-| rateMax | String | 最大速率（Mbps），如 `100` 或 `0.5`（500Kbps）|
-| burstMax | String | 最大突发（MB），如 `10` 或 `0.5`（500KB）|
+| rateMax | String | 最大速率（Mbps），如 `100` 或 `0.5`（500Kbps） |
+| burstMax | String | 最大突发（MB），如 `10` 或 `0.5`（500KB） |
 | priority | Int | 规则优先级 |
 | direction | QoSPolicyRuleDirection | 流量方向，取值为 `ingress` 或 `egress` |
 | matchType | QoSPolicyRuleMatchType | 匹配类型，取值为 `ip` |
@@ -540,7 +540,7 @@
 | namespaces | []String | 该 IPPool 可参与自动选池的命名空间列表，不限制显式指定该 IPPool 的 Pod |
 | ips | []String | IP 地址或 CIDR 范围列表，与 ipCount 互斥 |
 | ipCount | Int32 | 从子网空闲地址中自动选取的地址数量（双栈子网会同时选取等量的 IPv4 和 IPv6 地址）；取值范围 1-32，与 ips 互斥 |
-| enableAddressSet | Bool | 是否创建 AddressSet 以支持策略路由和 ACL
+| enableAddressSet | Bool | 是否创建 AddressSet 以支持策略路由和 ACL |
 
 #### IPPoolStatus
 
@@ -706,7 +706,7 @@
 | protocol | String | 协议类型 |
 | internalIP | String | 内部 IP 地址 |
 | internalPort | String | 内部端口 |
-| type | String | DNAT 规则类型，取值为 `exclusive`（独占，默认）或 `share`（共享负载均衡）|
+| type | String | DNAT 规则类型，取值为 `exclusive`（独占，默认）或 `share`（共享负载均衡） |
 | sessionAffinity | String | 会话亲和性，仅 share 类型支持，取值为 `""`（无）或 `ClientIP` |
 | sessionAffinityTimeoutSeconds | Int32 | ClientIP 会话亲和性超时秒数，默认 10800（3 小时） |
 
@@ -853,7 +853,7 @@
 | affinity | Affinity | 标准 Kubernetes 亲和性配置 |
 | qosPolicy | String | QoS 策略名称 |
 | bgpSpeaker | VpcBgpSpeaker | BGP speaker 配置 |
-| bfd | VpcNatGatewayBFDConfig | BFD 健康检测配置（HA 模式）|
+| bfd | VpcNatGatewayBFDConfig | BFD 健康检测配置（HA 模式） |
 | internalSubnets | []String | 按子网名称指定的内部流量子网，发往 0.0.0.0/0 或 ::/0 的流量将被路由到 NAT 网关实例 |
 | internalCIDRs | []String | 按 CIDR 指定的内部流量网段，发往 0.0.0.0/0 或 ::/0 的流量将被路由到 NAT 网关实例 |
 | routes | []Route | 路由配置列表 |
@@ -946,7 +946,7 @@
 | externalIPPool | String | 可选，用于分配外部地址的 `IPPool` 名称；其子网必须与 `externalSubnet` 匹配，且不能与 `externalIPs` 同时设置 |
 | selectors | []VpcEgressGatewaySelector | 命名空间/Pod 选择器，用于选择由该网关承载的流量来源；非主 CNI 模式下不支持，请改用 `policies` |
 | trafficPolicy | String | 可选，流量策略，`Cluster`（默认）或 `Local`，仅默认 VPC 生效 |
-| podAntiAffinity | String | Pod 反亲和模式，`Required`（默认，分散到不同节点）或 `Preferred`（允许共存）|
+| podAntiAffinity | String | Pod 反亲和模式，`Required`（默认，分散到不同节点）或 `Preferred`（允许共存） |
 | bfd | VpcEgressGatewayBFDConfig | BFD 配置 |
 | policies | []VpcEgressGatewayPolicy | 出向策略列表，至少一项 |
 | nodeSelector | []VpcEgressGatewayNodeSelector | 可选，工作负载节点选择器 |
