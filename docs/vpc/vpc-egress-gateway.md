@@ -460,6 +460,7 @@ Spec：
 | `image` | `string` | 是 | - | 工作负载 Deployment 使用的镜像。 | `docker.io/kubeovn/kube-ovn:v1.14.0-debug` |
 | `internalSubnet` | `string` | 是 | VPC 默认子网名称 | 接入 VPC 网络的子网名称。 | `subnet1` |
 | `externalSubnet` | `string` | 否 | - | 接入外部网络的子网名称。 | `ext1` |
+| `externalNetworkMode` | `string` | 是 | `Attachment` | 外部网络模式。`Attachment`（默认）使用 externalSubnet 指定的外部网络；`PrimaryCNI` 使用 Pod 主网络作为外部网络。创建后不可修改。PrimaryCNI 模式下不支持 externalIP/externalIPPool/BGP/EVPN/selectors/bandwidth/observability。仅在非主 CNI 模式下可用。 | `PrimaryCNI` |
 | `internalIPs` | `string array` | 是 | - | 接入 VPC 网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
 | `externalIPs` | `string array` | 是 | - | 接入外部网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
 | `internalIPPool` | `string` | 是 | - | 用于分配内部地址的 `IPPool` 名称。IPPool 子网必须与 `internalSubnet` 匹配，且不能与 `internalIPs` 同时设置。 | `veg-internal` |
@@ -469,6 +470,8 @@ Spec：
 | `selectors` | `object array` | 是 | - | 通过 Namespace Selector 以及 Pod Selector 配置 Egress 策略。匹配到的 Pod 将开启 SNAT/MASQUERADE。可与 `policies` 同时配置。 | - |
 | `nodeSelector` | `object array` | 是 | - | 工作负载的节点选择器，工作负载（Deployment/Pod）将运行在被选择的节点上。 | - |
 | `trafficPolicy` | `string` | 是 | `Cluster` | 可选值：`Cluster`/`Local`。**仅开启 BFD 时生效**。 设置为 `Local` 时，Egress 流量将优先导向同节点上的 VPC Egress Gateway 实例。若同节点上的 VPC Egress Gateway 实例出现故障，Egress 流量将导向其它实例。 | `Local` |
+| `podAntiAffinity` | `string` | 是 | `Required` | Pod 反亲和模式。`Required`（默认）将副本分散到不同节点，确保节点级高可用；`Preferred` 允许副本共存但节点级高可用性降低。从 `Preferred` 改为 `Required` 仅在 Pod 重建后生效。 | `Preferred` |
+| `priorityClassName` | `string` | 是 | - | 工作负载 Pod 的 PriorityClass 名称。不指定时使用集群默认 Pod 优先级。 | `high-priority` |
 | `bandwidth` | `object` | 是 | - | 每个网关副本的入向和出向带宽限制。 | - |
 | `bandwidth.ingress` | `integer 或 string` | 是 | - | 从外部网络进入 VPC 的流量限制。 | `1024` / `1Gi` |
 | `bandwidth.egress` | `integer 或 string` | 是 | - | 从 VPC 发往外部网络的流量限制。 | `1024` / `1Gi` |

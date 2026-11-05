@@ -460,6 +460,7 @@ Spec:
 | `image` | `string` | Yes | - | The image used by the workload deployment. | `docker.io/kubeovn/kube-ovn:v1.14.0-debug` |
 | `internalSubnet` | `string` | Yes | Name of the default subnet within the VPC. | Name of the subnet used to access the VPC network. | `subnet1` |
 | `externalSubnet` | `string` | No | - | Name of the subnet used to access the external network. | `ext1` |
+| `externalNetworkMode` | `string` | Yes | `Attachment` | External network mode. `Attachment` (default) uses the externalSubnet for the external network; `PrimaryCNI` uses the pod's primary network as the external network. Immutable after creation. PrimaryCNI mode does not support externalIP/externalIPPool/BGP/EVPN/selectors/bandwidth/observability. Only available in non-primary CNI mode. | `PrimaryCNI` |
 | `internalIPs` | `string array` | Yes | - | IP addresses used for accessing the VPC network. IPv4, IPv6 and dual-stack are supported. The number of IPs specified must NOT be less than `replicas`. It is recommended to set the number to `<replicas> + 1` to avoid extreme cases where the Pod is not created properly. | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
 | `externalIPs` | `string array` | Yes | - | IP addresses used for accessing the external network. IPv4, IPv6 and dual-stack are supported. The number of IPs specified must NOT be less than `replicas`. It is recommended to set the number to `<replicas> + 1` to avoid extreme cases where the Pod is not created properly. | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
 | `internalIPPool` | `string` | Yes | - | Name of an `IPPool` used to allocate internal addresses. The pool subnet must match `internalSubnet`; mutually exclusive with `internalIPs`. | `veg-internal` |
@@ -469,6 +470,8 @@ Spec:
 | `selectors` | `object array` | Yes | - | Configure Egress policies by namespace selectors and Pod selectors. SNAT/MASQUERADE will be applied to the matched Pods. Configurable when `policies` is configured. | - |
 | `nodeSelector` | `object array` | Yes | - | Node selector applied to the workload. The workload (Deployment/Pod) will run on the selected nodes. | - |
 | `trafficPolicy` | `string` | Yes | `Cluster` | Available values: `Cluster`/`Local`. **Effective only when BFD is enabled**. When set to `Local`, Egress traffic will be redirected to the VPC Egress Gateway instance running on the same node if available. If the instance is down, Egress traffic will be redirected to other instances. | `Local` |
+| `podAntiAffinity` | `string` | Yes | `Required` | Pod anti-affinity mode. `Required` (default) spreads replicas across nodes for node-level HA; `Preferred` allows co-located replicas without node-level HA. Changing from `Preferred` to `Required` only takes effect after pod recreation. | `Preferred` |
+| `priorityClassName` | `string` | Yes | - | PriorityClass name for the workload pods. Falls back to the cluster default Pod priority when unset. | `high-priority` |
 | `bandwidth` | `object` | Yes | - | Per-replica ingress and egress bandwidth limits. | - |
 | `bandwidth.ingress` | `integer or string` | Yes | - | Limit for traffic entering the VPC from the external network. | `1024` / `1Gi` |
 | `bandwidth.egress` | `integer or string` | Yes | - | Limit for traffic leaving the VPC for the external network. | `1024` / `1Gi` |

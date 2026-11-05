@@ -78,9 +78,28 @@ StatefulSet 和 VM 的 Pod 可能保留地址，直到所属 Workload 被删除�
 | 名称 | 用途 | 备注 |
 | :--------: | :----------------- | :-------------------------------------------------------- |
 | subnet | 指定所属子网 | 必填 |
-| ips | 指定包含的 IP 范围 | 支持 <IP>、<CIDR> 以及 <IP1>..<IP2> 三种格式，支持 IPv6。 |
+| ips | 指定包含的 IP 范围 | 支持 <IP>、<CIDR> 以及 <IP1>..<IP2> 三种格式，支持 IPv6。与 ipCount 互斥。 |
+| ipCount | 自动选取的地址数量 | 可选，范围 1-32。从子网空闲地址中自动选取指定数量的地址，双栈子网会同时选取等量的 IPv4 和 IPv6 地址。选取的地址会记录在 status.ips 中，增大的值追加地址，减小值会释放最近添加的地址。与 ips 互斥。 |
 | namespaces | 绑定命名空间 | 可选。列出该 IPPool 可参与自动选池的命名空间，不限制显式指定该池的 Pod。 |
 | enableAddressSet | 是否自动创建同名的 AddressSet | 默认 false，设置为 true 后 ACL 和策略路由可以使用对应 AddressSet 进行策略控制 |
+
+### 使用 ipCount 自动选取地址
+
+当不需要精确指定 IP 范围时，可以使用 `ipCount` 让控制器从子网空闲地址中自动选取：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: IPPool
+metadata:
+  name: pool-auto
+spec:
+  subnet: ovn-default
+  ipCount: 5
+  namespaces:
+  - ns-1
+```
+
+控制器会选取 5 个空闲地址并记录在 `status.ips` 中。增大 `ipCount` 会追加地址，减小会释放最近添加的地址。删除 IPPool 时所有地址会被释放。
 
 ## 注意事项
 

@@ -81,9 +81,28 @@ Field description:
 | Field | Usage | Comment |
 | :--------: | :------------------------------------- | :------------------------------------------------------------------ |
 | subnet | Specify the subnet to which it belongs | Required |
-| ips | Specify IP ranges | Support three formats: <IP>, <CIDR> and <IP1>..<IP2>. Support IPv6. |
+| ips | Specify IP ranges | Support three formats: <IP>, <CIDR> and <IP1>..<IP2>. Support IPv6. Mutually exclusive with ipCount. |
+| ipCount | Number of addresses to pick automatically | Optional, range 1-32. Picks the specified number of free addresses from the subnet; a dual-stack subnet yields ipCount IPv4 plus ipCount IPv6 addresses. Picked addresses are recorded in status.ips. Increasing the value appends addresses, decreasing it releases the most recently added ones. Mutually exclusive with ips. |
 | namespaces | Specifies the bound namespaces | Optional. Lists namespaces where the IPPool is eligible for automatic selection; does not restrict explicit references to the pool. |
 | enableAddressSet | Whether to automatically create an AddressSet with the same name | Default false. When set to true, ACL and policy routing can use the corresponding AddressSet for policy control |
+
+### Using ipCount for automatic allocation
+
+When you don't need to specify exact IP ranges, use `ipCount` to let the controller pick free addresses automatically:
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: IPPool
+metadata:
+  name: pool-auto
+spec:
+  subnet: ovn-default
+  ipCount: 5
+  namespaces:
+  - ns-1
+```
+
+The controller picks 5 free addresses and records them in `status.ips`. Increasing `ipCount` adds addresses; decreasing it releases the most recently added ones. Deleting the IPPool releases all addresses.
 
 ## Precautions
 

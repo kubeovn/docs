@@ -278,6 +278,44 @@ spec:
   # lanIp 留空，由 controller 为每个副本动态分配
 ```
 
+### BFD 健康检测与故障切换
+
+VPC NAT 网关支持通过 BFD（Bidirectional Forwarding Detection）实现快速故障检测和自动切换。同时需要 VPC 的 `spec.bfd.enabled` 为 true。
+
+```yaml
+spec:
+  vpc: test-vpc-1
+  subnet: net1
+  replicas: 2
+  bfd:
+    enabled: true
+    minRX: 500
+    minTX: 500
+    multiplier: 3
+```
+
+| 字段 | 类型 | 默认值 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `bfd.enabled` | boolean | false | 是否启用 BFD 健康检测 |
+| `bfd.minRX` | int32 | 1000 | BFD 最小接收间隔（ms） |
+| `bfd.minTX` | int32 | 1000 | BFD 最小发送间隔（ms） |
+| `bfd.multiplier` | int32 | 3 | BFD 检测倍数，检测时间 = minRX × multiplier |
+
+### 内部流量子网
+
+通过 `internalSubnets`（子网名称）或 `internalCIDRs`（CIDR 网段）指定需要经由 NAT 网关出网的内部流量来源。两者可同时使用：
+
+```yaml
+spec:
+  vpc: test-vpc-1
+  subnet: net1
+  internalSubnets:
+  - subnet-a
+  - subnet-b
+  internalCIDRs:
+  - 10.0.2.0/24
+```
+
 ### 创建 EIP
 
 EIP 为外部网络段的某个 IP 分配给 VPC 网关后可进行 DNAT，SNAT 和浮动 IP 操作。
@@ -358,6 +396,17 @@ spec:
   protocol: tcp
 ```
 
+#### DNAT 共享负载均衡（share 类型）
+
+`type: share` 用于 **VPC NAT 网关接管 Kubernetes Service** 场景：网关将流量负载均衡分发到多个后端 Pod。
+
+**share 类型的 IptablesDnatRule 由控制器自动管理，不支持手动创建。** 使用方式见下方「VPC NAT 网关接管 Kubernetes Service」章节。
+
+字段说明：
+
+- `type`：`exclusive`（默认）为独占模式，一个 EIP:Port 只能被一个 DNAT 规则使用；`share` 由控制器在 Service 接管场景下自动生成，允许多个后端共享同一个 EIP:Port。
+- `sessionAffinity`：仅 `share` 类型支持。设置为 `ClientIP` 后，同一客户端 IP 的连接会被固定到同一个后端，默认超时 10800 秒（3 小时），可通过 `sessionAffinityTimeoutSeconds` 指定。
+
 ### 创建 SNAT 规则
 
 通过 SNAT 规则，VPC 内的 Pod 访问外部的地址时将会通过对应 EIP 进行 SNAT。
@@ -402,6 +451,63 @@ spec:
   eip: eipf01
   internalIp: 10.0.1.5
 ```
+
+### VPC NAT 网关接管 Kubernetes Service
+
+该功能涉及以下控制器启动参数：
+
+| 参数 | 默认值 | 功能 |
+| :--- | :--- | :--- |
+| `--enable-lb` | true | OVN 负载均衡器，负责 ClusterIP / NodePort / LoadBalancer 类型 Service 的流量转发 |
+| `--enable-gw-nftable-lb-svc` | false | VPC NAT 网关接管 LoadBalancer 类型 Service，通过网关 nftables 实现负载均衡，需配合 `ovn.kubernetes.io/eip` annotation |
+| `--enable-gw-nftable-svc-cluster-ip` | false | 将 Service ClusterIP 同步到网关 nftables，实现网关侧 ClusterIP 负载均衡 |
+| `--enable-lb-svc` | false | Pod 模式 LoadBalancer：每个 LoadBalancer Service 启动专用 Pod，DNAT EIP 到 ClusterIP。与 `--enable-gw-nftable-lb-svc` 互斥。需搭配 `--enable-lb` 或 `--enable-gw-nftable-svc-cluster-ip` 作为 ClusterIP 数据面 |
+
+**参数组合说明：**
+
+| 组合 | 适用场景 |
+| :--- | :--- |
+| 仅 `--enable-lb`（默认） | OVN 负载均衡器处理所有 Service 流量 |
+| `--enable-lb` + `--enable-gw-nftable-lb-svc` | OVN 处理 ClusterIP，网关处理 LoadBalancer 的 EIP 入口流量 |
+| `--enable-gw-nftable-lb-svc` + `--enable-gw-nftable-svc-cluster-ip` | 网关同时处理 EIP 和 ClusterIP，OVN LB 可关闭 |
+| 仅 `--enable-gw-nftable-svc-cluster-ip` | 网关仅处理 ClusterIP（无 EIP），可与 `--enable-lb` 共存 |
+| `--enable-lb-svc` + `--enable-lb` | Pod 模式处理 EIP，OVN 负载均衡器处理 ClusterIP |
+| `--enable-lb-svc` + `--enable-gw-nftable-svc-cluster-ip` | Pod 模式处理 EIP，网关处理 ClusterIP |
+
+**互斥关系：**
+
+- `--enable-lb-svc` 与 `--enable-gw-nftable-lb-svc` 互斥（都处理 LoadBalancer Service 的 EIP 入口）。
+- 同一 Service 不能同时使用 `ovn.kubernetes.io/vpc-nat-gw` 和 `ovn.kubernetes.io/service_external_ip_from_subnet` annotation（webhook 拒绝），避免两个数据面争抢 LoadBalancer ingress IP。
+
+**使用方式：** 为 Service 添加 annotation `ovn.kubernetes.io/vpc-nat-gw` 指定网关名称，LoadBalancer 类型的 Service 还需通过 `ovn.kubernetes.io/eip` 指定 EIP 作为入口地址。
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+  annotations:
+    ovn.kubernetes.io/vpc-nat-gw: gw1
+    ovn.kubernetes.io/eip: eipd01
+spec:
+  type: LoadBalancer
+  selector:
+    app: my-app
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+```
+
+控制器会自动为每个 Service 端口和后端组合创建对应的 `IptablesDnatRule`（`type: share`），并在网关 Pod 上编程 nftables 规则。Service 删除时自动清理。
+
+**特性说明：**
+
+- 同时支持 `LoadBalancer` 和 `ClusterIP` 类型的 Service
+- 集群内流量（ClusterIP）和外部流量（EIP）均由网关负载均衡
+- 只支持 `ExternalTrafficPolicy: Cluster`，不支持 Local 模式
+- share DNAT 仅支持 IPv4
+- 后端变化通过 EndpointSlice 自动感知
 
 ## 自定义路由
 

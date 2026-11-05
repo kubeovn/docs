@@ -270,6 +270,75 @@ No resources found
 root@server:~# kubectl ko sbctl list Service_Monitor
 root@server:~# 
 root@server:~# kubectl ko nbctl list Load_Balancer_Health_Check
-root@server:~# 
+root@server:~#
 
+```
+
+## 自定义 VPC 路由器负载均衡
+
+> `RouterLBRule` 需要结合 OVN EIP 使用，请先参考 [OVN EIP FIP SNAT DNAT 文档](./ovn-eip-fip-snat.md) 完成 OVN 网关的部署。
+
+与 `SwitchLBRule` 作用于单个逻辑交换机不同，`RouterLBRule` 作用于 VPC 路由器层面，基于 OVN 路由器的 Load Balancer 实现，通过关联 OVN EIP 作为外部访问入口。
+
+`RouterLBRule` 样例如下：
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: RouterLBRule
+metadata:
+  name: rlr-nginx
+spec:
+  ovnEip: eip-1
+  vpc: vpc-1
+  namespace: default
+  selector:
+    - app: nginx
+  sessionAffinity: ClientIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+```
+
+字段说明：
+
+| 字段 | 用途 |
+| :--- | :--- |
+| ovnEip | 关联的 OVN EIP 名称，作为负载均衡的外部入口地址 |
+| vpc | 所属 VPC 名称 |
+| namespace | 后端 Pod 所在命名空间 |
+| selector | 后端 Pod 标签选择器 |
+| endpoints | 后端 IP 列表（与 selector 二选一，同时配置时忽略 selector） |
+| sessionAffinity | 会话亲和性，同 Kubernetes Service |
+| ports | 端口映射配置，含 name / port / targetPort / protocol |
+
+### 使用示例
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: RouterLBRule
+metadata:
+  name: rlr-example
+spec:
+  ovnEip: eip-1
+  vpc: vpc-1
+  namespace: default
+  endpoints:
+    - 10.0.1.10
+    - 10.0.1.11
+    - 10.0.1.12
+  ports:
+  - name: web
+    port: 443
+    targetPort: 8443
+    protocol: TCP
+```
+
+创建后，通过 `kubectl get rlr` 查看状态：
+
+```bash
+# kubectl get rlr
+NAME           OVNEIP   VPC    PORT(S)     SERVICE                    AGE
+rlr-example    eip-1    vpc-1  443/TCP     default/rlr-rlr-example    10s
 ```

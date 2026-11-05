@@ -158,6 +158,26 @@ spec:
 
 The system automatically creates VLAN sub-interfaces in `<interface>.<vlanid>` format without manual configuration. Suitable for multi-VLAN environments and large-scale deployments, significantly simplifying network management. Related sub-interfaces are automatically cleaned up when ProviderNetwork is deleted.
 
+### Preserving Existing VLAN Interfaces
+
+When nodes already have pre-configured VLAN sub-interfaces, use `preserveVlanInterfaces` and `vlanInterfaces` to prevent those interfaces from being lost during OVS bridge takeover.
+
+- `preserveVlanInterfaces`: When enabled, the system automatically detects VLAN sub-interfaces of `defaultInterface` (format `<interface>.<vlanid>`) and preserves them outside the OVS bridge.
+- `vlanInterfaces`: Explicit list of VLAN interface names to preserve (e.g., `eth0.10`, `bond0.20`).
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: ProviderNetwork
+metadata:
+  name: net1
+spec:
+  defaultInterface: eth1
+  preserveVlanInterfaces: true
+  vlanInterfaces:
+  - eth1.100
+  - eth1.200
+```
+
 ### Create VLAN
 
 Vlan provides an abstraction to bind Vlan Tag and ProviderNetwork.
