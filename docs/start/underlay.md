@@ -149,6 +149,26 @@ spec:
 
 系统会自动创建 `<interface>.<vlanid>` 格式的 VLAN 子接口，无需手动配置。适用于多 VLAN 环境和大规模部署，可以显著简化网络管理。删除 ProviderNetwork 时会自动清理相关接口。
 
+### 保留已有 VLAN 接口
+
+当节点上已经有预配置的 VLAN 子接口时，可以通过 `preserveVlanInterfaces` 和 `vlanInterfaces` 来避免 OVS 网桥接管过程中丢失这些接口。
+
+- `preserveVlanInterfaces`：启用后，系统会自动检测节点上属于 `defaultInterface` 的 VLAN 子接口（格式 `<interface>.<vlanid>`），并将其保留在 OVS 网桥之外。
+- `vlanInterfaces`：显式指定要保留的 VLAN 接口名称列表（如 `eth0.10`、`bond0.20`）。
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: ProviderNetwork
+metadata:
+  name: net1
+spec:
+  defaultInterface: eth1
+  preserveVlanInterfaces: true
+  vlanInterfaces:
+  - eth1.100
+  - eth1.200
+```
+
 ### 创建 VLAN
 
 Vlan 提供了将 Vlan Tag 和 ProviderNetwork 进行绑定的能力。

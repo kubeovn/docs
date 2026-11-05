@@ -283,6 +283,44 @@ spec:
   # Leave lanIp empty so the controller allocates one address per replica.
 ```
 
+### BFD Health Monitoring and Failover
+
+VPC NAT gateways support BFD (Bidirectional Forwarding Detection) for fast fault detection and automatic failover. The VPC's `spec.bfd.enabled` must also be set to `true`.
+
+```yaml
+spec:
+  vpc: test-vpc-1
+  subnet: net1
+  replicas: 2
+  bfd:
+    enabled: true
+    minRX: 500
+    minTX: 500
+    multiplier: 3
+```
+
+| Field | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `bfd.enabled` | boolean | false | Whether to enable BFD health monitoring |
+| `bfd.minRX` | int32 | 1000 | BFD minimum receive interval (ms) |
+| `bfd.minTX` | int32 | 1000 | BFD minimum transmit interval (ms) |
+| `bfd.multiplier` | int32 | 3 | BFD detection multiplier; detection time = minRX × multiplier |
+
+### Internal Traffic Subnets
+
+Use `internalSubnets` (by subnet name) or `internalCIDRs` (by CIDR) to specify which internal traffic sources should be routed through the NAT gateway. Both can be used together:
+
+```yaml
+spec:
+  vpc: test-vpc-1
+  subnet: net1
+  internalSubnets:
+  - subnet-a
+  - subnet-b
+  internalCIDRs:
+  - 10.0.2.0/24
+```
+
 ### Create EIP
 
 EIP allows for floating IP, SNAT, and DNAT operations after assigning an IP from an external network segment to a VPC gateway.
@@ -359,6 +397,58 @@ spec:
   externalPort: '8888'
   internalIp: 10.0.1.10
   internalPort: '80'
+  protocol: tcp
+```
+
+#### DNAT Share Mode (Load-Balanced)
+
+`type: share` allows multiple DNAT rules to share the same EIP:Port identity, each contributing a different backend. Traffic is distributed across backends using nftables random load balancing:
+
+```yaml
+kind: IptablesDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: dnat-share-1
+spec:
+  eip: eipd01
+  externalPort: '80'
+  internalIp: 10.0.1.10
+  internalPort: '8080'
+  protocol: tcp
+  type: share
+  sessionAffinity: ClientIP
+---
+kind: IptablesDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: dnat-share-2
+spec:
+  eip: eipd01
+  externalPort: '80'
+  internalIp: 10.0.1.11
+  internalPort: '8080'
+  protocol: tcp
+  type: share
+  sessionAffinity: ClientIP
+```
+
+- `type`: `exclusive` (default) — one EIP:Port maps to a single backend; `share` — multiple backends share the same EIP:Port with load balancing.
+- `sessionAffinity`: only supported for `share` type. When set to `ClientIP`, connections from the same client IP are pinned to the same backend, with a default timeout of 10800 seconds (3 hours). Use `sessionAffinityTimeoutSeconds` to customize.
+
+#### VPC-Internal Access via ClusterIP
+
+When you only need VPC-internal access to a DNAT rule via a Service ClusterIP, you can omit `eip` and use `clusterIP` only:
+
+```yaml
+kind: IptablesDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: dnat-clusterip
+spec:
+  clusterIP: 10.96.0.100
+  externalPort: '80'
+  internalIp: 10.0.1.10
+  internalPort: '8080'
   protocol: tcp
 ```
 

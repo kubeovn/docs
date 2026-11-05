@@ -290,6 +290,75 @@ No resources found
 root@server:~# kubectl ko sbctl list Service_Monitor
 root@server:~# 
 root@server:~# kubectl ko nbctl list Load_Balancer_Health_Check
-root@server:~# 
+root@server:~#
 
+```
+
+## Custom VPC Router Load Balancing
+
+> `RouterLBRule` must be used together with OVN EIP. Please refer to the [OVN EIP FIP SNAT DNAT documentation](./ovn-eip-fip-snat.md) to deploy the OVN gateway first.
+
+Unlike `SwitchLBRule` which operates on a single logical switch, `RouterLBRule` operates at the VPC router level. It is based on the OVN router Load Balancer and uses an associated OVN EIP as the external access entry point.
+
+Example `RouterLBRule`:
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: RouterLBRule
+metadata:
+  name: rlr-nginx
+spec:
+  ovnEip: eip-1
+  vpc: vpc-1
+  namespace: default
+  selector:
+    - app: nginx
+  sessionAffinity: ClientIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+```
+
+Field description:
+
+| Field | Description |
+| :--- | :--- |
+| ovnEip | Associated OVN EIP name, used as the external entry address for load balancing |
+| vpc | VPC name |
+| namespace | Namespace where backend Pods reside |
+| selector | Backend Pod label selector |
+| endpoints | Backend IP list (mutually exclusive with selector; when both are set, selector is ignored) |
+| sessionAffinity | Session affinity, same as Kubernetes Service |
+| ports | Port mappings: name / port / targetPort / protocol |
+
+### Usage Example
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: RouterLBRule
+metadata:
+  name: rlr-example
+spec:
+  ovnEip: eip-1
+  vpc: vpc-1
+  namespace: default
+  endpoints:
+    - 10.0.1.10
+    - 10.0.1.11
+    - 10.0.1.12
+  ports:
+  - name: web
+    port: 443
+    targetPort: 8443
+    protocol: TCP
+```
+
+Check status with `kubectl get rlr`:
+
+```bash
+# kubectl get rlr
+NAME           OVNEIP   VPC    PORT(S)     SERVICE                    AGE
+rlr-example    eip-1    vpc-1  443/TCP     default/rlr-rlr-example    10s
 ```

@@ -278,6 +278,44 @@ spec:
   # lanIp 留空，由 controller 为每个副本动态分配
 ```
 
+### BFD 健康检测与故障切换
+
+VPC NAT 网关支持通过 BFD（Bidirectional Forwarding Detection）实现快速故障检测和自动切换。同时需要 VPC 的 `spec.bfd.enabled` 为 true。
+
+```yaml
+spec:
+  vpc: test-vpc-1
+  subnet: net1
+  replicas: 2
+  bfd:
+    enabled: true
+    minRX: 500
+    minTX: 500
+    multiplier: 3
+```
+
+| 字段 | 类型 | 默认值 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `bfd.enabled` | boolean | false | 是否启用 BFD 健康检测 |
+| `bfd.minRX` | int32 | 1000 | BFD 最小接收间隔（ms）|
+| `bfd.minTX` | int32 | 1000 | BFD 最小发送间隔（ms）|
+| `bfd.multiplier` | int32 | 3 | BFD 检测倍数，检测时间 = minRX × multiplier |
+
+### 内部流量子网
+
+通过 `internalSubnets`（子网名称）或 `internalCIDRs`（CIDR 网段）指定需要经由 NAT 网关出网的内部流量来源。两者可同时使用：
+
+```yaml
+spec:
+  vpc: test-vpc-1
+  subnet: net1
+  internalSubnets:
+  - subnet-a
+  - subnet-b
+  internalCIDRs:
+  - 10.0.2.0/24
+```
+
 ### 创建 EIP
 
 EIP 为外部网络段的某个 IP 分配给 VPC 网关后可进行 DNAT，SNAT 和浮动 IP 操作。
@@ -355,6 +393,58 @@ spec:
   externalPort: '8888'
   internalIp: 10.0.1.10
   internalPort: '80'
+  protocol: tcp
+```
+
+#### DNAT 共享负载均衡（share 类型）
+
+`type: share` 允许多个 DNAT 规则共享同一个 EIP:Port 标识，每个规则贡献一个后端，流量通过 nftables 随机负载均衡分发到多个后端：
+
+```yaml
+kind: IptablesDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: dnat-share-1
+spec:
+  eip: eipd01
+  externalPort: '80'
+  internalIp: 10.0.1.10
+  internalPort: '8080'
+  protocol: tcp
+  type: share
+  sessionAffinity: ClientIP
+---
+kind: IptablesDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: dnat-share-2
+spec:
+  eip: eipd01
+  externalPort: '80'
+  internalIp: 10.0.1.11
+  internalPort: '8080'
+  protocol: tcp
+  type: share
+  sessionAffinity: ClientIP
+```
+
+- `type`：`exclusive`（默认）为独占模式，一个 EIP:Port 只能被一个 DNAT 规则使用；`share` 为共享模式，允许多个后端使用同一个 EIP:Port。
+- `sessionAffinity`：仅 `share` 类型支持。设置为 `ClientIP` 后，同一客户端 IP 的连接会被固定到同一个后端，默认超时 10800 秒（3 小时），可通过 `sessionAffinityTimeoutSeconds` 指定。
+
+#### 使用 ClusterIP 实现 VPC 内访问
+
+当只需要 VPC 内部通过 Service ClusterIP 访问 DNAT 规则时，可以不指定 `eip`，仅使用 `clusterIP`：
+
+```yaml
+kind: IptablesDnatRule
+apiVersion: kubeovn.io/v1
+metadata:
+  name: dnat-clusterip
+spec:
+  clusterIP: 10.96.0.100
+  externalPort: '80'
+  internalIp: 10.0.1.10
+  internalPort: '8080'
   protocol: tcp
 ```
 
