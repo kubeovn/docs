@@ -43,7 +43,7 @@ In each CRD definition, the Condition field in Status follows the above format, 
 | excludeIps | []String | The range of addresses under this subnet that will not be automatically assigned |
 | provider | String | Default value is `OVN`. In the case of multiple NICs, the value is `<name>.<namespace>` of the NetworkAttachmentDefinition, Kube-OVN will use this information to find the corresponding subnet resource |
 | gatewayType | String | The gateway type in overlay mode, either `distributed` or `centralized` |
-| gatewayNode | String | Gateway node(s) for centralized gateway type |
+| gatewayNode | String | The gateway node when the gateway mode is centralized, node names can be comma-separated |
 | gatewayNodeSelectors | []LabelSelector | Selectors to choose gateway nodes |
 | natOutgoing | Bool | Whether the outgoing traffic is NAT |
 | externalEgressGateway | String | The address of the external gateway. This parameter and the natOutgoing parameter cannot be set at the same time |
