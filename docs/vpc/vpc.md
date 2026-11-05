@@ -297,8 +297,8 @@ spec:
 | 字段 | 类型 | 默认值 | 说明 |
 | :--- | :--- | :--- | :--- |
 | `bfd.enabled` | boolean | false | 是否启用 BFD 健康检测 |
-| `bfd.minRX` | int32 | 1000 | BFD 最小接收间隔（ms）|
-| `bfd.minTX` | int32 | 1000 | BFD 最小发送间隔（ms）|
+| `bfd.minRX` | int32 | 1000 | BFD 最小接收间隔（ms） |
+| `bfd.minTX` | int32 | 1000 | BFD 最小发送间隔（ms） |
 | `bfd.multiplier` | int32 | 3 | BFD 检测倍数，检测时间 = minRX × multiplier |
 
 ### 内部流量子网

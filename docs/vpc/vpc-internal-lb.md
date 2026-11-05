@@ -309,7 +309,7 @@ spec:
 | vpc | 所属 VPC 名称 |
 | namespace | 后端 Pod 所在命名空间 |
 | selector | 后端 Pod 标签选择器 |
-| endpoints | 后端 IP 列表（与 selector 二选一，同时配置时忽略 selector）|
+| endpoints | 后端 IP 列表（与 selector 二选一，同时配置时忽略 selector） |
 | sessionAffinity | 会话亲和性，同 Kubernetes Service |
 | ports | 端口映射配置，含 name / port / targetPort / protocol |
 
