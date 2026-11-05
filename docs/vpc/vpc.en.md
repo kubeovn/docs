@@ -461,7 +461,7 @@ spec:
 This feature involves the following controller flags:
 
 | Flag | Default | Purpose |
-|------|---------|---------|
+| :--- | :--- | :--- |
 | `--enable-lb` | true | OVN load balancer, handles ClusterIP / NodePort / LoadBalancer Service traffic forwarding |
 | `--enable-gw-nftable-lb-svc` | false | Gateway handles LoadBalancer Services via nftables load balancing, requires `ovn.kubernetes.io/eip` annotation |
 | `--enable-gw-nftable-svc-cluster-ip` | false | Sync Service ClusterIPs to gateway nftables for gateway-side ClusterIP load balancing |
@@ -470,7 +470,7 @@ This feature involves the following controller flags:
 **Flag combinations:**
 
 | Combination | Use case |
-|-------------|----------|
+| :--- | :--- |
 | `--enable-lb` only (default) | OVN load balancer handles all Service traffic |
 | `--enable-lb` + `--enable-gw-nftable-lb-svc` | OVN handles ClusterIP, gateway handles LoadBalancer EIP ingress traffic |
 | `--enable-gw-nftable-lb-svc` + `--enable-gw-nftable-svc-cluster-ip` | Gateway handles both EIP and ClusterIP, OVN LB can be disabled |

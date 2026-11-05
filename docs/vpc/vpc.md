@@ -457,7 +457,7 @@ spec:
 该功能涉及以下控制器启动参数：
 
 | 参数 | 默认值 | 功能 |
-|------|--------|------|
+| :--- | :--- | :--- |
 | `--enable-lb` | true | OVN 负载均衡器，负责 ClusterIP / NodePort / LoadBalancer 类型 Service 的流量转发 |
 | `--enable-gw-nftable-lb-svc` | false | VPC NAT 网关接管 LoadBalancer 类型 Service，通过网关 nftables 实现负载均衡，需配合 `ovn.kubernetes.io/eip` annotation |
 | `--enable-gw-nftable-svc-cluster-ip` | false | 将 Service ClusterIP 同步到网关 nftables，实现网关侧 ClusterIP 负载均衡 |
@@ -466,7 +466,7 @@ spec:
 **参数组合说明：**
 
 | 组合 | 适用场景 |
-|------|---------|
+| :--- | :--- |
 | 仅 `--enable-lb`（默认） | OVN 负载均衡器处理所有 Service 流量 |
 | `--enable-lb` + `--enable-gw-nftable-lb-svc` | OVN 处理 ClusterIP，网关处理 LoadBalancer 的 EIP 入口流量 |
 | `--enable-gw-nftable-lb-svc` + `--enable-gw-nftable-svc-cluster-ip` | 网关同时处理 EIP 和 ClusterIP，OVN LB 可关闭 |
