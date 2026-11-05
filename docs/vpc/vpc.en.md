@@ -497,6 +497,41 @@ spec:
   internalIp: 10.0.1.5
 ```
 
+### VPC NAT Gateway Taking Over Kubernetes Services
+
+> Requires the controller flag `--enable-gw-nftable-lb-svc=true`.
+
+The VPC NAT gateway can take over Kubernetes Services of type LoadBalancer and ClusterIP. The gateway Pod's nftables implements kube-proxy-style load balancing, distributing traffic directly to backend Pods.
+
+**Usage:** Add the annotation `ovn.kubernetes.io/vpc-nat-gw` to the Service naming the gateway. For LoadBalancer Services, also add `ovn.kubernetes.io/eip` to specify the EIP as the ingress address.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+  annotations:
+    ovn.kubernetes.io/vpc-nat-gw: gw1
+    ovn.kubernetes.io/eip: eipd01
+spec:
+  type: LoadBalancer
+  selector:
+    app: my-app
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+```
+
+The controller automatically creates `IptablesDnatRule` (type: share) entries for each Service port/backend combination and programs nftables rules on the gateway Pod. Cleanup is automatic when the Service is deleted.
+
+**Characteristics:**
+- Supports both LoadBalancer and ClusterIP Service types
+- Both in-cluster (ClusterIP) and external (EIP) traffic are load-balanced by the gateway
+- Only supports ExternalTrafficPolicy: Cluster; Local mode is not supported
+- Share DNAT is IPv4 only
+- Backend changes are detected automatically via EndpointSlice
+
 ## Custom Routing
 
 Within the custom VPC, users can customize the routing rules within the VPC and combine it with the gateway for more flexible forwarding.

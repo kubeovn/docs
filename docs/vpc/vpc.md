@@ -493,6 +493,41 @@ spec:
   internalIp: 10.0.1.5
 ```
 
+### VPC NAT 网关接管 Kubernetes Service
+
+> 需要启用 `--enable-gw-nftable-lb-svc=true` 控制器启动参数。
+
+VPC NAT 网关可以接管 Kubernetes LoadBalancer 和 ClusterIP 类型的 Service，由网关 Pod 内的 nftables 实现类似 kube-proxy 的负载均衡，将流量直接分发到后端 Pod。
+
+**使用方式：** 为 Service 添加 annotation `ovn.kubernetes.io/vpc-nat-gw` 指定网关名称，LoadBalancer 类型的 Service 还需通过 `ovn.kubernetes.io/eip` 指定 EIP 作为入口地址。
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+  annotations:
+    ovn.kubernetes.io/vpc-nat-gw: gw1
+    ovn.kubernetes.io/eip: eipd01
+spec:
+  type: LoadBalancer
+  selector:
+    app: my-app
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+```
+
+控制器会自动为每个 Service 端口和后端组合创建对应的 `IptablesDnatRule`（`type: share`），并在网关 Pod 上编程 nftables 规则。Service 删除时自动清理。
+
+**特性说明：**
+- 同时支持 `LoadBalancer` 和 `ClusterIP` 类型的 Service
+- 集群内流量（ClusterIP）和外部流量（EIP）均由网关负载均衡
+- 只支持 `ExternalTrafficPolicy: Cluster`，不支持 Local 模式
+- share DNAT 仅支持 IPv4
+- 后端变化通过 EndpointSlice 自动感知
+
 ## 自定义路由
 
 在自定义 VPC 内，用户可以自定义网络内部的路由规则，结合网关实现更灵活的转发。
