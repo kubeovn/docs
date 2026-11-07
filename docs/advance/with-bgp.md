@@ -35,6 +35,9 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/y
 - --cluster-as=65000
 # 可选：设置源 IP 白名单，确保下一跳地址在白名单内
 # - --allowed-source-addresses=10.32.32.2,10.32.32.3,10.32.32.4,10.32.32.5
+# 可选：显式指定发布路由使用的下一跳
+# - --next-hops=192.0.2.100
+# - --next-hops=2001:db8::100
 ```
 
 如果你有一对交换机：
@@ -47,12 +50,16 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/y
 - --cluster-as=65000
 # 可选：设置源 IP 白名单，确保下一跳地址在白名单内
 # - --allowed-source-addresses=10.32.32.2,10.32.32.3,10.32.32.4,10.32.32.5
+# 可选：显式指定发布路由使用的下一跳
+# - --next-hops=192.0.2.100
+# - --next-hops=2001:db8::100
 ```
 
 - `neighbor-address`: BGP Peer 的地址，通常为路由器网关地址。
 - `neighbor-as`: BGP Peer 的 AS 号。
 - `cluster-as`: 容器网络的 AS 号。
 - `allowed-source-addresses`: Speaker 节点允许使用的源 IP 白名单，多个地址用逗号分隔。设置后，Speaker 会通过 `ip route get` 查找到达 BGP Peer 的路由，并验证路由选择的源 IP 是否在白名单内。如果不在白名单中，Speaker 将拒绝启动。该选项用于确保在 ECMP 环境中使用正确的源 IP 发布路由，避免因源 IP 不匹配导致的回程流量黑洞。
+- `next-hops`: 显式指定发布路由的下一跳，按地址族分别设置 IPv4 和 IPv6 地址。该选项优先于 `allowed-source-addresses`、路由查询和 `node-ips`，适用于发布路由时需要使用与 BGP 邻居建连地址不同的下一跳（例如 OVN LRP EIP）的场景。使用命令行参数时，地址以逗号分隔；同一地址族配置多个地址时只使用最后一个地址。
 
 部署 yaml:
 
@@ -121,11 +128,12 @@ env:
 - `grpc-host`：IPv4 或 IPv6 地址字符串。
 - `router-id`：IPv4 地址字符串；BGP router ID 不支持 IPv6。
 - `node-ips`：地址映射，键为 `IPv4` 或 `IPv6`，值必须匹配对应地址族。
+- `next-hops`：地址映射，键为 `IPv4` 或 `IPv6`，值必须匹配对应地址族。例如 `next-hops: {IPv4: 192.0.2.100, IPv6: 2001:db8::100}`。
 - `holdtime`、`graceful-restart-time` 和 `graceful-restart-deferral-time`：持续时间字符串（如 `90s`、`5m`、`1h`），也可以使用整数秒。
 - `announce-cluster-ip`、`graceful-restart`、`passivemode`、`extended-nexthop`、`nat-gw-mode`、`enable-metrics` 和 `enable-bfd`：布尔值。
 - `bfd-min-tx`、`bfd-min-rx` 和 `bfd-detection-multiplier`：整数。
 
-配置文件中明确设置的字段会覆盖同名 CLI 参数和默认值；未出现的字段继续使用 CLI 参数或默认值。需要清空 CLI 列表时，可在文件中设置为空列表。
+配置文件中明确设置的字段会覆盖同名 CLI 参数和默认值；未出现的字段继续使用 CLI 参数或默认值。未设置 `next-hops` 时保留原有的源地址/路由查询/`node-ips` 选择逻辑。需要清空 CLI 列表时，可在文件中设置为空列表；需要清除 `next-hops` 时，可将该字段设为空 map，或将单个地址族设为 `null`，例如 `next-hops: {IPv4: null}`。
 
 ## 发布 Pod/Subnet 路由
 
@@ -283,6 +291,7 @@ kubectl annotate eip sample ovn.kubernetes.io/bgp=true
 - `passivemode`: Speaker 运行在 passive 模式，不主动连接 peer。
 - `ebgp-multihop`: ebgp ttl 默认值为 1。
 - `allowed-source-addresses`: 源 IP 白名单，多个地址用逗号分隔。Speaker 启动时通过 `ip route get` 查找到达 BGP Peer 的路由，验证内核选择的源 IP 是否在白名单内，不在则拒绝启动。用于 ECMP 环境下确保使用正确的源 IP 发布路由。
+- `next-hops`: 显式指定发布路由的下一跳，按地址族分别设置 IPv4 和 IPv6 地址。该选项优先于源 IP 白名单、路由查询和 `node-ips`，可用于 OVN LRP EIP 等需要让发布路由使用独立下一跳地址的场景。命令行参数支持逗号分隔的地址；同一地址族有多个值时仅最后一个值生效。
 - `enable-bfd`: 启用 `kube-ovn-speaker` 内置 BFD（双向转发检测）快速故障检测，默认为 `false`。详见下文“方案一：`kube-ovn-speaker` 内置 BFD”。
 - `bfd-min-tx`: `kube-ovn-speaker` 内置 BFD 的最小发送间隔，单位为毫秒，默认 `1000`（1 秒）。
 - `bfd-min-rx`: `kube-ovn-speaker` 内置 BFD 的最小接收间隔，单位为毫秒，默认 `1000`（1 秒）。
