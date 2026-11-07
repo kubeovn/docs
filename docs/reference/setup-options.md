@@ -520,6 +520,35 @@ args:
 - --set-vxlan-tx-off=true
 ```
 
+## Geneve 关闭 TX checksum offload
+
+部分网卡或内核版本在 Geneve 隧道封装时也可能存在 checksum offload 兼容问题。默认情况下，Kube-OVN 保持 Geneve TX checksum offload 不变；需要关闭时，在安装脚本中设置：
+
+```bash
+SET_GENEVE_TX_OFF=true
+```
+
+安装脚本会将该值传递给 `kube-ovn-daemon` 的 `--set-geneve-tx-off` 参数。也可以在已安装的 `kube-ovn-cni` DaemonSet 中设置：
+
+```yaml
+args:
+- --set-geneve-tx-off=true
+```
+
+使用 Helm 安装时，classic chart 和 v2 chart 分别配置以下字段：
+
+```yaml
+# classic chart
+func:
+  SET_GENEVE_TX_OFF: true
+
+# v2 chart
+features:
+  SET_GENEVE_TX_OFF: true
+```
+
+启用后，daemon 启动时会对 `genev_sys_6081` 关闭 TX checksum offload；如果节点上不存在该网卡，则跳过这一步。该设置只在启动时修改网卡：从 `true` 改回 `false` 不会自动恢复已经关闭的 offload，需要先单独恢复节点网卡，才能依赖默认的 offload 状态。`SET_GENEVE_TX_OFF` 与 `SET_VXLAN_TX_OFF` 分别控制 Geneve 和 VXLAN 网卡，互不影响。
+
 ## KubeVirt 实时迁移优化
 
 启用后控制器会针对 KubeVirt 实时迁移过程优化端口绑定切换，减少迁移瞬时丢包。默认开启：
