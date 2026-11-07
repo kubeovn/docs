@@ -57,6 +57,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.xen/advance/fastpath/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.17.x/advance/hcp-ovn-central/</loc>
+        <lastmod>2026-11-07</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.x/advance/hcp-ovn-central/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.xen/advance/hcp-ovn-central/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.17.x/advance/multi-nic/</loc>
         <lastmod>2026-11-07</lastmod>
         <changefreq>daily</changefreq>
@@ -393,6 +400,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.xen/ops/delete-worker-node/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.17.x/ops/diagnostic-tools/</loc>
+        <lastmod>2026-11-07</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.x/ops/diagnostic-tools/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.xen/ops/diagnostic-tools/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.17.x/ops/faq/</loc>
         <lastmod>2026-11-07</lastmod>
         <changefreq>daily</changefreq>
@@ -603,6 +617,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.xen/vpc/vpc-internal-lb/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.17.x/vpc/vpc-nat-gateway-service/</loc>
+        <lastmod>2026-11-07</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.x/vpc/vpc-nat-gateway-service/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.xen/vpc/vpc-nat-gateway-service/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.17.x/vpc/vpc-peering/</loc>
         <lastmod>2026-11-07</lastmod>
         <changefreq>daily</changefreq>
@@ -678,6 +699,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.x/en/advance/fastpath/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.xadvance/fastpath/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.17.x/en/advance/hcp-ovn-central/</loc>
+        <lastmod>2026-11-07</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.x/en/advance/hcp-ovn-central/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.xadvance/hcp-ovn-central/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.17.x/en/advance/multi-nic/</loc>
@@ -1016,6 +1044,13 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.xops/delete-worker-node/"/>
     </url>
     <url>
+        <loc>https://kubeovn.github.io/docs/v1.17.x/en/ops/diagnostic-tools/</loc>
+        <lastmod>2026-11-07</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.x/en/ops/diagnostic-tools/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.xops/diagnostic-tools/"/>
+    </url>
+    <url>
         <loc>https://kubeovn.github.io/docs/v1.17.x/en/ops/faq/</loc>
         <lastmod>2026-11-07</lastmod>
         <changefreq>daily</changefreq>
@@ -1224,6 +1259,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.x/en/vpc/vpc-internal-lb/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.xvpc/vpc-internal-lb/"/>
+    </url>
+    <url>
+        <loc>https://kubeovn.github.io/docs/v1.17.x/en/vpc/vpc-nat-gateway-service/</loc>
+        <lastmod>2026-11-07</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://kubeovn.github.io/docs/v1.17.x/en/vpc/vpc-nat-gateway-service/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://kubeovn.github.io/docs/v1.17.xvpc/vpc-nat-gateway-service/"/>
     </url>
     <url>
         <loc>https://kubeovn.github.io/docs/v1.17.x/en/vpc/vpc-peering/</loc>
