@@ -41,6 +41,9 @@ If you only have one switch:
 - --cluster-as=65000
 # Optional: set --allowed-source-addresses to make sure nexthop in the allowed-source-addresses is valid.
 # - --allowed-source-addresses=10.32.32.2,10.32.32.3,10.32.32.4,10.32.32.5
+# Optional: explicitly set the next hop used for advertised routes.
+# - --next-hops=192.0.2.100
+# - --next-hops=2001:db8::100
 ```
 
 If you have a pair of switches:
@@ -53,12 +56,16 @@ If you have a pair of switches:
 - --cluster-as=65000
 # Optional: set --allowed-source-addresses to make sure nexthop in the allowed-source-addresses is valid.
 # - --allowed-source-addresses=10.32.32.2,10.32.32.3,10.32.32.4,10.32.32.5
+# Optional: explicitly set the next hop used for advertised routes.
+# - --next-hops=192.0.2.100
+# - --next-hops=2001:db8::100
 ```
 
 - `neighbor-address`: The address of the BGP Peer, usually the router gateway address.
 - `neighbor-as`: The AS number of the BGP Peer.
 - `cluster-as`: The AS number of the container network.
 - `allowed-source-addresses`: Comma-separated whitelist of source IPs allowed on the speaker node. When set, the speaker performs an `ip route get` lookup to the BGP peer and validates that the selected source IP is in the whitelist. If it doesn't match, the speaker refuses to start. This ensures the correct source IP is used when publishing routes in ECMP environments, preventing return traffic blackholes caused by source IP mismatches.
+- `next-hops`: Explicit next-hop overrides for advertised routes, configured separately for IPv4 and IPv6. This takes precedence over `allowed-source-addresses`, route lookup, and `node-ips`, and is useful when the advertised route must use a next hop different from the address used to establish the BGP session, such as an OVN LRP EIP. The flag accepts comma-separated addresses; if multiple addresses are configured for one family, only the last one is used.
 
 Apply the YAML:
 
@@ -127,6 +134,7 @@ Configuration keys use the kebab-case flag name without the leading `--`. Common
 - `grpc-host`: an IPv4 or IPv6 address string.
 - `router-id`: an IPv4 address string; BGP router IDs do not support IPv6.
 - `node-ips`: a map whose keys are `IPv4` or `IPv6` and whose values must match the corresponding address family.
+- `next-hops`: a map whose keys are `IPv4` or `IPv6` and whose values must match the corresponding address family. For example, `next-hops: {IPv4: 192.0.2.100, IPv6: 2001:db8::100}`.
 - `holdtime`, `graceful-restart-time`, and `graceful-restart-deferral-time`: duration strings such as `90s`, `5m`, or `1h`, or integer seconds.
 - `announce-cluster-ip`, `graceful-restart`, `passivemode`, `extended-nexthop`, `nat-gw-mode`, `enable-metrics`, and `enable-bfd`: booleans.
 - `bfd-min-tx`, `bfd-min-rx`, and `bfd-detection-multiplier`: integers.
@@ -353,6 +361,7 @@ is handled by a daemon such as `kube-proxy`. The annotation for Services only su
 - `passivemode`: The Speaker runs in Passive mode and does not actively connect to the peer.
 - `ebgp-multihop`: The TTL value of EBGP Peer, default is 1.
 - `allowed-source-addresses`: Comma-separated whitelist of source IPs. On startup, the speaker performs an `ip route get` lookup to the BGP peer and validates the kernel-selected source IP against the whitelist. If it doesn't match, the speaker refuses to start. Used in ECMP environments to ensure the correct source IP is used for route publishing.
+- `next-hops`: Explicit next-hop overrides for advertised routes, configured separately for IPv4 and IPv6. This takes precedence over source address whitelisting, route lookup, and `node-ips`, and can be used for OVN LRP EIPs or other cases where advertised routes need an independent next hop. The flag accepts comma-separated addresses; only the last value for each address family is used.
 - `enable-bfd`: Enable the built-in BFD (Bidirectional Forwarding Detection) support in `kube-ovn-speaker`, default is `false`. See "Option 1: Built-in BFD in `kube-ovn-speaker`" below.
 - `bfd-min-tx`: Minimum transmit interval for the built-in BFD in `kube-ovn-speaker`, in milliseconds. Default is `1000` (1 second).
 - `bfd-min-rx`: Minimum receive interval for the built-in BFD in `kube-ovn-speaker`, in milliseconds. Default is `1000` (1 second).
