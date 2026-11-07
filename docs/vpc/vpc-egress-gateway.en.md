@@ -288,6 +288,31 @@ Routing Policies
      29000        ip4.src == $ovn.default.kube.ovn.worker_ip4         reroute                100.64.0.3
 ```
 
+### Using PrimaryCNI Mode
+
+In a non-primary CNI deployment where nodes do not have a shared Layer 2 underlay, set the external network mode to `PrimaryCNI`. This mode requires Kube-OVN v1.17 or later and [non-primary CNI mode](../start/non-primary-mode.en.md) to be enabled (`cni_conf.NON_PRIMARY_CNI=true` for chart v1 or `cni.nonPrimaryCNI=true` for chart v2). It uses the Pod's primary `eth0` interface for the external network and connects the internal Kube-OVN network through a Multus attachment. The internal attachment must use a NetworkAttachmentDefinition and its corresponding Kube-OVN subnet; it carries VPC traffic without replacing the primary CNI network.
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: VpcEgressGateway
+metadata:
+  name: gateway-primary-cni
+  namespace: default
+spec:
+  vpc: ovn-cluster
+  replicas: 1
+  externalNetworkMode: PrimaryCNI
+  internalSubnet: gateway-internal
+  policies:
+    - subnets:
+        - workload-subnet
+      snat: true
+```
+
+PrimaryCNI mode preserves the primary CNI's default route and existing NAT and raw table rules. OVN uses the internal attachment IP as the reroute next hop and reports it in `status.internalIPs`; the primary CNI Pod IP is used as the external address and reported in `status.externalIPs`. IPv4 SNAT or IPv6 NAT66 applies only to traffic entering through the internal attachment and leaving through `eth0`.
+
+When `snat` is set to `false` in a policy, the external network must have a route that returns traffic to the VPC prefix. PrimaryCNI mode does not support `externalSubnet`, `externalIPs`, `externalIPPool`, BGP, EVPN, selectors, bandwidth, or observability configuration. When `externalNetworkMode` is omitted, the default `Attachment` mode is used and requires `externalSubnet`.
+
 ### Specifying Egress Gateway IP and Deployment Nodes
 
 You can use the `externalIPs` and `nodeSelector` fields to specify the Egress IPs used by Egress Gateway Pods and the nodes they are deployed on:
@@ -458,6 +483,7 @@ Spec:
 | `replicas` | `integer/int32` | Yes | `1` | Replicas. | `2` |
 | `prefix` | `string` | Yes | - | Prefix of the workload deployment name. This field is immutable. | `veg-` |
 | `image` | `string` | Yes | - | The image used by the workload deployment. | `docker.io/kubeovn/kube-ovn:v1.14.0-debug` |
+| `externalNetworkMode` | `string` | Yes | `Attachment` | External network mode. `Attachment` uses `externalSubnet` for the external network; `PrimaryCNI` uses the primary Pod CNI interface `eth0` and connects to the internal Kube-OVN network through a Multus attachment. | `PrimaryCNI` |
 | `internalSubnet` | `string` | Yes | Name of the default subnet within the VPC. | Name of the subnet used to access the VPC network. | `subnet1` |
 | `externalSubnet` | `string` | No | - | Name of the subnet used to access the external network. | `ext1` |
 | `externalNetworkMode` | `string` | Yes | `Attachment` | External network mode. `Attachment` (default) uses the externalSubnet for the external network; `PrimaryCNI` uses the pod's primary network as the external network. Immutable after creation. PrimaryCNI mode does not support externalIP/externalIPPool/BGP/EVPN/selectors/bandwidth/observability. Only available in non-primary CNI mode. | `PrimaryCNI` |
