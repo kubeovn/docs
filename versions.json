@@ -1,17 +1,22 @@
 [
   {
-    "version": "v1.17.x",
-    "title": "v1.17.x (dev)",
+    "version": "v1.18.x",
+    "title": "v1.18.x (dev)",
     "aliases": [
       "dev"
     ]
   },
   {
+    "version": "v1.17.x",
+    "title": "v1.17.x (dev)",
+    "aliases": []
+  },
+  {
     "version": "v1.16.x",
     "title": "v1.16.x (stable)",
     "aliases": [
-      "stable",
-      "current"
+      "current",
+      "stable"
     ]
   },
   {
