@@ -516,7 +516,7 @@ features:
   SET_GENEVE_TX_OFF: true
 ```
 
-When enabled, the daemon disables TX checksum offload on `genev_sys_6081` during startup. This setting only affects Geneve interface initialization at startup. `SET_GENEVE_TX_OFF` and `SET_VXLAN_TX_OFF` control the Geneve and VXLAN interfaces independently.
+When enabled, the daemon disables TX checksum offload on `genev_sys_6081` during startup. If that interface does not exist on a node, the initialization step is skipped. This setting only changes the interface during startup: changing it from `true` to `false` does not re-enable offload that was already disabled, so restore the node interface separately before relying on the default offload state. `SET_GENEVE_TX_OFF` and `SET_VXLAN_TX_OFF` control the Geneve and VXLAN interfaces independently.
 
 ## KubeVirt Live Migration Optimization
 

@@ -518,7 +518,7 @@ features:
   SET_GENEVE_TX_OFF: true
 ```
 
-启用后，daemon 启动时会对 `genev_sys_6081` 关闭 TX checksum offload；该设置只影响启动时的 Geneve 网卡初始化。`SET_GENEVE_TX_OFF` 与 `SET_VXLAN_TX_OFF` 分别控制 Geneve 和 VXLAN 网卡，互不影响。
+启用后，daemon 启动时会对 `genev_sys_6081` 关闭 TX checksum offload；如果节点上不存在该网卡，则跳过这一步。该设置只在启动时修改网卡：从 `true` 改回 `false` 不会自动恢复已经关闭的 offload，需要先单独恢复节点网卡，才能依赖默认的 offload 状态。`SET_GENEVE_TX_OFF` 与 `SET_VXLAN_TX_OFF` 分别控制 Geneve 和 VXLAN 网卡，互不影响。
 
 ## KubeVirt 实时迁移优化
 
