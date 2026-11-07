@@ -8,16 +8,16 @@
   },
   {
     "version": "v1.17.x",
-    "title": "v1.17.x (dev)",
-    "aliases": []
+    "title": "v1.17.x (stable)",
+    "aliases": [
+      "stable",
+      "current"
+    ]
   },
   {
     "version": "v1.16.x",
     "title": "v1.16.x",
-    "aliases": [
-      "current",
-      "stable"
-    ]
+    "aliases": []
   },
   {
     "version": "v1.15.x",
