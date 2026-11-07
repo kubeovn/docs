@@ -596,7 +596,7 @@ During an upgrade, Helm renders the Deployment with the configured replica count
 
 ## kube-ovn-v2 Deployment Tolerations
 
-The `kube-ovn-v2` chart provides configurable toleration lists for these Deployments:
+The `kube-ovn-v2` chart provides configurable toleration lists for these workloads:
 
 - `controller.tolerations`: `kube-ovn-controller`, defaulting to `NoSchedule` with `operator: Exists` and `key: CriticalAddonsOnly` with `operator: Exists`.
 - `central.tolerations`: `ovn-central`, defaulting to the two entries above plus `NoExecute` with `operator: Exists`.
@@ -604,7 +604,7 @@ The `kube-ovn-v2` chart provides configurable toleration lists for these Deploym
 - `validatingWebhook.tolerations`: `kube-ovn-webhook`, defaulting only to `NoSchedule` with `operator: Exists`.
 - `ic.tolerations`: `ovn-ic-controller`, with the same defaults as `central.tolerations`.
 
-These fields are rendered directly as `spec.template.spec.tolerations` on the corresponding Deployment Pod. The defaults preserve the previous templates, so leaving the values unset keeps the existing behavior. The default keyless tolerations match every taint with the corresponding effect, including `node.kubernetes.io/unschedulable`. Because these Deployments are normally placed on master nodes with hostname anti-affinity, a replacement Pod can be scheduled back onto a cordoned node after a drain or cordon. To make a component avoid cordoned nodes, set a keyed toleration list for each Deployment that needs to change, for example:
+These fields are rendered directly as `spec.template.spec.tolerations` on the corresponding Pod template. `central` renders a Deployment normally and a StatefulSet when `central.hcp.enabled` is true; `ic` is rendered only when `features.enableOvnInterconnections` is enabled. The defaults preserve the previous templates, so leaving the values unset keeps the existing behavior. The default keyless tolerations match every taint with the corresponding effect, including `node.kubernetes.io/unschedulable`. Because these workloads are normally placed on master nodes with hostname anti-affinity, a replacement Pod can be scheduled back onto a cordoned node after a drain or cordon. To make a component avoid cordoned nodes, set a keyed toleration list for each workload that needs to change, for example:
 
 ```yaml
 controller:
@@ -630,4 +630,4 @@ central:
       operator: Exists
 ```
 
-Setting a field replaces the entire default list for that Deployment; the same example can be applied to `monitor`, `validatingWebhook`, and `ic`. Retain the tolerations required by the control-plane taints in your cluster. DaemonSets such as `ovs-ovn`, `kube-ovn-agent`, `kube-ovn-pinger`, and `kube-ovn-speaker` are unchanged and do not use these fields.
+Setting a field replaces the entire default list for that workload; the same example can be applied to `monitor`, `validatingWebhook`, and `ic`. Retain the tolerations required by the control-plane taints in your cluster. DaemonSets such as `ovs-ovn`, `kube-ovn-agent`, `kube-ovn-pinger`, and `kube-ovn-speaker` are unchanged and do not use these fields.

@@ -598,7 +598,7 @@ classic chart 使用 `kube-ovn-monitor.replicas`，v2 chart 使用 `monitor.repl
 
 ## kube-ovn-v2 Deployment 容忍度
 
-`kube-ovn-v2` Chart 为以下 Deployment 提供可配置的容忍度列表：
+`kube-ovn-v2` Chart 为以下工作负载提供可配置的容忍度列表：
 
 - `controller.tolerations`：`kube-ovn-controller`，默认容忍 `NoSchedule` 且 `operator: Exists`，以及 `key: CriticalAddonsOnly` 且 `operator: Exists`。
 - `central.tolerations`：`ovn-central`，默认容忍上述两项，并额外容忍 `NoExecute` 且 `operator: Exists`。
@@ -606,7 +606,7 @@ classic chart 使用 `kube-ovn-monitor.replicas`，v2 chart 使用 `monitor.repl
 - `validatingWebhook.tolerations`：`kube-ovn-webhook`，默认仅容忍 `NoSchedule` 且 `operator: Exists`。
 - `ic.tolerations`：`ovn-ic-controller`，默认与 `central.tolerations` 相同。
 
-这些字段的值会直接渲染为对应 Deployment Pod 的 `spec.template.spec.tolerations`。默认值保持与此前模板相同，因此不设置 values 时行为不变。默认的无 key 容忍会匹配所有相应 effect 的污点，包括 `node.kubernetes.io/unschedulable`；由于这些 Deployment 通常按 master 节点部署并使用主机名反亲和性，节点 drain 或 cordon 后替代 Pod 可能仍会调度回该节点。需要让组件避开 cordon 节点时，请为每个需要调整的 Deployment 设置带 key 的容忍度列表，例如：
+这些字段的值会直接渲染为对应 Pod 模板的 `spec.template.spec.tolerations`。`central.hcp.enabled` 为 false 时 `central` 渲染为 Deployment，为 true 时渲染为 StatefulSet；`ic` 仅在启用 `features.enableOvnInterconnections` 时渲染。默认值保持与此前模板相同，因此不设置 values 时行为不变。默认的无 key 容忍会匹配所有相应 effect 的污点，包括 `node.kubernetes.io/unschedulable`；由于这些工作负载通常按 master 节点部署并使用主机名反亲和性，节点 drain 或 cordon 后替代 Pod 可能仍会调度回该节点。需要让组件避开 cordon 节点时，请为每个需要调整的工作负载设置带 key 的容忍度列表，例如：
 
 ```yaml
 controller:
@@ -632,7 +632,7 @@ central:
       operator: Exists
 ```
 
-设置一个字段会替换该 Deployment 的整个默认列表；上例也可分别用于 `monitor`、`validatingWebhook` 和 `ic`，请根据集群的控制平面污点保留所需的容忍度。`ovs-ovn`、`kube-ovn-agent`、`kube-ovn-pinger` 和 `kube-ovn-speaker` 等 DaemonSet 不使用这些字段。
+设置一个字段会替换该工作负载的整个默认列表；上例也可分别用于 `monitor`、`validatingWebhook` 和 `ic`，请根据集群的控制平面污点保留所需的容忍度。`ovs-ovn`、`kube-ovn-agent`、`kube-ovn-pinger` 和 `kube-ovn-speaker` 等 DaemonSet 不使用这些字段。
 
 ## 绑定本地 ip
 
