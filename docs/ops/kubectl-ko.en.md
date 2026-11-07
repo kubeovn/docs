@@ -82,10 +82,10 @@ kubectl ko
       status | backup | kick SERVER_ID | restore
     sb
       status | backup | kick SERVER_ID
-  trace --pod POD|--node NODE --dst-ip IP [OPTIONS]
-  capture (--pod POD | --vm VM | --vmi VMI) -- [TCPDUMP_ARGS...]
+  trace TARGET --target IP [OPTIONS]
+  capture TARGET [capture flags] -- [TCPDUMP_ARGS...]
   network
-    inspect --pod POD [--output table|json]
+    inspect TARGET [--output table|json]
   diagnose
     cluster
     node NODE
@@ -116,9 +116,9 @@ kubectl ko
 | `db nb backup`, `db sb backup` | Convert and download a standalone database, verify DB name and SHA256, and publish without overwriting an existing file. Write a JSON provenance sidecar; remove the temporary remote backup. |
 | `db nb kick SERVER_ID`, `db sb kick SERVER_ID` | Remove a stale cluster member. `--dry-run` prints the database leader Pod and exact command without requiring an agent or applying the change; actual removal runs through the agent on that leader's node. |
 | `db nb restore` | Reconstruct the central NB/SB cluster from the NB database already present on the explicit bootstrap node. Verify the shared hostPath, use temporary per-node helpers when OVS does not mount the databases, stop central, preserve originals and RAFT headers, rebuild, verify storage and restart OVS. Helpers use the central image and security context and are cleaned up by UID. This is not local-file import; SB-only restore is not supported. |
-| `trace` | Resolve Pod/Node addresses, MACs and logical ports, trace through OVN, then OVS. Supports IPv4/IPv6, ICMP/TCP/UDP, IPv4 ARP request/reply, explicit destination MAC, hostNetwork, Underlay/U2O and VM logical ports. `--engine ovn` runs only OVN trace. |
-| `capture` | Capture packets in a Pod or KubeVirt launcher network namespace through the independent Go node agent. Use exactly one of `--pod`, `--vm`, or `--vmi`. Supported capture flags are `-D` (list interfaces), `-i`, `-c`, `-s`, `-nn` and `-w -`; the last option streams a pcap locally. |
-| `network inspect` | Show the Pod network namespace path, every interface's index, kind, MAC, MTU, state and addresses, plus the host-side veth peer when one exists. For `macvlan`/`ipvlan`, also show the parent host NIC with its link details. `--output=json` emits machine-readable data. Host-network Pods use the host namespace and expose peer indexes for host links. |
+| `trace` | Resolve the positional target and trace through OVN, then OVS when `--engine=all`. Use `--target` for the destination, `--source-ip`/`--source-mac` for synthetic packets, and `--node` for localnet OVS selection. |
+| `capture` | Capture a positional target through the independent node agent. Use `--observe-at lsp/NAME` for LRP adjacency and `-i IFACE` for a Pod or secondary interface such as `net1`. |
+| `network inspect` | Inspect a positional Pod, Node, Service, workload, VM or VMI target. `--output=json` emits machine-readable data; the old `--pod` flag is removed. |
 | `diagnose cluster` | Check cluster configuration, component rollout and leaders; create a unique temporary NodePort Service and run active checks from independent temporary probe Pods in the original pinger network namespaces. |
 | `diagnose node NODE` | Perform configuration checks and restrict the independent active probes to one node. |
 | `diagnose subnet SUBNET` | Check the subnet, create an isolated temporary DaemonSet and NodePort Service, and check peer TCP/UDP, node ICMP and NodePort connectivity from those subnet Pods. Does not require optional CNI node TCP/UDP listeners. |
@@ -131,6 +131,52 @@ kubectl ko
 | `acl decode COOKIE` | Decode a sample cookie using the existing NB helper. |
 | `acl listen --node NODE` | Stream sampled cookies from that node, decode with bounded backpressure, and emit YAML documents until cancellation. |
 | `version`, `help`, `completion` | Show the client build, discover commands or generate shell completion without accessing a cluster. |
+
+## Current target references and diagnostic flags
+
+The current `trace`, `capture`, and `network inspect` commands accept one
+positional `TARGET`. A bare name means `pod/NAME`; namespaced resources use
+`KIND/NAME` together with `-n NAMESPACE`. `KIND/NAMESPACE/NAME` is rejected.
+Node, localnet, LSP and LRP references are cluster-scoped.
+
+Supported targets include Pods (`pod`, `po`, `pods`), Nodes (`node`, `no`,
+`nodes`), Services and workloads (`service`/`svc`, `deployment`/`deploy`,
+`daemonset`/`ds`, `statefulset`/`sts`, `replicaset`/`rs`, `job` and aliases),
+KubeVirt VMs/VMIs (`virtualmachine`/`vm`, `virtualmachineinstance`/`vmi`),
+`localnet/SUBNET`, `lsp/NAME`, and `lrp/NAME`. Service and workload targets
+resolve one running backend Pod.
+
+`trace` uses `trace TARGET --target IP [flags]`. `--target` accepts a bare
+IPv4/IPv6 address or `addr/IP`, replacing the legacy `--dst-ip` form. Use
+`--engine all` for OVN followed by OVS, or `--engine ovn` for OVN-only tracing.
+Use `--source-ip` and `--source-mac` to override synthetic packet fields;
+localnet sources require both values. `--node` selects the OVS node for a
+localnet or localnet LSP source. An unbound ordinary LSP supports OVN-only
+tracing, while LRP tracing is always OVN-only and defaults to its router-port
+IP and MAC.
+
+`capture` uses `capture TARGET [flags] -- [CAPTURE_ARGS...]`. LRP has no Linux
+interface, so capture must specify `--observe-at lsp/NAME` for an adjacent,
+bound LSP; the resolved observation point is reported on stderr. For Pod,
+Service/workload and VM/VMI targets, `-i IFACE` is resolved in the selected Pod
+network namespace and can select a secondary interface such as `net1`.
+`-D`, `-i`, `-c`, `-s`, `-nn` and `-w -` are supported capture arguments.
+
+`network inspect` uses `network inspect TARGET [--output table|json]` and
+supports Pod, Node, Service, workload, VM and VMI targets. Service, workload and
+VM/VMI results identify both the requested resource and selected Pod; Node targets
+read the host network namespace. The old `network inspect --pod` form is removed.
+
+```console
+kubectl ko trace -n app svc/api --target addr/10.0.0.8 --protocol tcp --dst-port 443
+kubectl ko trace localnet/underlay-a --target 10.0.0.8 --source-ip 10.0.0.2 --source-mac 02:00:00:00:00:02 --node worker-a
+kubectl ko trace lsp/web.app --target 10.0.0.8 --engine ovn
+kubectl ko trace lrp/router-underlay-a --target 10.0.0.8
+kubectl ko capture -n app pod/web -- -i net1 -c 10
+kubectl ko capture lrp/router-underlay-a --observe-at lsp/web.app -- -c 10
+kubectl ko network inspect node/worker-a
+kubectl ko network inspect -n app svc/api --output json
+```
 
 ## Configuration and argument boundaries
 

@@ -77,9 +77,9 @@ kubectl ko
       status | backup | kick SERVER_ID | restore
     sb
       status | backup | kick SERVER_ID
-  trace --pod POD|--node NODE --dst-ip IP [OPTIONS]
-  capture (--pod POD | --vm VM | --vmi VMI) -- [TCPDUMP_ARGS...]
-  network inspect --pod POD [--output table|json]
+  trace TARGET --target IP [OPTIONS]
+  capture TARGET [capture flags] -- [TCPDUMP_ARGS...]
+  network inspect TARGET [--output table|json]
   diagnose
     cluster | node NODE | subnet SUBNET
     connectivity --target PROTOCOL://IP:PORT [--target ...]
@@ -101,9 +101,9 @@ kubectl ko
 | `db nb/sb backup` | 转换并下载独立数据库，校验数据库名和 SHA256，写入 JSON 来源信息；不覆盖已有文件，清理远端临时备份。 |
 | `db nb/sb kick SERVER_ID` | 移除过期 RAFT 成员。`--dry-run` 仅打印 leader Pod 和具体命令，无需 agent；实际执行经 leader 节点的 agent。 |
 | `db nb restore` | 用明确指定的 bootstrap 节点上已有的 NB 数据库重建 central NB/SB 集群，不导入任意本地备份，也不支持仅恢复 SB。操作会停止 central、保留原始文件和 RAFT header、重建并验证存储，然后重启 OVS；详细条件见下文。 |
-| `trace` | 解析 Pod/节点地址、MAC 和逻辑端口后执行 OVN、OVS trace。支持 IPv4/IPv6、ICMP/TCP/UDP、IPv4 ARP、hostNetwork、Underlay/U2O 和 VM 端口；`--engine ovn` 只执行 OVN trace。 |
-| `capture` | 在 Pod 或 KubeVirt launcher 网络命名空间抓包；`--pod`、`--vm`、`--vmi` 三选一，`-w -` 将 pcap 流写到本地 stdout。 |
-| `network inspect` | 显示 Pod 网络命名空间、接口索引、类型、MAC、MTU、状态、地址和统计信息。存在 veth 时显示主机侧对端；`macvlan`/`ipvlan` 显示主机父接口；`--output=json` 提供机器可读输出。 |
+| `trace` | 解析位置参数目标后执行 OVN；`--engine=all` 时继续执行 OVS。使用 `--target` 指定目的地址，`--source-ip`/`--source-mac` 指定合成报文源字段，localnet 使用 `--node` 选择 OVS 节点。 |
+| `capture` | 通过独立 node agent 抓取位置参数目标。LRP 使用 `--observe-at lsp/NAME` 指定邻接点，Pod 或 secondary interface 使用 `-i IFACE`。 |
+| `network inspect` | 检查位置参数 Pod、Node、Service、工作负载、VM 或 VMI。`--output=json` 输出机器可读结果；旧版 `--pod` 已移除。 |
 | `diagnose cluster`、`diagnose node NODE` | 检查集群配置、组件 rollout 和 leader。默认创建唯一的临时 NodePort Service，通过独立临时 Pod 在原 pinger 网络命名空间主动探测；node 模式限制到指定节点。 |
 | `diagnose subnet SUBNET` | 创建隔离的临时 DaemonSet 和 NodePort Service，从子网 Pod 检查相互间 TCP/UDP、节点 ICMP 和 NodePort 连通性，无需可选的 CNI 节点 TCP/UDP listener。 |
 | `diagnose connectivity` | 在现有 pinger 网络命名空间的独立临时 Pod 中检查指定 TCP/UDP IP endpoint，不创建 NodePort Service 或子网 DaemonSet。 |
@@ -114,6 +114,47 @@ kubectl ko
 | `perf recovery --yes` | 依次删除 NB、SB 和 northd leader Pod 并测量恢复，不运行流量基准测试。 |
 | `acl decode COOKIE`、`acl listen --node NODE` | 解码 sample cookie，或从指定节点流式接收并解码采样 cookie，直到取消为止。 |
 | `version`、`help`、`completion` | 无需访问集群即可查看本地版本、帮助和 shell 补全。 |
+
+## 当前 target 引用与诊断参数
+
+当前 `trace`、`capture` 和 `network inspect` 都使用一个位置参数 `TARGET`。
+裸名称表示 `pod/NAME`；命名空间资源使用 `KIND/NAME`，并通过 `-n NAMESPACE`
+指定命名空间。`KIND/NAMESPACE/NAME` 三段格式会被拒绝。Node、localnet、LSP
+和 LRP 引用是集群级对象。
+
+支持 Pod（`pod`、`po`、`pods`）、Node（`node`、`no`、`nodes`）、Service 和工作负载
+（`service`/`svc`、`deployment`/`deploy`、`daemonset`/`ds`、`statefulset`/`sts`、
+`replicaset`/`rs`、`job` 及其别名）、KubeVirt VM/VMI（`virtualmachine`/`vm`、
+`virtualmachineinstance`/`vmi`）、`localnet/SUBNET`、`lsp/NAME` 和 `lrp/NAME`。
+Service 和工作负载目标会解析一个运行中的后端 Pod。
+
+`trace` 使用 `trace TARGET --target IP [选项]`。`--target` 接受裸 IPv4/IPv6 或
+`addr/IP`，替代旧版 `--dst-ip`。`--engine all` 依次执行 OVN 和 OVS，
+`--engine ovn` 只执行 OVN。`--source-ip` 和 `--source-mac` 可覆盖合成报文的源字段；
+localnet 源必须同时提供这两个值。`--node` 用于选择 localnet 或 localnet LSP 的
+OVS 节点。未绑定 chassis 的普通 LSP 支持 OVN-only trace；LRP 没有 Linux 接口，
+始终只执行 OVN trace，默认使用 router port 的 IP 和 MAC。
+
+`capture` 使用 `capture TARGET [选项] -- [抓包参数]`。LRP 没有 Linux 接口，必须使用
+`--observe-at lsp/NAME` 指定相邻且已绑定的 LSP，实际观测点会输出到 stderr。对于
+Pod、Service/工作负载和 VM/VMI，`-i IFACE` 在选中的 Pod 网络命名空间内解析，可
+选择 `net1` 等 secondary interface。支持 `-D`、`-i`、`-c`、`-s`、`-nn` 和 `-w -`。
+
+`network inspect` 使用 `network inspect TARGET [--output table|json]`，支持 Pod、
+Node、Service、工作负载、VM 和 VMI。Service、工作负载及 VM/VMI 结果同时标识请求
+资源和选中的 Pod；Node 目标读取宿主机网络命名空间。旧版 `network inspect --pod`
+形式已移除。
+
+```console
+kubectl ko trace -n app svc/api --target addr/10.0.0.8 --protocol tcp --dst-port 443
+kubectl ko trace localnet/underlay-a --target 10.0.0.8 --source-ip 10.0.0.2 --source-mac 02:00:00:00:00:02 --node worker-a
+kubectl ko trace lsp/web.app --target 10.0.0.8 --engine ovn
+kubectl ko trace lrp/router-underlay-a --target 10.0.0.8
+kubectl ko capture -n app pod/web -- -i net1 -c 10
+kubectl ko capture lrp/router-underlay-a --observe-at lsp/web.app -- -c 10
+kubectl ko network inspect node/worker-a
+kubectl ko network inspect -n app svc/api --output json
+```
 
 ## 配置与参数边界
 
