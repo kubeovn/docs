@@ -240,7 +240,7 @@ Routing Policies
 
 ### Using PrimaryCNI Mode
 
-In a non-primary CNI deployment where nodes do not have a shared Layer 2 underlay, set the external network mode to `PrimaryCNI`. This mode uses the Pod's primary `eth0` interface for the external network and connects the internal Kube-OVN network through a Multus attachment. The internal attachment must use a NetworkAttachmentDefinition and its corresponding Kube-OVN subnet; it carries VPC traffic without replacing the primary CNI network.
+In a non-primary CNI deployment where nodes do not have a shared Layer 2 underlay, set the external network mode to `PrimaryCNI`. This mode requires Kube-OVN v1.17 or later and [non-primary CNI mode](../start/non-primary-mode.en.md) to be enabled (`cni_conf.NON_PRIMARY_CNI=true` for chart v1 or `cni.nonPrimaryCNI=true` for chart v2). It uses the Pod's primary `eth0` interface for the external network and connects the internal Kube-OVN network through a Multus attachment. The internal attachment must use a NetworkAttachmentDefinition and its corresponding Kube-OVN subnet; it carries VPC traffic without replacing the primary CNI network.
 
 ```yaml
 apiVersion: kubeovn.io/v1

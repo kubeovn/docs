@@ -240,7 +240,7 @@ Routing Policies
 
 ### 使用 PrimaryCNI 模式
 
-在非主 CNI 部署中，如果节点之间没有共享的二层 Underlay，可以将外部网络模式设置为 `PrimaryCNI`。此模式使用 Pod 主网卡 `eth0` 连接外部网络，并通过 Multus attachment 接入 VPC 内部的 Kube-OVN 网络。内部网络 attachment 需要使用 NetworkAttachmentDefinition 和对应的 Kube-OVN 子网；该 attachment 只用于 VPC 内部流量，不会替换主 CNI 网络。
+在非主 CNI 部署中，如果节点之间没有共享的二层 Underlay，可以将外部网络模式设置为 `PrimaryCNI`。此模式需要 Kube-OVN v1.17 或更高版本，并且必须启用 [非主 CNI 模式](../start/non-primary-mode.md)（v1 chart 使用 `cni_conf.NON_PRIMARY_CNI=true`，v2 chart 使用 `cni.nonPrimaryCNI=true`）。它使用 Pod 主网卡 `eth0` 连接外部网络，并通过 Multus attachment 接入 VPC 内部的 Kube-OVN 网络。内部网络 attachment 需要使用 NetworkAttachmentDefinition 和对应的 Kube-OVN 子网；该 attachment 只用于 VPC 内部流量，不会替换主 CNI 网络。
 
 ```yaml
 apiVersion: kubeovn.io/v1
