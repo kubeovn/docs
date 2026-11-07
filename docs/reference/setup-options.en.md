@@ -489,6 +489,35 @@ args:
 - --set-vxlan-tx-off=true
 ```
 
+## Disable Geneve TX Checksum Offload
+
+Some NICs or kernel versions may also have checksum offload compatibility issues during Geneve tunnel encapsulation. Kube-OVN leaves Geneve TX checksum offload unchanged by default. To disable it, set the following in the installation script:
+
+```bash
+SET_GENEVE_TX_OFF=true
+```
+
+The installation script passes this value to the `--set-geneve-tx-off` argument of `kube-ovn-daemon`. You can also set the argument in the `kube-ovn-cni` DaemonSet after installation:
+
+```yaml
+args:
+- --set-geneve-tx-off=true
+```
+
+When installing with Helm, configure the following fields in the classic and v2 charts respectively:
+
+```yaml
+# classic chart
+func:
+  SET_GENEVE_TX_OFF: true
+
+# v2 chart
+features:
+  SET_GENEVE_TX_OFF: true
+```
+
+When enabled, the daemon disables TX checksum offload on `genev_sys_6081` during startup. This setting only affects Geneve interface initialization at startup. `SET_GENEVE_TX_OFF` and `SET_VXLAN_TX_OFF` control the Geneve and VXLAN interfaces independently.
+
 ## KubeVirt Live Migration Optimization
 
 Once enabled, the controller optimizes port-binding switches during KubeVirt live migration to reduce transient packet loss. Enabled by default:
