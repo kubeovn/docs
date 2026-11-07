@@ -217,6 +217,15 @@ status:
     - ip: 172.18.0.18
 ```
 
+Pod 模式的 LoadBalancer 流量按以下端口链路转发：`LoadBalancerIP:Service port -> ClusterIP:Service port -> PodIP:targetPort`。因此 `spec.ports[].port` 必须使用 Service 对外提供的端口，`targetPort` 用于连接后端 Pod；两者可以不同。例如 Service 的 `port` 为 `9443`、`targetPort` 为 `80` 时，入口流量会先转发到 `ClusterIP:9443`，再由 Service 转发到 Pod 的 `80` 端口。
+
+升级到包含该行为修复的版本后，已有的 Pod 模式 LoadBalancer Pod 需要重建，以清理旧版本按后端端口生成的 DNAT 规则。对每个 Service 执行以下命令：
+
+```bash
+kubectl rollout restart deployment/lb-svc-<service-name> -n <service-namespace>
+kubectl rollout status deployment/lb-svc-<service-name> -n <service-namespace>
+```
+
 ## 测试 LoadBalancerIP 访问
 
 参考以下 yaml, 创建测试 Pod，作为 Service 的 Endpoints 提供服务：

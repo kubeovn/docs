@@ -217,6 +217,15 @@ status:
      - ip: 172.18.0.18
 ```
 
+Pod-mode LoadBalancer traffic follows this port path: `LoadBalancerIP:Service port -> ClusterIP:Service port -> PodIP:targetPort`. Therefore, `spec.ports[].port` is the port exposed by the Service and `targetPort` is the port used by the backend Pod; they can be different. For example, with a Service `port` of `9443` and a `targetPort` of `80`, ingress traffic is first sent to `ClusterIP:9443` and the Service then forwards it to port `80` on the Pod.
+
+After upgrading to a version containing this behavior fix, existing Pod-mode LoadBalancer Pods must be recreated to remove DNAT rules generated with the old backend-port behavior. Run the following commands for each Service:
+
+```bash
+kubectl rollout restart deployment/lb-svc-<service-name> -n <service-namespace>
+kubectl rollout status deployment/lb-svc-<service-name> -n <service-namespace>
+```
+
 ## Testing LoadBalancerIP access
 
 Refer to the following YAML to create a test Pod that serves as the Endpoints for the Service:
