@@ -41,6 +41,12 @@ Pods bind security groups by adding the `ovn.kubernetes.io/security_groups` anno
 
 For port security feature, please refer to the [Port Security documentation](../guide/port-security.en.md).
 
+### VIPs with Port Security Disabled
+
+A Pod can declare VIPs through the `ovn.kubernetes.io/aaps` annotation and bind a SecurityGroup at the same time. Even when `ovn.kubernetes.io/port_security` is set to `"false"` or is not enabled, the declared VIP addresses are included in the SecurityGroup's IPv4 and IPv6 AddressSets, so rules based on a remote SecurityGroup still match traffic involving those VIPs.
+
+Existing logical switch ports are corrected during the next SecurityGroup synchronization; the Pod does not need to be recreated. Disabling port security only turns off OVN source-address checks for the port. It does not remove declared VIPs from SecurityGroup member addresses.
+
 ## Tiered Security Groups
 
 Security groups support multi-tier ACL processing via the optional `tier` field. This allows you to stack multiple security groups to perform hierarchical ACL evaluation.

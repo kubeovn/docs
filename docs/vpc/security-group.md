@@ -41,6 +41,12 @@ Pod 通过添加 `ovn.kubernetes.io/security_groups` annotation 来绑定安全�
 
 关于端口安全（Port Security）功能的说明，请参考[端口安全文档](../guide/port-security.md)。
 
+### 关闭端口安全时的 VIP
+
+Pod 可以通过 `ovn.kubernetes.io/aaps` annotation 声明 VIP，并同时绑定 SecurityGroup。即使 Pod 的 `ovn.kubernetes.io/port_security` 设置为 `"false"` 或未开启，声明的 VIP 地址仍会加入该 SecurityGroup 的 IPv4 和 IPv6 AddressSet，因此基于远端 SecurityGroup 的允许或拒绝规则仍然会匹配这些 VIP。
+
+已有逻辑交换机端口会在下一次 SecurityGroup 同步时读取并修正 VIP 地址，不需要重建 Pod。关闭端口安全只表示 OVN 不对该端口执行源地址安全检查，不会把已声明的 VIP 从 SecurityGroup 成员地址中排除。
+
 ## 分层安全组
 
 安全组支持通过可选的 `tier` 字段进行多层 ACL 处理。这允许您堆叠多个安全组以执行分层 ACL 评估。
