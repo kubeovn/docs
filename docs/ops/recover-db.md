@@ -101,6 +101,27 @@ mv /etc/origin/ovn/ovnnb_db.db /tmp
 kubectl delete pod -n kube-system ovn-central-xxxx
 ```
 
+### 无效 Raft 成员的启动检查和恢复
+
+对于 OVN central 的 NB/SB 数据库，以及 OVN-IC 的 NB/SB 数据库，启动时会先检查持久化数据库。可以在对应的节点或 OVN 容器中执行 `ovsdb-tool check-cluster` 查看检查结果：
+
+```bash
+ovsdb-tool check-cluster /etc/origin/ovn/ovnnb_db.db
+ovsdb-tool check-cluster /etc/origin/ovn/ovnsb_db.db
+
+# OVN-IC 数据库
+ovsdb-tool check-cluster /etc/origin/ovn/ovn_ic_nb_db.db
+ovsdb-tool check-cluster /etc/origin/ovn/ovn_ic_sb_db.db
+```
+
+如果检查发现持久化日志存在语义缺口，启动流程会将该成员判定为无效成员。数据库存活和就绪检查也会执行 `check-cluster`，因此该成员会从服务中移除并由 kubelet 重启；进程或 Pod 显示为运行中不能代替数据库检查结果。自动恢复一次只处理一个无效成员，不能在多个成员同时损坏时自动重建多数派。
+
+恢复无效成员时，请先保留对应的数据库文件、Raft header（例如 `ovnnb_db.hdr`）和日志。Raft header 必须包含有效的 cluster ID 和 server ID，且 cluster ID 必须与可达多数派查询到的 live cluster ID 一致。无法读取有效 header、无法达到多数派、发现 peer 的 cluster ID 不一致，或磁盘仍然没有可用空间时，不会替换原文件，成员会保持不可用以便后续重试和人工处理。
+
+启动流程不会直接在原数据库上执行修复。它会根据 Raft header 和 peer 地址在临时文件中执行 `ovsdb-tool rejoin-cluster`，使用原 server ID 创建干净成员；只有临时文件成功生成且非空后，才会将原数据库移动为带时间戳的 `.backup-*` 文件，并把临时文件移到原路径。随后由健康多数派通过正常的 Raft 日志或快照同步补齐该成员。数据库文件缺失但仍保留可用 header 时，流程也会先生成临时 `join-cluster` 文件，再安装到原路径。任何本地检查或诊断都应针对副本执行，不能覆盖原数据库。
+
+如果创建临时文件、保存原文件或安装新文件失败，启动会以非零状态退出并保持成员不可用；失败的恢复文件和原文件会按情况保留，供诊断使用。恢复前应同时核对 cluster/server identity、Raft header、任期、已提交条目、快照和应用数据，不能仅凭文件大小或 commit index 选择权威副本。
+
 ## 集群不能正常工作下的恢复
 
 若集群多数节点受损无法选举出 leader，请参照下面的步骤进行恢复。

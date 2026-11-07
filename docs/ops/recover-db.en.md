@@ -104,6 +104,27 @@ Delete the `ovn-central` pod of the corresponding node and wait for the cluster 
 kubectl delete pod -n kube-system ovn-central-xxxx
 ```
 
+### Startup Checks and Recovery of an Invalid Raft Member
+
+At startup, Kube-OVN checks the persisted databases for the OVN central NB/SB databases and the OVN-IC NB/SB databases. Run `ovsdb-tool check-cluster` on the corresponding node or inside the OVN container to inspect the result:
+
+```bash
+ovsdb-tool check-cluster /etc/origin/ovn/ovnnb_db.db
+ovsdb-tool check-cluster /etc/origin/ovn/ovnsb_db.db
+
+# OVN-IC databases
+ovsdb-tool check-cluster /etc/origin/ovn/ovn_ic_nb_db.db
+ovsdb-tool check-cluster /etc/origin/ovn/ovn_ic_sb_db.db
+```
+
+When the check finds a semantic gap in the persisted log, startup marks the member invalid. Database liveness and readiness checks also run `check-cluster`, so the member is removed from service and kubelet restarts it; a running process or Pod does not override the database check. Automatic recovery handles one invalid member at a time and does not rebuild a majority from multiple damaged members.
+
+Before recovering an invalid member, preserve its database file, Raft header (for example, `ovnnb_db.hdr`), and logs. The Raft header must contain valid cluster and server IDs, and its cluster ID must match the live cluster ID reported by a reachable quorum. If the header is invalid or unavailable, a quorum cannot be reached, peer cluster IDs conflict, or the disk still has no usable space, the original file is not replaced and the member remains unavailable for a later retry or explicit recovery.
+
+The startup path does not repair the original database in place. It uses the Raft header and peer addresses to create a clean member in a temporary file with `ovsdb-tool rejoin-cluster` and the original server ID. Only after the temporary file is created successfully and is non-empty does it move the original database to a timestamped `.backup-*` file and install the temporary file at the original path. The healthy majority then repopulates the member through normal Raft log or snapshot synchronization. When the database file is missing but a usable header remains, the path can create a temporary `join-cluster` file before installing it. Any local repair inspection must use a copy and must not overwrite the original database.
+
+If creating the temporary file, preserving the original, or installing the replacement fails, startup exits nonzero and keeps the member unavailable. Failed recovery artifacts and the original file are retained as applicable for diagnosis. Before explicit recovery, compare the cluster and server identities, Raft header, terms, committed entries, snapshots, and application data; file size or commit index alone does not identify an authoritative copy.
+
 ## Recover when Total Cluster Failed
 
 If the majority of the cluster nodes are broken and the leader cannot be elected, please refer to the following steps to recover.
