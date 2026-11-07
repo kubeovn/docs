@@ -238,6 +238,31 @@ Routing Policies
      29000        ip4.src == $ovn.default.kube.ovn.worker_ip4         reroute                100.64.0.3
 ```
 
+### 使用 PrimaryCNI 模式
+
+在非主 CNI 部署中，如果节点之间没有共享的二层 Underlay，可以将外部网络模式设置为 `PrimaryCNI`。此模式使用 Pod 主网卡 `eth0` 连接外部网络，并通过 Multus attachment 接入 VPC 内部的 Kube-OVN 网络。内部网络 attachment 需要使用 NetworkAttachmentDefinition 和对应的 Kube-OVN 子网；该 attachment 只用于 VPC 内部流量，不会替换主 CNI 网络。
+
+```yaml
+apiVersion: kubeovn.io/v1
+kind: VpcEgressGateway
+metadata:
+  name: gateway-primary-cni
+  namespace: default
+spec:
+  vpc: ovn-cluster
+  replicas: 1
+  externalNetworkMode: PrimaryCNI
+  internalSubnet: gateway-internal
+  policies:
+    - subnets:
+        - workload-subnet
+      snat: true
+```
+
+PrimaryCNI 模式会保留主 CNI 的默认路由以及已有的 NAT 和 raw 表规则。OVN 使用内部 attachment 的 IP 作为重定向下一跳，并将其写入 `status.internalIPs`；主 CNI Pod IP 用作外部地址，并写入 `status.externalIPs`。IPv4 SNAT 或 IPv6 NAT66 只作用于从内部 attachment 进入、经 `eth0` 发出的流量。
+
+当策略中的 `snat` 设置为 `false` 时，外部网络必须配置能够返回 VPC 网段的路由。PrimaryCNI 模式不支持 `externalSubnet`、`externalIPs`、`externalIPPool`、BGP、EVPN、selectors、bandwidth 和 observability 配置。未设置 `externalNetworkMode` 时仍使用默认的 `Attachment` 模式，该模式必须配置 `externalSubnet`。
+
 ### 指定 Egress Gateway IP 和部署节点
 
 可以通过 `externalIPs` 和 `nodeSelector` 字段选择 Egress Gateway Pods 所使用的 Egress IP 和所部署的节点：
@@ -408,6 +433,7 @@ Spec：
 | `replicas` | `integer/int32` | 是 | `1` | 副本数。 | `2` |
 | `prefix` | `string` | 是 | - | 工作负载 Deployment 名称前缀。不可修改。 | `veg-` |
 | `image` | `string` | 是 | - | 工作负载 Deployment 使用的镜像。 | `docker.io/kubeovn/kube-ovn:v1.14.0-debug` |
+| `externalNetworkMode` | `string` | 是 | `Attachment` | 外部网络模式。`Attachment` 使用 `externalSubnet` 提供外部网络；`PrimaryCNI` 使用 Pod 主 CNI 网卡 `eth0`，并通过 Multus attachment 接入内部 Kube-OVN 网络。 | `PrimaryCNI` |
 | `internalSubnet` | `string` | 是 | VPC 默认子网名称 | 接入 VPC 网络的子网名称。 | `subnet1` |
 | `externalSubnet` | `string` | 否 | - | 接入外部网络的子网名称。 | `ext1` |
 | `internalIPs` | `string array` | 是 | - | 接入 VPC 网络使用的 IP 地址，支持 IPv6 及双栈。指定的 IP 数量不得小于副本数。建议将数量设置为 `<replicas> + 1` 以避免某些极端情况下 Pod 无法正常创建的问题。 | `10.16.0.101` / `fd00::11` / `10.16.0.101,fd00::11` |
