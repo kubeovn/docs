@@ -1,5 +1,25 @@
 # OVN 数据库备份和恢复
 
+## OVN 数据库启动校验与单成员恢复
+
+在 Raft 模式的 `ovn-central` 和 OVN-IC 数据库启动时，系统会先校验数据库身份、存储格式和集群日志。无法验证时会保留原数据库文件和 Raft header，并以非零状态退出。
+
+| 数据库状态 | 启动行为 |
+| --- | --- |
+| 有效的集群数据库 | 正常启动，由 Raft 同步成员。 |
+| 有效的 standalone 数据库 | 保留原有 standalone 启动流程。 |
+| 数据库不存在 | 保留原有初始化和 header 恢复流程。 |
+| 等待加入集群 | 继续加入流程；central 数据库保留原有过期 pending-join 清理。 |
+| 身份未知、数据库名错误、存储格式未知或集群日志无效 | 保留原文件和 header；只有在 header 匹配可访问 quorum 时，才从 header 创建干净成员，否则阻塞并等待后续重试。 |
+
+不要在已有无效成员上直接执行 `ovsdb-tool fix-cluster` 后再执行 `join-cluster`。本地修复可能丢弃已提交但本地缺失的日志。系统会要求有效且匹配的 Raft header，查询可访问的多数派，然后使用原 server ID 和 peer 地址创建 `rejoin-cluster` 数据库；新文件创建成功后才会把原数据库移动为带时间戳的备份。新成员启动后由健康多数派通过 Raft 日志或 snapshot 重新填充。
+
+磁盘仍满、header 无效、quorum 不可访问或替换失败时，进程会以非零状态退出，原文件保持不变，成员保持不可用以便后续重试。集群数据库的 readiness/liveness 检查也会执行 `ovsdb-tool check-cluster`，因此语义持久化缺口会使成员退出服务并由 kubelet 重启；进程或 Pod 显示 Ready 不能单独证明数据库历史安全。
+
+自动恢复一次只处理一个损坏成员，不能自动修复多个分叉成员。显式恢复前，请保存每个成员的数据库、header、备份和日志，比较 cluster/server identity、snapshot/log history、term、commit entry 和应用数据，并在历史冲突时先完成明确的人工取舍。文件大小和 commit index 单独不能证明哪份数据是权威副本。
+
+该启动保护不会修复已经分叉的历史，也不会修复底层 I/O 故障；它只把可验证的单成员恢复限制在能够从一致多数派同步的路径上。详见 [Issue #7870](https://github.com/kubeovn/kube-ovn/issues/7870)。
+
 本文档介绍如何进行数据库备份，以及在不同情况下如何通过已有的数据库文件进行集群恢复。
 
 ## 数据库备份

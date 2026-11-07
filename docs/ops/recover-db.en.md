@@ -1,5 +1,25 @@
 # OVN DB Backup and Recovery
 
+## OVN Database Startup Validation and Single-Member Recovery
+
+During startup in Raft mode, `ovn-central` and OVN-IC databases validate database identity, storage format and clustered log state. If validation fails, the original database and Raft header are preserved and the process exits nonzero.
+
+| Database state | Startup behavior |
+| --- | --- |
+| Valid clustered database | Start normally and let Raft synchronize the member. |
+| Valid standalone database | Preserve the existing standalone startup path. |
+| Missing database | Preserve the existing initialization and header recovery paths. |
+| Pending cluster join | Resume the join and keep the existing stale pending-join cleanup. |
+| Unknown identity, unexpected name, unknown format or invalid clustered log | Preserve the original file and header. Rebuild only when a valid matching Raft header and reachable quorum are available; otherwise remain blocked for retry. |
+
+Do not run `ovsdb-tool fix-cluster` followed by `join-cluster` on an existing invalid member. A local repair can discard committed log entries that are missing locally. The startup path requires a valid Raft header, verifies it against a reachable majority, and creates a `rejoin-cluster` database with the original server ID and peer addresses. Only after the new file is created successfully is the original database moved to a timestamped backup. The healthy majority then repopulates the clean member through normal Raft log or snapshot synchronization.
+
+If the disk is still full, the header is invalid, the quorum is unavailable or replacement fails, startup exits nonzero and leaves the original file untouched. Clustered database readiness and liveness checks also run `ovsdb-tool check-cluster`; a semantic persistence gap therefore removes the member from service and lets kubelet restart it. A process or Pod reporting Ready alone does not prove that the database history is safe.
+
+Automatic recovery is limited to one damaged member at a time. It does not reconcile multiple divergent members. Before explicit recovery, preserve each member's database, header, backups and logs; compare cluster/server identities, snapshot and log history, terms, committed entries and application data; and reconcile conflicting histories explicitly. File sizes and commit indexes alone do not identify an authoritative copy.
+
+This startup protection does not repair already divergent histories or the underlying I/O failure. It limits automatic recovery to a fresh member that can synchronize from a reachable, consistent majority. See [Issue #7870](https://github.com/kubeovn/kube-ovn/issues/7870).
+
 This document describes how to perform database backups and how to
 perform cluster recovery from existing database files in different situations.
 
