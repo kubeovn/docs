@@ -133,7 +133,7 @@ env:
 - `announce-cluster-ip`、`graceful-restart`、`passivemode`、`extended-nexthop`、`nat-gw-mode`、`enable-metrics` 和 `enable-bfd`：布尔值。
 - `bfd-min-tx`、`bfd-min-rx` 和 `bfd-detection-multiplier`：整数。
 
-配置文件中明确设置的字段会覆盖同名 CLI 参数和默认值；未出现的字段继续使用 CLI 参数或默认值。需要清空 CLI 列表时，可在文件中设置为空列表。
+配置文件中明确设置的字段会覆盖同名 CLI 参数和默认值；未出现的字段继续使用 CLI 参数或默认值。未设置 `next-hops` 时保留原有的源地址/路由查询/`node-ips` 选择逻辑。需要清空 CLI 列表时，可在文件中设置为空列表；需要清除 `next-hops` 时，可将该字段设为空 map，或将单个地址族设为 `null`，例如 `next-hops: {IPv4: null}`。
 
 ## 发布 Pod/Subnet 路由
 

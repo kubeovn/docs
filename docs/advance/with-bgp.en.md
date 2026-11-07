@@ -139,7 +139,7 @@ Configuration keys use the kebab-case flag name without the leading `--`. Common
 - `announce-cluster-ip`, `graceful-restart`, `passivemode`, `extended-nexthop`, `nat-gw-mode`, `enable-metrics`, and `enable-bfd`: booleans.
 - `bfd-min-tx`, `bfd-min-rx`, and `bfd-detection-multiplier`: integers.
 
-Fields explicitly set in the file override the same CLI flags and defaults. Omitted fields keep their CLI or default values. Set a list to `[]` in the file to clear a CLI list.
+Fields explicitly set in the file override the same CLI flags and defaults. Omitted fields keep their CLI or default values. When `next-hops` is omitted, the existing source-address, route-lookup, and `node-ips` selection remains unchanged. Set a list to `[]` in the file to clear a CLI list; to clear `next-hops`, set the map to empty or set one family to `null`, for example `next-hops: {IPv4: null}`.
 
 ## Publishing Pod/Subnet Routes
 
