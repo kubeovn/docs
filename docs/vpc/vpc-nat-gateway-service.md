@@ -20,6 +20,8 @@ VPC NAT 网关可以直接使用 nftables 为 Kubernetes Service 提供 DNAT。�
 - 两个网关开关可以同时开启；也可以让网关处理 EIP、让 OVN LoadBalancer 处理 ClusterIP。
 - `--enable-lb-svc` 仍需要 `--enable-lb` 或 ClusterIP 网关开关提供后端数据面。
 
+旧参数 `--enable-nftable-lb-svc` 的默认值为 `true`，现在已拆分为两个默认关闭的参数，且没有兼容别名；升级前必须同步更新 controller 参数、安装脚本变量或 Helm values。
+
 ## 配置 Service
 
 `LoadBalancer` Service 必须指定网关和 EIP；ClusterIP Service 只需指定网关：
@@ -42,7 +44,7 @@ spec:
       protocol: TCP
 ```
 
-控制器完成编程后会写入 `status.loadBalancer.ingress`。后端由 EndpointSlice 提供；所有 Ready 后端均参与负载均衡。
+控制器完成编程后会写入 `status.loadBalancer.ingress`。Admission 不要求 EIP 已存在或处于 Ready；控制器会在 EIP 可用后重新排队并完成编程。后端仅由 EndpointSlice 提供；所有 Ready 后端均参与负载均衡。运行中 Pod 的 Multus 网卡地址原地变化不会触发 EndpointSlice 更新。
 
 `IptablesDnatRule` 的 `type: share` 对象只是控制器维护的记账记录，不能手工创建、修改或删除，也不会直接驱动数据面。可使用以下命令查看状态：
 
@@ -57,7 +59,8 @@ kubectl ko nbctl lr-policy-list <vpc>
 
 - 同一 EIP、端口和协议只能绑定一个 Service；冲突会被 webhook 拒绝。
 - Service 使用的 EIP 必须属于标注的网关；删除 Service 前不能删除仍在使用的 EIP。
-- 网关和 EIP 绑定不可修改；需要更换时删除并重新创建 Service。清除网关注解是退出该模式的方式。
+- 网关和 EIP 绑定不可修改；需要更换时删除并重新创建 Service。清除网关和 EIP 两个 annotation 是退出该模式的方式，控制器会释放记录、VIP 路由、loopback 地址和 finalizer。
+- `ovn.kubernetes.io/vpc_nat_gw` 与 `ovn.kubernetes.io/service_external_ip_from_subnet` 不能同时指定，避免 Service 发布两个入口地址。
+- 删除网关会释放其关联 Service 的记录、入口状态和 finalizer；正常情况下 webhook 会先阻止仍绑定 EIP 或 ClusterIP 的网关删除。
 - 仅支持 IPv4、TCP/UDP 和 `Cluster` 流量策略；不支持节点本地流量策略、拓扑感知路由或客户端源地址保留。
 - `ClientIP` 会话亲和性支持整个 VIP 身份；多网卡后端必须在该 VPC 中存在可用网卡。
-- 旧参数 `--enable-nftable-lb-svc` 已替换为上述两个参数，升级前必须更新 Deployment、安装脚本或 Helm values，旧参数没有别名。

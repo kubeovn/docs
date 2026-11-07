@@ -20,6 +20,8 @@ The install script variables are `ENABLE_GW_NFTABLE_LB_SVC` and `ENABLE_GW_NFTAB
 - Both gateway gates can be enabled together, or the gateway can serve the EIP while an OVN load balancer serves the ClusterIP.
 - `--enable-lb-svc` still needs `--enable-lb` or the gateway ClusterIP gate to provide a ClusterIP data plane.
 
+The old `--enable-nftable-lb-svc` flag defaulted to `true`. It is now split into the two flags above, both defaulting to `false`, with no compatibility alias. Update controller arguments, install script variables, or Helm values before upgrading.
+
 ## Configure a Service
 
 A `LoadBalancer` Service must name the gateway and EIP. A ClusterIP Service only needs the gateway annotation:
@@ -42,7 +44,7 @@ spec:
       protocol: TCP
 ```
 
-After programming completes, the controller writes `status.loadBalancer.ingress`. Backends come from EndpointSlices, and all Ready backends participate in load balancing.
+After programming completes, the controller writes `status.loadBalancer.ingress`. Admission does not require the EIP to exist or be Ready; the controller requeues the Service and programs it when the EIP becomes available. Backends come only from EndpointSlices, and all Ready backends participate in load balancing. An in-place Multus interface address change on a running Pod does not trigger an EndpointSlice update.
 
 `IptablesDnatRule` objects with `type: share` are controller-owned accounting records. Operators cannot create, edit, or delete them, and they do not directly drive the data plane. Inspect the programmed state with:
 
@@ -57,7 +59,8 @@ kubectl ko nbctl lr-policy-list <vpc>
 
 - One EIP, port, and protocol identity can belong to only one Service; webhook validation rejects conflicts.
 - The Service EIP must belong to the annotated gateway. An EIP in use cannot be deleted before the Service is removed.
-- The gateway and EIP binding is immutable; delete and recreate the Service to change it. Clear the gateway annotation to leave this mode.
+- The gateway and EIP binding is immutable; delete and recreate the Service to change it. Clear both the gateway and EIP annotations to leave this mode; the controller releases records, VIP routes, loopback addresses, and the finalizer.
+- `ovn.kubernetes.io/vpc_nat_gw` and `ovn.kubernetes.io/service_external_ip_from_subnet` are mutually exclusive so a Service cannot publish two ingress addresses.
+- Deleting a gateway releases its Service records, published ingress state, and finalizer. Normally the webhook rejects deleting a gateway that still has EIP or ClusterIP bindings.
 - Only IPv4, TCP/UDP, and `Cluster` traffic policy are supported. Node-local traffic policy, topology-aware routing, and client source address preservation are not supported.
 - `ClientIP` session affinity is supported for the whole VIP identity. Multi-NIC backends must have an available NIC in the gateway VPC.
-- The old `--enable-nftable-lb-svc` flag is replaced by the two flags above. Update the Deployment, install script, or Helm values before upgrading; there is no alias.
