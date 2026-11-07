@@ -596,6 +596,44 @@ classic chart 使用 `kube-ovn-monitor.replicas`，v2 chart 使用 `monitor.repl
 
 升级时 Helm 会按照配置的副本数渲染 Deployment，不会因 chart 升级将已配置的副本数覆盖回 `1`。建议通过 Helm values 管理该设置，而不是只使用 `kubectl scale` 临时修改 Deployment。
 
+## kube-ovn-v2 Deployment 容忍度
+
+`kube-ovn-v2` Chart 为以下 Deployment 提供可配置的容忍度列表：
+
+- `controller.tolerations`：`kube-ovn-controller`，默认容忍 `NoSchedule` 且 `operator: Exists`，以及 `key: CriticalAddonsOnly` 且 `operator: Exists`。
+- `central.tolerations`：`ovn-central`，默认容忍上述两项，并额外容忍 `NoExecute` 且 `operator: Exists`。
+- `monitor.tolerations`：`kube-ovn-monitor`，默认与 `controller.tolerations` 相同。
+- `validatingWebhook.tolerations`：`kube-ovn-webhook`，默认仅容忍 `NoSchedule` 且 `operator: Exists`。
+- `ic.tolerations`：`ovn-ic-controller`，默认与 `central.tolerations` 相同。
+
+这些字段的值会直接渲染为对应 Deployment Pod 的 `spec.template.spec.tolerations`。默认值保持与此前模板相同，因此不设置 values 时行为不变。默认的无 key 容忍会匹配所有相应 effect 的污点，包括 `node.kubernetes.io/unschedulable`；由于这些 Deployment 通常按 master 节点部署并使用主机名反亲和性，节点 drain 或 cordon 后替代 Pod 可能仍会调度回该节点。需要让组件避开 cordon 节点时，请为每个需要调整的 Deployment 设置带 key 的容忍度列表，例如：
+
+```yaml
+controller:
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: CriticalAddonsOnly
+      operator: Exists
+
+central:
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: CriticalAddonsOnly
+      operator: Exists
+```
+
+设置一个字段会替换该 Deployment 的整个默认列表；上例也可分别用于 `monitor`、`validatingWebhook` 和 `ic`，请根据集群的控制平面污点保留所需的容忍度。`ovs-ovn`、`kube-ovn-agent`、`kube-ovn-pinger` 和 `kube-ovn-speaker` 等 DaemonSet 不使用这些字段。
+
 ## 绑定本地 ip
 
 kube-ovn-controller/kube-ovn-cni/kube-ovn-monitor 这些服务支持绑定本地 ip，该功能设计原因主要是因为某些场景下出于安全考虑不允许服务绑定 0.0.0.0 （比如该服务部署在某个对外网关上，外部用户可以直接通过公网 ip 并指定端口去访问到该服务），该功能默认是打开的，由安装脚本中如下参数控制：
