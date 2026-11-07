@@ -46,6 +46,7 @@ nav:
       - Egress Gateway: "vpc/vpc-egress-gateway.md"
       - Egress Gateway 可观测性: "vpc/vpc-egress-gateway-observability.md"
       - Egress Gateway BGP/EVPN: "vpc/vpc-egress-gateway-bgp-evpn.md"
+      - VPC NAT 网关提供 Service: "vpc/vpc-nat-gateway-service.md"
       - Egress QoS 配置: "vpc/vpc-qos.md"
       - 内部负载均衡: "vpc/vpc-internal-lb.md"
       - 内部 DNS: "vpc/vpc-internal-dns.md"
@@ -199,6 +200,7 @@ plugins:
             Egress Gateway: Egress Gateway
             Egress Gateway 可观测性: Egress Gateway Observability
             Egress Gateway BGP/EVPN: Egress Gateway BGP/EVPN
+            VPC NAT 网关提供 Service: Services Served by a VPC NAT Gateway
             Egress QoS 配置: Egress QoS Configuration
             VPC 使用: Config VPC
             VPC QoS 配置: VPC QoS
