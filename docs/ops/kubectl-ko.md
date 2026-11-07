@@ -29,7 +29,7 @@ Expand-Archive .\kubectl-ko-windows-arm64.zip .\kubectl-ko-windows-arm64
 ```
 
 x64 Windows 应改用 amd64 文件。二进制 stdout 重定向（例如
-`kubectl ko capture --pod web -- -w -`）
+`kubectl ko capture pod/web -- -w -`）
 请使用 PowerShell 7.4 或更高版本，或 `cmd.exe`；旧版 PowerShell 可能破坏
 pcap 字节流。Windows 工作站无需 WSL。
 
@@ -170,9 +170,9 @@ kubeconfig 命名空间、`default` 依次确定；`TYPE/NAME` 中的斜杠分�
 | --- | --- |
 | 全局 | `--timeout=0` 限制整个调用，零值允许长时间流；`--discovery-timeout=10s` 限制目标选择。Kubernetes `--request-timeout` 不会截断已建立的 exec 流。 |
 | Kubernetes exec | 接受 `POD` 或 `TYPE/NAME`、`-c/--container`、`-l/--selector`、`-i/--stdin`、`-t/--tty`、`-q/--quiet` 和 `--pod-running-timeout=1m`。命令必须位于 `--` 后。 |
-| 节点工具与抓包 | OVS 工具需要 `--node`；抓包需要且只能选择 `--pod`、`--vm` 或 `--vmi`。远端参数必须位于 `--` 后。 |
-| 网络检查 | `network inspect` 需要 `--pod`；默认 `--output=table`，自动化可用 `--output=json`。 |
-| Trace | `--pod` 与 `--node` 二选一，必须指定 `--dst-ip`；默认 `--protocol=icmp`、`--engine=all`，可选 `--dst-mac`。TCP/UDP 需要 `--dst-port=1..65535`；IPv4 ARP 使用 `--arp-op=request` 或 `--arp-op=reply`。 |
+| 节点工具与抓包 | OVS 工具需要 `--node`；抓包使用一个位置参数 `TARGET`，远端抓包参数位于 `--` 后。 |
+| 网络检查 | `network inspect` 使用一个位置参数 `TARGET`；默认 `--output=table`，自动化可用 `--output=json`。 |
+| Trace | `trace` 使用一个位置参数 `TARGET`，必须指定 `--target IP`；默认 `--protocol=icmp`、`--engine=all`，可选 `--dst-mac`。TCP/UDP 需要 `--dst-port=1..65535`；IPv4 ARP 使用 `--arp-op=request` 或 `--arp-op=reply`。 |
 | 数据库备份与恢复 | 备份可指定 `--output FILE`，否则生成唯一的数据库专属文件名。恢复必须指定 `--source-node NODE`，并指定 `--yes` 或 `--dry-run`。 |
 | 诊断 | cluster/node/subnet 可用 `--read-only` 跳过主动探测和临时资源。配置/探测模式可用 `--skip-kube-proxy`，默认取自 `WITHOUT_KUBE_PROXY=true`。subnet 的 `--tcp-port`、`--udp-port` 依次取自 `TCP_CONN_CHECK_PORT`、`UDP_CONN_CHECK_PORT`，再默认到 8100、8101；显式参数优先。connectivity 至少需要一个 `--target tcp://IP:PORT` 或 `udp://IP:PORT`，IPv6 地址须加方括号。 |
 | 日志 | `--component=all`，可选 `all`、`kube-ovn`、`ovn`、`ovs`、`linux`；`--output-dir=kubectl-ko-log`、`--concurrency=4`、`--item-timeout=30s`、单项 `--max-bytes=268435456`，可选 `--strict`。 |
@@ -186,9 +186,9 @@ kubeconfig 命名空间、`default` 依次确定；`TYPE/NAME` 中的斜杠分�
 kubectl ko exec -n app pod/web -- date
 kubectl ko exec nbctl --context staging -- --format=json show
 kubectl ko exec nbctl -- -- ls-add example -- lsp-add example example-port
-kubectl ko trace --pod app/web --dst-ip 10.0.0.8 --protocol tcp --dst-port 443
-kubectl ko trace --node worker-a --dst-ip 2001:db8::8 --engine ovn
-kubectl ko network inspect --pod app/web --output json
+kubectl ko trace -n app pod/web --target 10.0.0.8 --protocol tcp --dst-port 443
+kubectl ko trace localnet/underlay-a --node worker-a --target 2001:db8::8
+kubectl ko network inspect -n app pod/web --output json
 kubectl ko diagnose subnet ovn-default --tcp-port 8100 --udp-port 8101
 kubectl ko diagnose connectivity --target tcp://10.0.0.8:8100 --target 'udp://[2001:db8::8]:8101'
 kubectl ko db nb backup --output northbound.backup
@@ -226,14 +226,14 @@ kubectl ko exec vsctl --node worker-a -- --timeout=5 show
 
 ## Pod、VM 和 VMI 抓包
 
-`capture` 必须且只能指定一个目标：`--pod`、`--vm` 或 `--vmi`。支持的抓包
+`capture` 必须且只能指定一个位置参数 `TARGET`，例如 `pod/NAME`、`vm/NAME` 或 `vmi/NAME`。支持的抓包
 参数包括 `-D`（列出接口）、`-i`、`-c`、`-s`、`-nn` 和 `-w -`。使用
 `-w -` 时 pcap 写入本地 stdout，诊断信息写入 stderr：
 
 ```console
-kubectl ko capture --namespace app --pod web -- -w - > capture.pcap
-kubectl ko capture --vm app/database -- -w - > vm.pcap
-kubectl ko capture --namespace app --vmi database -- -c 10
+kubectl ko capture -n app pod/web -- -w - > capture.pcap
+kubectl ko capture -n app vm/database -- -w - > vm.pcap
+kubectl ko capture -n app vmi/database -- -c 10
 ```
 
 节点 agent 在目标网络命名空间中直接使用 Linux `AF_PACKET` socket 和
@@ -242,13 +242,13 @@ kubectl ko capture --namespace app --vmi database -- -c 10
 
 ### KubeVirt 迁移期间的选择规则
 
-- `--vm` 会校验 VMI 由指定 VM 控制；`--vmi` 也支持没有 VM 控制器的独立 VMI。
+- `vm/NAME` 会校验 VMI 由指定 VM 控制；`vmi/NAME` 也支持没有 VM 控制器的独立 VMI。
 - 插件依据 VMI controller UID、节点和运行状态选择当前 launcher Pod。
 - 迁移进行中一直使用源 launcher；迁移成功后才选择目标 launcher。失败的迁移仍使用源 launcher。
-- launcher 必须处于 Running 且没有删除时间戳。缺失或存在多个候选 launcher，或请求开始前 VMI/Pod 状态发生变化时，命令会明确失败；状态稳定后重试，或直接使用 `--pod` 指定 launcher。
+- launcher 必须处于 Running 且没有删除时间戳。缺失或存在多个候选 launcher，或请求开始前 VMI/Pod 状态发生变化时，命令会明确失败；状态稳定后重试。
 - 已建立的抓包会一直留在开始时选定的网络命名空间，不会随着后续迁移切换。
 
-调用者需要读取 VMI、列出 launcher Pod；使用 `--vm` 时还需读取 VM。
+调用者需要读取 VMI、列出 launcher Pod；使用 `vm/NAME` 目标时还需读取 VM。
 `network inspect` 会先从 OVSDB 解析 Pod 网络命名空间；若无 OVS 接口，会以
 Pod UID 从宿主机进程 cgroup 查找。它从 Pod 和宿主机接口读取链路详情与
 RX/TX 统计；主机网络 Pod 使用宿主机命名空间。文本和 JSON 均保留 64 位
@@ -346,10 +346,10 @@ Go CLI 保留诊断能力，但旧 Bash 命令名称和位置参数不是别名�
 | `nb/sb status`、`nb/sb backup`、`nb/sb kick ID` | `db nb/sb status`、`db nb/sb backup`、`db nb/sb kick ID` |
 | `nb dbstatus`、`sb dbstatus` | `db health` |
 | `nb restore` | 先运行 `db nb restore --source-node NODE --dry-run`，确认后使用 `--yes`。 |
-| `trace POD IP [MAC] PROTOCOL [PORT/OP]` | `trace --pod POD --dst-ip IP [--dst-mac MAC] --protocol PROTOCOL [--dst-port PORT/--arp-op OP]` |
-| `trace node//NODE ...` | `trace --node NODE ...` |
+| `trace POD IP [MAC] PROTOCOL [PORT/OP]` | `trace POD --target IP [--dst-mac MAC] --protocol PROTOCOL [--dst-port PORT/--arp-op OP]` |
+| `trace node//NODE ...` | 对 localnet 源使用 `trace localnet/SUBNET --node NODE --target IP ...`；Node 本身不是 trace 源。 |
 | `ovn-trace ...` | `trace --engine ovn ...` |
-| `tcpdump POD ARGS` | `capture --pod POD -- ARGS` |
+| `tcpdump POD ARGS` | `capture POD -- ARGS` |
 | `diagnose [all]` | `diagnose cluster` |
 | `diagnose node NODE`、`diagnose subnet SUBNET` | 命令形式不变，现为有独立帮助及参数校验的子命令。 |
 | `diagnose IPPorts tcp-IP-PORT,udp-IP-PORT` | `diagnose connectivity --target tcp://IP:PORT --target udp://IP:PORT` |
