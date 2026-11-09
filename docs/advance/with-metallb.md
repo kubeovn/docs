@@ -31,7 +31,7 @@ MetalLB 与 Kube-OVN Underlay 集成的流量走向如下：
 
 ## 前提条件
 
-- Kube-OVN 控制器启用 `--enable-ovn-lb-prefer-local=true` 选项
+- Kube-OVN v1.14 至 v1.16 需要启用旧版 `--enable-ovn-lb-prefer-local=true` 选项；Kube-OVN v1.17 及更新版本使用当前的 Service 负载均衡本地性实现，不需要该选项
 - Underlay 子网配置 `enableExternalLBAddress=true`
 - 在 Underlay 子网的 `excludeIps` 中添加 MetalLB 地址池使用的 IP 范围
 
@@ -39,7 +39,7 @@ MetalLB 与 Kube-OVN Underlay 集成的流量走向如下：
 
 ### 1. 部署 Kube-OVN
 
-按照常规方式部署 Kube-OVN，确保 Kube-OVN 控制器启用 `--enable-ovn-lb-prefer-local=true` 和 `--ls-ct-skip-dst-lport-ips=false` 选项：
+按照常规方式部署 Kube-OVN。Kube-OVN v1.17 及更新版本不需要额外的负载均衡本地性参数；v1.14 至 v1.16 需要添加旧版 `--enable-ovn-lb-prefer-local=true`。本方案还需要 `--ls-ct-skip-dst-lport-ips=false`：
 
 ```bash
 # 在 kube-ovn-controller 的 Deployment 配置中添加参数
@@ -49,8 +49,13 @@ kubectl edit deployment -n kube-system kube-ovn-controller
 添加以下参数到命令行：
 
 ```text
---enable-ovn-lb-prefer-local=true
 --ls-ct-skip-dst-lport-ips=false
+```
+
+Kube-OVN v1.14 至 v1.16 还需要添加：
+
+```text
+--enable-ovn-lb-prefer-local=true
 ```
 
 ### 2. 配置 Underlay 子网
@@ -200,6 +205,4 @@ kubectl exec -it $(kubectl get pods -l app=nginx -o name | head -n1) -- cat /var
     MetalLB 必须使用与 Kube-OVN Underlay 子网相同的网络接口（如示例中的 `underlay0.341`）。该接口应配置为 VLAN 子接口，以确保能够正确广播带有 VLAN 标签的 ARP 报文，从而正确通告 MetalLB VIP。
 
 !!! note "本地流量策略"
-    要启用本地优先功能，需要满足两个条件：
-    - Kube-OVN 控制器启用 `--enable-ovn-lb-prefer-local=true` 参数
-    - Service 配置中设置 `externalTrafficPolicy: Local`
+    Service 需要设置 `externalTrafficPolicy: Local`，以保留客户端源 IP，并将外部流量限制在节点本地 endpoint。Kube-OVN v1.14 至 v1.16 还需要 `--enable-ovn-lb-prefer-local=true`；Kube-OVN v1.17 及更新版本不再依赖该旧参数处理 Service 负载均衡本地性。

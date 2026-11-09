@@ -31,7 +31,7 @@ The entire subnet segment is 10.180.204.0/24, including both the VIP and backend
 
 ## Prerequisites
 
-- Kube-OVN controller enabled with `--enable-ovn-lb-prefer-local=true` option
+- For Kube-OVN v1.14 through v1.16, enable the legacy `--enable-ovn-lb-prefer-local=true` option. Kube-OVN v1.17 and later uses the current Service load-balancing locality implementation and does not require this option.
 - Underlay subnet configured with `enableExternalLBAddress=true`
 - MetalLB address pool IP range added to Underlay subnet's `excludeIps`
 
@@ -39,7 +39,7 @@ The entire subnet segment is 10.180.204.0/24, including both the VIP and backend
 
 ### 1. Deploy Kube-OVN
 
-Deploy Kube-OVN following the standard procedure, ensuring the Kube-OVN controller is enabled with `--enable-ovn-lb-prefer-local=true` and `--ls-ct-skip-dst-lport-ips=false` options:
+Deploy Kube-OVN following the standard procedure. Kube-OVN v1.17 and later does not require an additional load-balancer locality flag. For v1.14 through v1.16, add the legacy `--enable-ovn-lb-prefer-local=true` option. This guide also requires `--ls-ct-skip-dst-lport-ips=false`:
 
 ```bash
 # Add parameters to the kube-ovn-controller Deployment configuration
@@ -49,8 +49,13 @@ kubectl edit deployment -n kube-system kube-ovn-controller
 Add the following parameters to the command line:
 
 ```text
---enable-ovn-lb-prefer-local=true
 --ls-ct-skip-dst-lport-ips=false
+```
+
+For Kube-OVN v1.14 through v1.16, also add:
+
+```text
+--enable-ovn-lb-prefer-local=true
 ```
 
 ### 2. Configure Underlay Subnet
@@ -200,6 +205,4 @@ kubectl exec -it $(kubectl get pods -l app=nginx -o name | head -n1) -- cat /var
     MetalLB must use the same network interface as the Kube-OVN Underlay subnet (e.g., `underlay0.341` in the example). This interface should be configured as a VLAN sub-interface to ensure proper broadcasting of ARP messages with VLAN tags for correct MetalLB VIP announcement.
 
 !!! note "Local Traffic Policy"
-    To enable local preference, two conditions must be met:
-    - Kube-OVN controller enabled with `--enable-ovn-lb-prefer-local=true` parameter
-    - Service configured with `externalTrafficPolicy: Local`
+    Configure the Service with `externalTrafficPolicy: Local` to preserve the client source IP and restrict external traffic to node-local endpoints. Kube-OVN v1.14 through v1.16 additionally requires `--enable-ovn-lb-prefer-local=true`; Kube-OVN v1.17 and later handles Service load-balancer locality without that legacy option.
