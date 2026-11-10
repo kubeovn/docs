@@ -557,9 +557,9 @@ features:
 ENABLE_LIVE_MIGRATION_OPTIMIZE=true
 ```
 
-## OVN LB 偏好本地 endpoint
+## 旧版 OVN LB 偏好本地 endpoint（v1.14–v1.16）
 
-启用后 OVN 内置 LoadBalancer 会偏好同节点的 endpoint，配合 `externalTrafficPolicy=Local` 使用：
+Kube-OVN v1.14 至 v1.16 可以启用旧版 OVN 内置 LoadBalancer 行为，使其偏好同节点的 endpoint，并配合 `externalTrafficPolicy=Local` 使用：
 
 ```bash
 ENABLE_OVN_LB_PREFER_LOCAL=true
@@ -569,6 +569,8 @@ ENABLE_OVN_LB_PREFER_LOCAL=true
 args:
 - --enable-ovn-lb-prefer-local=true
 ```
+
+Kube-OVN v1.17 及更新版本使用当前的 Service 负载均衡本地性实现。新的 v1.17+ 安装不要添加此旧参数。
 
 ## 外部网关 ConfigMap 命名空间
 

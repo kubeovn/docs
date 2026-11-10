@@ -572,9 +572,9 @@ Once enabled, the controller optimizes port-binding switches during KubeVirt liv
 ENABLE_LIVE_MIGRATION_OPTIMIZE=true
 ```
 
-## OVN LB Prefer Local Endpoint
+## Legacy OVN LB Prefer Local Endpoint (v1.14–v1.16)
 
-Once enabled, the OVN built-in LoadBalancer prefers endpoints on the same node, intended to be used together with `externalTrafficPolicy=Local`:
+Kube-OVN v1.14 through v1.16 can enable the legacy OVN built-in LoadBalancer behavior that prefers endpoints on the same node. Use it together with `externalTrafficPolicy=Local`:
 
 ```bash
 ENABLE_OVN_LB_PREFER_LOCAL=true
@@ -584,6 +584,8 @@ ENABLE_OVN_LB_PREFER_LOCAL=true
 args:
 - --enable-ovn-lb-prefer-local=true
 ```
+
+Kube-OVN v1.17 and later uses the current Service load-balancing locality implementation. Do not add this legacy option to new v1.17+ installations.
 
 ## External Gateway ConfigMap Namespace
 
