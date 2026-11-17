@@ -7,6 +7,10 @@ Kube-OVN 支持基于单个 Pod 的两种不同类型的 QoS：
 
 > 目前只支持 Pod 级别 QoS 不支持 Namespace 或 Subnet 级别的 QoS 限制。
 
+!!! warning
+
+    在集成 Cilium 并使用 tcx 的环境中，Pod 出口方向的最大带宽限制不会生效，详见 [Cilium tcx 模式下的 Pod 带宽限制](../advance/with-cilium.md)。
+
 ## 基于最大带宽限制的 QoS
 
 该类型的 QoS 可以通过 Pod annotation 动态配置，可以在不中断 Pod 运行的情况下进行调整。

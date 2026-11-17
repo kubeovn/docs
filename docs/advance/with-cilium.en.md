@@ -170,3 +170,15 @@ by setting the `enableSourceIPVerification` value to `false`:
 ```yaml
 enableSourceIPVerification: false
 ```
+
+## Pod bandwidth limits with Cilium tcx
+
+!!! warning
+
+    When Cilium attaches its programs with tcx (`enable-tcx: true`, available on Linux kernel 6.6 and later), the Pod egress limit set with the `ovn.kubernetes.io/egress_rate` annotation is not enforced.
+
+Kube-OVN applies this limit as an Open vSwitch ingress policer, which is a `tc` filter on the host-side veth interface of the Pod.
+When Cilium attaches through tcx, it removes the `tc` filters it did not create, and `tc` filters on that interface do not run while Cilium's tcx programs are attached.
+The limit is still set on the Open vSwitch interface, but the traffic of the Pod is not limited.
+
+Only `ovn.kubernetes.io/egress_rate` has been verified. The ingress limit and the other QoS features have not been tested with Cilium.
