@@ -7,6 +7,10 @@ Kube-OVN supports two types of Pod level QoS:
 
 > Currently, only Pod level QoS is supported, and QoS restrictions at the Namespace or Subnet level are not supported.
 
+!!! warning
+
+    The maximum bandwidth limit is not enforced for Pod egress when Cilium is integrated with tcx. See [Pod bandwidth limits with Cilium tcx](../advance/with-cilium.md).
+
 ## Maximum Bandwidth Limit QoS
 
 This type of QoS can be dynamically configured via Pod annotation and can be adjusted without restarting running Pod.
