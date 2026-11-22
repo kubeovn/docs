@@ -165,3 +165,15 @@ Cilium 1.20 起（[cilium/cilium#43505](https://github.com/cilium/cilium/pull/43
 ```yaml
 enableSourceIPVerification: false
 ```
+
+## Cilium tcx 模式下的 Pod 带宽限制
+
+!!! warning
+
+    当 Cilium 使用 tcx 挂载其程序时（`enable-tcx: true`，需要 Linux 内核 6.6 及以上版本），通过 `ovn.kubernetes.io/egress_rate` annotation 设置的 Pod 出口带宽限制不会生效。
+
+Kube-OVN 使用 Open vSwitch 的 ingress policer 实现该限制，即在 Pod 宿主机侧 veth 网卡上设置的 `tc` filter。
+Cilium 通过 tcx 挂载程序时会删除并非由其创建的 `tc` filter，并且在 Cilium 的 tcx 程序挂载期间，该网卡上的 `tc` filter 不会被执行。
+限制仍然会设置在 Open vSwitch 的接口上，但是 Pod 的流量不会被限制。
+
+目前只验证了 `ovn.kubernetes.io/egress_rate`，入口方向的限制以及其他 QoS 功能尚未在 Cilium 环境下测试。
