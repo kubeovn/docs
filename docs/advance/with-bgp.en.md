@@ -64,8 +64,11 @@ If you have a pair of switches:
 - `neighbor-address`: The address of the BGP Peer, usually the router gateway address.
 - `neighbor-as`: The AS number of the BGP Peer.
 - `cluster-as`: The AS number of the container network.
+- `metrics-bind-address`: The IP address where the metrics and health check HTTP server listens. It defaults to the Speaker Pod IP and falls back to `127.0.0.1` when `POD_IP` is unavailable. Because the Speaker uses `hostNetwork`, do not set it to `0.0.0.0` unless the service must be available on every node interface.
 - `allowed-source-addresses`: Comma-separated whitelist of source IPs allowed on the speaker node. When set, the speaker performs an `ip route get` lookup to the BGP peer and validates that the selected source IP is in the whitelist. If it doesn't match, the speaker refuses to start. This ensures the correct source IP is used when publishing routes in ECMP environments, preventing return traffic blackholes caused by source IP mismatches.
 - `next-hops`: Explicit next-hop overrides for advertised routes, configured separately for IPv4 and IPv6. This takes precedence over `allowed-source-addresses`, route lookup, and `node-ips`, and is useful when the advertised route must use a next hop different from the address used to establish the BGP session, such as an OVN LRP EIP. The flag accepts comma-separated addresses; if multiple addresses are configured for one family, only the last one is used.
+
+The Speaker uses `hostNetwork`. The downloaded manifest sets `--metrics-bind-address=$(POD_IP)` so the metrics and health check server is bound to the Pod IP instead of every node interface, including NAT Gateway EIPs. Keep this argument in custom manifests, or set it to the intended node management IP. When upgrading an older custom manifest, omitting this argument without providing `POD_IP` makes the server fall back to `127.0.0.1`, so external Prometheus scraping will stop.
 
 Apply the YAML:
 
@@ -132,6 +135,7 @@ Configuration keys use the kebab-case flag name without the leading `--`. Common
 - `allowed-source-addresses` and `allowed-source-ipv6-addresses`: source address allowlists.
 - `cluster-as` and `neighbor-as`: integer AS numbers.
 - `grpc-host`: an IPv4 or IPv6 address string.
+- `metrics-bind-address`: an IPv4 or IPv6 address string for the metrics and health check server; defaults to `POD_IP` and falls back to `127.0.0.1` when `POD_IP` is unavailable.
 - `router-id`: an IPv4 address string; BGP router IDs do not support IPv6.
 - `node-ips`: a map whose keys are `IPv4` or `IPv6` and whose values must match the corresponding address family.
 - `next-hops`: a map whose keys are `IPv4` or `IPv6` and whose values must match the corresponding address family. For example, `next-hops: {IPv4: 192.0.2.100, IPv6: 2001:db8::100}`.
