@@ -163,6 +163,10 @@ spec:
     }'
 ```
 
+!!! warning
+
+    With the current implementation, the external NAD must omit the `ipam` field when `noDefaultEIP: true`. Do not configure `ipam.type: kube-ovn` in this mode: the controller marks the external interface as allocated without an IP address, while Kube-OVN IPAM waits for that address, leaving the VPC gateway Pod in `ContainerCreating`. If `net1` should receive an address from Kube-OVN IPAM, keep `noDefaultEIP` set to `false`.
+
 - This Subnet is used to manage the available external addresses and the address will be allocated to VPC NAT Gateway through Macvlan, so please communicate with your network administrator to give you the available physical segment IPs.
 - The VPC gateway uses Macvlan for physical network configuration, and `master` of `NetworkAttachmentDefinition` should be the NIC name of the corresponding physical network NIC.
 - `name`: External network name.

@@ -159,6 +159,10 @@ spec:
     }'
 ```
 
+!!! warning
+
+    当前实现中，`noDefaultEIP: true` 时外部 NAD 必须不配置 `ipam` 字段。该模式下不要配置 `ipam.type: kube-ovn`：控制器会将外部网卡标记为已分配但不写入 IP 地址，而 Kube-OVN IPAM 会持续等待该地址，导致 VPC 网关 Pod 一直处于 `ContainerCreating`。如果需要由 Kube-OVN IPAM 为 `net1` 分配地址，请将 `noDefaultEIP` 保持为 `false`。
+
 - 该 Subnet 用来管理可用的外部地址，网段内的地址将会通过 Macvlan 分配给 VPC 网关，请和网络管理员沟通给出可用的物理段 IP。
 - VPC 网关使用 Macvlan 做物理网络配置，`NetworkAttachmentDefinition` 的 `master` 需为对应物理网络网卡的网卡名。
 - `name` 外部网络名称。
