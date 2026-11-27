@@ -58,8 +58,11 @@ wget https://raw.githubusercontent.com/kubeovn/kube-ovn/{{ variables.branch }}/y
 - `neighbor-address`: BGP Peer 的地址，通常为路由器网关地址。
 - `neighbor-as`: BGP Peer 的 AS 号。
 - `cluster-as`: 容器网络的 AS 号。
+- `metrics-bind-address`: metrics 和健康检查 HTTP 服务监听的 IP 地址。默认使用 Speaker Pod IP；由于 Speaker 使用 `hostNetwork`，不要设置为 `0.0.0.0`，除非确实需要在节点的所有接口提供该服务。
 - `allowed-source-addresses`: Speaker 节点允许使用的源 IP 白名单，多个地址用逗号分隔。设置后，Speaker 会通过 `ip route get` 查找到达 BGP Peer 的路由，并验证路由选择的源 IP 是否在白名单内。如果不在白名单中，Speaker 将拒绝启动。该选项用于确保在 ECMP 环境中使用正确的源 IP 发布路由，避免因源 IP 不匹配导致的回程流量黑洞。
 - `next-hops`: 显式指定发布路由的下一跳，按地址族分别设置 IPv4 和 IPv6 地址。该选项优先于 `allowed-source-addresses`、路由查询和 `node-ips`，适用于发布路由时需要使用与 BGP 邻居建连地址不同的下一跳（例如 OVN LRP EIP）的场景。使用命令行参数时，地址以逗号分隔；同一地址族配置多个地址时只使用最后一个地址。
+
+Speaker 使用 `hostNetwork`，下载的 manifest 会通过 `--metrics-bind-address=$(POD_IP)` 将 metrics 和健康检查服务绑定到 Pod IP，避免通过节点的其他接口（包括 NAT Gateway 的 EIP）暴露。使用自定义 manifest 时请保留该参数，或将其设置为预期的节点管理 IP。
 
 部署 yaml:
 
@@ -126,6 +129,7 @@ env:
 - `allowed-source-addresses` 和 `allowed-source-ipv6-addresses`：源地址白名单列表。
 - `cluster-as` 和 `neighbor-as`：AS 号，使用整数。
 - `grpc-host`：IPv4 或 IPv6 地址字符串。
+- `metrics-bind-address`：metrics 和健康检查服务监听的 IPv4 或 IPv6 地址字符串；未设置时使用 `POD_IP`。
 - `router-id`：IPv4 地址字符串；BGP router ID 不支持 IPv6。
 - `node-ips`：地址映射，键为 `IPv4` 或 `IPv6`，值必须匹配对应地址族。
 - `next-hops`：地址映射，键为 `IPv4` 或 `IPv6`，值必须匹配对应地址族。例如 `next-hops: {IPv4: 192.0.2.100, IPv6: 2001:db8::100}`。
