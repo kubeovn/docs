@@ -557,19 +557,6 @@ features:
 ENABLE_LIVE_MIGRATION_OPTIMIZE=true
 ```
 
-## OVN LB 偏好本地 endpoint
-
-启用后 OVN 内置 LoadBalancer 会偏好同节点的 endpoint，配合 `externalTrafficPolicy=Local` 使用：
-
-```bash
-ENABLE_OVN_LB_PREFER_LOCAL=true
-```
-
-```yaml
-args:
-- --enable-ovn-lb-prefer-local=true
-```
-
 ## 外部网关 ConfigMap 命名空间
 
 集中式外部网关相关 ConfigMap（如 `external-gw-config`）默认在 `kube-system`。可通过下列参数迁移到其他命名空间：

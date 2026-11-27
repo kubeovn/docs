@@ -572,19 +572,6 @@ Once enabled, the controller optimizes port-binding switches during KubeVirt liv
 ENABLE_LIVE_MIGRATION_OPTIMIZE=true
 ```
 
-## OVN LB Prefer Local Endpoint
-
-Once enabled, the OVN built-in LoadBalancer prefers endpoints on the same node, intended to be used together with `externalTrafficPolicy=Local`:
-
-```bash
-ENABLE_OVN_LB_PREFER_LOCAL=true
-```
-
-```yaml
-args:
-- --enable-ovn-lb-prefer-local=true
-```
-
 ## External Gateway ConfigMap Namespace
 
 ConfigMaps related to the centralized external gateway (such as `external-gw-config`) live in `kube-system` by default. They can be moved to a different namespace via:
